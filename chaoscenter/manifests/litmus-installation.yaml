@@ -102,6 +102,8 @@ data:
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
                 proxy_pass "https://litmusportal-auth-server-service:9005/";
+                proxy_ssl_certificate /etc/tls/client-cert.pem;
+                proxy_ssl_certificate_key /etc/tls/client-key.pem;
             }
 
             location /api/ {
