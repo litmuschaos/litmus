@@ -23,7 +23,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 	}
 
 	if enableHTTPSConnection {
-		if utils.Config.TlsCertPath != "" {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
 			// configuring TLS config based on provided certificates & keys
 			conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, false)
 

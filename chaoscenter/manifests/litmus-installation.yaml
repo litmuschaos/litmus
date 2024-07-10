@@ -65,10 +65,10 @@ data:
 
         server {
             listen 8185 ssl;
-            ssl_certificate /etc/tls/client-cert.pem;
-            ssl_certificate_key /etc/tls/client-key.pem;
+            ssl_certificate /etc/tls/tls.crt;
+            ssl_certificate_key /etc/tls/tls.key;
             ssl_protocols TLSv1.2 TLSv1.3;
-            ssl_client_certificate /etc/tls/ca-cert.pem;
+            ssl_client_certificate /etc/tls/ca.crt;
             ssl_ciphers HIGH:!aNULL:!MD5;
             ssl_prefer_server_ciphers on;
             ssl_session_cache shared:SSL:10m;
@@ -102,8 +102,8 @@ data:
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
                 proxy_pass "https://litmusportal-auth-server-service:9005/";
-                proxy_ssl_certificate /etc/tls/client-cert.pem;
-                proxy_ssl_certificate_key /etc/tls/client-key.pem;
+                proxy_ssl_certificate /etc/tls/tls.crt;
+                proxy_ssl_certificate_key /etc/tls/tls.key;
             }
 
             location /api/ {
@@ -117,8 +117,8 @@ data:
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
                 proxy_pass "https://litmusportal-server-service:9004/";
-                proxy_ssl_certificate /etc/tls/client-cert.pem;
-                proxy_ssl_certificate_key /etc/tls/client-key.pem;
+                proxy_ssl_certificate /etc/tls/tls.crt;
+                proxy_ssl_certificate_key /etc/tls/tls.key;
             }
         }
     }
@@ -274,11 +274,11 @@ spec:
             - name: ENABLE_INTERNAL_TLS
               value: "true"
             - name: TLS_CERT_PATH
-              value: "/etc/tls/client-cert.pem"
+              value: "/etc/tls/tls.crt"
             - name: TLS_KEY_PATH
-              value: "/etc/tls/client-key.pem"
+              value: "/etc/tls/tls.key"
             - name: CA_CERT_TLS_PATH
-              value: "/etc/tls/ca-cert.pem"
+              value: "/etc/tls/ca.crt"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -389,11 +389,11 @@ spec:
             - name: ENABLE_INTERNAL_TLS
               value: "true"
             - name: TLS_CERT_PATH
-              value: "/etc/tls/client-cert.pem"
+              value: "/etc/tls/tls.crt"
             - name: TLS_KEY_PATH
-              value: "/etc/tls/client-key.pem"
+              value: "/etc/tls/ctls.key"
             - name: CA_CERT_TLS_PATH
-              value: "/etc/tls/ca-cert.pem"
+              value: "/etc/tls/ca.crt"
           ports:
             - containerPort: 3000
             - containerPort: 3030
