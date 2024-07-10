@@ -256,8 +256,6 @@ spec:
           ports:
             - containerPort: 8080
             - containerPort: 8000
-            - containerPort: 8081
-            - containerPort: 8001
           imagePullPolicy: Always
           resources:
             requests:
@@ -301,12 +299,6 @@ spec:
     - name: graphql-rpc-server
       port: 8000
       targetPort: 8000
-    - name: graphql-server-https
-      port: 9004
-      targetPort: 8081
-    - name: graphql-rpc-server-https
-      port: 8001
-      targetPort: 8001
   selector:
     component: litmusportal-server
 ---
@@ -364,8 +356,6 @@ spec:
           ports:
             - containerPort: 3000
             - containerPort: 3030
-            - containerPort: 3001
-            - containerPort: 3031
           imagePullPolicy: Always
           resources:
             requests:
@@ -413,11 +403,5 @@ spec:
     - name: auth-rpc-server
       port: 3030
       targetPort: 3030
-    - name: auth-server-https
-      port: 9005
-      targetPort: 3001
-    - name: auth-rpc-server-https
-      port: 3031
-      targetPort: 3031
   selector:
     component: litmusportal-auth-server
