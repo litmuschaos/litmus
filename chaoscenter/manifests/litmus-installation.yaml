@@ -269,15 +269,11 @@ spec:
               value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
             - name: ENABLE_INTERNAL_TLS
               value: "true"
-            - name: SERVER_TLS_CERT_PATH
+            - name: TLS_CERT_PATH
               value: "/etc/tls/client-cert.pem"
-            - name: SERVER_TLS_KEY_PATH
+            - name: TLS_KEY_PATH
               value: "/etc/tls/client-key.pem"
-            - name: CLIENT_TLS_CERT_PATH
-              value: "/etc/tls/client-cert.pem"
-            - name: CLIENT_TLS_KEY_PATH
-              value: "/etc/tls/client-key.pem"
-            - name: CA_CERT_PATH
+            - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca-cert.pem"
           ports:
             - containerPort: 8080
@@ -388,11 +384,11 @@ spec:
               value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
             - name: ENABLE_INTERNAL_TLS
               value: "true"
-            - name: CUSTOM_TLS_CERT_PATH
+            - name: TLS_CERT_PATH
               value: "/etc/tls/client-cert.pem"
             - name: TLS_KEY_PATH
               value: "/etc/tls/client-key.pem"
-            - name: CA_CERT_PATH
+            - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca-cert.pem"
           ports:
             - containerPort: 3000

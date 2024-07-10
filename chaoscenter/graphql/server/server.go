@@ -111,7 +111,7 @@ func main() {
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
 	if enableHTTPSConnection {
-		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsCertPath != "" {
 			go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
 		} else {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
@@ -171,14 +171,14 @@ func main() {
 	if enableHTTPSConnection {
 		log.Infof("graphql server running at https://localhost:%s", utils.Config.HttpsPort)
 		// configuring TLS config based on provided certificates & keys
-		conf := utils.GetTlsConfig(utils.Config.ServerTlsCertPath, utils.Config.ServerTlsKeyPath, true)
+		conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsCertPath, true)
 
 		server := http.Server{
 			Addr:      ":" + utils.Config.HttpsPort,
 			Handler:   router,
 			TLSConfig: conf,
 		}
-		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsCertPath != "" {
 			go func() {
 				err := server.ListenAndServeTLS("", "")
 				if err != nil {
@@ -219,7 +219,7 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 	}
 
 	// configuring TLS config based on provided certificates & keys
-	conf := utils.GetTlsConfig(utils.Config.ServerTlsCertPath, utils.Config.ServerTlsKeyPath, true)
+	conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsCertPath, true)
 
 	// create tls credentials
 	tlsCredentials := credentials.NewTLS(conf)

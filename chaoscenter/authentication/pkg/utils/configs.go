@@ -25,9 +25,9 @@ var (
 	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
 	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
 	EnableInternalTls            = getEnvAsBool("ENABLE_INTERNAL_TLS", false)
-	CustomTlsCertPath            = os.Getenv("CUSTOM_TLS_CERT_PATH")
+	CustomTlsCertPath            = os.Getenv("TLS_CERT_PATH")
 	TlSKeyPath                   = os.Getenv("TLS_KEY_PATH")
-	CaCertPath                   = os.Getenv("CA_CERT_PATH")
+	CaCertPath                   = os.Getenv("CA_CERT_TLS_PATH")
 	DBName                       = "auth"
 	Port                         = ":3000"
 	PortHttps                    = ":3001"

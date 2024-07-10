@@ -38,11 +38,9 @@ type Configuration struct {
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string   `split_words:"true" default:"false"`
 	EnableInternalTls           string   `split_words:"true" default:"false"`
-	ServerTlsCertPath           string   `split_words:"true"`
-	ServerTlsKeyPath            string   `split_words:"true"`
-	ClientTlsCertPath           string   `split_words:"true"`
-	ClientTlsKeyPath            string   `split_words:"true"`
-	CaCertPath                  string   `split_words:"true"`
+	TlsCertPath                 string   `split_words:"true"`
+	TlsKeyPath                  string   `split_words:"true"`
+	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
 }
 
