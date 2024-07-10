@@ -23,14 +23,11 @@ type Configuration struct {
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string   `split_words:"true" default:":3030"`
-	LitmusAuthGrpcPortHttps     string   `split_words:"true" default:":3031"`
 	KubeConfigFilePath          string   `split_words:"true"`
 	RemoteHubMaxSize            string   `split_words:"true"`
 	SkipSslVerify               string   `split_words:"true"`
-	HttpPort                    string   `split_words:"true" default:"8080"`
-	HttpsPort                   string   `split_words:"true" default:"8081"`
-	RpcPort                     string   `split_words:"true" default:"8000"`
-	RpcPortHttps                string   `split_words:"true" default:"8001"`
+	RestPort                    string   `split_words:"true" default:"8080"`
+	GrpcPort                    string   `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string   `required:"true" split_words:"true"`
 	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string   `required:"true" split_words:"true"`

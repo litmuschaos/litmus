@@ -253,6 +253,10 @@ spec:
               value: ""
             - name: CA_CERT_TLS_PATH
               value: ""
+            - name: REST_PORT
+              value: 8080
+            - name: GRPC_PORT
+              value: 8000
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -353,6 +357,10 @@ spec:
               value: ""
             - name: CA_CERT_TLS_PATH
               value: ""
+            - name: REST_PORT
+              value: 3000
+            - name: GRPC_PORT
+              value: 3030
           ports:
             - containerPort: 3000
             - containerPort: 3030

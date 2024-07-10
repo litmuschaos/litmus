@@ -30,7 +30,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 			tlsCredential := credentials.NewTLS(conf)
 
 			// Set up a connection to the server.
-			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPortHttps, grpc.WithTransportCredentials(tlsCredential))
+			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithTransportCredentials(tlsCredential))
 			if err != nil {
 				logrus.Fatalf("did not connect: %v", err)
 			}

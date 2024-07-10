@@ -279,6 +279,10 @@ spec:
               value: "/etc/tls/tls.key"
             - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca.crt"
+            - name: REST_PORT
+              value: 8081
+            - name: GRPC_PORT
+              value: 8001
           ports:
             - containerPort: 8081
             - containerPort: 8001
@@ -386,6 +390,10 @@ spec:
               value: "/etc/tls/ctls.key"
             - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca.crt"
+            - name: REST_PORT
+              value: 3001
+            - name: GRPC_PORT
+              value: 3031
           ports:
             - containerPort: 3001
             - containerPort: 3031

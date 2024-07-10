@@ -197,17 +197,17 @@ func runRestServer(applicationService services.ApplicationService) {
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
 
-	log.Infof("Listening and serving HTTP on %s", utils.Port)
+	log.Infof("Listening and serving HTTP on %s", utils.RestPort)
 
 	if utils.EnableInternalTls {
 		if utils.TlsCertPath != "" && utils.TlSKeyPath != "" {
 			conf := utils.GetTlsConfig()
 			server := http.Server{
-				Addr:      utils.PortHttps,
+				Addr:      utils.RestPort,
 				Handler:   app,
 				TLSConfig: conf,
 			}
-			log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
+			log.Infof("Listening and serving HTTPS on %s", utils.RestPort)
 			err := server.ListenAndServeTLS("", "")
 			if err != nil {
 				log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
@@ -216,8 +216,8 @@ func runRestServer(applicationService services.ApplicationService) {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
 	} else {
-		log.Infof("Listening and serving HTTP on %s", utils.Port)
-		err := app.Run(utils.Port)
+		log.Infof("Listening and serving HTTP on %s", utils.RestPort)
+		err := app.Run(utils.RestPort)
 		if err != nil {
 			log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 		}
@@ -244,7 +244,7 @@ func runGrpcServer(applicationService services.ApplicationService) {
 func runGrpcServerWithTLS(applicationService services.ApplicationService) {
 
 	// Starting gRPC server
-	lis, err := net.Listen("tcp", utils.GrpcPortHttps)
+	lis, err := net.Listen("tcp", utils.GrpcPort)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
 	}

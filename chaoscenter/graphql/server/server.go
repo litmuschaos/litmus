@@ -116,7 +116,7 @@ func main() {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
 	} else {
-		go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
@@ -171,12 +171,12 @@ func main() {
 
 	if enableHTTPSConnection {
 		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
-			log.Infof("graphql server running at https://localhost:%s", utils.Config.HttpsPort)
+			log.Infof("graphql server running at https://localhost:%s", utils.Config.RestPort)
 			// configuring TLS config based on provided certificates & keys
 			conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
 
 			server := http.Server{
-				Addr:      ":" + utils.Config.HttpsPort,
+				Addr:      ":" + utils.Config.RestPort,
 				Handler:   router,
 				TLSConfig: conf,
 			}
@@ -188,8 +188,8 @@ func main() {
 			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
 		}
 	} else {
-		log.Infof("graphql server running at http://localhost:%s", utils.Config.HttpPort)
-		log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+		log.Infof("graphql server running at http://localhost:%s", utils.Config.RestPort)
+		log.Fatal(http.ListenAndServe(":"+utils.Config.RestPort, router))
 	}
 
 }
@@ -214,7 +214,7 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 // startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
 func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 
-	lis, err := net.Listen("tcp", ":"+utils.Config.RpcPortHttps)
+	lis, err := net.Listen("tcp", ":"+utils.Config.GrpcPort)
 	if err != nil {
 		log.Fatal("failed to listen: %w", err)
 	}

@@ -27,11 +27,9 @@ var (
 	TlsCertPath                  = os.Getenv("TLS_CERT_PATH")
 	TlSKeyPath                   = os.Getenv("TLS_KEY_PATH")
 	CaCertPath                   = os.Getenv("CA_CERT_TLS_PATH")
+	RestPort                     = os.Getenv("REST_PORT")
+	GrpcPort                     = os.Getenv("GRPC_PORT")
 	DBName                       = "auth"
-	Port                         = ":3000"
-	PortHttps                    = ":3001"
-	GrpcPort                     = ":3030"
-	GrpcPortHttps                = ":3031"
 	UserCollection               = "users"
 	ProjectCollection            = "project"
 	AuthConfigCollection         = "auth-config"
