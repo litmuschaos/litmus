@@ -4,8 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"net"
+	"net/http"
 	"runtime"
 	"time"
+
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+	"google.golang.org/grpc/credentials"
 
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
@@ -82,6 +87,12 @@ func main() {
 		log.Errorf("failed to create collection  %s", err)
 	}
 
+	// Creating AuthConfig Collection
+	err = utils.CreateCollection(utils.AuthConfigCollection, db)
+	if err != nil {
+		log.Errorf("failed to create collection  %s", err)
+	}
+
 	// Creating RevokedToken Collection
 	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
 		log.Errorf("failed to create collection  %s", err)
@@ -108,13 +119,29 @@ func main() {
 	apiTokenCollection := db.Collection(utils.ApiTokenCollection)
 	apiTokenRepo := session.NewApiTokenRepo(apiTokenCollection)
 
+	authConfigCollection := db.Collection(utils.AuthConfigCollection)
+	authConfigRepo := authConfig.NewAuthConfigRepo(authConfigCollection)
+
 	miscRepo := misc.NewRepo(db, client)
 
-	applicationService := services.NewService(userRepo, projectRepo, miscRepo, revokedTokenRepo, apiTokenRepo, db)
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, revokedTokenRepo, apiTokenRepo, authConfigRepo, db)
+
+	err = response.AddSalt(applicationService)
+	if err != nil {
+		log.Fatal("couldn't create salt $s", err)
+	}
 
 	validatedAdminSetup(applicationService)
 
 	go runGrpcServer(applicationService)
+	if utils.EnableInternalTls {
+		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
+			go runGrpcServerWithTLS(applicationService)
+		} else {
+			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
+		}
+	}
+
 	runRestServer(applicationService)
 }
 
@@ -130,10 +157,11 @@ func validatedAdminSetup(service services.ApplicationService) {
 	password := string(hashedPassword)
 
 	adminUser := entities.User{
-		ID:       uID,
-		Username: utils.AdminName,
-		Password: password,
-		Role:     entities.RoleAdmin,
+		ID:             uID,
+		Username:       utils.AdminName,
+		Password:       password,
+		Role:           entities.RoleAdmin,
+		IsInitialLogin: true,
 		Audit: entities.Audit{
 			CreatedAt: time.Now().UnixMilli(),
 			UpdatedAt: time.Now().UnixMilli(),
@@ -163,12 +191,35 @@ func runRestServer(applicationService services.ApplicationService) {
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)
 	}
+	routes.CapabilitiesRouter(app)
 	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
-	routes.CapabilitiesRouter(app)
 
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
+
+	if utils.EnableInternalTls {
+		log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
+		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
+			conf := utils.GetTlsConfig()
+
+			server := http.Server{
+				Addr:      utils.PortHttps,
+				Handler:   app,
+				TLSConfig: conf,
+			}
+			log.Infof("Listening and serving HTTPS on %s", utils.Port)
+			go func() {
+				err := server.ListenAndServeTLS("", "")
+				if err != nil {
+					log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
+				}
+			}()
+		} else {
+			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+	}
+
 	err := app.Run(utils.Port)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
@@ -188,6 +239,34 @@ func runGrpcServer(applicationService services.ApplicationService) {
 	log.Infof("Listening and serving gRPC on %s", utils.GrpcPort)
 	err = grpcServer.Serve(lis)
 	if err != nil {
-		log.Fatalf("Failure to start litmus-portal authentication GRPC server due to %v", err)
+		log.Fatalf("Failure to start chaoscenter authentication GRPC server due to %v", err)
+	}
+}
+
+func runGrpcServerWithTLS(applicationService services.ApplicationService) {
+
+	// Starting gRPC server
+	lis, err := net.Listen("tcp", utils.GrpcPortHttps)
+	if err != nil {
+		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
+	}
+
+	// configuring TLS config based on provided certificates & keys
+	conf := utils.GetTlsConfig()
+
+	// create tls credentials
+	tlsCredentials := credentials.NewTLS(conf)
+
+	// create grpc server with tls credential
+	grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
+
+	grpcApplicationServer := grpcHandler.ServerGrpc{ApplicationService: applicationService}
+
+	grpcPresenter.RegisterAuthRpcServiceServer(grpcServer, &grpcApplicationServer)
+
+	log.Infof("Listening and serving gRPC on %s with TLS", utils.GrpcPort)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatalf("Failure to start chaoscenter authentication GRPC server due to %v", err)
 	}
 }

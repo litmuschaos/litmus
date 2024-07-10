@@ -11,11 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+
 	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -787,13 +788,17 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil, err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 	var (
 		wc      = writeconcern.New(writeconcern.WMajority())
 		rc      = readconcern.Snapshot()
 		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 	)
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	session, err := mongodb.MgoClient.StartSession()
 	if err != nil {
@@ -995,6 +1000,9 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return err
+	}
 
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
