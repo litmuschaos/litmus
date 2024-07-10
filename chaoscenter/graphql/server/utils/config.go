@@ -11,7 +11,7 @@ import (
 func GetTlsConfig(certPath string, keyPath string, isServerConfig bool) *tls.Config {
 
 	// read ca's cert, verify to client's certificate
-	caPem, err := os.ReadFile(Config.CaCertPath)
+	caPem, err := os.ReadFile(Config.CaCertTlsPath)
 	if err != nil {
 		log.Fatal(err)
 	}
