@@ -9,8 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// upgradeAuthDb: migrates project collection from litmus-db to auth-db, renames usercredentials collection to users"
-func upgradeAuthDb(logger *log.Logger, dbClient *mongo.Client) error {
+// upgradeExecutor: migrates project collection from litmus-db to auth-db, renames usercredentials collection to users"
+func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 
 	// migration of project collection to auth DB
 	projectLitmusCollection := dbClient.Database("litmus").Collection("project") //project collection from litmus DB

@@ -1,4 +1,4 @@
-package v2_4_0
+package v0_0_0
 
 import (
 	log "github.com/sirupsen/logrus"
@@ -20,8 +20,7 @@ func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManage
 // to upgrade from the previous version to `this` version
 func (vm VersionManager) Run() error {
 	if err := upgradeExecutor(vm.Logger, vm.DBClient); err != nil {
-		return err
+		return nil
 	}
-	// other upgrade step .....
 	return nil
 }

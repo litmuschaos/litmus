@@ -1,4 +1,4 @@
-package v3_9_0
+package v0_0_0
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 
 // upgradeWorkflowCollection updated the index related changes in workflow-collection
 func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
+
 	var err error
 	db := dbClient.Database("auth")
 	collectionsNames, err := db.ListCollectionNames(context.TODO(), bson.M{})

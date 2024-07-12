@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// upgradeWorkflowCollection updated the index related changes in workflow-collection
-func upgradeWorkflowCollection(logger *log.Logger, dbClient *mongo.Client) error {
+// upgradeExecutor updated the index related changes in workflow-collection
+func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 	workflowCollection := dbClient.Database("litmus").Collection("workflow-collection")
 
 	//delete the existing workflow_name index

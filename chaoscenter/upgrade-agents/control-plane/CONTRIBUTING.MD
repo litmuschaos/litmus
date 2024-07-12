@@ -30,9 +30,10 @@ If you set your `user.name` and `user.email` git configs, you can sign your comm
 
 ## Versions
 
-`<version>/` folder contains files for the specific upgrade logic
+`<version>/` folder contains files for the upgrade logic
 
-- `manager.go` - Instantiates the Version Manager and runs the upgradeExecutor.
-- `upgrade.go` - Contains the logic of upgradeExecutor of what schema changes are to be made in the specific version.
+- `upgrade-manager.go` - Contains a map of versions with their corresponding version-managers for the versions.
+- `vx.y.z/manager.go` - Instantiates the Version Manager and runs the upgradeExecutor.
+- `vx.y.z/upgrade.go` - Contains the logic of upgradeExecutor of what schema changes are to be made in the specific version.
 
 There are some other files not mentioned here.
