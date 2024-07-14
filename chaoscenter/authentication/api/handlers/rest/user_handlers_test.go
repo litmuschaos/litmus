@@ -490,7 +490,7 @@ func TestUpdatePassword(t *testing.T) {
 			givenStrictPassword:  false,
 			givenServiceResponse: nil,
 			expectedCode:         http.StatusOK,
-			expectedOutput:       `{"message":"password has been updated successfully"}`,
+			expectedOutput:       `{"message":"password has been updated successfully","projectID":"someProjectID"}`,
 		},
 		{
 			name:                 "Invalid new password",
@@ -511,8 +511,6 @@ func TestUpdatePassword(t *testing.T) {
 			c.Request.Header.Set("Content-Type", "application/json")
 			c.Set("username", tt.givenUsername)
 
-			utils.StrictPasswordPolicy = tt.givenStrictPassword
-
 			userPassword := entities.UserPassword{
 				Username:    tt.givenUsername,
 				OldPassword: "oldPass@123",
@@ -524,9 +522,19 @@ func TestUpdatePassword(t *testing.T) {
 				Email:          "test@example.com",
 				IsInitialLogin: false,
 			}
+			userFromDB := &entities.User{
+				ID:       "testUserID",
+				Username: "testUser",
+				Password: "hashedPassword",
+				Email:    "test@example.com",
+			}
+			service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 			service.On("GetUser", "testUID").Return(user, nil)
 			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
-
+			project := &entities.Project{
+				ID: "someProjectID",
+			}
+			service.On("GetOwnerProjectIDs", mock.Anything, "testUserID").Return([]*entities.Project{project}, nil)
 			rest.UpdatePassword(service)(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)
