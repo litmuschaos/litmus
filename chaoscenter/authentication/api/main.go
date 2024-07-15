@@ -34,7 +34,6 @@ import (
 )
 
 type Config struct {
-	JwtSecret      string   `required:"true" split_words:"true"`
 	AdminUsername  string   `required:"true" split_words:"true"`
 	AdminPassword  string   `required:"true" split_words:"true"`
 	DbServer       string   `required:"true" split_words:"true"`
