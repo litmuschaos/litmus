@@ -30,7 +30,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 			tlsCredential := credentials.NewTLS(conf)
 
 			// Set up a connection to the server.
-			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithTransportCredentials(tlsCredential))
+			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+":"+utils.Config.LitmusAuthGrpcPort, grpc.WithTransportCredentials(tlsCredential))
 			if err != nil {
 				logrus.Fatalf("did not connect: %v", err)
 			}
@@ -38,7 +38,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 			logrus.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
 	} else {
-		conn, err = grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithInsecure())
+		conn, err = grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+":"+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithInsecure())
 		if err != nil {
 			logrus.Fatalf("did not connect: %s", err)
 		}

@@ -262,7 +262,7 @@ spec:
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
-              value: ":3030"
+              value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
               value: "ci"
             - name: REMOTE_HUB_MAX_SIZE
@@ -379,7 +379,7 @@ spec:
             - name: LITMUS_GQL_GRPC_ENDPOINT
               value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
-              value: ":8000"
+              value: "8000"
             - name: ALLOWED_ORIGINS
               value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?" #ip needs to added here
             - name: ENABLE_INTERNAL_TLS
