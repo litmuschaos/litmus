@@ -22,6 +22,5 @@ func (vm VersionManager) Run() error {
 	if err := upgradeExecutor(vm.Logger, vm.DBClient); err != nil {
 		return err
 	}
-	// other upgrade step .....
 	return nil
 }

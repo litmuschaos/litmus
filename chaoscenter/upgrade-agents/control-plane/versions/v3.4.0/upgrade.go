@@ -2,36 +2,52 @@ package v3_4_0
 
 import (
 	"context"
-	"fmt"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	// "github.com/mongodb/mongo-tools/mongodump"
 	// "go.mongodb.org/mongo-driver/mongo/options"
 
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 	log "github.com/sirupsen/logrus"
 )
 
-func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
+func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
+	session, err := dbClient.StartSession()
+	if err != nil {
+		log.Fatal("error starting session: %w", err)
+	}
+	defer session.EndSession(ctx)
+
+	err = session.StartTransaction()
+	if err != nil {
+		log.Fatal("error starting transaction: %w", err)
+	}
 
 	var indexes []string
 	var environmentIDIndexName string
 
-	environmentCollection := dbClient.Database("litmus").Collection("environment")
+	environmentCollection := dbClient.Database(database.LitmusDB).Collection(database.EnvironmentCollection)
 	indexView := environmentCollection.Indexes()
-	cursor, err := indexView.List(context.TODO())
+	cursor, err := indexView.List(ctx)
 	if err != nil {
-		log.Fatal(err)
+		session.AbortTransaction(ctx)
+		log.Fatal("error listing indexes: %w", err)
 	}
-	defer cursor.Close(context.TODO())
+	defer cursor.Close(ctx)
 
 	environmentIDIndexExists := false
 
-	for cursor.Next(context.TODO()) {
+	logVersion := log.Fields{
+		"version": "3.4.0",
+	}
+
+	for cursor.Next(ctx) {
 		var index bson.M
 		if err := cursor.Decode(&index); err != nil {
-			log.Fatal(err)
+			session.AbortTransaction(ctx)
+			log.Fatal("error decoding index: %w", err)
 		}
 		indexes = append(indexes, index["name"].(string))
 		if keys, ok := index["key"].(bson.M); ok {
@@ -42,22 +58,28 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 		}
 	}
 
-	logger.WithFields(log.Fields{
+	// logIndexes := append(logVersion,)
+
+	logIndexes := log.Fields{
 		"version": "3.4.0",
 		"indexes": indexes,
-	}).Info("Indexes found in environment collection while upgrading to intermediate version v3.4.0")
+	}
+
+	logger.WithFields(logIndexes).Info("Indexes found in environment collection while upgrading to intermediate version v3.4.0")
+
+	logFields := log.Fields{
+		"collection": database.EnvironmentCollection,
+		"db":         database.LitmusDB,
+	}
 
 	if environmentIDIndexExists {
-		// delete the existing workflow_name index
-		_, err := environmentCollection.Indexes().DropOne(context.Background(), environmentIDIndexName)
+		_, err := environmentCollection.Indexes().DropOne(ctx, environmentIDIndexName)
 		if err != nil {
-			fmt.Errorf("error: %w", err)
+			session.AbortTransaction(ctx)
+			log.Fatal("error dropping index: %w", err)
 		}
-		logger.WithFields(log.Fields{
-			"version": "3.4.0",
-		}).Info("Deleted an existing index in environment collection while upgrading to intermediate v3.4.0")
+		logger.WithFields(logFields).Info("Deleted an existing index in environment collection while upgrading to intermediate v3.4.0")
 
-		//create a new workflow index with partial filter expression
 		indexModel := mongo.IndexModel{
 			Keys: bson.M{"environment_id": 1},
 			Options: options.Index().
@@ -67,18 +89,23 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 				}),
 		}
 
-		_, err = environmentCollection.Indexes().CreateOne(context.Background(), indexModel)
+		_, err = environmentCollection.Indexes().CreateOne(ctx, indexModel)
 		if err != nil {
-			log.Fatalf("error creating index: %v", err)
+			session.AbortTransaction(ctx)
+			log.Fatal("error creating index: %w", err)
 		}
 
-		log.WithFields(log.Fields{
-			"version": "3.4.0",
-		}).Info("Created a new index with partial filter expresion environment_id while upgrading to intermediate v3.4.0")
+		log.WithFields(logVersion).Info("Created a new index with partial filter expression environment_id while upgrading to intermediate v3.4.0")
 
 	} else {
+		session.AbortTransaction(ctx)
 		log.Fatal("environment id index not found in version v3.4.0")
 	}
 
-	return err
+	err = session.CommitTransaction(ctx)
+	if err != nil {
+		log.Fatal("error committing transaction: %w", err)
+	}
+
+	return nil
 }
