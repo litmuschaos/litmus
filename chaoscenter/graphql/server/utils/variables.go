@@ -22,7 +22,7 @@ type Configuration struct {
 	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
-	LitmusAuthGrpcPort          string   `split_words:"true" default:":3030"`
+	LitmusAuthGrpcPort          string   `split_words:"true" default:"3030"`
 	KubeConfigFilePath          string   `split_words:"true"`
 	RemoteHubMaxSize            string   `split_words:"true"`
 	SkipSslVerify               string   `split_words:"true"`
