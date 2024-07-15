@@ -249,11 +249,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.9.1"
+              value: "litmuschaos/chaos-operator:3.9.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.9.1"
+              value: "litmuschaos/chaos-runner:3.9.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.9.1"
+              value: "litmuschaos/chaos-exporter:3.9.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
@@ -263,11 +263,11 @@ spec:
             - name: LITMUS_AUTH_GRPC_PORT
               value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.9.1"
+              value: "3.9.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["3.9.1"]'
+              value: '["3.9.0"]'
             - name: ALLOWED_ORIGINS
               value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?"
             - name: ENABLE_INTERNAL_TLS
