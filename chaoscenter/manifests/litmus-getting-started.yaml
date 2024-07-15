@@ -4,7 +4,6 @@ kind: Secret
 metadata:
   name: litmus-portal-admin-secret
 stringData:
-  JWT_SECRET: "litmus-portal@123"
   DB_USER: "root"
   DB_PASSWORD: "1234"
 ---
