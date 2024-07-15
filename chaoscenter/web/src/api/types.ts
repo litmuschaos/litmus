@@ -9,8 +9,6 @@ import type {
   SubscriptionResult,
   LazyQueryHookOptions
 } from '@apollo/client';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { SWRConfiguration, SWRResponse } from 'swr';
 import type { Identifiers } from './entities';
 
 // GraphQL types
@@ -45,25 +43,3 @@ export type GqlAPISubscriptionRequest<TData, TVariables = OperationVariables> = 
   Omit<SubscriptionHookOptions<TData, TVariables>, 'variables'>;
 
 export type GqlAPISubscriptionResponse<TData, TVariables = OperationVariables> = SubscriptionResult<TData, TVariables>;
-
-// REST types
-export type GetRequest = AxiosRequestConfig | null;
-
-export interface Return<Data, Error>
-  extends Pick<SWRResponse<AxiosResponse<Data>, AxiosError<Error>>, 'isValidating' | 'error' | 'mutate'> {
-  data: Data | undefined;
-  loading: boolean;
-  response: AxiosResponse<Data> | undefined;
-}
-
-export interface Config<Data = unknown, Error = unknown>
-  extends Omit<SWRConfiguration<AxiosResponse<Data>, AxiosError<Error>>, 'fallbackData'> {
-  fallbackData?: Data;
-}
-
-export interface RestAPIResponse<Data> extends Omit<Partial<Return<Data, unknown>>, 'loading'> {
-  loading: boolean;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RestError<T = unknown, D = any> = AxiosError<T, D> | undefined;

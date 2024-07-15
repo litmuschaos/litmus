@@ -25,6 +25,12 @@ type UserResponse struct {
 	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
 
+type CapabilitiesResponse struct {
+	Dex struct {
+		Enabled bool `json:"enabled"`
+	} `json:"dex"`
+}
+
 type MessageResponse struct {
 	Message string
 }
@@ -69,6 +75,11 @@ type ErrInvalidRequest struct {
 	Message string `json:"message" example:"The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed"`
 }
 
+type ErrOldPassword struct {
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"The old and new passwords can't be same"`
+}
+
 type ErrUnauthorized struct {
 	Code    int    `json:"code" example:"401"`
 	Message string `json:"message" example:"The user does not have requested authorization to access this resource"`
@@ -91,7 +102,12 @@ type ErrUserDeactivated struct {
 
 type ErrStrictPasswordPolicyViolation struct {
 	Code    int    `json:"code" example:"401"`
-	Message string `json:"message" example:"Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"`
+	Message string `json:"message" example:"Please ensure the password is atleast 8 characters and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"`
+}
+
+type ErrStrictUsernamePolicyViolation struct {
+	Code    int    `json:"code" example:"401"`
+	Message string `json:"message" example:"The username should be atleast 3 characters long and atmost 16 characters long."`
 }
 
 type ErrEmptyProjectName struct {

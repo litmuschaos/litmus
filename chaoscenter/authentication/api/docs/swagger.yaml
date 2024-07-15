@@ -12,6 +12,14 @@ definitions:
       userID:
         type: string
     type: object
+  response.CapabilitiesResponse:
+    properties:
+      dex:
+        properties:
+          enabled:
+            type: boolean
+        type: object
+    type: object
   response.ErrInvalidCredentials:
     properties:
       code:
@@ -49,6 +57,15 @@ definitions:
         example: Role is invalid
         type: string
     type: object
+  response.ErrOldPassword:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: The old and new passwords can't be same
+        type: string
+    type: object
   response.ErrProjectNotFound:
     properties:
       code:
@@ -65,7 +82,7 @@ definitions:
         type: integer
       message:
         example: The authorization server encountered an unexpected condition that
-          prevented it from fulfi
+          prevented it from fulfilling the request
         type: string
     type: object
   response.ErrStrictPasswordPolicyViolation:
@@ -74,8 +91,19 @@ definitions:
         example: 401
         type: integer
       message:
-        example: Please ensure the password is 8 characters long and has 1 digit,
-          1 lowercase alphabet, 1 uppercase alphabet and 1 special character
+        example: Please ensure the password is atleast 8 characters and atmost 16
+          characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase
+          alphabet and 1 special character
+        type: string
+    type: object
+  response.ErrStrictUsernamePolicyViolation:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: The username should be atleast 3 characters long and atmost 16 characters
+          long.
         type: string
     type: object
   response.ErrUnauthorized:
@@ -176,6 +204,26 @@ paths:
       summary: Accept invitaion.
       tags:
       - ProjectRouter
+  /capabilities:
+    get:
+      consumes:
+      - application/json
+      description: Returns capabilities that can be leveraged by frontend services
+        to toggle certain features.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CapabilitiesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get capabilities of Auth Server.
+      tags:
+      - CapabilitiesRouter
   /create_project:
     post:
       consumes:
@@ -734,6 +782,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrStrictUsernamePolicyViolation'
         "500":
           description: Internal Server Error
           schema:
@@ -755,7 +807,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ErrInvalidRequest'
+            $ref: '#/definitions/response.ErrOldPassword'
         "401":
           description: Unauthorized
           schema:

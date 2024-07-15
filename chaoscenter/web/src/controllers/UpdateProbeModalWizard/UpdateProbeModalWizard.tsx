@@ -1,16 +1,18 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { getProbeAllProperties, updateProbe, validateUniqueProbe } from '@api/core';
+import { getProbeAllProperties, GetProbeRequest, GetProbeResponse, updateProbe, validateUniqueProbe } from '@api/core';
 import type { RefetchProbes } from '@controllers/ChaosProbes';
 import AddProbeModalWizardView from '@views/AddProbeModalWizard';
 import type { InfrastructureType } from '@api/entities';
 import { getScope } from '@utils';
 import Loader from '@components/Loader';
+import { GqlAPIQueryResponse } from '@api/types';
 
-interface UpdateHubModalWizardControllerProps extends RefetchProbes {
+interface UpdateHubModalWizardControllerProps {
   hideDarkModal: () => void;
   probeName: string;
   infrastructureType: InfrastructureType | undefined;
+  refetchProbes?: GqlAPIQueryResponse<GetProbeResponse, GetProbeRequest>['refetch'] | RefetchProbes['refetchProbes'];
 }
 
 export default function UpdateProbeModalWizardController({

@@ -70,7 +70,6 @@
     "@visx/visx": "^2.18.0",
     "ajv": "^8.12.0",
     "anser": "2.0.1",
-    "axios": "^0.28.0",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.1.0",
     "cron-parser": "^4.6.0",

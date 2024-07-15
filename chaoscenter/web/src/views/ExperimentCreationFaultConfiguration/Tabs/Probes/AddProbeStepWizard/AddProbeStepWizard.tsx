@@ -1,3 +1,4 @@
+// TODO: Unused, to be removed
 import React from 'react';
 import { Button, ButtonVariation, Dialog, StepWizard } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
@@ -51,7 +52,6 @@ export const ProbeStepWizard = ({
     runProperties: {
       probeTimeout: undefined,
       interval: undefined,
-      retry: undefined,
       probePollingInterval: undefined,
       initialDelay: undefined,
       stopOnFailure: undefined,

@@ -2,19 +2,16 @@ package chaos_infrastructure
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-
-	"io/ioutil"
-	"os"
-	"strings"
 )
 
 type SubscriberConfigurations struct {
@@ -22,42 +19,25 @@ type SubscriberConfigurations struct {
 	TLSCert        string
 }
 
-func GetEndpoint(agentType string) (string, error) {
+func GetEndpoint(host string) (string, error) {
 	// returns endpoint from env, if provided by user
 	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/ws/query", nil
+		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
 	}
 
-	// generating endpoint based on ChaosCenter Scope & InfraType (Self or External)
-	agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
-
-	if agentEndpoint == "" || err != nil {
-		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	}
-
-	return agentEndpoint, err
+	return host + "/api/query", nil
 }
 
-func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
+func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 
 	var config SubscriberConfigurations
-	endpoint, err := GetEndpoint(infra.InfraType)
+	endpoint, err := GetEndpoint(host)
 	if err != nil {
 		return nil, err
 	}
 	config.ServerEndpoint = endpoint
 
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if scope == NamespaceScope {
-		config.TLSCert = utils.Config.TlsCertB64
-	}
+	config.TLSCert = utils.Config.TlsCertB64
 
 	var respData []byte
 	if infra.InfraScope == ClusterScope {
@@ -65,7 +45,7 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 	} else if infra.InfraScope == NamespaceScope {
 		respData, err = ManifestParser(infra, "manifests/namespace", &config)
 	} else {
-		logrus.Error("INFRA_SCOPE env is empty!")
+		log.Error("INFRA_SCOPE env is empty!")
 	}
 	if err != nil {
 		return nil, err
@@ -115,11 +95,11 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 	)
 
 	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
-	if *infra.InfraNsExists == false && infra.InfraScope != "namespace" {
+	if !*infra.InfraNsExists && infra.InfraScope != "namespace" {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(namespaceConfig))
 	}
 
-	if *infra.InfraSaExists == false {
+	if !*infra.InfraSaExists {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
 	}
 
@@ -129,14 +109,19 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		return nil, fmt.Errorf("failed to open the file %v", err)
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Errorf("failed to close the file %v", err)
+		}
+	}(file)
 
 	list, err := file.Readdirnames(0) // 0 to read all files and folders
 	if err != nil {
 		return nil, fmt.Errorf("failed to read the file %v", err)
 	}
 
-	var nodeselector string
+	var nodeSelector string
 	if infra.NodeSelector != nil {
 		selector := strings.Split(*infra.NodeSelector, ",")
 		selectorList := make(map[string]string)
@@ -145,18 +130,17 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 			selectorList[kv[0]] = kv[1]
 		}
 
-		nodeSelector := struct {
-			NodeSelector map[string]string `yaml:"nodeSelector" json:"nodeSelector"`
-		}{
-			NodeSelector: selectorList,
-		}
-
-		byt, err := yaml.Marshal(nodeSelector)
+		byt, err := yaml.Marshal(
+			struct {
+				NodeSelector map[string]string `yaml:"nodeSelector" json:"nodeSelector"`
+			}{
+				NodeSelector: selectorList,
+			})
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal the node selector %v", err)
 		}
 
-		nodeselector = string(utils.AddRootIndent(byt, 6))
+		nodeSelector = string(utils.AddRootIndent(byt, 6))
 	}
 
 	var tolerations string
@@ -174,7 +158,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 	}
 
 	for _, fileName := range list {
-		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
+		fileContent, err := os.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read the file %v", err)
 		}
@@ -188,7 +172,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		newContent = strings.Replace(newContent, "#{SUBSCRIBER_IMAGE}", utils.Config.SubscriberImage, -1)
 		newContent = strings.Replace(newContent, "#{EVENT_TRACKER_IMAGE}", utils.Config.EventTrackerImage, -1)
 		newContent = strings.Replace(newContent, "#{INFRA_NAMESPACE}", InfraNamespace, -1)
-		newContent = strings.Replace(newContent, "#{SUBSCRIBER_SERVICE_ACCOUNT}", ServiceAccountName, -1)
+		newContent = strings.Replace(newContent, "#{INFRA_SERVICE_ACCOUNT}", ServiceAccountName, -1)
 		newContent = strings.Replace(newContent, "#{INFRA_SCOPE}", infra.InfraScope, -1)
 		newContent = strings.Replace(newContent, "#{ARGO_WORKFLOW_CONTROLLER}", utils.Config.ArgoWorkflowControllerImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS_CHAOS_OPERATOR}", utils.Config.LitmusChaosOperatorImage, -1)
@@ -202,14 +186,14 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		newContent = strings.Replace(newContent, "#{CUSTOM_TLS_CERT}", config.TLSCert, -1)
 
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+infra.StartTime+"\"", -1)
-		if infra.IsInfraConfirmed == true {
+		if infra.IsInfraConfirmed {
 			newContent = strings.Replace(newContent, "#{IS_INFRA_CONFIRMED}", "\""+"true"+"\"", -1)
 		} else {
 			newContent = strings.Replace(newContent, "#{IS_INFRA_CONFIRMED}", "\""+"false"+"\"", -1)
 		}
 
 		if infra.NodeSelector != nil {
-			newContent = strings.Replace(newContent, "#{NODE_SELECTOR}", nodeselector, -1)
+			newContent = strings.Replace(newContent, "#{NODE_SELECTOR}", nodeSelector, -1)
 		}
 		generatedYAML = append(generatedYAML, newContent)
 	}
@@ -219,13 +203,6 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.ChaosCenterScope == string(model.InfraScopeCluster) {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
 	newAction := &model.InfraActionResponse{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
@@ -250,7 +227,8 @@ func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimen
 	var workflowObj unstructured.Unstructured
 	err := yaml.Unmarshal([]byte(workflow.ExperimentManifest), &workflowObj)
 	if err != nil {
-		fmt.Errorf("error while parsing experiment manifest %v", err)
+		log.Errorf("error while parsing experiment manifest %v", err)
+		return
 	}
 
 	SendRequestToSubscriber(SubscriberRequests{

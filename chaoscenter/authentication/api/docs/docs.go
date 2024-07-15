@@ -56,6 +56,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/capabilities": {
+            "get": {
+                "description": "Returns capabilities that can be leveraged by frontend services to toggle certain features.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CapabilitiesRouter"
+                ],
+                "summary": "Get capabilities of Auth Server.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.CapabilitiesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
+                    }
+                }
+            }
+        },
         "/create_project": {
             "post": {
                 "description": "Create a new project.",
@@ -911,6 +940,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.ErrInvalidRequest"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrStrictUsernamePolicyViolation"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -942,7 +977,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                            "$ref": "#/definitions/response.ErrOldPassword"
                         }
                     },
                     "401": {
@@ -1085,6 +1120,19 @@ const docTemplate = `{
                 }
             }
         },
+        "response.CapabilitiesResponse": {
+            "type": "object",
+            "properties": {
+                "dex": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
         "response.ErrInvalidCredentials": {
             "type": "object",
             "properties": {
@@ -1137,6 +1185,19 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ErrOldPassword": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The old and new passwords can't be same"
+                }
+            }
+        },
         "response.ErrProjectNotFound": {
             "type": "object",
             "properties": {
@@ -1159,7 +1220,7 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string",
-                    "example": "The authorization server encountered an unexpected condition that prevented it from fulfi"
+                    "example": "The authorization server encountered an unexpected condition that prevented it from fulfilling the request"
                 }
             }
         },
@@ -1172,7 +1233,20 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string",
-                    "example": "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                    "example": "Please ensure the password is atleast 8 characters and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                }
+            }
+        },
+        "response.ErrStrictUsernamePolicyViolation": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The username should be atleast 3 characters long and atmost 16 characters long."
                 }
             }
         },
