@@ -13,7 +13,7 @@ metadata:
   name: litmus-portal-admin-config
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
-  VERSION: "3.9.0"
+  VERSION: "3.9.1"
   SKIP_SSL_VERIFY: "false"
     # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
@@ -125,7 +125,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:3.9.0
+          image: litmuschaos/litmusportal-frontend:3.9.1
           # securityContext:
           #   runAsUser: 2000
           #   allowPrivilegeEscalation: false
@@ -188,7 +188,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:3.9.0
+          image: litmuschaos/litmusportal-server:3.9.1
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -215,9 +215,9 @@ spec:
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:3.9.0"
+              value: "litmuschaos/litmusportal-subscriber:3.9.1"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:3.9.0"
+              value: "litmuschaos/litmusportal-event-tracker:3.9.1"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -324,7 +324,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:3.9.0
+          image: litmuschaos/litmusportal-auth-server:3.9.1
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
