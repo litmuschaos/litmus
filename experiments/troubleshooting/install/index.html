@@ -4296,7 +4296,7 @@ verified with the following commands: </p>
 <h3 id="litmus-uninstallation-is-not-successful-and-namespace-is-stuck-in-terminating-state">Litmus uninstallation is not successful and namespace is stuck in terminating state?<a class="headerlink" href="#litmus-uninstallation-is-not-successful-and-namespace-is-stuck-in-terminating-state" title="Permanent link">&para;</a></h3>
 <p>Under typical operating conditions, the ChaosOperator makes use of finalizers to ensure that the ChaosEngine is deleted 
 only after chaos resources (chaos-runner, experiment pod, any other helper pods) are removed. </p>
-<p>When uninstalling Litmus via the operator manifest (which contains the namespace, operator, crd specifictions in a single YAML) 
+<p>When uninstalling Litmus via the operator manifest, which contains the namespace, operator, and crd specifications in a single YAML,
 without deleting the existing chaosengine resources first, the ChaosOperator deployment may get deleted before the CRD removal 
 is attempted. Since the stale chaosengines have the finalizer present on them, their deletion (triggered by the CRD delete) and 
 by consequence, the deletion of the chaosengine CRD itself is "stuck". </p>
