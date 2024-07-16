@@ -21,25 +21,16 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
 
 LABEL maintainer="LitmusChaos"
 
-ENV APP_USER=litmus
 ENV APP_DIR="/litmus"
-ENV DATA_DIR "$APP_DIR/data"
-ENV CONF_DIR "$APP_DIR/conf"
 
-RUN microdnf install shadow-utils \
-    && groupadd -g 2000 $APP_USER \
-    && useradd -u 2000 -g 2000 -d $APP_DIR -s /sbin/nologin $APP_USER \
-    && mkdir -p "$DATA_DIR" "$CONF_DIR" \
-    && chown -R "$APP_USER:0" "$DATA_DIR" "$CONF_DIR" \
-    && chmod -R 700 "$DATA_DIR" "$CONF_DIR"
-    
-# Copy the built server binary to /litmus
 COPY --from=builder /output/server $APP_DIR/
-# Copy manifests and set the owner and permissions
-COPY --chown=$APP_USER:0 --chmod=755 ./manifests/. $APP_DIR/manifests
+COPY ./manifests/. $APP_DIR/manifests
+
+RUN chown -R 65534:0 $APP_DIR/manifests && chmod -R 755 $APP_DIR/manifests
+RUN chown 65534:0 $APP_DIR/server && chmod 755 $APP_DIR/server
 
 WORKDIR $APP_DIR
-USER $APP_USER
+USER 65534
 
 CMD ["./server"]
 
