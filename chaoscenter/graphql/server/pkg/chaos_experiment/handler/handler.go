@@ -128,7 +128,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			return "", err
 		}
 
-		return "experiment updated successfully", nil
+		return fmt.Sprintf("experiment updated successfully with ID %s", wfDetails.ExperimentID), nil
 	}
 	err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
 	if err != nil {
@@ -150,7 +150,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "", err
 	}
 
-	return "experiment saved successfully", nil
+	return fmt.Sprintf("experiment saved successfully with ID %s", wfDetails.ExperimentID), nil
 }
 
 func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string, username string) (*model.ChaosExperimentResponse, error) {
