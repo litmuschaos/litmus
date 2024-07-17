@@ -16,6 +16,7 @@ RUN go env
 RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # Packaging stage
+# Use RedHat UBI minimal image as base
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
 
 LABEL maintainer="LitmusChaos"
