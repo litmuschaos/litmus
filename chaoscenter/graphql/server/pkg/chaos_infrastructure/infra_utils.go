@@ -9,7 +9,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -20,42 +19,25 @@ type SubscriberConfigurations struct {
 	TLSCert        string
 }
 
-func GetEndpoint(agentType string) (string, error) {
+func GetEndpoint(host string) (string, error) {
 	// returns endpoint from env, if provided by user
 	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/ws/query", nil
+		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
 	}
 
-	// generating endpoint based on ChaosCenter Scope & InfraType (Self or External)
-	agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
-
-	if agentEndpoint == "" || err != nil {
-		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	}
-
-	return agentEndpoint, err
+	return host + "/api/query", nil
 }
 
-func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
+func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 
 	var config SubscriberConfigurations
-	endpoint, err := GetEndpoint(infra.InfraType)
+	endpoint, err := GetEndpoint(host)
 	if err != nil {
 		return nil, err
 	}
 	config.ServerEndpoint = endpoint
 
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if scope == NamespaceScope {
-		config.TLSCert = utils.Config.TlsCertB64
-	}
+	config.TLSCert = utils.Config.TlsCertB64
 
 	var respData []byte
 	if infra.InfraScope == ClusterScope {
@@ -222,13 +204,6 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.ChaosCenterScope == string(model.InfraScopeCluster) {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
 	newAction := &model.InfraActionResponse{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{

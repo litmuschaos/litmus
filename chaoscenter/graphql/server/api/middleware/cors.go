@@ -25,6 +25,7 @@ func ValidateCors() gin.HandlerFunc {
 		}
 
 		validOrigin := false
+
 		for _, allowedOrigin := range allowedOrigins {
 			match, err := regexp.MatchString(allowedOrigin, origin)
 			if err == nil && match {

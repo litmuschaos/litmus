@@ -14,6 +14,7 @@ import (
 
 // AddChaosHub is the resolver for the addChaosHub field.
 func (r *mutationResolver) AddChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+
 	if err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.AddChaosHub],
 		model.InvitationAccepted.String()); err != nil {
