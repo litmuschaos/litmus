@@ -15,7 +15,7 @@ ENV GOOS=${TARGETOS} \
 RUN go env
 RUN CGO_ENABLED=0 go build -o /output/server -v
 
-## DEPLOY STAGE
+# DEPLOY STAGE
 # Use Red Hat UBI minimal image as base
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
 
