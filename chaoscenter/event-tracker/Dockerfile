@@ -16,12 +16,18 @@ RUN go env
 RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # Packaging stage
-# Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
-# The base image is non-root (have litmus user) with default litmus directory.
-FROM litmuschaos/infra-alpine
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
 
 LABEL maintainer="LitmusChaos"
 
-COPY --from=builder /output/event-tracker /litmus
+ENV APP_DIR="/litmus"
+
+COPY --from=builder /output/event-tracker $APP_DIR/
+RUN chown 65534:0 $APP_DIR/event-tracker && chmod 755 $APP_DIR/event-tracker
+
+WORKDIR $APP_DIR
+USER 65534
 
 CMD ["./event-tracker"]
+
+EXPOSE 8080
