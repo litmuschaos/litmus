@@ -206,7 +206,6 @@ export type {
   UpdateStateProps,
   UpdateStateRequestBody
 } from './hooks/useUpdateStateMutation';
-
 export { updateState, useUpdateStateMutation } from './hooks/useUpdateStateMutation';
 export type { UsersErrorResponse, UsersOkResponse, UsersProps } from './hooks/useUsersQuery';
 export { useUsersQuery, users } from './hooks/useUsersQuery';
@@ -224,5 +223,9 @@ export type { LogoutResponse } from './schemas/LogoutResponse';
 export type { Project } from './schemas/Project';
 export type { ProjectMember } from './schemas/ProjectMember';
 export type { RemoveApiTokenResponse } from './schemas/RemoveApiTokenResponse';
+export type { ResponseErrBadRequest } from './schemas/ResponseErrBadRequest';
+export type { ResponseErrInvalidCredentials } from './schemas/ResponseErrInvalidCredentials';
+export type { ResponseErrOldPassword } from './schemas/ResponseErrOldPassword';
+export type { ResponseMessageResponse } from './schemas/ResponseMessageResponse';
 export type { User } from './schemas/User';
 export type { Users } from './schemas/Users';

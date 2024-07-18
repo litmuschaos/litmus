@@ -7,7 +7,9 @@ import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
 import type { CreateUserMutationProps, User } from '@api/auth';
 import { useStrings } from '@strings';
-import { PASSWORD_REGEX, USERNAME_REGEX } from '@constants/validation';
+import { USERNAME_REGEX } from '@constants/validation';
+import PasswordInput from '@components/PasswordInput';
+import css from './CreateNewUser.module.scss';
 
 interface CreateNewUserViewProps {
   createNewUserMutation: UseMutateFunction<User, unknown, CreateUserMutationProps<never>, unknown>;
@@ -28,29 +30,22 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
   const { getString } = useStrings();
 
   function handleSubmit(values: CreateNewUserFormProps): void {
-    createNewUserMutation(
-      {
-        body: {
-          name: values.name,
-          email: values.email,
-          username: values.username,
-          password: values.password,
-          role: 'user'
-        }
-      },
-      {
-        onSuccess: () => {
-          handleClose();
-        }
+    createNewUserMutation({
+      body: {
+        name: values.name,
+        email: values.email,
+        username: values.username,
+        password: values.password,
+        role: 'user'
       }
-    );
+    });
   }
 
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('createNewUser')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={handleClose} />
       </Layout.Horizontal>
       <Container>
         <Formik<CreateNewUserFormProps>
@@ -70,11 +65,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
               .min(3, getString('fieldMinLength', { length: 3 }))
               .max(16, getString('fieldMaxLength', { length: 16 }))
               .matches(USERNAME_REGEX, getString('usernameValidText')),
-            password: Yup.string()
-              .required(getString('passwordIsRequired'))
-              .min(8, getString('fieldMinLength', { length: 8 }))
-              .max(16, getString('fieldMaxLength', { length: 16 }))
-              .matches(PASSWORD_REGEX, getString('passwordValidation')),
+            password: Yup.string().required(getString('passwordIsRequired')),
             reEnterPassword: Yup.string()
               .required(getString('reEnterPassword'))
               .oneOf([Yup.ref('password'), null], getString('passwordsDoNotMatch'))
@@ -103,15 +94,14 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                       placeholder={getString('enterYourUsername')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('username')}</Text>}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="password"
-                      inputGroup={{ type: 'password' }}
                       placeholder={getString('enterYourPassword')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('password')}</Text>}
+                      className={css.passwordField}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="reEnterPassword"
-                      inputGroup={{ type: 'password' }}
                       placeholder={getString('reEnterYourPassword')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('confirmPassword')}</Text>}
                     />
@@ -125,11 +115,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                       disabled={createNewUserMutationLoading || Object.keys(formikProps.errors).length > 0}
                       style={{ minWidth: '90px' }}
                     />
-                    <Button
-                      variation={ButtonVariation.TERTIARY}
-                      text={getString('cancel')}
-                      onClick={() => handleClose()}
-                    />
+                    <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>

@@ -1,20 +1,21 @@
 import { FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, Layout, Text, useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { Icon } from '@harnessio/icons';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { UpdatePasswordMutationProps, UpdatePasswordOkResponse } from '@api/auth';
+import type { ResponseMessageResponse, UpdatePasswordErrorResponse, UpdatePasswordMutationProps } from '@api/auth';
 import { PASSWORD_REGEX } from '@constants/validation';
+import PasswordInput from '@components/PasswordInput';
 
 interface AccountPasswordChangeViewProps {
   handleClose: () => void;
   username: string | undefined;
   updatePasswordMutation: UseMutateFunction<
-    UpdatePasswordOkResponse,
-    unknown,
+    ResponseMessageResponse,
+    UpdatePasswordErrorResponse,
     UpdatePasswordMutationProps<never>,
     unknown
   >;
@@ -58,7 +59,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
           }
         },
         {
-          onError: () => showError(getString('passwordsDoNotMatch')),
+          onError: err => showError(err.errorDescription),
           onSuccess: () => handleClose()
         }
       );
@@ -68,7 +69,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('updatePassword')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={handleClose} />
       </Layout.Horizontal>
       <Container>
         <Formik<AccountPasswordChangeFormProps>
@@ -94,29 +95,26 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
             return (
               <Form style={{ height: '100%' }}>
                 <Layout.Vertical style={{ gap: '2rem' }}>
-                  <Container>
-                    <FormInput.Text
+                  <Layout.Vertical width="100%" style={{ gap: '0.5rem' }}>
+                    <PasswordInput
                       name="oldPassword"
                       placeholder={getString('oldPassword')}
-                      inputGroup={{ type: 'password' }}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('oldPassword')}</Text>}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="newPassword"
                       placeholder={getString('newPassword')}
-                      inputGroup={{ type: 'password' }}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('newPassword')}</Text>}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="reEnterNewPassword"
                       placeholder={getString('reEnterNewPassword')}
-                      inputGroup={{ type: 'password' }}
                       label={
                         <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('reEnterNewPassword')}</Text>
                       }
                     />
-                  </Container>
-                  <Layout.Horizontal style={{ gap: '1rem' }}>
+                  </Layout.Vertical>
+                  <Layout.Horizontal style={{ gap: '1rem' }} width="100%">
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
@@ -125,11 +123,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
                       disabled={updatePasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
                       style={{ minWidth: '90px' }}
                     />
-                    <Button
-                      variation={ButtonVariation.TERTIARY}
-                      text={getString('cancel')}
-                      onClick={() => handleClose()}
-                    />
+                    <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonVariation, Container, Heading, Layout, Text } from '@harnessio/uicore';
+import { ButtonVariation, Container, Heading, Layout, Text, useToggleOpen } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Icon } from '@harnessio/icons';
 import type { DefaultLayoutTemplateProps } from '@components/DefaultLayout/DefaultLayout';
@@ -11,6 +11,8 @@ import MainNav from '@components/MainNav';
 import SideNav from '@components/SideNav';
 import { UpdateProbeModal } from '@views/ChaosProbes/UpdateProbeModal';
 import { RefetchGetProbes } from '@controllers/ChaosProbe/types';
+import RbacButton from '@components/RbacButton';
+import { PermissionGroup } from '@models';
 import css from './ChaosProbe.module.scss';
 
 interface ChaosProbeHeaderProps extends DefaultLayoutTemplateProps {
@@ -53,7 +55,7 @@ export default function ChaosProbeHeader({
   refetchProbes
 }: React.PropsWithChildren<ChaosProbeHeaderProps>): React.ReactElement {
   const { getString } = useStrings();
-  const [isEditProbeOpen, setEditProbeOpen] = React.useState<boolean>(false);
+  const { isOpen: isEditProbeOpen, open: setEditProbeOpen, close: setEditProbeClose } = useToggleOpen();
 
   return (
     <Layout.Horizontal>
@@ -95,11 +97,12 @@ export default function ChaosProbeHeader({
             {/* Details of creation, updation and editing */}
             <Layout.Horizontal spacing={'medium'}>
               <HeaderToolbar createdAt={createdAt} updatedAt={updatedAt} />
-              <Button
+              <RbacButton
                 text={getString('editProbe')}
                 variation={ButtonVariation.SECONDARY}
                 icon="Edit"
-                onClick={() => setEditProbeOpen(true)}
+                permission={PermissionGroup.OWNER}
+                onClick={setEditProbeOpen}
               />
             </Layout.Horizontal>
           </Layout.Horizontal>
@@ -107,7 +110,7 @@ export default function ChaosProbeHeader({
         <UpdateProbeModal
           refetchProbes={refetchProbes}
           isOpen={isEditProbeOpen}
-          hideDarkModal={() => setEditProbeOpen(false)}
+          hideDarkModal={setEditProbeClose}
           probeName={probeData.name}
           infrastructureType={probeData.infrastructureType}
         />
