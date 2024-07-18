@@ -1,44 +1,38 @@
 package main
 
 import (
-	"regexp"
-	"strconv"
-
-	"google.golang.org/grpc/credentials"
-
-	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
-	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-
 	"context"
 	"fmt"
 	"net"
 	"net/http"
+	"regexp"
 	"runtime"
+	"strconv"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
-	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
+	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 func init() {
