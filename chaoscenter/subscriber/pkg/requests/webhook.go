@@ -87,7 +87,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 		}
 		if r.Payload.Errors != nil {
 			logrus.Error("Error response from the server : ", string(message))
-      panicWhen("ALREADY CONNECTED", message)
+			panicWhen("ALREADY CONNECTED", message)
 			continue
 		}
 
