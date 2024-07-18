@@ -45,7 +45,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func validateVersion() error {
@@ -103,11 +102,10 @@ func main() {
 	}
 
 	if enableHTTPSConnection {
-		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
-			go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
-		} else {
+		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
 	} else {
 		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
 	}
