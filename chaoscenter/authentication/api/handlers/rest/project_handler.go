@@ -319,6 +319,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		userRequest.UserID = c.MustGet("uid").(string)
 
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
 		initialLogin, err := CheckInitialLogin(service, userRequest.UserID)
@@ -345,8 +346,6 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			emptyTags := make([]*string, 0)
 			userRequest.Tags = emptyTags
 		}
-
-		userRequest.UserID = c.MustGet("uid").(string)
 
 		user, err := service.GetUser(userRequest.UserID)
 		if err != nil {

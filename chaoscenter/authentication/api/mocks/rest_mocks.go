@@ -236,5 +236,3 @@ func (m *MockedApplicationService) UpdateConfig(ctx context.Context, key string,
 	args := m.Called(ctx, key, value)
 	return args.Error(0)
 }
-
-

@@ -27,14 +27,11 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
-	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
-	GetProjectOwners(projectID string) ([]*entities.Member, error)
-	DeleteProject(projectID string) error
 	GetProjectOwners(projectID string) ([]*entities.Member, error)
 	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
@@ -332,7 +329,6 @@ func (r repository) UpdateMemberRole(projectID string, userID string, role *enti
 
 	return nil
 }
-
 
 // GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
 func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
