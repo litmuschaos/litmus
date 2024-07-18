@@ -37,7 +37,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -106,7 +105,7 @@ func main() {
 
 	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
 	if err != nil {
-		logrus.Errorf("unable to parse boolean value %v", err)
+		log.Errorf("unable to parse boolean value %v", err)
 	}
 
 	if enableHTTPSConnection {
