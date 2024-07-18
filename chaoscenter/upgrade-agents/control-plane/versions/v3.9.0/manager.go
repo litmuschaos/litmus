@@ -1,9 +1,9 @@
 package v3_9_0
 
 import (
+	"context"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"context"
 )
 
 // VersionManager implements IVersionManger
@@ -22,8 +22,9 @@ func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManage
 // to upgrade from the previous version to `this` version
 func (vm VersionManager) Run() error {
 	ctx := context.Background()
-	if err := upgradeExecutor(vm.Logger, vm.DBClient, ctx); err != nil {
-		return nil
+	err := upgradeExecutor(vm.Logger, vm.DBClient, ctx)
+	if err != nil {
+		return err
 	}
-	return nil
+	return err
 }

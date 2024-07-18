@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -26,12 +26,12 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 	}
 
 	logVersion := log.Fields{
-		"version" : "3.9.0",
+		"version": "3.9.0",
 	}
 
 	logger.WithFields(logFields).Info("Collections found in auth DB while upgrading to intermediate version v3.9.0")
 
-	projectCollection, err := db.ListCollectionNames(ctx, bson.M{"name": "project"})
+	projectCollection, err := db.ListCollectionNames(ctx, bson.M{"name": database.ProjectCollection})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,19 +40,22 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 
 		projectLitmusCollection := dbClient.Database(database.AuthDB).Collection(database.ProjectCollection)
 
-	RawArgs := []string{
-		fmt.Sprintf("--uri=%s", database.DBUri),
-		"--db=post",
-		"--collection=test",
-		fmt.Sprintf("--file=%s", "test"),
-		"--jsonArray",
-	}
+		RawArgs := []string{
+			fmt.Sprintf("--uri=%s", database.DBUri),
+			"--db=post",
+			"--collection=test",
+			fmt.Sprintf("--out=%s", "test.txt"),
+			"--jsonArray",
+		}
 
-		err := database.Export("test",RawArgs)
+		err := database.Export("test.txt", RawArgs)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		err = projectLitmusCollection.Drop(ctx)
 		if err != nil {
-			fmt.Errorf("Error: %w", err)
+			log.Fatal(err)
 		}
 
 		logger.WithFields(logVersion).Info("Deleted project collection while upgrading to intermediate version v3.9.0")

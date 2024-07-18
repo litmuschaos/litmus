@@ -1,8 +1,7 @@
 package database
 
 import (
-	"errors"
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/mongodb/mongo-tools/mongoexport"
@@ -11,26 +10,16 @@ import (
 )
 
 func Export(filename string, RawArgs []string) error {
-	file, err := os.CreateTemp("", filename)
+	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	// RawArgs := []string{
-	// 	fmt.Sprintf("--uri=%s", db.GetDBURI()),
-	// 	"--db=post",
-	// 	"--collection=test",
-	// 	fmt.Sprintf("--out=%s", fileName),
-	// 	"--jsonArray",
-	// 	"--pretty",
-	// }
-
 	Options, err := mongoexport.ParseOptions(RawArgs, "", "")
 	if err != nil {
 		return err
 	}
-
 	MongoExport, err := mongoexport.New(Options)
 	if err != nil {
 		return err
@@ -77,7 +66,7 @@ func Import(filename string, RawArgs []string) error {
 		return err
 	}
 	if failed > 0 {
-		return errors.New(fmt.Sprintf("%d imported and %d aborted", success, failed))
+		log.Fatal("Could not import documents", success)
 	}
 
 	return nil

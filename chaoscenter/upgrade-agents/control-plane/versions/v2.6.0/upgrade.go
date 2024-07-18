@@ -10,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// upgradeExecutor updated the index related changes in workflow-collection
 func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 	workflowCollection := dbClient.Database("litmus").Collection("workflow-collection")
 
