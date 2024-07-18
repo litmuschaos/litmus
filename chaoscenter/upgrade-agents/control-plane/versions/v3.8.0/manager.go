@@ -23,25 +23,32 @@ func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManage
 func (vm VersionManager) Run() error {
 	ctx := context.Background()
 	session, err := vm.DBClient.StartSession()
+
 	defer session.EndSession(ctx)
+
 	if err != nil {
 		log.Fatal("error starting session: %w", err)
 	}
+
 	defer session.EndSession(ctx)
+
 	err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
 		err := session.StartTransaction()
 		if err != nil {
 			log.Fatal("error starting transaction: %w", err)
 		}
+
 		if err := upgradeExecutor(vm.Logger, vm.DBClient, sc); err != nil {
 			return err
 		}
+
 		err = session.CommitTransaction(sc)
 
 		if err != nil {
 			return err
 		}
+
 		return nil
 	})
 	if err != nil {

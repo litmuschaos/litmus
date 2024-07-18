@@ -13,8 +13,6 @@ import (
 
 	v3_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.4.0"
 
-	v3_8_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.8.0"
-
 	v3_9_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.9.0"
 
 	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
@@ -86,7 +84,7 @@ func ParseVersion(version string) *Version {
 func NewUpgradeManager(logger *log.Logger, dbClient *mongo.Client) (*UpgradeManager, error) {
 
 	// added for debug only to run version manager consistently
-	database.UpdateVersion(dbClient, "3.3.0")
+	// database.UpdateVersion(dbClient, "3.3.0")
 
 	currentVersion := os.Getenv("VERSION")
 	log.WithFields(log.Fields{
@@ -236,10 +234,6 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 		"3.7.7-beta8": {
 			NextVersion:    "",
 			VersionManager: nil,
-		},
-		"3.8.0": {
-			NextVersion:    "",
-			VersionManager: v3_8_0.NewVersionManger(m.Logger, m.DBClient),
 		},
 		"3.9.0": {
 			NextVersion:    "",
