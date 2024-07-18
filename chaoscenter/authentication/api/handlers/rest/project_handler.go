@@ -640,7 +640,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		
+
 		if member.Role != nil && *member.Role == entities.RoleOwner {
 			owners, err := service.GetProjectOwners(member.ProjectID)
 			if err != nil {
@@ -654,7 +654,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 				return
 			}
 		}
-    
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
@@ -860,7 +860,6 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-
 		// Validating member role
 		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
@@ -878,13 +877,13 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
-	
+
 		uid := c.MustGet("uid").(string)
 		if uid == member.UserID {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change their own role."})
 			return
 		}
-		
+
 		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
 		if err != nil {
 			log.Error(err)
@@ -968,7 +967,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 
 	}
 }
-	
+
 // DeleteProject  		godoc
 //
 //	@Description	Delete a project.
@@ -981,7 +980,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Router			/delete_project/{project_id} [post]
 //
 // DeleteProject is used to delete a project.
-func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
+func DeleteProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 
@@ -1003,7 +1002,7 @@ func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Successfully deleted project.",
 		})

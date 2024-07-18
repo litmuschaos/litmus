@@ -55,7 +55,7 @@ type CreateProjectInput struct {
 }
 
 type DeleteProjectInput struct {
-	ProjectID   string `json:"projectID"`
+	ProjectID string `json:"projectID"`
 }
 
 type MemberInput struct {
