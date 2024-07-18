@@ -62,10 +62,6 @@ type DeleteProjectInput struct {
 	ProjectID string `json:"projectID"`
 }
 
-type DeleteProjectInput struct {
-	ProjectID string `json:"projectID"`
-}
-
 type MemberInput struct {
 	ProjectID string      `json:"projectID"`
 	UserID    string      `json:"userID"`
