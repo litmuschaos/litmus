@@ -20,6 +20,11 @@ func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}
 	claims := token.Claims.(jwt.MapClaims)
+
+	if claims["uid"] == nil {
+		return &protos.ValidationResponse{Error: "token is invalid", IsValid: false}, err
+	}
+
 	uid := claims["uid"].(string)
 	err = validations.RbacValidator(uid, inputRequest.ProjectId,
 		inputRequest.RequiredRoles, inputRequest.Invitation, s.ApplicationService)

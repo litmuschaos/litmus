@@ -6,6 +6,7 @@ export type PrimitiveObject<T extends string> = Record<T, string | number | bool
 
 export interface StringsMap {
     '404Error': unknown
+  'Executor': unknown
   'FRI': unknown
   'MON': unknown
   'NASlash': unknown
@@ -264,7 +265,6 @@ export interface StringsMap {
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
-  'editor': unknown
   'effect': unknown
   'email': unknown
   'emailIsRequired': unknown
@@ -359,6 +359,8 @@ export interface StringsMap {
   'featureRestriction.resourceLevelUpFree': PrimitiveObject<'resourceLimit' | 'resourceName'>
   'featureRestriction.resourceLevelUpTeam': PrimitiveObject<'resourceLimit'>
   'featureRestriction.resourceOveruseEnterprise': unknown
+  'fieldMaxLength': PrimitiveObject<'length'>
+  'fieldMinLength': PrimitiveObject<'length'>
   'fieldSelector': unknown
   'fixAllErrors': unknown
   'generateSSH': unknown
@@ -510,7 +512,7 @@ export interface StringsMap {
   'nameIdDescriptionTags.tagsLabel': unknown
   'nameIsARequiredField': unknown
   'nameIsRequired': unknown
-  'nameVaidText': unknown
+  'nameValidText': unknown
   'namespace': unknown
   'namespaceScopeDescription': unknown
   'namespaceWide': unknown
@@ -623,6 +625,7 @@ export interface StringsMap {
   'password': unknown
   'passwordIsRequired': unknown
   'passwordResetSuccess': unknown
+  'passwordValidation': unknown
   'passwordsDoNotMatch': unknown
   'pauseRun': unknown
   'pending': unknown
@@ -980,6 +983,7 @@ export interface StringsMap {
   'userManagement': unknown
   'username': unknown
   'usernameIsRequired': unknown
+  'usernameValidText': unknown
   'usersNotAvailableMessage': unknown
   'usersNotAvailableTitle': unknown
   'validationError': unknown

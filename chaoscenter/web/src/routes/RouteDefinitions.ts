@@ -25,6 +25,7 @@ export interface UseRouteDefinitionsProps {
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
   toAccountSettingsOverview(): string;
   toProjects(): string;
+  toPasswordReset(): string;
   toProjectSetup(): string;
   toProjectMembers(): string;
   toImageRegistry(): string;
@@ -61,6 +62,7 @@ export const paths: UseRouteDefinitionsProps = {
     `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
   // Account Scoped Routes
   toAccountSettingsOverview: () => '/settings/overview',
+  toPasswordReset: () => '/settings/password-reset',
   // Project Setup Routes
   toProjects: () => '/projects',
   toProjectSetup: () => '/setup',

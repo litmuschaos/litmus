@@ -223,10 +223,11 @@ func TestGetProjectsByUserID(t *testing.T) {
 func TestGetProject(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	t.Run("unauthorized request to Project", func(t *testing.T) {
-		projectID := "testUserID"
+		projectID := "testProjectID"
 		w := httptest.NewRecorder()
 		ctx := GetTestGinContext(w)
 		ctx.Set("uid", projectID)
+		ctx.Set("role", string(entities.RoleUser))
 		service := new(mocks.MockedApplicationService)
 		project := &entities.Project{
 			ID:   "testProjectID",
@@ -249,6 +250,7 @@ func TestGetProject(t *testing.T) {
 		w := httptest.NewRecorder()
 		ctx := GetTestGinContext(w)
 		ctx.Set("uid", projectID)
+		ctx.Set("role", string(entities.RoleAdmin))
 		service := new(mocks.MockedApplicationService)
 		project := &entities.Project{
 			ID:   "testProjectID",
@@ -284,7 +286,7 @@ func TestGetProject(t *testing.T) {
 								Value: primitive.D{
 									primitive.E{
 										Key:   "$in",
-										Value: []string{"Owner", "Viewer", "Editor"},
+										Value: []string{"Owner", "Viewer", "Executor"},
 									},
 								},
 							},

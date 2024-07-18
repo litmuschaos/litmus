@@ -61,7 +61,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA",
+                "access_token": "",
                 "expires_in": 86400,
                 "type": "Bearer"
               }
@@ -155,7 +155,7 @@
                   {
                     "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
                     "name": "test-api-token",
-                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "token": "ACCESS_TOKEN",
                     "expires_at": 1627040198,
                     "created_at": 1627040098
                   }
@@ -200,7 +200,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "accessToken": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                "accessToken": "",
                 "type": "Bearer"
               }
             },
@@ -293,7 +293,7 @@
                 }
               },
               "example": {
-                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+                "token": "ACCESS_TOKEN"
               }
             }
           }
@@ -1030,7 +1030,7 @@
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["Owner", "Editor", "Viewer"]
+                  "enum": ["Owner", "Executor", "Viewer"]
                 }
               },
               "example": {
@@ -1352,7 +1352,7 @@
                     "username": "john",
                     "email": "john@gmail.com",
                     "name": "john doe",
-                    "role": "Editor",
+                    "role": "Executor",
                     "invitation": "Accepted",
                     "joinedAt": 1690245328
                   }
@@ -1655,7 +1655,7 @@
         },
         "role": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "invitation": {
           "type": "string",
@@ -1683,7 +1683,7 @@
         },
         "invitationRole": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "projectOwner": {
           "$ref": "#/definitions/ProjectMember"
