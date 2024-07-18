@@ -3,6 +3,8 @@ package mocks
 import (
 	"context"
 
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/stretchr/testify/mock"
@@ -67,6 +69,11 @@ func (m *MockedApplicationService) CreateUser(user *entities.User) (*entities.Us
 
 func (m *MockedApplicationService) UpdateUser(user *entities.UserDetails) error {
 	args := m.Called(user)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	args := m.Called(filter, updateQuery)
 	return args.Error(0)
 }
 
@@ -170,8 +177,8 @@ func (m *MockedApplicationService) ValidateToken(encodedToken string) (*jwt.Toke
 	return args.Get(0).(*jwt.Token), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetSignedJWT(user *entities.User) (string, error) {
-	args := m.Called(user)
+func (m *MockedApplicationService) GetSignedJWT(user *entities.User, jwtSecret string) (string, error) {
+	args := m.Called(user, jwtSecret)
 	return args.String(0), args.Error(1)
 }
 
@@ -214,3 +221,19 @@ func (m *MockedApplicationService) DeleteProject(projectID string) error {
 	args := m.Called(projectID)
 	return args.Error(0)
 }
+
+func (m *MockedApplicationService) CreateConfig(config authConfig.AuthConfig) error {
+	args := m.Called(config)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) GetConfig(key string) (*authConfig.AuthConfig, error) {
+	args := m.Called(key)
+	return args.Get(0).(*authConfig.AuthConfig), args.Error(1)
+}
+
+func (m *MockedApplicationService) UpdateConfig(ctx context.Context, key string, value interface{}) error {
+	args := m.Called(ctx, key, value)
+	return args.Error(0)
+}
+

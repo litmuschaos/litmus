@@ -73,7 +73,7 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 	var projects []*entities.Project
 	query := bson.D{}
 
-	if isOwner == true {
+	if isOwner {
 		query = bson.D{
 			{"members", bson.D{
 				{"$elemMatch", bson.D{

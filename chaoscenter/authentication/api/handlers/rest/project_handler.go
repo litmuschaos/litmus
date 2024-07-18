@@ -84,14 +84,17 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
+		userRole := c.MustGet("role").(string)
 
-		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
-			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
-		if err != nil {
-			log.Warn(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
-				presenter.CreateErrorResponse(utils.ErrUnauthorized))
-			return
+		if userRole != string(entities.RoleAdmin) {
+			err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+				validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+			if err != nil {
+				log.Warn(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+					presenter.CreateErrorResponse(utils.ErrUnauthorized))
+				return
+			}
 		}
 
 		project, err := service.GetProjectByProjectID(projectID)
@@ -186,6 +189,18 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 		state := c.Param("state")
+		role := c.MustGet("role").(string)
+		if role != string(entities.RoleAdmin) {
+			err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+				validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+			if err != nil {
+				log.Warn(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+					presenter.CreateErrorResponse(utils.ErrUnauthorized))
+				return
+			}
+		}
+
 		members, err := service.GetProjectMembers(projectID, state)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -294,6 +309,15 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, userRequest.UserID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		// checking if project name is empty
 		if userRequest.ProjectName == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrEmptyProjectName], presenter.CreateErrorResponse(utils.ErrEmptyProjectName))
@@ -402,8 +426,17 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		// Validating member role
-		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
+		if member.Role == nil || (*member.Role != entities.RoleExecutor && *member.Role != entities.RoleViewer) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
@@ -496,6 +529,14 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["acceptInvitation"],
 			string(entities.PendingInvitation),
@@ -542,6 +583,14 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
+		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -606,6 +655,14 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			}
 		}
     
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
@@ -656,6 +713,14 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 		if member.UserID == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
+		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -722,6 +787,14 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
+		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string),

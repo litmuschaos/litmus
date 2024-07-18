@@ -55,8 +55,6 @@ ChaosExperiment CRs are hosted on <a href="https://hub.litmuschaos.io" target="_
 application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications 
 in production.
 
-![chaos-operator-flow](/images/chaos-operator-flow.png)
-
 ## Use cases
 
 - **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.

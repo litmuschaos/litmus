@@ -1,3 +1,3 @@
-import PassowrdInput from './PasswordInput';
+import PasswordInput from './PasswordInput';
 
-export default PassowrdInput;
+export default PasswordInput;

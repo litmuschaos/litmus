@@ -118,7 +118,7 @@ export const initialValues: InitialValueProps = {
 };
 
 export const kubernetesChaosInfrastructureCRDsEndpoint =
-  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta10/litmus-portal-crds-3.0.0-beta10.yml';
+  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.6.1/litmus-portal-crds-3.6.1.yml';
 
 type InfrastructurePlatformNameType = 'Kubernetes';
 

@@ -21,7 +21,6 @@ function CMDRunProperties({ kubernetesCMDProperties, columns }: CMDRunProperties
       ? [
           {
             probeTimeout: kubernetesCMDProperties?.probeTimeout,
-            retry: kubernetesCMDProperties?.retry,
             attempt: kubernetesCMDProperties?.attempt as number,
             interval: kubernetesCMDProperties?.interval,
             probePollingInterval: kubernetesCMDProperties?.probePollingInterval,

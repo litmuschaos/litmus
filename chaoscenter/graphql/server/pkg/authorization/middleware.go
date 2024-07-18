@@ -34,8 +34,10 @@ func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc
 			c.Writer.Write([]byte("Error verifying JWT token: Token is revoked"))
 			return
 		}
+
 		ctx := context.WithValue(c.Request.Context(), AuthKey, jwt)
-		c.Request = c.Request.WithContext(ctx)
+		ctx1 := context.WithValue(ctx, "request-header", c.Request.Header)
+		c.Request = c.Request.WithContext(ctx1)
 		handler.ServeHTTP(c.Writer, c.Request)
 	}
 }
