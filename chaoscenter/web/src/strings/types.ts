@@ -405,6 +405,7 @@ export interface StringsMap {
   'infrastructureRegistered': unknown
   'infrastructureStates': unknown
   'infrastructureType': unknown
+  'infrastructures': unknown
   'initialDelay': unknown
   'initialDelaySeconds': unknown
   'insecureSkipVerify': unknown

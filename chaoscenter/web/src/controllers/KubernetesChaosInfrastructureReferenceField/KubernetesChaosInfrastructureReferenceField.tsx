@@ -5,6 +5,7 @@ import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
 import type { ChaosInfrastructureReferenceFieldProps } from '@models';
 import type { InfrastructureDetails } from '@views/ChaosInfrastructureReferenceField/ChaosInfrastructureReferenceField';
+import { listEnvironment } from '@api/core/environments';
 
 function KubernetesChaosInfrastructureReferenceFieldController({
   setFieldValue,
@@ -16,13 +17,31 @@ function KubernetesChaosInfrastructureReferenceFieldController({
 
   const [page, setPage] = React.useState<number>(0);
   const limit = 8;
+  const [envID, setEnvID] = React.useState<string>('all');
+  const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number | null>(null);
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
-    filter: { name: searchInfrastructure, isActive: true },
+    environmentIDs: envID === 'all' ? undefined : [envID],
+    filter: { name: searchInfrastructure },
     pagination: { page, limit },
     options: { onError: error => showError(error.message) }
   });
+
+  const { data: env } = listEnvironment({
+    ...scope,
+    options: {
+      onError: err => showError(err.message)
+    }
+  });
+
+  const environmentList = env?.listEnvironments?.environments;
+
+  React.useEffect(() => {
+    if (envID === 'all' && initialAllInfrastructureLength === null && listChaosInfraData?.listInfras?.totalNoOfInfras) {
+      setInitialAllInfrastructureLength(listChaosInfraData.listInfras.totalNoOfInfras);
+    }
+  }, [listChaosInfraData]);
 
   // TODO: replace with get API as this becomes empty during edit
   const preSelectedInfrastructure = listChaosInfraData?.listInfras.infras.find(
@@ -47,7 +66,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     }
   }, [preSelectedInfrastructure, setFieldValue]);
 
-  const infrastructureList = listChaosInfraData?.listInfras.infras.map(infra => {
+  const infrastructureList = listChaosInfraData?.listInfras?.infras.map(infra => {
     const infraDetails: InfrastructureDetails = {
       id: infra.infraID,
       name: infra.name,
@@ -87,6 +106,9 @@ function KubernetesChaosInfrastructureReferenceFieldController({
       }}
       searchInfrastructure={searchInfrastructure}
       setSearchInfrastructure={setSearchInfrastructure}
+      allInfrastructureLength={initialAllInfrastructureLength}
+      environmentList={environmentList}
+      setEnvID={setEnvID}
       loading={{
         listChaosInfra: listChaosInfraLoading
       }}

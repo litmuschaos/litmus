@@ -60,14 +60,14 @@
   background: #effbff;
   border: 1.5px solid #0278d5;
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 4px;
+  border-radius: 8px !important;
 }
 
 .notSelected {
   background: #fafbfc;
-  border: 1px solid rgba(40, 41, 61, 0.3);
+  // border: 1px solid rgba(40, 41, 61, 0.3);
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 4px;
+  border-radius: 8px !important;
   cursor: pointer;
 }
 
@@ -78,14 +78,14 @@
 
 .agentListInnerContainer {
   flex-grow: 1;
-  overflow: auto;
+  // overflow: auto;
   gap: 1rem;
   max-height: calc(100% - 48px);
 }
 
 .item {
   display: grid;
-  grid-template-columns: 5fr 4fr 25px;
+  grid-template-columns: 3fr 4fr 25px;
   align-items: center;
   gap: 0.5rem;
 
@@ -189,4 +189,36 @@
       left: 5px !important;
     }
   }
+}
+
+.listEnvContainer {
+  box-shadow: 0px 2px 4px 0px #a9aabc29, 0px 0px 1px 0px #28293d0a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.itemEnv {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.activeEnv {
+  border: 1px solid var(--primary-7);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+
+  img {
+    width: 200px;
+  }
+}
+
+.rounded {
+  border-radius: 999px;
 }
