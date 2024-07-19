@@ -18,7 +18,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const [page, setPage] = React.useState<number>(0);
   const limit = 8;
   const [envID, setEnvID] = React.useState<string>('all');
-  const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number | null>(null);
+  const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number>(0);
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
@@ -38,7 +38,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const environmentList = env?.listEnvironments?.environments;
 
   React.useEffect(() => {
-    if (envID === 'all' && initialAllInfrastructureLength === null && listChaosInfraData?.listInfras?.totalNoOfInfras) {
+    if (envID === 'all' && listChaosInfraData?.listInfras?.totalNoOfInfras) {
       setInitialAllInfrastructureLength(listChaosInfraData.listInfras.totalNoOfInfras);
     }
   }, [listChaosInfraData]);
