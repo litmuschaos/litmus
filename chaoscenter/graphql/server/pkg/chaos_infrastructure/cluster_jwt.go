@@ -1,11 +1,14 @@
 package chaos_infrastructure
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
+
 	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // InfraCreateJWT generates jwt used in chaos_infra registration
@@ -13,8 +16,11 @@ func InfraCreateJWT(id string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["chaos_infra_id"] = id
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	tokenString, err := token.SignedString([]byte(utils.Config.JwtSecret))
+	config, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+	if err != nil {
+		return "", err
+	}
+	tokenString, err := token.SignedString([]byte(config.Value))
 	if err != nil {
 		return "", err
 	}
@@ -28,7 +34,11 @@ func InfraValidateJWT(token string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(utils.Config.JwtSecret), nil
+		config, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+		if err != nil {
+			return "", err
+		}
+		return []byte(config.Value), nil
 	})
 
 	if err != nil {

@@ -14,7 +14,7 @@ interface CreateNewUserControllerProps {
 
 export default function CreateNewUserController(props: CreateNewUserControllerProps): React.ReactElement {
   const { getUsersRefetch, handleClose } = props;
-  const { showSuccess } = useToaster();
+  const { showSuccess, showError } = useToaster();
   const { getString } = useStrings();
 
   const { mutate: createNewUserMutation, isLoading } = useCreateUserMutation(
@@ -22,7 +22,11 @@ export default function CreateNewUserController(props: CreateNewUserControllerPr
     {
       onSuccess: data => {
         getUsersRefetch();
+        handleClose();
         showSuccess(getString('userCreateSuccessMessage', { name: data.name }));
+      },
+      onError: e => {
+        showError(e.errorDescription);
       }
     }
   );

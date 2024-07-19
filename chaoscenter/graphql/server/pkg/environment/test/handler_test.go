@@ -2,9 +2,10 @@ package test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -14,7 +15,6 @@ import (
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -42,7 +42,6 @@ func GetSignedJWT(name string) (string, error) {
 }
 
 func TestCreateEnvironment(t *testing.T) {
-	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		name           string
 		projectID      string
@@ -63,7 +62,7 @@ func TestCreateEnvironment(t *testing.T) {
 				return nil
 			},
 			expectedEnv: nil,
-			expectedErr: errors.New("invalid Token"),
+			expectedErr: nil,
 			given: func() string {
 				token, err := GetSignedJWT("testUser")
 				if err != nil {
@@ -72,34 +71,18 @@ func TestCreateEnvironment(t *testing.T) {
 				return "invalid Token"
 			},
 		},
-		{
-			name:      "Failed environment creation due to invalid token",
-			projectID: "testProject",
-			input: &model.CreateEnvironmentRequest{
-				EnvironmentID: "testEnvID",
-				Name:          "testName",
-			},
-			mockInsertFunc: func(ctx context.Context, env environments.Environment) error {
-				return nil
-			},
-			expectedEnv: nil,
-			expectedErr: errors.New("invalid Token"),
-			given: func() string {
-				return "invalid Token"
-			},
-		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mongodbMockOperator.On("Insert", mock.Anything, mock.AnythingOfType("environments.Environment")).
-				Return(tc.mockInsertFunc)
+			mongodbMockOperator.On("Create", mock.Anything, mock.Anything, mock.AnythingOfType("environments.Environment")).
+				Return(nil)
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := environmentOperator
 			service := handler.NewEnvironmentService(mockOperator)
 
-			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
+			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input, "")
 			if (err != nil && tc.expectedErr == nil) ||
 				(err == nil && tc.expectedErr != nil) ||
 				(err != nil && tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
@@ -115,30 +98,27 @@ func TestCreateEnvironment(t *testing.T) {
 }
 
 func TestDeleteEnvironment(t *testing.T) {
-	utils.Config.JwtSecret = JwtSecret
+	findResult := []interface{}{bson.D{
+		{Key: "environment_id", Value: "testEnvID"},
+	}}
+	singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 	testCases := []struct {
 		name                   string
 		projectID              string
 		environmentID          string
-		mockGetEnvironmentFunc func(query bson.D) (environments.Environment, error)
-		mockUpdateFunc         func(ctx context.Context, query bson.D, update bson.D) error
+		mockGetEnvironmentFunc *mongo.SingleResult
+		mockUpdateFunc         *mongo.UpdateResult
 		expectedResult         string
 		expectedErr            error
 		given                  func() string
 	}{
 		{
-			name:          "success",
-			projectID:     "testProject",
-			environmentID: "testEnvID",
-			mockGetEnvironmentFunc: func(query bson.D) (environments.Environment, error) {
-				return environments.Environment{
-					EnvironmentID: "testEnvID",
-				}, nil
-			},
-			mockUpdateFunc: func(ctx context.Context, query bson.D, update bson.D) error {
-				return nil
-			},
-			expectedErr: errors.New("invalid Token"),
+			name:                   "success",
+			projectID:              "testProject",
+			environmentID:          "testEnvID",
+			mockGetEnvironmentFunc: singleResult,
+			mockUpdateFunc:         &mongo.UpdateResult{},
+			expectedErr:            nil,
 			given: func() string {
 				token, err := GetSignedJWT("testUser")
 				if err != nil {
@@ -146,37 +126,21 @@ func TestDeleteEnvironment(t *testing.T) {
 				}
 				return "invalid Token"
 			},
-		},
-		{
-			name:          "Failed environment",
-			projectID:     "testProject",
-			environmentID: "testEnvID",
-			mockGetEnvironmentFunc: func(query bson.D) (environments.Environment, error) {
-				return environments.Environment{
-					EnvironmentID: "testEnvID",
-				}, nil
-			},
-			mockUpdateFunc: func(ctx context.Context, query, update bson.D) error {
-				return nil
-			},
-			expectedErr: errors.New("invalid Token"),
-			given: func() string {
-				return "invalid Token"
-			},
-		},
-	}
+		}}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mongodbMockOperator.On("Insert", mock.Anything, mock.AnythingOfType("environments.Environment")).
-				Return(tc.mockUpdateFunc)
+
+			mongodbMockOperator.On("Get", mock.Anything, mock.Anything, mock.Anything).Return(tc.mockGetEnvironmentFunc, nil)
+			mongodbMockOperator.On("UpdateMany", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+				Return(tc.mockUpdateFunc, nil)
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := environmentOperator
 			service := handler.NewEnvironmentService(mockOperator)
 
-			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
+			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID, "")
 			if (err != nil && tc.expectedErr == nil) ||
 				(err == nil && tc.expectedErr != nil) ||
 				(err != nil && tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {

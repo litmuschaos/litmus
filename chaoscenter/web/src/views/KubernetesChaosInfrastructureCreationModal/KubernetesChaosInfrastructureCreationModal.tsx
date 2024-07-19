@@ -58,7 +58,7 @@ export default function KubernetesChaosInfrastructureCreationModalView({
             stopPolling();
             setCreateInfrastructureModal(true);
           }}
-          permission={PermissionGroup.EDITOR}
+          permission={PermissionGroup.OWNER}
         />
       </>
     </ParentComponentErrorWrapper>
