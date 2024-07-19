@@ -38,7 +38,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const environmentList = env?.listEnvironments?.environments;
 
   React.useEffect(() => {
-    if (envID === 'all' && listChaosInfraData?.listInfras?.totalNoOfInfras) {
+    if (envID === 'all' && listChaosInfraData?.listInfras?.totalNoOfInfras && searchInfrastructure === '') {
       setInitialAllInfrastructureLength(listChaosInfraData.listInfras.totalNoOfInfras);
     }
   }, [listChaosInfraData]);
