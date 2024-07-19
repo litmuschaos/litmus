@@ -7,7 +7,7 @@ import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
 import type { CreateUserMutationProps, User } from '@api/auth';
 import { useStrings } from '@strings';
-import { PASSWORD_REGEX, USERNAME_REGEX } from '@constants/validation';
+import { USERNAME_REGEX } from '@constants/validation';
 
 interface CreateNewUserViewProps {
   createNewUserMutation: UseMutateFunction<User, unknown, CreateUserMutationProps<never>, unknown>;
@@ -74,11 +74,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
               .min(3, getString('fieldMinLength', { length: 3 }))
               .max(16, getString('fieldMaxLength', { length: 16 }))
               .matches(USERNAME_REGEX, getString('usernameValidText')),
-            password: Yup.string()
-              .required(getString('passwordIsRequired'))
-              .min(8, getString('fieldMinLength', { length: 8 }))
-              .max(16, getString('fieldMaxLength', { length: 16 }))
-              .matches(PASSWORD_REGEX, getString('passwordValidation')),
+            password: Yup.string().required(getString('passwordIsRequired')),
             reEnterPassword: Yup.string()
               .required(getString('reEnterPassword'))
               .oneOf([Yup.ref('password'), null], getString('passwordsDoNotMatch'))
@@ -129,11 +125,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                       disabled={createNewUserMutationLoading || Object.keys(formikProps.errors).length > 0}
                       style={{ minWidth: '90px' }}
                     />
-                    <Button
-                      variation={ButtonVariation.TERTIARY}
-                      text={getString('cancel')}
-                      onClick={() => handleClose()}
-                    />
+                    <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>

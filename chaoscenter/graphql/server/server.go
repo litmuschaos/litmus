@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
+	"regexp"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
@@ -66,9 +68,10 @@ func validateVersion() error {
 		}
 		return nil
 	}
-	if dbVersion.Value.(string) != currentVersion {
-		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
-	}
+	// This check will be added back once DB upgrader job becomes functional
+	// if dbVersion.Value.(string) != currentVersion {
+	// 	return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	// }
 	return nil
 }
 
@@ -77,12 +80,7 @@ func setupGin() *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-	}))
-
+	router.Use(middleware.ValidateCors())
 	return router
 }
 
@@ -111,13 +109,27 @@ func main() {
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
-				return true
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					origin = r.Host
+				}
+				for _, allowedOrigin := range utils.Config.AllowedOrigins {
+					match, err := regexp.MatchString(allowedOrigin, origin)
+					if err == nil && match {
+						return true
+					}
+				}
+				return false
 			},
 		},
 	})
 
-	// to be removed in production
-	srv.Use(extension.Introspection{})
+	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
+	if err != nil {
+		log.Errorf("unable to parse boolean value %v", err)
+	} else if err == nil && enableIntrospection == true {
+		srv.Use(extension.Introspection{})
+	}
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()

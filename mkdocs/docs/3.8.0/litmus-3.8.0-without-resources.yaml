@@ -8,7 +8,7 @@ rules:
     resources: [ingresses]
     verbs: [get]
   - apiGroups: [""]
-    resources: [services, nodes, pods/log] # Will have to remove this for namespaced scope
+    resources: [services, nodes, pods/log]
     verbs: [get, watch]
   - apiGroups: [""] # To get TLS Cert from secrets incase of cluster scope
     resources: [secrets]
@@ -56,7 +56,7 @@ metadata:
   namespace: litmus
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
-  VERSION: "ci"
+  VERSION: "3.8.0"
   SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
@@ -139,6 +139,15 @@ data:
 
             location /api/ {
                 proxy_http_version 1.1;
+                proxy_set_header   Host                 $host;
+                proxy_set_header   X-Real-IP            $remote_addr;
+                proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+                proxy_set_header   X-Forwarded-Proto    $scheme;
+                proxy_pass "http://litmusportal-server-service:9002/";
+            }
+
+            location /ws/ {
+                proxy_http_version 1.1;
                 proxy_set_header   Upgrade              $http_upgrade;
                 proxy_set_header   Connection           $connection_upgrade;
                 proxy_set_header   Host                 $host;
@@ -170,7 +179,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-frontend:3.8.0
           imagePullPolicy: Always
           # securityContext:
           #   runAsUser: 2000
@@ -178,15 +187,6 @@ spec:
           #   runAsNonRoot: true
           ports:
             - containerPort: 8185
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
@@ -234,7 +234,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-server:3.8.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -263,19 +263,19 @@ spec:
             - name: ENABLE_GQL_INTROSPECTION
               value: "false"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-subscriber:3.8.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-event-tracker:3.8.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.3.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.3.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:ci"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.8.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:ci"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:ci"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-exporter:3.8.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: INFRA_DEPLOYMENTS
@@ -293,32 +293,21 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "master"
+              value: "v3.8.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.7.0"
+              value: "3.8.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["ci"]'
-            - name: ALLOWED_ORIGINS
-              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
+              value: '["3.8.0"]'
           ports:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -358,7 +347,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-auth-server:3.8.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -380,17 +369,6 @@ spec:
               value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
-            - name: ALLOWED_ORIGINS
-              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-auth-server-service(:[0-9]+|)?
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           ports:
             - containerPort: 3000
             - containerPort: 3030
