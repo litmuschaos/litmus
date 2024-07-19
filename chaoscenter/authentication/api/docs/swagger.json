@@ -967,7 +967,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                            "$ref": "#/definitions/response.ErrOldPassword"
                         }
                     },
                     "401": {
@@ -1175,6 +1175,19 @@
                 }
             }
         },
+        "response.ErrOldPassword": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The old and new passwords can't be same"
+                }
+            }
+        },
         "response.ErrProjectNotFound": {
             "type": "object",
             "properties": {
@@ -1324,9 +1337,6 @@
                 },
                 "username": {
                     "type": "string"
-                },
-                "isInitialLogin": {
-                    "type": "boolean"
                 }
             }
         }

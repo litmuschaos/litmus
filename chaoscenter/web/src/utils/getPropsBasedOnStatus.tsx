@@ -176,7 +176,7 @@ export function getPropsBasedOnPermissionGroup(status: Status): StatusProps {
         color: Color.GREEN_800,
         bgColor: `var(--green-50)`
       };
-    case PermissionGroup.EDITOR:
+    case PermissionGroup.Executor:
       return {
         color: Color.ORANGE_700,
         bgColor: `var(--orange-50)`

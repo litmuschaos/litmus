@@ -25,6 +25,7 @@ import AccountSettingsController from '@controllers/AccountSettings';
 import ProjectMembersView from '@views/ProjectMembers';
 import ChaosProbesController from '@controllers/ChaosProbes';
 import ChaosProbeController from '@controllers/ChaosProbe';
+import PasswordResetController from '@controllers/PasswordReset';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -45,14 +46,14 @@ export function RoutesWithAuthentication(): React.ReactElement {
   const history = useHistory();
 
   const { forceLogout } = useLogout();
-  const { accessToken: token, isInitialLogin } = getUserDetails();
+  const { accessToken: token, isInitialLogin, accountID } = getUserDetails();
 
   useEffect(() => {
     if (!token || !isUserAuthenticated()) {
       forceLogout();
     }
     if (isInitialLogin) {
-      history.push(projectRenderPaths.toDashboard());
+      history.push(`/account/${accountID}/settings/password-reset`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, isInitialLogin]);
@@ -61,7 +62,10 @@ export function RoutesWithAuthentication(): React.ReactElement {
     <Switch>
       <Redirect exact from={accountMatchPaths.toRoot()} to={accountRenderPaths.toAccountSettingsOverview()} />
       <Redirect exact from={projectMatchPaths.toRoot()} to={projectRenderPaths.toDashboard()} />
-      <Route exact path={accountMatchPaths.toAccountSettingsOverview()} component={AccountSettingsController} />
+      {/* Account */}
+      <Route exact path={accountRenderPaths.toAccountSettingsOverview()} component={AccountSettingsController} />
+      <Route exact path={accountRenderPaths.toPasswordReset()} component={PasswordResetController} />
+      {/* Dashboard */}
       <Route exact path={projectMatchPaths.toDashboard()} component={OverviewController} />
       {/* Chaos Experiments */}
       <Route exact path={projectMatchPaths.toExperiments()} component={ExperimentDashboardV2Controller} />

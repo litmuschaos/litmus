@@ -75,6 +75,11 @@ type ErrInvalidRequest struct {
 	Message string `json:"message" example:"The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed"`
 }
 
+type ErrOldPassword struct {
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"The old and new passwords can't be same"`
+}
+
 type ErrUnauthorized struct {
 	Code    int    `json:"code" example:"401"`
 	Message string `json:"message" example:"The user does not have requested authorization to access this resource"`
