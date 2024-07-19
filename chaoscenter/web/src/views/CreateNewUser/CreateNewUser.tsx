@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import type { CreateUserMutationProps, User } from '@api/auth';
 import { useStrings } from '@strings';
 import { USERNAME_REGEX } from '@constants/validation';
+import PasswordInput from '@components/PasswordInput';
+import css from './CreateNewUser.module.scss';
 
 interface CreateNewUserViewProps {
   createNewUserMutation: UseMutateFunction<User, unknown, CreateUserMutationProps<never>, unknown>;
@@ -54,7 +56,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('createNewUser')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={handleClose} />
       </Layout.Horizontal>
       <Container>
         <Formik<CreateNewUserFormProps>
@@ -103,15 +105,14 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                       placeholder={getString('enterYourUsername')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('username')}</Text>}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="password"
-                      inputGroup={{ type: 'password' }}
                       placeholder={getString('enterYourPassword')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('password')}</Text>}
+                      className={css.passwordField}
                     />
-                    <FormInput.Text
+                    <PasswordInput
                       name="reEnterPassword"
-                      inputGroup={{ type: 'password' }}
                       placeholder={getString('reEnterYourPassword')}
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('confirmPassword')}</Text>}
                     />
