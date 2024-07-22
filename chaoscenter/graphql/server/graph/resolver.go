@@ -87,10 +87,10 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		}}
 
 	infra := newInfraCollector(func() []Infra {
-    result, _ := chaosInfrastructureService.ListAll();
-    var infras = []Infra{}
-    copier.Copy(&infras, &result)
-    return infras
+		result, _ := chaosInfrastructureService.ListAll()
+		var infras = []Infra{}
+		copier.Copy(&infras, &result)
+		return infras
 	})
 	prometheus.MustRegister(infra)
 
