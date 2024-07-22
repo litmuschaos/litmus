@@ -370,6 +370,8 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		// Adding user as project owner in project's member list
 		newMember := &entities.Member{
 			UserID:     user.ID,
+			Username: user.Name,
+			Email: user.Email,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
 			JoinedAt:   time.Now().UnixMilli(),
