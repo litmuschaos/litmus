@@ -203,9 +203,12 @@ createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
 createNewToken: Create New Token
 createNewUser: Create New User
+createProject: Create Project
 createRecurringSchedule: Create recurring schedule
 created: Created
 createdAt: Created At
+createdBy: Created By
+createdByUser: Created By User
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -254,6 +257,8 @@ deleteProbeDesc: >-
   control plane. This will also misplace any analytics that had incurred for the
   previous runs for this probe.
 deleteProbeHeading: Delete this probe?
+deleteProject: Delete Project
+deleteProjectWarning: Do you want to delete selected project?
 deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
@@ -497,6 +502,7 @@ invitationSuccess: Invitation sent successfully
 invitations: Invitations
 inviteAs: Invite as
 invitedBy: Invited By
+invitedByOthers: Invited By Others
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
 k8sDescription: >-
@@ -683,6 +689,11 @@ noProbesFound:
   errorMessage: Error in fetching probes
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
+noProject:
+  subtitle: >-
+    Create a project to to run chaos experiments on your applications and verify
+    resilience.
+  title: Get Started with Chaos Engineering
 noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
 noProjectsFound: No projects found
 noProjectsJoined: No projects joined
@@ -734,6 +745,7 @@ overallNodeResult: Overall Node Result
 overallResiliencyScore: Overall Resilience Score
 overview: Overview
 overwriteYaml: Uploading a yaml will overwrite the existing one.
+owner: Owner
 parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
@@ -845,8 +857,16 @@ probesArePassed: probes are passed
 prod: Prod
 project: Project
 projectCreatedByYou: Your Projects
+projectDashboard:
+  noProjectDescription: There are no projects.
+  noProjectText: No Projects
+projectDeletedSuccess: Project Deleted Successfully
+projectDescription: Project Description
+projectFilters: Project Filters
 projectNameIsRequired: Project name is a required in order to update.
 projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
+projectSetup: Project Setup
+projects: Projects
 projectsByInvite: Projects By Invite
 projectsInTotal: project(s) in total
 projectsJoined: Projects Joined
@@ -1020,6 +1040,8 @@ signIn: Sign In
 signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
+sortDirection: Sort Direction
+sortField: Sort Field
 source: Source
 sourceModeDesction: >-
   Source mode is where the command execution is carried out from within a new
@@ -1037,6 +1059,7 @@ startWith: Start with blank canvas
 startedAt: Started at
 startedOn: Started On
 startingWith: Starting with
+state: State
 status: Status
 statusCheck: >-
   Note: You may check the status of your Chaos Infrastructure in the status

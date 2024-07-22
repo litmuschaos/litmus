@@ -100,23 +100,24 @@ export default function SideNav(): ReactElement {
       }}
     >
       <div>
-        {isPathPresent('settings') ? (
+        {isPathPresent('settings') || isPathPresent('projects') ? (
           <Layout.Vertical spacing="small" padding={{ top: 'large' }}>
-            <SidebarLink label={'Settings'} to={accountScopedPaths.toAccountSettingsOverview()} />
+            <SidebarLink label={getString('settings')} to={accountScopedPaths.toAccountSettingsOverview()} />
+            <SidebarLink label={getString('projects')} to={accountScopedPaths.toProjects()} />
           </Layout.Vertical>
         ) : (
           <Layout.Vertical spacing="small">
             <ProjectSelectorController />
-            <SidebarLink label={'Overview'} to={paths.toDashboard()} />
-            <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
-            <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
-            <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
-            <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
+            <SidebarLink label={getString('overview')} to={paths.toDashboard()} />
+            <SidebarLink label={getString('chaosExperiments')} to={paths.toExperiments()} />
+            <SidebarLink label={getString('environments')} to={paths.toEnvironments()} />
+            <SidebarLink label={getString('resilienceProbes')} to={paths.toChaosProbes()} />
+            <SidebarLink label={getString('chaoshubs')} to={paths.toChaosHubs()} />
             {projectRole === PermissionGroup.OWNER && (
-              <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
-                <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
-                <SidebarLink label={'GitOps'} to={paths.toGitops()} />
-                <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
+              <NavExpandable title={getString('projectSetup')} route={paths.toProjectSetup()}>
+                <SidebarLink label={getString('members')} to={paths.toProjectMembers()} />
+                <SidebarLink label={getString('gitops')} to={paths.toGitops()} />
+                <SidebarLink label={getString('imageRegistry')} to={paths.toImageRegistry()} />
               </NavExpandable>
             )}
           </Layout.Vertical>
