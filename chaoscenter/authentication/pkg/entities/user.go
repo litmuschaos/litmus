@@ -63,23 +63,6 @@ type UserWithProject struct {
 	Projects []*Project `bson:"projects" json:"projects"`
 }
 
-func (user User) GetUserWithProject() *UserWithProject {
-
-	return &UserWithProject{
-		ID:       user.ID,
-		Username: user.Username,
-		Name:     user.Name,
-		Audit: Audit{
-			IsRemoved: user.IsRemoved,
-			CreatedAt: user.CreatedAt,
-			CreatedBy: user.UpdatedBy,
-			UpdatedAt: user.UpdatedAt,
-			UpdatedBy: user.UpdatedBy,
-		},
-		Email: user.Email,
-	}
-}
-
 // SanitizedUser returns the user object without sensitive information
 func (user *User) SanitizedUser() *User {
 	user.Password = ""
