@@ -17,7 +17,12 @@ export default function DeleteProjectInvitationController(
   const { handleClose, listInvitationsRefetch, projectID } = props;
   const { mutate: declineInvitationMutation } = useDeclineInvitationMutation(
     {},
-    { onSuccess: () => listInvitationsRefetch() }
+    {
+      onSuccess: () => {
+        listInvitationsRefetch();
+        handleClose();
+      }
+    }
   );
 
   return (

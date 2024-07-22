@@ -3,5 +3,6 @@
 // Please do not modify this code directly.
 
 export interface ResponseMessageResponse {
-  message?: string;
+  message: string;
+  projectID: string;
 }
