@@ -25,11 +25,14 @@ type Repository interface {
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
+	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
+	GetProjectOwners(projectID string) ([]*entities.Member, error)
+	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
@@ -277,6 +280,24 @@ func (r repository) UpdateProjectName(projectID string, projectName string) erro
 	return nil
 }
 
+// UpdateMemberRole : Updates Role of the member in the project.
+func (r repository) UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error {
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.user_id", userID}},
+		},
+	})
+	query := bson.D{{"_id", projectID}}
+	update := bson.D{{"$set", bson.M{"members.$[elem].role": role}}}
+
+	_, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
 func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
 	results, err := r.Collection.Aggregate(context.TODO(), pipeline, opts)
@@ -379,6 +400,28 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 	}
 
 	return projects, nil
+}
+
+// GetProjectOwners takes projectID and returns the owners
+func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, error) {
+	filter := bson.D{{"_id", projectID}}
+
+	var project struct {
+		Members []*entities.Member `bson:"members"`
+	}
+	err := r.Collection.FindOne(context.TODO(), filter).Decode(&project)
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter the members to include only the owners
+	var owners []*entities.Member
+	for _, member := range project.Members {
+		if member.Role == entities.RoleOwner && member.Invitation == entities.AcceptedInvitation {
+			owners = append(owners, member)
+		}
+	}
+	return owners, nil
 }
 
 // GetProjectRole returns the role of a user in the project
@@ -555,4 +598,20 @@ func NewRepo(collection *mongo.Collection) Repository {
 	return &repository{
 		Collection: collection,
 	}
+}
+
+// DeleteProject deletes the project with given projectID
+func (r repository) DeleteProject(projectID string) error {
+	query := bson.D{{"_id", projectID}}
+
+	result, err := r.Collection.DeleteOne(context.TODO(), query)
+	if err != nil {
+		return err
+	}
+
+	if result.DeletedCount == 0 {
+		return errors.New("no project found with the given projectID")
+	}
+
+	return nil
 }
