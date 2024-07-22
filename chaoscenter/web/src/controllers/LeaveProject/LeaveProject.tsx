@@ -23,6 +23,7 @@ export default function LeaveProjectController(props: LeaveProjectControllerProp
       onSuccess: () => {
         projectsJoinedRefetch();
         getUserWithProjectsRefetch();
+        handleClose();
       }
     }
   );
