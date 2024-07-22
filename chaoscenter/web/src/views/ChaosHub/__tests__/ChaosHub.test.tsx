@@ -34,7 +34,7 @@ describe('ChaosHubView Component', () => {
     const chaosExperimentsTab = await screen.findByRole('tab', { name: /chaosExperiments/i });
     expect(chaosExperimentsTab).toBeInTheDocument();
 
-    const chaosExperimentsText = await screen.findByText(/chaosExperiments/i);
+    const chaosExperimentsText = await screen.findByText(/chaosExperiments/i, { selector: 'p' });
     expect(chaosExperimentsText).toBeInTheDocument();
   });
 
