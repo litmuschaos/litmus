@@ -72,7 +72,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 
 - Star를 주세요 ⭐️ - LitmusChaos를 사용 중이거나 이 프로젝트가 흥미롭다고 생각되시면 Star를 주시면 감사하겠습니다 ❤️.
 
-- 리트머스카오스를 트위터에서 팔로우해주세요 [@LitmusChaos](https://twitter.com/LitmusChaos).
+- LitmusChaos를 트위터에서 팔로우해주세요 [@LitmusChaos](https://twitter.com/LitmusChaos).
 
 - 정기 업데이트 및 회의 녹화를 보려면 [LitmusChaos 유튜브 채널](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)을 구독해주세요.
 
