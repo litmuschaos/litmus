@@ -431,7 +431,6 @@ genericResourceNotFoundError: >-
   has been deleted.
 gitConnection: Repository Connection
 gitOps: GitOps
-githubRepo: Github Repository
 gitops: Gitops
 goBack: Go back to previous page
 goChaosHome: Go to Home
@@ -909,6 +908,7 @@ referencedBy: Referenced By
 registry: Registry
 registryName: Registry Name
 registryType: Registry Type
+remoteRepo: Remote Repository
 remove: Remove
 removeMember: Remove Member
 removeMemberConfirmation: Are you sure you want to remove {{username}}?
