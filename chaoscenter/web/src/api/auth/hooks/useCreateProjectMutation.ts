@@ -7,7 +7,9 @@ import type { Project } from '../schemas/Project';
 import { fetcher, FetcherOptions } from 'services/fetcher';
 
 export type CreateProjectRequestBody = {
+  description?: string;
   projectName: string;
+  tags?: string[];
 };
 
 export type CreateProjectOkResponse = {

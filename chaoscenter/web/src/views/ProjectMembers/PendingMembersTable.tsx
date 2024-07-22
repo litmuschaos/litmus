@@ -69,6 +69,10 @@ export default function PendingMembersTableView({
             {
               label: 'Viewer',
               value: 'Viewer'
+            },
+            {
+              label: 'Owner',
+              value: 'Owner'
             }
           ];
 
