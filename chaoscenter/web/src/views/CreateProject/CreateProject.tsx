@@ -81,7 +81,7 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
                       }
                     />
                     <FormInput.KVTagInput
-                      name={getString('tags')}
+                      name={'tags'}
                       label={getString('tags')}
                       isArray={true}
                       tooltipProps={{

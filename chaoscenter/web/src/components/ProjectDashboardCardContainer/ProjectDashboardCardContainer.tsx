@@ -94,7 +94,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
                   </Text>
                   <CustomTagsPopover
                     // custom tags here
-                    tags={project.tags}
+                    tags={project.tags ? project.tags : ['Project', 'ChaosExperiment']}
                     title={getString('nameIdDescriptionTags.tagsLabel')}
                   />
                 </Container>
