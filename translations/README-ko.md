@@ -21,13 +21,13 @@
 
 ## 개요
 
-LitmusChaos는 통제된 방식으로 카오스 테스트를 유도하여 팀이 인프라의 약점과 잠재적인 운영 중단을 파악할 수 있게 해주는 오픈 소스 카오스 엔지니어링 플랫폼입니다.
-개발자와 SRE는 LitmusChaos를 통해 카오스 엔지니어링을 실습할 수 있으며, 이는 사용하기 쉽고 현대 카오스 엔지니어링 원칙에 기반하며 커뮤니티의 협력으로 운영됩니다.
+LitmusChaos는 통제된 방식으로 카오스 테스트를 실행하여 팀이 인프라의 약점과 잠재적인 운영 중단을 파악할 수 있게 해주는 오픈 소스 카오스 엔지니어링 플랫폼입니다.
+개발자와 SRE는 LitmusChaos를 통해 카오스 엔지니어링을 도입할 수 있으며, 이는 사용하기 쉽고 현대 카오스 엔지니어링 원칙에 기반하며 커뮤니티의 협력으로 운영됩니다.
 LitmusChaos는 100% 오픈 소스이며 CNCF 프로젝트입니다.
 
 LitmusChaos는 클라우드 네이티브 접근 방식을 사용하여 카오스를 생성, 관리 및 모니터링합니다. 이 플랫폼은 일련의 마이크로서비스들을 실행하며, 카오스 의도와 정상 상태 가설을 정의한 쿠버네티스 커스텀 리소스들(CRs)을 사용합니다.
 
-Litmus는 높은 수준에서 다음과 같이 구성됩니다:
+Litmus의 전반적인 아키텍처는 다음과 같이 두가지 컴포넌트로 구성됩니다:
 
 - **Chaos Control Plane**: 중앙 집중식 카오스 관리 도구인 Chaos Center는 Litmus 카오스 워크플로 구성, 스케줄링 및 시각화에 도움을 줍니다.
 - **Chaos Execution Plane Services**: 하나의 카오스 에이전트와 여러 오퍼레이터들로 구성되며 정의된 대상 쿠버네티스 환경에서 실험을 실행하고 모니터링합니다.
@@ -42,7 +42,7 @@ Litmus는 높은 수준에서 다음과 같이 구성됩니다:
 
 ChaosExperiment 및 ChaosEngine CR은 Workflow 객체에 포함되며 이는 하나 이상의 실험을 원하는 순서대로 연결할 수 있습니다.
 
-- **ChaosResult**: A resource to hold the results of the experiment run. It provides details of the success of each validation constraint, the revert/rollback status of the fault as well as a verdict. The Chaos-exporter reads the results and exposes information as prometheus metrics. ChaosResults are especially useful during automated runs. 카오스 실험 실행 결과를 저장하는 리소스입니다. 각 검증 제약 조건의 성공 여부, 결함의 복구/롤백 상태 및 판결에 대한 세부 정보를 제공합니다. Chaos-exporter는 결과 정보를 Prometheus 메트릭으로 보여줍니다. ChaosResults는 자동화된 실행 중에 특히 유용합니다.
+- **ChaosResult**: 카오스 실험 실행 결과를 저장하는 리소스입니다. 각 검증 제약 조건의 성공 여부, 결함의 복구/롤백 상태 및 판결에 대한 세부 정보를 제공합니다. Chaos Exporter는 결과 정보를 Prometheus 메트릭으로 보여줍니다. ChaosResults는 자동화된 실행 중에 특히 유용합니다.
 
 ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>에서 호스팅됩니다. 이는 사용자가 프로덕션 환경에서 애플리케이션의 회복 탄력성을 높일 수 있도록 애플리케이션 개발자 또는 공급 업체가 카오스 실험을 공유하는 중앙 허브입니다.
 
