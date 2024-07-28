@@ -65,9 +65,7 @@ function kubernetesBlankCanvasTemplate(
             image: `${imageRegistry.repo}/k8s:2.11.0`,
             command: ['sh', '-c'],
             args: [
-                'kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} && ' +
-                'faultCount=$(ls /tmp/ | grep -E "\.ya?ml$" | wc -l) && ' +
-                'until [[ $(kubectl get -f /tmp/ --no-headers | wc -l) -eq $faultCount ]]; do sleep 1; echo "Waiting for ChaosExperiment CR Ready..." ; done; echo "ChaosExperiment CR Ready"'
+              'kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} && faultCount=$(ls /tmp/ | grep -E "(.yaml$|.yml$)" | wc -l) && until [[ $(kubectl get -f /tmp/ --no-headers | wc -l) -eq $faultCount ]]; do sleep 1; echo "Waiting for ChaosExperiment CR Ready..." ; done; echo "ChaosExperiment CR Ready"'
             ]
           }
         },
