@@ -8303,7 +8303,7 @@ extend type Mutation {
 
 enum MemberRole {
   Owner
-  Editor
+  Executor
   Viewer
 }
 `, BuiltIn: false},

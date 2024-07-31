@@ -150,7 +150,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-server:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'          
@@ -177,7 +177,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -204,7 +204,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -261,7 +261,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'

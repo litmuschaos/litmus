@@ -2557,20 +2557,20 @@ func (e Invitation) MarshalGQL(w io.Writer) {
 type MemberRole string
 
 const (
-	MemberRoleOwner  MemberRole = "Owner"
-	MemberRoleEditor MemberRole = "Editor"
-	MemberRoleViewer MemberRole = "Viewer"
+	MemberRoleOwner    MemberRole = "Owner"
+	MemberRoleExecutor MemberRole = "Executor"
+	MemberRoleViewer   MemberRole = "Viewer"
 )
 
 var AllMemberRole = []MemberRole{
 	MemberRoleOwner,
-	MemberRoleEditor,
+	MemberRoleExecutor,
 	MemberRoleViewer,
 }
 
 func (e MemberRole) IsValid() bool {
 	switch e {
-	case MemberRoleOwner, MemberRoleEditor, MemberRoleViewer:
+	case MemberRoleOwner, MemberRoleExecutor, MemberRoleViewer:
 		return true
 	}
 	return false

@@ -7,6 +7,9 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/google/uuid"
@@ -80,8 +83,22 @@ func (r *mutationResolver) GetManifestWithInfraID(ctx context.Context, projectID
 		"chaosInfraId": infraID,
 	}
 
+	reqHeader, ok := ctx.Value("request-header").(http.Header)
+	if !ok {
+		return "", fmt.Errorf("unable to parse request header")
+	}
+
+	referrer := reqHeader.Get("Referer")
+	if referrer == "" {
+		return "", fmt.Errorf("unable to parse referer header")
+	}
+
+	referrerURL, err := url.Parse(referrer)
+	if err != nil {
+		return "", err
+	}
 	logrus.WithFields(logFields).Info("request received to get chaos infrastructure installation manifest")
-	manifest, err := r.chaosInfrastructureService.GetManifestWithInfraID(infraID, accessKey)
+	manifest, err := r.chaosInfrastructureService.GetManifestWithInfraID(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infraID, accessKey)
 	if err != nil {
 		return "", err
 	}
@@ -170,8 +187,24 @@ func (r *queryResolver) GetInfraManifest(ctx context.Context, infraID string, up
 	logFields := logrus.Fields{
 		"projectId": projectID,
 	}
+
+	reqHeader, ok := ctx.Value("request-header").(http.Header)
+	if !ok {
+		return "", fmt.Errorf("unable to parse request header")
+	}
+
+	referrer := reqHeader.Get("Referer")
+	if referrer == "" {
+		return "", fmt.Errorf("unable to parse referer header")
+	}
+
+	referrerURL, err := url.Parse(referrer)
+	if err != nil {
+		return "", err
+	}
+
 	logrus.WithFields(logFields).Info("request received to get chaos infrastructure manifest")
-	err := authorization.ValidateRole(ctx, projectID,
+	err = authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetManifest],
 		model.InvitationAccepted.String())
 	if err != nil {
@@ -183,7 +216,7 @@ func (r *queryResolver) GetInfraManifest(ctx context.Context, infraID string, up
 		return "", err
 	}
 
-	gcaResponse, err := chaos_infrastructure.GetK8sInfraYaml(getInfra)
+	gcaResponse, err := chaos_infrastructure.GetK8sInfraYaml(referrerURL.Host, getInfra)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err

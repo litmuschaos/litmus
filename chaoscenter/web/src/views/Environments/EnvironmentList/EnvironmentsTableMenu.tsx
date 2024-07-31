@@ -30,13 +30,13 @@ export const MenuCell = ({
             icon="edit"
             text={getString('editEnvironment')}
             onClick={openEditModal}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
           <RbacMenuItem
             icon="trash"
             text={getString('delete')}
             onClick={openDeleteModal}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
         </Menu>
       </Popover>
