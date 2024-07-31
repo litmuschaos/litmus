@@ -35,7 +35,7 @@ export default function TargetApplicationTabController({
     request: {
       infraID: infrastructureID ?? '',
       kubeObjRequest: selectedGVR,
-      namespace: targetApp.appns ?? '',
+      namespace: targetApp?.appns ?? '',
       objectType: 'kubeobject'
     }
   });

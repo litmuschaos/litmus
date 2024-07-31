@@ -50,13 +50,13 @@ export interface KubeNamespaceResponse {
   };
 }
 
-export function kubeObjectSubscription({
+export const kubeObjectSubscription = ({
   request,
   ...options
 }: GqlAPISubscriptionRequest<KubeObjResponse, KubeObjRequest>): GqlAPISubscriptionResponse<
   KubeObjResponse,
   KubeObjRequest
-> {
+> => {
   const { data, loading, error } = useSubscription<KubeObjResponse, KubeObjRequest>(
     gql`
       subscription getKubeObject($request: KubeObjectRequest!) {
@@ -86,15 +86,15 @@ export function kubeObjectSubscription({
   );
 
   return { data, loading, error };
-}
+};
 
-export function kubeNamespaceSubscription({
+export const kubeNamespaceSubscription = ({
   request,
   ...options
 }: GqlAPISubscriptionRequest<KubeNamespaceResponse, KubeNamespaceRequest>): GqlAPISubscriptionResponse<
   KubeNamespaceResponse,
   KubeNamespaceRequest
-> {
+> => {
   const { data, loading, error } = useSubscription<KubeNamespaceResponse, KubeNamespaceRequest>(
     gql`
       subscription getKubeNamespace($request: KubeNamespaceRequest!) {
@@ -117,4 +117,4 @@ export function kubeNamespaceSubscription({
   );
 
   return { data, loading, error };
-}
+};
