@@ -71,8 +71,8 @@ export default function TargetApplicationTab({
               onChange={selectedItem => {
                 setTargetApp({
                   appkind: selectedItem.label,
-                  appns: '',
-                  applabel: ''
+                  applabel: '',
+                  appns: ''
                 });
                 if (engineCR?.spec?.appinfo?.appkind !== undefined) engineCR.spec.appinfo.appkind = selectedItem.label;
                 setFaultData(faultData => {

@@ -23,11 +23,11 @@ export default function TargetApplicationTabController({
   });
   const [selectedGVR, setSelectedGVR] = React.useState<KubeGVRRequest>();
   const { data: resultNamespace, loading: loadingNamespace } = kubeNamespaceSubscription({
-    shouldResubscribe: true,
-    skip: targetApp?.appkind === undefined || selectedGVR === undefined,
     request: {
       infraID: infrastructureID ?? ''
-    }
+    },
+    shouldResubscribe: true,
+    skip: targetApp?.appkind === undefined || selectedGVR === undefined
   });
   const { data: resultObject, loading: loadingObject } = kubeObjectSubscription({
     shouldResubscribe: true,
@@ -46,8 +46,8 @@ export default function TargetApplicationTabController({
       if (data.resource === targetApp?.appkind) {
         setSelectedGVR({
           group: data.group,
-          version: data.version,
-          resource: `${data.resource}s`
+          resource: `${data.resource}s`,
+          version: data.version
         });
       }
     });
