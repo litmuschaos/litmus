@@ -63,15 +63,19 @@ export default function CustomStepLogController({
     <SimpleLogViewer
       loading={loading}
       data={
-        podLogs && podLogs?.getPodLog ? (() => {
-          try {
-              return Object.entries(JSON.parse(podLogs.getPodLog.log))
+        podLogs && podLogs?.getPodLog
+          ? (() => {
+              try {
+                return Object.entries(JSON.parse(podLogs.getPodLog.log))
                   .map(([key, value]) => `${key}: ${value}`)
                   .join('\n');
-          } catch (e) {
-              return podLogs.getPodLog.log;
-          }
-      })() : error ? error.message : getString('logErrorMessage')
+              } catch (e) {
+                return podLogs.getPodLog.log;
+              }
+            })()
+          : error
+          ? error.message
+          : getString('logErrorMessage')
       }
     />
   );
