@@ -97,9 +97,9 @@ func (m *MockedApplicationService) GetProjects(query bson.D) ([]*entities.Projec
 	return args.Get(0).([]*entities.Project), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error) {
-	args := m.Called(uid, isOwner)
-	return args.Get(0).([]*entities.Project), args.Error(1)
+func (m *MockedApplicationService) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
+	args := m.Called(request)
+	return args.Get(0).(*entities.ListProjectResponse), args.Error(1)
 }
 
 func (m *MockedApplicationService) GetProjectStats() ([]*entities.ProjectStats, error) {
@@ -127,6 +127,11 @@ func (m *MockedApplicationService) UpdateProjectName(projectID, projectName stri
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) UpdateMemberRole(projectID, userID string, role *entities.MemberRole) error {
+	args := m.Called(projectID, userID, role)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
 	args := m.Called(pipeline, opts)
 	return args.Get(0).(*mongo.Cursor), args.Error(1)
@@ -149,6 +154,11 @@ func (m *MockedApplicationService) GetProjectRole(projectID, userID string) (*en
 
 func (m *MockedApplicationService) GetProjectMembers(projectID, state string) ([]*entities.Member, error) {
 	args := m.Called(projectID, state)
+	return args.Get(0).([]*entities.Member), args.Error(1)
+}
+
+func (m *MockedApplicationService) GetProjectOwners(projectID string) ([]*entities.Member, error) {
+	args := m.Called(projectID)
 	return args.Get(0).([]*entities.Member), args.Error(1)
 }
 
@@ -204,6 +214,11 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 
 func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
 	args := m.Called(userID, resourceID, rules, invitationStatus)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) DeleteProject(projectID string) error {
+	args := m.Called(projectID)
 	return args.Error(0)
 }
 
