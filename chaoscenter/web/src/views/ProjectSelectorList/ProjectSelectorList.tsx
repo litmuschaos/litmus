@@ -3,6 +3,7 @@ import { Container, Layout, Text } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
+import { auto } from '@popperjs/core';
 import { useStrings } from '@strings';
 import ProjectCard from '@components/ProjectCard';
 import Loader from '@components/Loader';
@@ -33,7 +34,11 @@ export default function ProjectSelectorListView({
           <Text font={{ variation: FontVariation.H5 }}>{getString('selectProject')}</Text>
           <Container margin={{ top: 'small' }}>{searchBar}</Container>
         </Container>
-        <Layout.Vertical width="100%" className={cx(styles.grow, styles.gap2)}>
+        <Layout.Vertical
+          width="100%"
+          style={{ height: 'calc(100% - 96px)', overflow: auto }}
+          className={cx(styles.grow, styles.gap2)}
+        >
           <Text font={{ variation: FontVariation.H6 }}>
             {getString('total')}: {projectList?.length ?? 0}
           </Text>

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"regexp"
 	"strconv"
 
-	"github.com/gin-contrib/cors"
+	"google.golang.org/grpc/credentials"
+
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
@@ -11,7 +13,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 
 	"context"
 	"fmt"
@@ -36,6 +37,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -69,9 +71,10 @@ func validateVersion() error {
 		}
 		return nil
 	}
-	if dbVersion.Value.(string) != currentVersion {
-		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
-	}
+	// This check will be added back once DB upgrader job becomes functional
+	// if dbVersion.Value.(string) != currentVersion {
+	// 	return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	// }
 	return nil
 }
 
@@ -80,12 +83,7 @@ func setupGin() *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-	}))
-
+	router.Use(middleware.ValidateCors())
 	return router
 }
 
@@ -105,7 +103,21 @@ func main() {
 	if err := validateVersion(); err != nil {
 		log.Fatal(err)
 	}
-	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
+	if err != nil {
+		logrus.Errorf("unable to parse boolean value %v", err)
+	}
+
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
+			go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+		} else {
+			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+	} else {
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
 	srv.AddTransport(transport.POST{})
@@ -114,14 +126,24 @@ func main() {
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
-				return true
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					origin = r.Host
+				}
+				for _, allowedOrigin := range utils.Config.AllowedOrigins {
+					match, err := regexp.MatchString(allowedOrigin, origin)
+					if err == nil && match {
+						return true
+					}
+				}
+				return false
 			},
 		},
 	})
 
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
-		logrus.Errorf("unable to parse boolean value %v", err)
+		log.Errorf("unable to parse boolean value %v", err)
 	} else if err == nil && enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
@@ -147,8 +169,29 @@ func main() {
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
-	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
-	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
+			log.Infof("graphql server running at https://localhost:%s", utils.Config.RestPort)
+			// configuring TLS config based on provided certificates & keys
+			conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+			server := http.Server{
+				Addr:      ":" + utils.Config.RestPort,
+				Handler:   router,
+				TLSConfig: conf,
+			}
+			err := server.ListenAndServeTLS("", "")
+			if err != nil {
+				log.Fatalf("Failure to start litmus-portal graphql REST server due to %v", err)
+			}
+		} else {
+			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
+		}
+	} else {
+		log.Infof("graphql server running at http://localhost:%s", utils.Config.RestPort)
+		log.Fatal(http.ListenAndServe(":"+utils.Config.RestPort, router))
+	}
+
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
@@ -159,6 +202,31 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	}
 
 	grpcServer := grpc.NewServer()
+
+	// Register services
+
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
+
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
+
+	lis, err := net.Listen("tcp", ":"+utils.Config.GrpcPort)
+	if err != nil {
+		log.Fatal("failed to listen: %w", err)
+	}
+
+	// configuring TLS config based on provided certificates & keys
+	conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+	// create tls credentials
+	tlsCredentials := credentials.NewTLS(conf)
+
+	// create grpc server with tls credential
+	grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
 
 	// Register services
 

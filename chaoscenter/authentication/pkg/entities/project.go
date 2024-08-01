@@ -2,17 +2,23 @@ package entities
 
 // Project contains the required fields to be stored in the database for a project
 type Project struct {
-	Audit   `bson:",inline"`
-	ID      string    `bson:"_id" json:"projectID"`
-	Name    string    `bson:"name" json:"name"`
-	Members []*Member `bson:"members" json:"members"`
-	State   *string   `bson:"state" json:"state"`
+	Audit       `bson:",inline"`
+	ID          string    `bson:"_id" json:"projectID"`
+	Name        string    `bson:"name" json:"name"`
+	Members     []*Member `bson:"members" json:"members"`
+	State       *string   `bson:"state" json:"state"`
+	Tags        []*string `bson:"tags" json:"tags"`
+	Description *string   `bson:"description" json:"description"`
 }
 
 type Owner struct {
-	UserID   string `bson:"user_id" json:"userID"`
-	Username string `bson:"username" json:"username"`
+	UserID        string     `bson:"user_id" json:"userID"`
+	Username      string     `bson:"username" json:"username"`
+	Invitation    Invitation `bson:"invitation" json:"invitation"`
+	JoinedAt      int64      `bson:"joined_at" json:"joinedAt"`
+	DeactivatedAt *int64     `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
+
 type MemberStat struct {
 	Owner *[]Owner `bson:"owner" json:"owner"`
 	Total int      `bson:"total" json:"total"`
@@ -46,8 +52,14 @@ type ProjectInput struct {
 }
 
 type CreateProjectInput struct {
-	ProjectName string `bson:"project_name" json:"projectName"`
-	UserID      string `bson:"user_id" json:"userID"`
+	ProjectName string    `bson:"project_name" json:"projectName"`
+	UserID      string    `bson:"user_id" json:"userID"`
+	Description *string   `bson:"description" json:"description"`
+	Tags        []*string `bson:"tags" json:"tags"`
+}
+
+type DeleteProjectInput struct {
+	ProjectID string `json:"projectID"`
 }
 
 type MemberInput struct {
@@ -62,6 +74,50 @@ type ListInvitationResponse struct {
 	ProjectOwner   Member     `json:"projectOwner"`
 	InvitationRole MemberRole `json:"invitationRole"`
 }
+
+type ListProjectResponse struct {
+	Projects              []*Project `json:"projects"`
+	TotalNumberOfProjects *int64     `json:"totalNumberOfProjects"`
+}
+
+type Pagination struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
+type ListProjectRequest struct {
+	UserID     string                  `json:"userID"`
+	Sort       *SortInput              `json:"sort,omitempty"`
+	Filter     *ListProjectInputFilter `json:"filter,omitempty"`
+	Pagination *Pagination             `json:"pagination,omitempty"`
+}
+
+type ListProjectInputFilter struct {
+	ProjectName     *string `json:"projectName"`
+	CreatedByMe     *bool   `json:"createdByMe"`
+	InvitedByOthers *bool   `json:"invitedByOthers"`
+}
+
+type ProjectSortingField string
+
+const (
+	ProjectSortingFieldName ProjectSortingField = "NAME"
+	ProjectSortingFieldTime ProjectSortingField = "TIME"
+)
+
+type SortInput struct {
+	Field     *ProjectSortingField `json:"field"`
+	Ascending *bool                `json:"ascending"`
+}
+
+const (
+	ProjectName = "projectName"
+	SortField   = "sortField"
+	Ascending   = "sortAscending"
+	CreatedByMe = "createdByMe"
+	Page        = "page"
+	Limit       = "limit"
+)
 
 // GetProjectOutput takes a Project struct as input and returns the graphQL model equivalent
 func (project *Project) GetProjectOutput() *Project {
@@ -108,9 +164,9 @@ func (member *Member) GetMemberOutput() *Member {
 type MemberRole string
 
 const (
-	RoleOwner  MemberRole = "Owner"
-	RoleEditor MemberRole = "Editor"
-	RoleViewer MemberRole = "Viewer"
+	RoleOwner    MemberRole = "Owner"
+	RoleExecutor MemberRole = "Executor"
+	RoleViewer   MemberRole = "Viewer"
 )
 
 // Invitation defines the type of the invitation that is sent by the Owner of the project to other users

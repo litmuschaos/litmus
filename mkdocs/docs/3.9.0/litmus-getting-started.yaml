@@ -1,51 +1,9 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: litmus-server-cr
-rules:
-  - apiGroups: [networking.k8s.io, extensions]
-    resources: [ingresses]
-    verbs: [get]
-  - apiGroups: [""]
-    resources: [services, nodes, pods/log] # Will have to remove this for namespaced scope
-    verbs: [get, watch]
-  - apiGroups: [""] # To get TLS Cert from secrets incase of cluster scope
-    resources: [secrets]
-    verbs: [get]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-server-crb
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: litmus-server-cr
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-## Control plane manifests
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: litmus
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-server-account
-  namespace: litmus
----
 apiVersion: v1
 kind: Secret
 metadata:
   name: litmus-portal-admin-secret
-  namespace: litmus
 stringData:
-  JWT_SECRET: "litmus-portal@123"
   DB_USER: "root"
   DB_PASSWORD: "1234"
 ---
@@ -53,12 +11,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
-  namespace: litmus
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
-  VERSION: "ci"
+  VERSION: "3.9.0"
   SKIP_SSL_VERIFY: "false"
-  # Configurations if you are using dex for OAuth
+    # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
   OIDC_ISSUER: "http://<Your Domain>:32000"
   DEX_OAUTH_CALLBACK_URL: "http://<litmus-portal frontend exposed URL>:8080/auth/dex/callback"
@@ -70,7 +27,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: litmusportal-frontend-nginx-configuration
-  namespace: litmus
 data:
   nginx.conf: |
     pid /tmp/nginx.pid;
@@ -139,15 +95,6 @@ data:
 
             location /api/ {
                 proxy_http_version 1.1;
-                proxy_set_header   Host                 $host;
-                proxy_set_header   X-Real-IP            $remote_addr;
-                proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-                proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "http://litmusportal-server-service:9002/";
-            }
-
-            location /ws/ {
-                proxy_http_version 1.1;
                 proxy_set_header   Upgrade              $http_upgrade;
                 proxy_set_header   Connection           $connection_upgrade;
                 proxy_set_header   Host                 $host;
@@ -163,7 +110,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-frontend
-  namespace: litmus
   labels:
     component: litmusportal-frontend
 spec:
@@ -179,17 +125,17 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
-          imagePullPolicy: Always
+          image: litmuschaos/litmusportal-frontend:3.9.0
           # securityContext:
           #   runAsUser: 2000
           #   allowPrivilegeEscalation: false
           #   runAsNonRoot: true
+          imagePullPolicy: Always
           ports:
             - containerPort: 8185
           resources:
             requests:
-              memory: "150Mi"
+              memory: "250Mi"
               cpu: "125m"
               ephemeral-storage: "500Mi"
             limits:
@@ -209,7 +155,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-frontend-service
-  namespace: litmus
 spec:
   type: NodePort
   ports:
@@ -223,7 +168,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-server
-  namespace: litmus
   labels:
     component: litmusportal-server
 spec:
@@ -236,6 +180,7 @@ spec:
       labels:
         component: litmusportal-server
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: gitops-storage
           emptyDir: {}
@@ -243,7 +188,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:3.9.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -260,59 +205,57 @@ spec:
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
-            # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
-            - name: TLS_SECRET_NAME
+            # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
+            - name: TLS_CERT_B64
               value: ""
-            - name: LITMUS_PORTAL_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: CHAOS_CENTER_SCOPE
-              value: "cluster"
             - name: ENABLE_GQL_INTROSPECTION
               value: "false"
+            - name: INFRA_DEPLOYMENTS
+              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: ""
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:3.9.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:3.9.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:ci"
+              value: "litmuschaos/chaos-operator:3.9.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:ci"
+              value: "litmuschaos/chaos-runner:3.9.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:ci"
-            - name: SERVER_SERVICE_NAME
-              value: "litmusportal-server-service"
-            - name: INFRA_DEPLOYMENTS
-              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: CHAOS_CENTER_UI_ENDPOINT
-              value: ""
-            - name: INGRESS
-              value: "false"
-            - name: INGRESS_NAME
-              value: "litmus-ingress"
+              value: "litmuschaos/chaos-exporter:3.9.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "master"
+              value: "3.9.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
-              value: ":3030"
+              value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.7.0"
+              value: "3.9.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["ci"]'
+              value: '["3.9.0"]'
+            - name: ALLOWED_ORIGINS
+              value: ".*"  #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
+            - name: ENABLE_INTERNAL_TLS
+              value: "false"
+            - name: TLS_CERT_PATH
+              value: ""
+            - name: TLS_KEY_PATH
+              value: ""
+            - name: CA_CERT_TLS_PATH
+              value: ""
+            - name: REST_PORT
+              value: "8080"
+            - name: GRPC_PORT
+              value: "8000"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -326,13 +269,30 @@ spec:
               memory: "712Mi"
               cpu: "550m"
               ephemeral-storage: "1Gi"
-      serviceAccountName: litmus-server-account
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: litmusportal-server
+  namespace: litmus
+  labels:
+    component: litmusportal-server
+spec:
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      component: litmusportal-server
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-frontend
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-server-service
-  namespace: litmus
 spec:
   type: NodePort
   ports:
@@ -349,7 +309,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: litmusportal-auth-server
-  namespace: litmus
   labels:
     component: litmusportal-auth-server
 spec:
@@ -365,7 +324,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:3.9.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -386,26 +345,62 @@ spec:
             - name: LITMUS_GQL_GRPC_ENDPOINT
               value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
-              value: ":8000"
+              value: "8000"
+            - name: ALLOWED_ORIGINS
+              value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
+            - name: ENABLE_INTERNAL_TLS
+              value: "false"
+            - name: TLS_CERT_PATH
+              value: ""
+            - name: TLS_KEY_PATH
+              value: ""
+            - name: CA_CERT_TLS_PATH
+              value: ""
+            - name: REST_PORT
+              value: "3000"
+            - name: GRPC_PORT
+              value: "3030"
+          ports:
+            - containerPort: 3000
+            - containerPort: 3030
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "250Mi"
-              cpu: "225m"
+              cpu: "125m"
               ephemeral-storage: "500Mi"
             limits:
               memory: "712Mi"
               cpu: "550m"
               ephemeral-storage: "1Gi"
-          ports:
-            - containerPort: 3000
-            - containerPort: 3030
-          imagePullPolicy: Always
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: litmusportal-auth-server
+  namespace: litmus
+  labels:
+    component: litmusportal-auth-server
+spec:
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      component: litmusportal-auth-server
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-frontend
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-server
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: litmusportal-auth-server-service
-  namespace: litmus
 spec:
   type: NodePort
   ports:
