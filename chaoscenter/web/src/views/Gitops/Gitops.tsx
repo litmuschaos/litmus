@@ -199,7 +199,7 @@ export default function GitopsView({
                                 font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                                 color={Color.BLACK}
                               >
-                                {getString('githubRepo')}
+                                {getString('remoteRepo')}
                               </Text>
                             </Layout.Vertical>
                             {gitopsType === GitopsValues.GITHUB && (
