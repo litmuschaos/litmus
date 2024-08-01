@@ -42,6 +42,8 @@ interface ChaosInfrastructureReferenceFieldViewProps {
   searchInfrastructure: string;
   setSearchInfrastructure: React.Dispatch<React.SetStateAction<string>>;
   setEnvID: (id: string) => void;
+  activeEnv: string | undefined;
+  setactiveEnv: (id: string) => void;
   loading: {
     listChaosInfra: boolean;
   };
@@ -57,6 +59,8 @@ function ChaosInfrastructureReferenceFieldView({
   searchInfrastructure,
   setSearchInfrastructure,
   setEnvID,
+  activeEnv,
+  setactiveEnv,
   loading,
   pagination
 }: ChaosInfrastructureReferenceFieldViewProps): JSX.Element {
@@ -67,7 +71,7 @@ function ChaosInfrastructureReferenceFieldView({
   const [selectedInfrastructure, setSelectedInfrastructure] = React.useState<InfrastructureDetails | undefined>(
     preSelectedInfrastructure
   );
-  const [activeEnv, setactiveEnv] = React.useState<string>('all');
+
   // const searchParams = useSearchParams();
   // const infrastructureType =
   //   (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
@@ -79,29 +83,31 @@ function ChaosInfrastructureReferenceFieldView({
       <Container
         key={env.environmentID}
         flex
-        padding={{ left: 'small', right: 'medium', top: 'small', bottom: 'small' }}
-        className={`${css.listEnvContainer} ${activeEnv === env.name && css.activeEnv}`}
+        padding="small"
+        className={`${css.listEnvContainer} ${activeEnv === env.environmentID && css.activeEnv}`}
         onClick={() => {
           setEnvID(env.environmentID);
-          setactiveEnv(env.name);
+          setactiveEnv(env.environmentID);
         }}
       >
         <div className={css.itemEnv}>
-          <Layout.Horizontal padding={{ left: 'small' }} spacing="medium">
-            <Text lineClamp={1}>{env.name}</Text>
+          <Layout.Horizontal padding={{ left: 'small' }} spacing="medium" className={css.leftInfo}>
+            <Text lineClamp={1} color={Color.GREY_800} font={{ variation: FontVariation.H6 }}>
+              {env.name}
+            </Text>
           </Layout.Horizontal>
+          <Text
+            font={{ variation: FontVariation.SMALL }}
+            color={activeEnv === env.name ? Color.WHITE : Color.PRIMARY_7}
+            background={activeEnv === env.name ? Color.PRIMARY_7 : Color.PRIMARY_BG}
+            height={24}
+            width={24}
+            flex={{ alignItems: 'center', justifyContent: 'center' }}
+            className={css.rounded}
+          >
+            {env.infraIDs.length}
+          </Text>
         </div>
-        <Text
-          font={{ variation: FontVariation.SMALL }}
-          color={activeEnv === env.name ? Color.WHITE : Color.PRIMARY_7}
-          background={activeEnv === env.name ? Color.PRIMARY_7 : Color.PRIMARY_BG}
-          height={25}
-          width={25}
-          flex={{ alignItems: 'center', justifyContent: 'center' }}
-          className={css.rounded}
-        >
-          {env.infraIDs.length}
-        </Text>
       </Container>
     );
   };
@@ -112,7 +118,10 @@ function ChaosInfrastructureReferenceFieldView({
         key={infrastructure.id}
         padding="small"
         background={Color.WHITE}
-        className={selectedInfrastructure?.id === infrastructure.id ? css.selected : css.notSelected}
+        className={cx(
+          selectedInfrastructure?.id === infrastructure.id ? css.selected : css.notSelected,
+          preSelectedInfrastructure?.id === infrastructure.id ? css.selected : css.notSelected
+        )}
         onClick={() => {
           infrastructure.isActive
             ? setSelectedInfrastructure(infrastructure)
@@ -199,68 +208,77 @@ function ChaosInfrastructureReferenceFieldView({
           </Layout.Horizontal>
         }
       >
-        <Layout.Horizontal flex width={'100%'} padding={{ bottom: 'small' }} border={{ bottom: true }}>
-          <Container
-            width={'50%'}
-            padding={{ left: 'medium', right: 'medium' }}
-            flex={{ justifyContent: 'space-between' }}
-          >
-            <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
-              {getString('environments')}
-            </Text>
-            <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
-              {getString('infrastructures')}
-            </Text>
-          </Container>
-          <ExpandingSearchInput
-            alwaysExpanded
-            throttle={500}
-            placeholder={getString('search')}
-            onChange={e => setSearchInfrastructure(e)}
-          />
-        </Layout.Horizontal>
         {environmentList && environmentList.length > 0 ? (
-          <Layout.Vertical
-            height={'calc(88% - 32px)'}
-            padding={{ bottom: 'medium', top: 'small' }}
-            className={css.gap4}
-          >
-            <Layout.Horizontal width={'100%'}>
-              <Layout.Vertical
-                width={'30%'}
-                padding={{ left: 'medium', right: 'medium', top: 'small' }}
-                className={css.agentList}
+          <Layout.Vertical height={'100%'}>
+            <Layout.Horizontal flex width={'100%'} padding={{ bottom: 'small' }} border={{ bottom: true }}>
+              <Container
+                width={'50%'}
+                padding={{ left: 'medium', right: 'medium' }}
+                flex={{ justifyContent: 'space-between' }}
               >
-                <Container
-                  className={`${css.listEnvContainer} ${activeEnv === 'all' && css.activeEnv}`}
-                  onClick={() => {
-                    setEnvID('all');
-                    setactiveEnv('all');
-                  }}
+                <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
+                  {getString('environments')}
+                </Text>
+                <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
+                  {getString('infrastructures')}
+                </Text>
+              </Container>
+              <ExpandingSearchInput
+                alwaysExpanded
+                throttle={500}
+                placeholder={getString('search')}
+                onChange={e => setSearchInfrastructure(e)}
+              />
+            </Layout.Horizontal>
+            <Layout.Horizontal height={'calc(87% - 10px)'}>
+              <Layout.Horizontal
+                width={'30%'}
+                padding={{ bottom: 'medium', top: 'small' }}
+                className={css.gap4}
+                border={{ right: true }}
+              >
+                <Layout.Vertical
+                  width={'30%'}
+                  padding={{ left: 'medium', right: 'small', top: 'small', bottom: 'medium' }}
+                  className={css.agentList}
                 >
-                  <Container flex padding={{ left: 'small', right: 'medium', bottom: 'small', top: 'small' }}>
+                  <Container
+                    flex
+                    padding="small"
+                    className={`${css.listEnvContainer} ${activeEnv === 'all' && css.activeEnv}`}
+                    onClick={() => {
+                      setEnvID('all');
+                      setactiveEnv('all');
+                    }}
+                  >
                     <div className={css.itemEnv}>
-                      <Layout.Horizontal padding={{ left: 'small' }} spacing="medium">
-                        <Text lineClamp={1}>{getString('all')}</Text>
+                      <Layout.Horizontal padding={{ left: 'small' }} spacing="medium" className={css.leftInfo}>
+                        <Text lineClamp={1} color={Color.GREY_800} font={{ variation: FontVariation.H6 }}>
+                          {getString('all')}
+                        </Text>
                       </Layout.Horizontal>
+                      <Text
+                        font={{ variation: FontVariation.SMALL }}
+                        color={activeEnv === 'all' ? Color.WHITE : Color.PRIMARY_7}
+                        background={activeEnv === 'all' ? Color.PRIMARY_7 : Color.PRIMARY_BG}
+                        height={24}
+                        width={24}
+                        flex={{ alignItems: 'center', justifyContent: 'center' }}
+                        className={css.rounded}
+                      >
+                        {allInfrastructureLength}
+                      </Text>
                     </div>
-                    <Text
-                      font={{ variation: FontVariation.SMALL }}
-                      color={activeEnv === 'all' ? Color.WHITE : Color.PRIMARY_7}
-                      background={activeEnv === 'all' ? Color.PRIMARY_7 : Color.PRIMARY_BG}
-                      height={25}
-                      width={25}
-                      flex={{ alignItems: 'center', justifyContent: 'center' }}
-                      className={css.rounded}
-                    >
-                      {allInfrastructureLength}
-                    </Text>
                   </Container>
-                </Container>
-                {environmentList.map(env => listingEnvironment({ env: env }))}
-              </Layout.Vertical>
-              <Layout.Vertical width={'70%'} padding={{ top: 'small', left: 'medium' }} className={css.agentList}>
-                <Layout.Vertical className={css.agentListInnerContainer}>
+                  {environmentList.map(env => listingEnvironment({ env: env }))}
+                </Layout.Vertical>
+              </Layout.Horizontal>
+              <Layout.Vertical width={'70%'} padding={{ top: 'small' }} className={cx(css.gap4, css.agentList)}>
+                <Layout.Vertical
+                  width={'100%'}
+                  padding={{ left: 'medium', right: 'medium', top: 'small' }}
+                  className={cx(css.agentList, css.agentListInnerContainer)}
+                >
                   <Loader
                     loading={loading.listChaosInfra}
                     noData={{
@@ -292,8 +310,28 @@ function ChaosInfrastructureReferenceFieldView({
                     )}
                   </Loader>
                 </Layout.Vertical>
-                <Container className={css.paginationContainer}>{pagination}</Container>
+                <Layout.Horizontal flex={{ justifyContent: 'center' }}>
+                  <Container className={css.paginationContainer}>{pagination}</Container>
+                </Layout.Horizontal>
               </Layout.Vertical>
+            </Layout.Horizontal>
+            <Layout.Horizontal className={css.gap4} padding={{ right: 'medium' }} flex={{ justifyContent: 'flex-end' }}>
+              <Button
+                variation={ButtonVariation.PRIMARY}
+                text={getString('apply')}
+                onClick={() => {
+                  setOpen(false);
+                  setInfrastructureValue(selectedInfrastructure);
+                }}
+                disabled={!selectedInfrastructure}
+              />
+              <Button
+                variation={ButtonVariation.TERTIARY}
+                text={getString('cancel')}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              />
             </Layout.Horizontal>
           </Layout.Vertical>
         ) : (
@@ -322,28 +360,6 @@ function ChaosInfrastructureReferenceFieldView({
             )}
           </Layout.Vertical>
         )}
-        <Layout.Horizontal
-          className={css.gap4}
-          padding={{ right: 'medium', top: 'small' }}
-          flex={{ justifyContent: 'flex-end' }}
-        >
-          <Button
-            variation={ButtonVariation.PRIMARY}
-            text={getString('apply')}
-            onClick={() => {
-              setOpen(false);
-              setInfrastructureValue(selectedInfrastructure);
-            }}
-            disabled={!selectedInfrastructure}
-          />
-          <Button
-            variation={ButtonVariation.TERTIARY}
-            text={getString('cancel')}
-            onClick={() => {
-              setOpen(false);
-            }}
-          />
-        </Layout.Horizontal>
       </Dialog>
     </FormGroup>
   );

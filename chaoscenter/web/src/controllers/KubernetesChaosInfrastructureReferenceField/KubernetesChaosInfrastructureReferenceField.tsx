@@ -14,11 +14,11 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const scope = getScope();
   const { showError } = useToaster();
   const [searchInfrastructure, setSearchInfrastructure] = React.useState<string>('');
-
   const [page, setPage] = React.useState<number>(0);
-  const limit = 8;
+  const limit = 5;
   const [envID, setEnvID] = React.useState<string>('all');
   const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number>(0);
+  const [activeEnv, setactiveEnv] = React.useState<string>('all');
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
@@ -56,6 +56,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     noOfExperimentsRuns: preSelectedInfrastructure?.noOfExperimentRuns,
     environmentID: preSelectedInfrastructure?.environmentID
   };
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [envID]);
 
   React.useEffect(() => {
     if (preSelectedInfrastructure) {
@@ -104,6 +108,8 @@ function KubernetesChaosInfrastructureReferenceFieldController({
           setFieldValue('chaosInfrastructure.environmentID', infrastructure.environmentID, false);
         }
       }}
+      activeEnv={activeEnv}
+      setactiveEnv={setactiveEnv}
       searchInfrastructure={searchInfrastructure}
       setSearchInfrastructure={setSearchInfrastructure}
       allInfrastructureLength={initialAllInfrastructureLength}
