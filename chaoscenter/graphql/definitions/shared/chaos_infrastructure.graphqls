@@ -177,6 +177,10 @@ input RegisterInfraRequest {
   """
   nodeSelector: String
   """
+  TelemetryEndpoint value indicating telemetry endpoint for infra
+  """
+  TelemetryEndpoint: String
+  """
   Node tolerations used by infra
   """
   tolerations: [Toleration]
