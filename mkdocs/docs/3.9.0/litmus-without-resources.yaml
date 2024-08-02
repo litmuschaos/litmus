@@ -248,11 +248,11 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "master"
+              value: "3.9.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
-              value: ":3030"
+              value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
               value: "3.9.0"
             - name: REMOTE_HUB_MAX_SIZE
@@ -270,9 +270,9 @@ spec:
             - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca.crt"
             - name: REST_PORT
-              value: 8081
+              value: "8081"
             - name: GRPC_PORT
-              value: 8001
+              value: "8001"
           ports:
             - containerPort: 8081
             - containerPort: 8001
@@ -360,7 +360,7 @@ spec:
             - name: LITMUS_GQL_GRPC_ENDPOINT
               value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
-              value: ":8000"
+              value: "8000"
             - name: ALLOWED_ORIGINS
               value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?" #ip needs to added here
             - name: ENABLE_INTERNAL_TLS
@@ -372,9 +372,9 @@ spec:
             - name: CA_CERT_TLS_PATH
               value: "/etc/tls/ca.crt"
             - name: REST_PORT
-              value: 3001
+              value: "3001"
             - name: GRPC_PORT
-              value: 3031
+              value: "3031"
           ports:
             - containerPort: 3001
             - containerPort: 3031
