@@ -100,7 +100,7 @@ function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElem
           return (
             <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '0.25rem' }}>
               <Button
-                key={data.projectID}
+                key={`${data.projectID}-accept`}
                 variation={ButtonVariation.PRIMARY}
                 text={getString('acceptInvitation')}
                 onClick={() =>
@@ -122,7 +122,7 @@ function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElem
                 }
               />
               <Button
-                key={data.projectID}
+                key={`${data.projectID}-decline`}
                 icon="main-trash"
                 iconProps={{ size: 18, color: Color.RED_300 }}
                 variation={ButtonVariation.ICON}
