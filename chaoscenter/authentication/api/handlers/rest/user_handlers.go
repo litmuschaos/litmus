@@ -286,13 +286,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		user, err := service.FindUserByUsername(userRequest.Username)
 		if err != nil {
 			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
 		// Checking if user is deactivated
 		if user.DeactivatedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
