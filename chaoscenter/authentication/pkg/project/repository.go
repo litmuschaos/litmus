@@ -634,7 +634,7 @@ func NewRepo(collection *mongo.Collection) Repository {
 
 // DeleteProject deletes the project with given projectID
 func (r repository) DeleteProject(projectID string) error {
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 
 	result, err := r.Collection.DeleteOne(context.TODO(), query)
 	if err != nil {
