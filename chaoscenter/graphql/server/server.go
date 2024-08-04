@@ -13,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"context"
 	"fmt"
@@ -81,6 +82,7 @@ func validateVersion() error {
 func setupGin() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
