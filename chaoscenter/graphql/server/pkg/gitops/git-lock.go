@@ -16,13 +16,13 @@ type GitMutexLock struct {
 
 // Lock acquires a lock on particular project or repo for access
 func (g *GitMutexLock) Lock(repo string, branch *string) {
-	url := getKey(repo, branch)
+	key := getKey(repo, branch)
 
 	g.mapMutex.Lock()
-	if _, ok := g.gitMutex[url]; !ok {
-		g.gitMutex[url] = &sync.Mutex{}
+	if _, ok := g.gitMutex[key]; !ok {
+		g.gitMutex[key] = &sync.Mutex{}
 	}
-	temp := g.gitMutex[url]
+	temp := g.gitMutex[key]
 	g.mapMutex.Unlock()
 
 	temp.Lock()
@@ -31,12 +31,12 @@ func (g *GitMutexLock) Lock(repo string, branch *string) {
 
 // Unlock releases the lock on particular project or repo
 func (g *GitMutexLock) Unlock(repo string, branch *string) {
-	url := getKey(repo, branch)
+	key := getKey(repo, branch)
 	g.mapMutex.Lock()
-	if _, ok := g.gitMutex[url]; !ok {
+	if _, ok := g.gitMutex[key]; !ok {
 		return
 	}
-	temp := g.gitMutex[url]
+	temp := g.gitMutex[key]
 	g.mapMutex.Unlock()
 	temp.Unlock()
 	log.Info("release LOCK")
