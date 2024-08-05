@@ -1,5 +1,5 @@
 import { Pagination, useToaster } from '@harnessio/uicore';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { listChaosInfra } from '@api/core';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
@@ -9,7 +9,8 @@ import { listEnvironment } from '@api/core/environments';
 
 function KubernetesChaosInfrastructureReferenceFieldController({
   setFieldValue,
-  initialInfrastructureID
+  initialInfrastructureID,
+  initialEnvironmentID
 }: ChaosInfrastructureReferenceFieldProps): React.ReactElement {
   const scope = getScope();
   const { showError } = useToaster();
@@ -43,10 +44,15 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     }
   }, [listChaosInfraData]);
 
+  const preSelectedEnvironment = env?.listEnvironments?.environments?.find(
+    ({ environmentID }) => environmentID === initialEnvironmentID
+  );
+
   // TODO: replace with get API as this becomes empty during edit
   const preSelectedInfrastructure = listChaosInfraData?.listInfras.infras.find(
     ({ infraID }) => infraID === initialInfrastructureID
   );
+
   const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure && {
     id: preSelectedInfrastructure?.infraID,
     name: preSelectedInfrastructure?.name,
@@ -60,6 +66,12 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   React.useEffect(() => {
     setPage(0);
   }, [envID]);
+
+  useEffect(() => {
+    if (preSelectedEnvironment) {
+      setEnvID(preSelectedEnvironment?.environmentID), setactiveEnv(preSelectedEnvironment?.environmentID);
+    }
+  }, [preSelectedEnvironment, setFieldValue]);
 
   React.useEffect(() => {
     if (preSelectedInfrastructure) {

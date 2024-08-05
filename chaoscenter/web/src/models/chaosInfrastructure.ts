@@ -31,6 +31,7 @@ export function getChaosInfrastructureStatus(
 export interface ChaosInfrastructureReferenceFieldProps {
   setFieldValue: FormikHelpers<ExperimentMetadata>['setFieldValue'];
   initialInfrastructureID: string | undefined;
+  initialEnvironmentID: string | undefined;
 }
 
 export enum DeploymentScopeOptions {
