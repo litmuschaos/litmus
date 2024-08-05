@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
@@ -18,7 +19,7 @@ import (
 type Repository interface {
 	GetProjectByProjectID(projectID string) (*entities.Project, error)
 	GetProjects(query bson.D) ([]*entities.Project, error)
-	GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error)
+	GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error)
 	GetProjectStats() ([]*entities.ProjectStats, error)
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
@@ -69,51 +70,82 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 }
 
 // GetProjectsByUserID returns a project based on the userID
-func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entities.Project, error) {
+func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
 	var projects []*entities.Project
-	query := bson.D{}
+	ctx := context.TODO()
 
-	if isOwner {
-		query = bson.D{
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"role", bson.D{
-						{"$eq", entities.RoleOwner},
-					}},
-				}},
-			}}}
+	// Construct the pipeline
+	var pipeline mongo.Pipeline
+
+	// Match stage
+	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID))
+
+	// Filter stage
+	if request.Filter != nil {
+		filterStages := project_utils.CreateFilterStages(request.Filter, request.UserID)
+		pipeline = append(pipeline, filterStages...)
+	}
+
+	// Sort stage
+	sortStage := project_utils.CreateSortStage(request.Sort)
+	if len(sortStage) > 0 {
+		pipeline = append(pipeline, sortStage)
+	}
+
+	// Pagination stages
+	paginationStages := project_utils.CreatePaginationStage(request.Pagination)
+
+	// Facet stage to count total projects and paginate results
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"totalCount", bson.A{
+				bson.D{{"$count", "totalNumberOfProjects"}},
+			}},
+			{"projects", append(mongo.Pipeline{}, paginationStages...)},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
+
+	// Execute the aggregate pipeline
+	cursor, err := r.Collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Extract results
+	var result struct {
+		TotalCount []struct {
+			TotalNumberOfProjects int64 `bson:"totalNumberOfProjects"`
+		} `bson:"totalCount"`
+		Projects []*entities.Project `bson:"projects"`
+	}
+
+	if cursor.Next(ctx) {
+		if err := cursor.Decode(&result); err != nil {
+			return nil, err
+		}
+	}
+
+	var totalNumberOfProjects int64
+	if len(result.TotalCount) > 0 {
+		totalNumberOfProjects = result.TotalCount[0].TotalNumberOfProjects
 	} else {
-		query = bson.D{
-			{"is_removed", false},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"$and", bson.A{
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.PendingInvitation},
-						}}},
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.DeclinedInvitation},
-						}}},
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.ExitedProject},
-						}}},
-					}},
-				}},
-			}}}
+		zero := int64(0)
+		return &entities.ListProjectResponse{
+			Projects:              projects,
+			TotalNumberOfProjects: &zero,
+		}, nil
 	}
 
-	result, err := r.Collection.Find(context.TODO(), query)
-	if err != nil {
-		return nil, err
-	}
-	err = result.All(context.TODO(), &projects)
-	if err != nil {
-		return nil, err
+	projects = result.Projects
+
+	response := entities.ListProjectResponse{
+		Projects:              projects,
+		TotalNumberOfProjects: &totalNumberOfProjects,
 	}
 
-	return projects, err
+	return &response, nil
 }
 
 // GetProjectStats returns stats related to projects in the DB

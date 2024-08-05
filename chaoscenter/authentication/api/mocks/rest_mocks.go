@@ -97,9 +97,9 @@ func (m *MockedApplicationService) GetProjects(query bson.D) ([]*entities.Projec
 	return args.Get(0).([]*entities.Project), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error) {
-	args := m.Called(uid, isOwner)
-	return args.Get(0).([]*entities.Project), args.Error(1)
+func (m *MockedApplicationService) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
+	args := m.Called(request)
+	return args.Get(0).(*entities.ListProjectResponse), args.Error(1)
 }
 
 func (m *MockedApplicationService) GetProjectStats() ([]*entities.ProjectStats, error) {
