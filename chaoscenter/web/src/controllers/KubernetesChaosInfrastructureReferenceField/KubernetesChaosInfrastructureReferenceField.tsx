@@ -19,7 +19,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const limit = 5;
   const [envID, setEnvID] = React.useState<string>('all');
   const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number>(0);
-  const [activeEnv, setactiveEnv] = React.useState<string>('all');
+  const [activeEnv, setActiveEnv] = React.useState<string>('all');
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
@@ -29,14 +29,14 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     options: { onError: error => showError(error.message) }
   });
 
-  const { data: env } = listEnvironment({
+  const { data: listEnvironmentData } = listEnvironment({
     ...scope,
     options: {
       onError: err => showError(err.message)
     }
   });
 
-  const environmentList = env?.listEnvironments?.environments;
+  const environmentList = listEnvironmentData?.listEnvironments?.environments;
 
   React.useEffect(() => {
     if (envID === 'all' && listChaosInfraData?.listInfras?.totalNoOfInfras && searchInfrastructure === '') {
@@ -44,7 +44,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     }
   }, [listChaosInfraData]);
 
-  const preSelectedEnvironment = env?.listEnvironments?.environments?.find(
+  const preSelectedEnvironment = listEnvironmentData?.listEnvironments?.environments?.find(
     ({ environmentID }) => environmentID === initialEnvironmentID
   );
 
@@ -69,7 +69,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
 
   useEffect(() => {
     if (preSelectedEnvironment) {
-      setEnvID(preSelectedEnvironment?.environmentID), setactiveEnv(preSelectedEnvironment?.environmentID);
+      setEnvID(preSelectedEnvironment?.environmentID), setActiveEnv(preSelectedEnvironment?.environmentID);
     }
   }, [preSelectedEnvironment, setFieldValue]);
 
@@ -121,7 +121,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
         }
       }}
       activeEnv={activeEnv}
-      setactiveEnv={setactiveEnv}
+      setActiveEnv={setActiveEnv}
       searchInfrastructure={searchInfrastructure}
       setSearchInfrastructure={setSearchInfrastructure}
       allInfrastructureLength={initialAllInfrastructureLength}

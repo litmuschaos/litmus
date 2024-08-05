@@ -43,7 +43,7 @@ interface ChaosInfrastructureReferenceFieldViewProps {
   setSearchInfrastructure: React.Dispatch<React.SetStateAction<string>>;
   setEnvID: (id: string) => void;
   activeEnv: string | undefined;
-  setactiveEnv: (id: string) => void;
+  setActiveEnv: (id: string) => void;
   loading: {
     listChaosInfra: boolean;
   };
@@ -60,7 +60,7 @@ function ChaosInfrastructureReferenceFieldView({
   setSearchInfrastructure,
   setEnvID,
   activeEnv,
-  setactiveEnv,
+  setActiveEnv,
   loading,
   pagination
 }: ChaosInfrastructureReferenceFieldViewProps): JSX.Element {
@@ -84,10 +84,10 @@ function ChaosInfrastructureReferenceFieldView({
         key={env.environmentID}
         flex
         padding="small"
-        className={`${css.listEnvContainer} ${activeEnv === env.environmentID && css.activeEnv}`}
+        className={cx(css.listEnvContainer, activeEnv === env.environmentID && css.activeEnv)}
         onClick={() => {
           setEnvID(env.environmentID);
-          setactiveEnv(env.environmentID);
+          setActiveEnv(env.environmentID);
         }}
       >
         <div className={css.itemEnv}>
@@ -98,8 +98,8 @@ function ChaosInfrastructureReferenceFieldView({
           </Layout.Horizontal>
           <Text
             font={{ variation: FontVariation.SMALL }}
-            color={activeEnv === env.name ? Color.WHITE : Color.PRIMARY_7}
-            background={activeEnv === env.name ? Color.PRIMARY_7 : Color.PRIMARY_BG}
+            color={activeEnv === env.environmentID ? Color.WHITE : Color.PRIMARY_7}
+            background={activeEnv === env.environmentID ? Color.PRIMARY_7 : Color.PRIMARY_BG}
             height={24}
             width={24}
             flex={{ alignItems: 'center', justifyContent: 'center' }}
@@ -245,10 +245,10 @@ function ChaosInfrastructureReferenceFieldView({
                   <Container
                     flex
                     padding="small"
-                    className={`${css.listEnvContainer} ${activeEnv === 'all' && css.activeEnv}`}
+                    className={cx(css.listEnvContainer, activeEnv === 'all' && css.activeEnv)}
                     onClick={() => {
                       setEnvID('all');
-                      setactiveEnv('all');
+                      setActiveEnv('all');
                     }}
                   >
                     <div className={css.itemEnv}>
