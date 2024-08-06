@@ -69,7 +69,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			logrus.WithError(err).Fatal("Failed to read message")
+			logrus.WithError(err).Panic("Failed to read message")
 		}
 
 		var r types.RawData
@@ -87,6 +87,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 		}
 		if r.Payload.Errors != nil {
 			logrus.Error("Error response from the server : ", string(message))
+			panicWhen("ALREADY CONNECTED", message)
 			continue
 		}
 
@@ -94,6 +95,12 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 		if err != nil {
 			logrus.WithError(err).Error("Error on processing request")
 		}
+	}
+}
+
+func panicWhen(errorMessage string, message []byte) {
+	if strings.Contains(string(message), errorMessage) {
+		logrus.Panic("Server error: ", errorMessage)
 	}
 }
 
