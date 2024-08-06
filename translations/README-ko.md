@@ -73,7 +73,7 @@
 
 리트머스 카오스는 CNCF 프로젝트의 일부입니다.
 
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## 커뮤니티
 
@@ -94,5 +94,5 @@
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="CNCF Landscape의 리트머스" height="15">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="CNCF Landscape의 리트머스" height="15">
 </a>
