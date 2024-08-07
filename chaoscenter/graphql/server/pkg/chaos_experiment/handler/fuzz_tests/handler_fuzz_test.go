@@ -12,16 +12,13 @@ import (
 	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbChoasInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -75,9 +72,7 @@ func FuzzSaveChaosExperiment(f *testing.F) {
 		if err != nil {
 			return
 		}
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		findResult := []interface{}{bson.D{
 			{Key: "experiment_id", Value: targetStruct.request.ID},
 		}}
@@ -93,8 +88,7 @@ func FuzzSaveChaosExperiment(f *testing.F) {
 
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
-		store := store.NewStore()
-		res, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, targetStruct.request, targetStruct.projectID, store)
+		res, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, targetStruct.request, targetStruct.projectID, "")
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.SaveChaosExperiment() error = %v", err)
 			return
@@ -119,9 +113,7 @@ func FuzzDeleteChaosExperiment(f *testing.F) {
 			return
 		}
 		logrus.Info("here", targetStruct)
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		findResult := []interface{}{bson.D{
 			{Key: "experiment_id", Value: targetStruct.experimentId},
 			{Key: "experiment_runs", Value: []*dbChaosExperimentRun.ChaosExperimentRun{
@@ -137,7 +129,7 @@ func FuzzDeleteChaosExperiment(f *testing.F) {
 		mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 
 		store := store.NewStore()
-		res, err := mockServices.ChaosExperimentHandler.DeleteChaosExperiment(ctx, targetStruct.projectID, targetStruct.experimentId, &targetStruct.experimentRunID, store)
+		res, err := mockServices.ChaosExperimentHandler.DeleteChaosExperiment(ctx, targetStruct.projectID, targetStruct.experimentId, &targetStruct.experimentRunID, store, "")
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.DeleteChaosExperiment() error = %v", err)
 			return
@@ -161,9 +153,7 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 			return
 		}
 		experimentType := dbChaosExperiment.NonCronExperiment
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		mockServices := NewMockServices()
 		mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
@@ -174,7 +164,7 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 		store := store.NewStore()
-		res, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, targetStruct.experiment, targetStruct.projectID, store)
+		res, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, targetStruct.experiment, targetStruct.projectID, store, "")
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.UpdateChaosExperiment() error = %v", err)
 			return
@@ -197,9 +187,7 @@ func FuzzGetExperiment(f *testing.F) {
 		if err != nil {
 			return
 		}
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		mockServices := NewMockServices()
 		findResult := []interface{}{bson.D{
 			{Key: "project_id", Value: targetStruct.projectID},
@@ -244,9 +232,6 @@ func FuzzListExperiment(f *testing.F) {
 		if err != nil {
 			return
 		}
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
-		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		mockServices := NewMockServices()
 		findResult := []interface{}{
 			bson.D{
@@ -282,13 +267,8 @@ func FuzzDisableCronExperiment(f *testing.F) {
 		if len(targetStruct.request.Revision) < 1 {
 			return
 		}
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
-		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		mockServices := NewMockServices()
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
-		err = mockServices.ChaosExperimentHandler.DisableCronExperiment(username, targetStruct.request, targetStruct.projectID, store.NewStore())
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.DisableCronExperiment() error = %v", err)
 			return
@@ -309,9 +289,7 @@ func FuzzGetExperimentStats(f *testing.F) {
 			return
 		}
 
-		username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, authorization.AuthKey, username)
 		mockServices := NewMockServices()
 		findResult := []interface{}{
 			bson.D{

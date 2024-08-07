@@ -21,6 +21,7 @@ type User struct {
 	ID             string `bson:"_id,omitempty" json:"userID"`
 	Username       string `bson:"username,omitempty" json:"username"`
 	Password       string `bson:"password,omitempty" json:"password,omitempty"`
+	Salt           string `bson:"salt" json:"salt"`
 	Email          string `bson:"email,omitempty" json:"email,omitempty"`
 	Name           string `bson:"name,omitempty" json:"name,omitempty"`
 	Role           Role   `bson:"role,omitempty" json:"role"`
@@ -60,23 +61,6 @@ type UserWithProject struct {
 	Email    string     `bson:"email" json:"email"`
 	Name     string     `bson:"name" json:"name"`
 	Projects []*Project `bson:"projects" json:"projects"`
-}
-
-func (user User) GetUserWithProject() *UserWithProject {
-
-	return &UserWithProject{
-		ID:       user.ID,
-		Username: user.Username,
-		Name:     user.Name,
-		Audit: Audit{
-			IsRemoved: user.IsRemoved,
-			CreatedAt: user.CreatedAt,
-			CreatedBy: user.UpdatedBy,
-			UpdatedAt: user.UpdatedAt,
-			UpdatedBy: user.UpdatedBy,
-		},
-		Email: user.Email,
-	}
 }
 
 // SanitizedUser returns the user object without sensitive information
