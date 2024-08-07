@@ -11,7 +11,7 @@ import (
 
 	v2_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v2.4.0"
 
-	v3_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.4.0"
+	v0_0_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v0.0.0"
 
 	v3_9_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.9.0"
 
@@ -123,6 +123,10 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 	// key : previous version,
 	// value :{ Version Manger that upgrades the system from priv version to next, NextVersion points to next version in the path}
 	return map[string]UpgradeExecutor{
+		"0.0.0": {
+			NextVersion: "",
+			VersionManager: v0_0_0.NewVersionManger(m.Logger, m.DBClient),
+		},
 		"2.3.0": {
 			NextVersion:    "2.4.0",
 			VersionManager: v2_4_0.NewVersionManger(m.Logger, m.DBClient),
@@ -223,10 +227,7 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
-		"3.4.0": {
-			NextVersion:    "3.6.0",
-			VersionManager: v3_4_0.NewVersionManger(m.Logger, m.DBClient),
-		},
+
 		"3.6.0": {
 			NextVersion:    "3.7.0",
 			VersionManager: nil,

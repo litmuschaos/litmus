@@ -1,14 +1,18 @@
 package v0_0_0
 
 import (
+	"context"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+/* Template for Upgrade Manager to be followed for introducing new upgrade files*/
 
 // VersionManager implements IVersionManger
 type VersionManager struct {
 	Logger   *log.Logger
 	DBClient *mongo.Client
+	Context  *context.Context
 }
 
 // NewVersionManger provides a new instance of a new VersionManager
@@ -19,8 +23,10 @@ func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManage
 // Run executes all the steps required for the Version Manger
 // to upgrade from the previous version to `this` version
 func (vm VersionManager) Run() error {
-	if err := upgradeExecutor(vm.Logger, vm.DBClient); err != nil {
-		return nil
+	ctx := context.Background()
+	err := upgradeMany(vm.Logger, vm.DBClient, ctx)
+	if err != nil {
+		return err
 	}
-	return nil
+	return err
 }
