@@ -2,7 +2,6 @@ package probe
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -230,7 +229,6 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 			if probe.KubernetesCMDProperties.Source != nil {
 				jsonSource, _ := json.Marshal(probe.KubernetesCMDProperties.Source)
 				source := string(jsonSource)
-				fmt.Println("string source", source)
 				probeResponse.KubernetesCMDProperties.Source = &source
 			}
 

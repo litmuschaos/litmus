@@ -3,6 +3,8 @@ package mocks
 import (
 	"context"
 
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/stretchr/testify/mock"
@@ -70,6 +72,11 @@ func (m *MockedApplicationService) UpdateUser(user *entities.UserDetails) error 
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	args := m.Called(filter, updateQuery)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error {
 	args := m.Called(ctx, username, isDeactivate, deactivateTime)
 	return args.Error(0)
@@ -90,9 +97,9 @@ func (m *MockedApplicationService) GetProjects(query bson.D) ([]*entities.Projec
 	return args.Get(0).([]*entities.Project), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error) {
-	args := m.Called(uid, isOwner)
-	return args.Get(0).([]*entities.Project), args.Error(1)
+func (m *MockedApplicationService) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
+	args := m.Called(request)
+	return args.Get(0).(*entities.ListProjectResponse), args.Error(1)
 }
 
 func (m *MockedApplicationService) GetProjectStats() ([]*entities.ProjectStats, error) {
@@ -117,6 +124,11 @@ func (m *MockedApplicationService) UpdateInvite(projectID, userID string, invita
 
 func (m *MockedApplicationService) UpdateProjectName(projectID, projectName string) error {
 	args := m.Called(projectID, projectName)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) UpdateMemberRole(projectID, userID string, role *entities.MemberRole) error {
+	args := m.Called(projectID, userID, role)
 	return args.Error(0)
 }
 
@@ -145,6 +157,11 @@ func (m *MockedApplicationService) GetProjectMembers(projectID, state string) ([
 	return args.Get(0).([]*entities.Member), args.Error(1)
 }
 
+func (m *MockedApplicationService) GetProjectOwners(projectID string) ([]*entities.Member, error) {
+	args := m.Called(projectID)
+	return args.Get(0).([]*entities.Member), args.Error(1)
+}
+
 func (m *MockedApplicationService) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
 	args := m.Called(userID, invitationState)
 	return args.Get(0).([]*entities.Project), args.Error(1)
@@ -160,8 +177,8 @@ func (m *MockedApplicationService) ValidateToken(encodedToken string) (*jwt.Toke
 	return args.Get(0).(*jwt.Token), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetSignedJWT(user *entities.User) (string, error) {
-	args := m.Called(user)
+func (m *MockedApplicationService) GetSignedJWT(user *entities.User, jwtSecret string) (string, error) {
+	args := m.Called(user, jwtSecret)
 	return args.String(0), args.Error(1)
 }
 
@@ -197,5 +214,25 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 
 func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
 	args := m.Called(userID, resourceID, rules, invitationStatus)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) DeleteProject(projectID string) error {
+	args := m.Called(projectID)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) CreateConfig(config authConfig.AuthConfig) error {
+	args := m.Called(config)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) GetConfig(key string) (*authConfig.AuthConfig, error) {
+	args := m.Called(key)
+	return args.Get(0).(*authConfig.AuthConfig), args.Error(1)
+}
+
+func (m *MockedApplicationService) UpdateConfig(ctx context.Context, key string, value interface{}) error {
+	args := m.Called(ctx, key, value)
 	return args.Error(0)
 }
