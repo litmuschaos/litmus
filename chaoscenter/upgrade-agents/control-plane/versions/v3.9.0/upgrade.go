@@ -11,10 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-
 const (
-	oldRole        = "Editor"
-	newRole        = "Executor"
+	oldRole = "Editor"
+	newRole = "Executor"
 )
 
 func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
@@ -43,9 +42,9 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 	}
 
 	logUpdateDocuments := log.Fields{
-		"documents_matched" : updateResult.MatchedCount,
-		"documents_updated" : updateResult.ModifiedCount,
-		"version"			: "3.9.0",
+		"documents_matched": updateResult.MatchedCount,
+		"documents_updated": updateResult.ModifiedCount,
+		"version":           "3.9.0",
 	}
 
 	logger.WithFields(logUpdateDocuments).Infof("Matched %v documents and updated %v documents in project collection", updateResult.MatchedCount, updateResult.ModifiedCount)
@@ -64,9 +63,9 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 		return err
 	}
 	logDocumentsCount := log.Fields{
-		"documents_matched" : updateResult.MatchedCount,
-		"documents_updated" : updateResult.ModifiedCount,
-		"version"			: "3.9.0",
+		"documents_matched": updateResult.MatchedCount,
+		"documents_updated": updateResult.ModifiedCount,
+		"version":           "3.9.0",
 	}
 
 	logger.WithFields(logDocumentsCount).Infof("Matched %v documents and updated %v documents in users collection.", updateResult.MatchedCount, updateResult.ModifiedCount)
