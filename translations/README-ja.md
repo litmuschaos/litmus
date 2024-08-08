@@ -73,7 +73,7 @@ Litmus は Apache License, Version 2.0 の下でライセンスされていま�
 
 Litmus Chaos はCNCFプロジェクトの一部です。
 
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## コミュニティ
 
@@ -94,5 +94,5 @@ Litmusコミュニティミーティングは毎月第3水曜日の10:00PM IST/9
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>

@@ -76,7 +76,7 @@ Litmos está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto comp
 
 Litmus Chaos forma parte de los projectos CNCF.
 
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## Communidad
 
@@ -97,5 +97,5 @@ Recursos de la comunidad:
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
