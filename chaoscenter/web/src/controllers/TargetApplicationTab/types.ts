@@ -4,7 +4,10 @@ export interface TargetApplicationData {
   applabel?: string;
 }
 
+export interface NamespaceData {
+  namespace: string[];
+}
+
 export interface AppInfoData {
-  namespace: string;
   appLabel: string[];
 }
