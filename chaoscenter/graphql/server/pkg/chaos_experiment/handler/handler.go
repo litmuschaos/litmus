@@ -306,8 +306,8 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	pipeline = mongo.Pipeline{
 		bson.D{
 			{"$match", bson.D{
-				{"experiment_id", experimentID},
-				{"project_id", projectID},
+				{"experiment_id", bson.D{{"$eq", experimentID}}},
+				{"project_id", bson.D{{"$eq", projectID}}},
 				{"is_removed", false},
 			}},
 		},
@@ -512,7 +512,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 	// Match with identifiers
 	matchIdStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 		}},
 	}
 
@@ -1051,7 +1051,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -1345,7 +1345,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 // validateDuplicateExperimentName validates if the name of experiment is duplicate
 func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Context, projectID, name string) error {
 	filterQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"name", name},
 		{"is_removed", false},
 	}
