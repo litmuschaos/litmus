@@ -25,3 +25,13 @@ if [ "$LITMUS_UI_FILE_CHANGES" -gt 0 ];
   else
     echo "\033[0;93mSkipping husky pre-commit hook in $MATCH_PATH folder\033[0m"
 fi
+
+# check for unused strings in strings.en.yaml
+UNUSED_STRINGS=$(grep -Fvxf <(grep -oP '"\K[^"]+' chaoscenter/web/strings/strings.en.yaml) <(grep -rl 'chaoscenter/web/src' ./*))
+if [ "$UNUSED_STRINGS" != "" ]; then
+  echo "\033[0;31;1mERROR: Unused strings found in strings.en.yaml\033[0m"
+  echo "$UNUSED_STRINGS"
+  exit 1
+fi
+
+
