@@ -1071,8 +1071,8 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 	} else {
 		splitCPVersion := strings.Split(currentVersion, ".")
 		splitSubVersion := strings.Split(identity.Version, ".")
-		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] || splitSubVersion[1] != splitCPVersion[1] {
-			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.%v.x got %v)", splitCPVersion[0], splitCPVersion[1], identity.Version)
+		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] {
+			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.x.x got %v)", splitCPVersion[0], identity.Version)
 		}
 	}
 	infra, err := in.infraOperator.GetInfra(identity.InfraID)
