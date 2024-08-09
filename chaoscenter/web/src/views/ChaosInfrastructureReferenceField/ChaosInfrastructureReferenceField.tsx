@@ -257,7 +257,7 @@ function ChaosInfrastructureReferenceFieldView({
                   onChange={setSearchInfrastructure}
                 />
               </Layout.Horizontal>
-              <Layout.Horizontal height={'83%'}>
+              <Layout.Horizontal height={'calc(100% - 80px)'}>
                 <Layout.Horizontal width={'30%'} padding={{ top: 'small' }} border={{ right: true }}>
                   <Layout.Vertical
                     width={'30%'}
