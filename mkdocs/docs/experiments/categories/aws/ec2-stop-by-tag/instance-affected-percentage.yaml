@@ -16,7 +16,7 @@ spec:
         - name: INSTANCE_AFFECTED_PERC
           value: '100'
         # tag of the ec2 instance
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
         # region for the ec2 instance
         - name: REGION

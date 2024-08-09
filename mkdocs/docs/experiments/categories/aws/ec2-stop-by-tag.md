@@ -137,9 +137,9 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <th> Notes </th>
       </tr>
       <tr> 
-        <td> INSTANCE_TAG </td>
+        <td> EC2_INSTANCE_TAG </td>
         <td> Instance Tag to filter the target ec2 instance.</td>
-        <td> The <code>INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
+        <td> The <code>EC2_INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
       </tr>
       <tr>
         <td> REGION </td>
@@ -196,7 +196,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target single instance
 
-It will stop a random single ec2 instance with the given `INSTANCE_TAG` tag and the `REGION` region.
+It will stop a random single ec2 instance with the given `EC2_INSTANCE_TAG` tag and the `REGION` region.
 
 Use the following example to tune this:
 
@@ -217,7 +217,7 @@ spec:
       components:
         env:
         # tag of the ec2 instance
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
         # region for the ec2 instance
         - name: REGION
@@ -228,7 +228,7 @@ spec:
 
 ### Target Percent of instances
 
-It will stop the `INSTANCE_AFFECTED_PERC` percentage of ec2 instances with the given `INSTANCE_TAG` tag and `REGION` region.
+It will stop the `INSTANCE_AFFECTED_PERC` percentage of ec2 instances with the given `EC2_INSTANCE_TAG` tag and `REGION` region.
 
 Use the following example to tune this:
 
@@ -252,7 +252,7 @@ spec:
         - name: INSTANCE_AFFECTED_PERC
           value: '100'
         # tag of the ec2 instance
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
         # region for the ec2 instance
         - name: REGION
