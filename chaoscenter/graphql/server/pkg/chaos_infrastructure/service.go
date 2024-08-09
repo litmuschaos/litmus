@@ -932,6 +932,9 @@ func fetchLatestVersion(versions map[int]string) int {
 
 // updateVersionFormat converts string array to int by removing decimal points, 1.0.0 will be returned as 100, 0.1.0 will be returned as 10, 0.0.1 will be returned as 1
 func updateVersionFormat(str string) (int, error) {
+	if str == CIVersion {
+		return 0, nil
+	}
 	var versionInt int
 	versionSlice := strings.Split(str, ".")
 	for i, val := range versionSlice {
