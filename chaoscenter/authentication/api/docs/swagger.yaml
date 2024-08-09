@@ -318,6 +318,28 @@ paths:
       summary: Decline invitation.
       tags:
       - ProjectRouter
+  /delete_project/{project_id}:
+    post:
+      consumes:
+      - application/json
+      description: Delete a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrProjectNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - ProjectRouter
   /dex/callback:
     get:
       consumes:
@@ -404,6 +426,31 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrServerError'
       summary: Get active project members.
+      tags:
+      - ProjectRouter
+  /get_project_owners/:project_id/:state:
+    get:
+      consumes:
+      - application/json
+      description: Return list of active project owners.
+      parameters:
+      - description: State
+        in: path
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get active project Owners.
       tags:
       - ProjectRouter
   /get_project_role/:project_id:
@@ -836,6 +883,33 @@ paths:
             $ref: '#/definitions/response.ErrUnauthorized'
       tags:
       - UserRouter
+  /update_member_role:
+    post:
+      consumes:
+      - application/json
+      description: Return updated member role.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Update member role.
+      tags:
+      - ProjectRouter
   /update_project_name:
     post:
       consumes:

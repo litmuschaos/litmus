@@ -229,6 +229,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/delete_project/{project_id}": {
+            "post": {
+                "description": "Delete a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrProjectNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
+                    }
+                }
+            }
+        },
         "/dex/callback": {
             "get": {
                 "description": "DexRouter creates all the required routes for OAuth purposes. .",
@@ -339,6 +373,44 @@ const docTemplate = `{
                     "ProjectRouter"
                 ],
                 "summary": "Get active project members.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "State",
+                        "name": "state",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_project_owners/:project_id/:state": {
+            "get": {
+                "description": "Return list of active project owners.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get active project Owners.",
                 "parameters": [
                     {
                         "type": "string",
@@ -1018,6 +1090,47 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_member_role": {
+            "post": {
+                "description": "Return updated member role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Update member role.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
