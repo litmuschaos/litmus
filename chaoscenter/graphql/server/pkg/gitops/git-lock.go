@@ -26,7 +26,7 @@ func (g *GitMutexLock) Lock(repo string, branch *string) {
 	g.mapMutex.Unlock()
 
 	temp.Lock()
-	log.Info("acquired LOCK : ", key)
+	log.Info("acquired LOCK")
 }
 
 // Unlock releases the lock on particular project or repo
@@ -39,7 +39,7 @@ func (g *GitMutexLock) Unlock(repo string, branch *string) {
 	temp := g.gitMutex[key]
 	g.mapMutex.Unlock()
 	temp.Unlock()
-	log.Info("release LOCK : ", key)
+	log.Info("release LOCK")
 }
 
 // NewGitLock returns a instance of GitMutexLock
