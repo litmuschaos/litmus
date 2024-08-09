@@ -8,7 +8,8 @@ import {
   ExpandingSearchInput,
   Layout,
   Text,
-  useToaster
+  useToaster,
+  useToggleOpen
 } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import cx from 'classnames';
@@ -19,7 +20,7 @@ import FallbackBox from '@images/FallbackBox.svg';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import Loader from '@components/Loader';
 import { useRouteWithBaseUrl } from '@hooks';
-import { Environment } from '@api/entities';
+import { Environment, EnvironmentDetail } from '@api/entities';
 import css from './ChaosInfrastructureReferenceField.module.scss';
 
 export interface InfrastructureDetails {
@@ -42,8 +43,7 @@ interface ChaosInfrastructureReferenceFieldViewProps {
   searchInfrastructure: string;
   setSearchInfrastructure: React.Dispatch<React.SetStateAction<string>>;
   setEnvID: (id: string) => void;
-  activeEnv: string | undefined;
-  setActiveEnv: (id: string) => void;
+  envID: string | undefined;
   loading: {
     listChaosInfra: boolean;
   };
@@ -58,70 +58,77 @@ function ChaosInfrastructureReferenceFieldView({
   setInfrastructureValue,
   searchInfrastructure,
   setSearchInfrastructure,
+  envID,
   setEnvID,
-  activeEnv,
-  setActiveEnv,
   loading,
   pagination
 }: ChaosInfrastructureReferenceFieldViewProps): JSX.Element {
-  const [isOpen, setOpen] = React.useState(false);
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
 
   const [selectedInfrastructure, setSelectedInfrastructure] = React.useState<InfrastructureDetails | undefined>(
     preSelectedInfrastructure
   );
+  const { isOpen, open, close } = useToggleOpen();
 
-  // const searchParams = useSearchParams();
-  // const infrastructureType =
-  //   (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
   const { showError } = useToaster();
   const { getString } = useStrings();
 
-  const listingEnvironment = ({ env }: { env: Environment }): JSX.Element => {
+  const EnvListItem = ({ EnvDetail }: { EnvDetail: EnvironmentDetail }): JSX.Element => {
     return (
       <Container
-        key={env.environmentID}
+        key={EnvDetail.envID}
         flex
         padding="small"
-        className={cx(css.listEnvContainer, activeEnv === env.environmentID && css.activeEnv)}
+        className={cx(css.listEnvContainer, { [css.activeEnv]: envID === EnvDetail.envID })}
         onClick={() => {
-          setEnvID(env.environmentID);
-          setActiveEnv(env.environmentID);
+          setEnvID(EnvDetail.envID);
         }}
       >
         <div className={css.itemEnv}>
           <Layout.Horizontal padding={{ left: 'small' }} spacing="medium" className={css.leftInfo}>
             <Text lineClamp={1} color={Color.GREY_800} font={{ variation: FontVariation.H6 }}>
-              {env.name}
+              {EnvDetail.envName}
             </Text>
           </Layout.Horizontal>
           <Text
             font={{ variation: FontVariation.SMALL }}
-            color={activeEnv === env.environmentID ? Color.WHITE : Color.PRIMARY_7}
-            background={activeEnv === env.environmentID ? Color.PRIMARY_7 : Color.PRIMARY_BG}
+            color={envID === EnvDetail.envID ? Color.WHITE : Color.PRIMARY_7}
+            background={envID === EnvDetail.envID ? Color.PRIMARY_7 : Color.PRIMARY_BG}
             height={24}
             width={24}
             flex={{ alignItems: 'center', justifyContent: 'center' }}
             className={css.rounded}
           >
-            {env.infraIDs.length}
+            {EnvDetail.totalInfra ?? 0}
           </Text>
         </div>
       </Container>
     );
   };
 
-  const listItem = ({ infrastructure }: { infrastructure: InfrastructureDetails }): JSX.Element => {
+  const EnvironmentList = ({ env }: { env: Environment }): JSX.Element => {
+    return (
+      <EnvListItem
+        EnvDetail={{
+          envName: env.name,
+          envID: env.environmentID,
+          totalInfra: env.infraIDs.length
+        }}
+      />
+    );
+  };
+
+  const InfrastructureListItem = ({ infrastructure }: { infrastructure: InfrastructureDetails }): JSX.Element => {
+    const isSelected =
+      selectedInfrastructure?.id === infrastructure.id || preSelectedInfrastructure?.id === infrastructure.id;
+
     return (
       <Container
         key={infrastructure.id}
         padding="small"
         background={Color.WHITE}
-        className={cx(
-          selectedInfrastructure?.id === infrastructure.id ? css.selected : css.notSelected,
-          preSelectedInfrastructure?.id === infrastructure.id ? css.selected : css.notSelected
-        )}
+        className={cx({ [css.selected]: isSelected, [css.notSelected]: !isSelected })}
         onClick={() => {
           infrastructure.isActive
             ? setSelectedInfrastructure(infrastructure)
@@ -135,7 +142,6 @@ function ChaosInfrastructureReferenceFieldView({
               size={12}
               name="pipeline-approval"
             />
-            {/* <Icon name={`service-${infrastructureType.toLocaleLowerCase()}` as IconName} size={23} /> */}
             <Text lineClamp={1} color={Color.GREY_800} font={{ variation: FontVariation.H6 }}>
               {infrastructure.name}
             </Text>
@@ -174,6 +180,26 @@ function ChaosInfrastructureReferenceFieldView({
     );
   };
 
+  const NoInfraImage = (): JSX.Element => {
+    return (
+      <Layout.Vertical flex={{ justifyContent: 'center' }} spacing="medium" padding={{ top: 'xlarge' }}>
+        <img src={FallbackBox} alt={getString('latestRun')} />
+        <Text font={{ variation: FontVariation.BODY1 }} color={Color.GREY_500}>
+          {searchInfrastructure === '' ? getString('newUserNoInfra.title') : getString('noFilteredActiveInfra')}
+        </Text>
+        {searchInfrastructure === '' && (
+          <Button
+            variation={ButtonVariation.PRIMARY}
+            text={getString('enableChaosInfraButton')}
+            onClick={() => {
+              history.push(paths.toEnvironments());
+            }}
+          />
+        )}
+      </Layout.Vertical>
+    );
+  };
+
   return (
     <FormGroup label={getString('selectChaosInfrastructureFormLabel')}>
       <Button
@@ -183,7 +209,7 @@ function ChaosInfrastructureReferenceFieldView({
         withoutCurrentColor={true}
         rightIcon="chevron-down"
         iconProps={{ size: 14 }}
-        onClick={() => setOpen(true)}
+        onClick={() => open()}
         disabled={loading.listChaosInfra}
       >
         <span className={css.placeholder}>
@@ -192,175 +218,113 @@ function ChaosInfrastructureReferenceFieldView({
           )}
         </span>
       </Button>
-      <Dialog
-        isOpen={isOpen}
-        enforceFocus={false}
-        canEscapeKeyClose
-        canOutsideClickClose
-        onClose={() => {
-          setOpen(false);
-          setSearchInfrastructure('');
-        }}
-        className={cx(css.referenceSelect, css.dialog)}
-        title={
-          <Layout.Horizontal>
-            <Text font={{ variation: FontVariation.H3 }}>{getString('selectChaosInfrastructure')}</Text>
-          </Layout.Horizontal>
-        }
-      >
-        {environmentList && environmentList.length > 0 ? (
-          <Layout.Vertical height={'100%'}>
-            <Layout.Horizontal flex width={'100%'} padding={{ bottom: 'small' }} border={{ bottom: true }}>
-              <Container
-                width={'50%'}
-                padding={{ left: 'medium', right: 'medium' }}
-                flex={{ justifyContent: 'space-between' }}
-              >
-                <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
-                  {getString('environments')}
-                </Text>
-                <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
-                  {getString('infrastructures')}
-                </Text>
-              </Container>
-              <ExpandingSearchInput
-                alwaysExpanded
-                throttle={500}
-                placeholder={getString('search')}
-                onChange={e => setSearchInfrastructure(e)}
-              />
+      {isOpen && (
+        <Dialog
+          isOpen={isOpen}
+          enforceFocus={false}
+          canEscapeKeyClose
+          canOutsideClickClose
+          onClose={() => {
+            close();
+            setSearchInfrastructure('');
+          }}
+          className={cx(css.referenceSelect, css.dialog)}
+          title={
+            <Layout.Horizontal>
+              <Text font={{ variation: FontVariation.H3 }}>{getString('selectChaosInfrastructure')}</Text>
             </Layout.Horizontal>
-            <Layout.Horizontal height={'calc(87% - 10px)'}>
-              <Layout.Horizontal
-                width={'30%'}
-                padding={{ bottom: 'medium', top: 'small' }}
-                className={css.gap4}
-                border={{ right: true }}
-              >
-                <Layout.Vertical
-                  width={'30%'}
-                  padding={{ left: 'medium', right: 'small', top: 'small', bottom: 'medium' }}
-                  className={css.agentList}
+          }
+        >
+          {environmentList && environmentList.length > 0 ? (
+            <Layout.Vertical height={'100%'}>
+              <Layout.Horizontal flex padding={{ bottom: 'small' }} border={{ bottom: true }}>
+                <Container
+                  width={'50%'}
+                  padding={{ left: 'medium', right: 'medium' }}
+                  flex={{ justifyContent: 'space-between' }}
                 >
-                  <Container
-                    flex
-                    padding="small"
-                    className={cx(css.listEnvContainer, activeEnv === 'all' && css.activeEnv)}
-                    onClick={() => {
-                      setEnvID('all');
-                      setActiveEnv('all');
-                    }}
-                  >
-                    <div className={css.itemEnv}>
-                      <Layout.Horizontal padding={{ left: 'small' }} spacing="medium" className={css.leftInfo}>
-                        <Text lineClamp={1} color={Color.GREY_800} font={{ variation: FontVariation.H6 }}>
-                          {getString('all')}
-                        </Text>
-                      </Layout.Horizontal>
-                      <Text
-                        font={{ variation: FontVariation.SMALL }}
-                        color={activeEnv === 'all' ? Color.WHITE : Color.PRIMARY_7}
-                        background={activeEnv === 'all' ? Color.PRIMARY_7 : Color.PRIMARY_BG}
-                        height={24}
-                        width={24}
-                        flex={{ alignItems: 'center', justifyContent: 'center' }}
-                        className={css.rounded}
-                      >
-                        {allInfrastructureLength}
-                      </Text>
-                    </div>
-                  </Container>
-                  {environmentList.map(env => listingEnvironment({ env: env }))}
-                </Layout.Vertical>
+                  <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
+                    {getString('environments')}
+                  </Text>
+                  <Text color={Color.GREY_800} font={{ variation: FontVariation.H5 }}>
+                    {getString('infrastructures')}
+                  </Text>
+                </Container>
+                <ExpandingSearchInput
+                  alwaysExpanded
+                  throttle={500}
+                  placeholder={getString('search')}
+                  onChange={setSearchInfrastructure}
+                />
               </Layout.Horizontal>
-              <Layout.Vertical width={'70%'} padding={{ top: 'small' }} className={cx(css.gap4, css.agentList)}>
-                <Layout.Vertical
-                  width={'100%'}
-                  padding={{ left: 'medium', right: 'medium', top: 'small' }}
-                  className={cx(css.agentList, css.agentListInnerContainer)}
-                >
-                  <Loader
-                    loading={loading.listChaosInfra}
-                    noData={{
-                      when: () => !infrastructureList,
-                      messageTitle: getString('noData.title'),
-                      message: getString('noData.message')
-                    }}
+              <Layout.Horizontal height={'83%'}>
+                <Layout.Horizontal width={'30%'} padding={{ top: 'small' }} border={{ right: true }}>
+                  <Layout.Vertical
+                    width={'30%'}
+                    padding={{ left: 'medium', right: 'small', top: 'small', bottom: 'medium' }}
+                    className={cx(css.agentList, css.agentListInnerContainer)}
                   >
-                    {infrastructureList && infrastructureList.length > 0 ? (
-                      infrastructureList.map(infrastructure => listItem({ infrastructure: infrastructure }))
-                    ) : (
-                      <Layout.Vertical flex={{ justifyContent: 'center' }} spacing="medium" padding={{ top: 'xlarge' }}>
-                        <img src={FallbackBox} alt={getString('latestRun')} />
-                        <Text font={{ variation: FontVariation.BODY1 }} color={Color.GREY_500}>
-                          {searchInfrastructure === ''
-                            ? getString('newUserNoInfra.title')
-                            : getString('noFilteredActiveInfra')}
-                        </Text>
-                        {searchInfrastructure === '' && (
-                          <Button
-                            variation={ButtonVariation.PRIMARY}
-                            text={getString('enableChaosInfraButton')}
-                            onClick={() => {
-                              history.push(paths.toEnvironments());
-                            }}
-                          />
-                        )}
-                      </Layout.Vertical>
-                    )}
-                  </Loader>
-                </Layout.Vertical>
-                <Layout.Horizontal flex={{ justifyContent: 'center' }}>
-                  <Container className={css.paginationContainer}>{pagination}</Container>
+                    <EnvListItem EnvDetail={{ envName: 'all', envID: 'all', totalInfra: allInfrastructureLength }} />
+                    {environmentList.map(env => (
+                      <EnvironmentList key={env.environmentID} env={env} />
+                    ))}
+                  </Layout.Vertical>
                 </Layout.Horizontal>
-              </Layout.Vertical>
-            </Layout.Horizontal>
-            <Layout.Horizontal className={css.gap4} padding={{ right: 'medium' }} flex={{ justifyContent: 'flex-end' }}>
-              <Button
-                variation={ButtonVariation.PRIMARY}
-                text={getString('apply')}
-                onClick={() => {
-                  setOpen(false);
-                  setInfrastructureValue(selectedInfrastructure);
-                }}
-                disabled={!selectedInfrastructure}
-              />
-              <Button
-                variation={ButtonVariation.TERTIARY}
-                text={getString('cancel')}
-                onClick={() => {
-                  setOpen(false);
-                }}
-              />
-            </Layout.Horizontal>
-          </Layout.Vertical>
-        ) : (
-          <Layout.Vertical
-            height={'calc(88% - 32px)'}
-            flex={{
-              justifyContent: 'center'
-            }}
-            spacing="medium"
-            background={Color.PRIMARY_BG}
-          >
-            <img src={FallbackBox} alt={getString('latestRun')} />
-            <Text font={{ variation: FontVariation.BODY1 }} color={Color.GREY_500}>
-              {searchInfrastructure === ''
-                ? getString('newUserNoExperiments.title')
-                : getString('noFilteredActiveInfra')}
-            </Text>
-            {searchInfrastructure === '' && (
-              <Button
-                variation={ButtonVariation.PRIMARY}
-                text={getString('enableChaosInfraButton')}
-                onClick={() => {
-                  history.push(paths.toEnvironments());
-                }}
-              />
-            )}
-          </Layout.Vertical>
-        )}
-      </Dialog>
+                <Layout.Horizontal width={'70%'} padding={{ top: 'small' }}>
+                  <Layout.Vertical width={'70%'} className={css.agentList}>
+                    <Layout.Vertical
+                      height={'80%'}
+                      width={'100%'}
+                      padding={'small'}
+                      className={cx(css.agentList, css.agentListInnerContainer)}
+                    >
+                      <Loader
+                        loading={loading.listChaosInfra}
+                        noData={{
+                          when: () => !infrastructureList,
+                          messageTitle: getString('noData.title'),
+                          message: getString('noData.message')
+                        }}
+                      >
+                        {infrastructureList && infrastructureList.length > 0 ? (
+                          infrastructureList.map(infrastructure => (
+                            <InfrastructureListItem key={infrastructure.id} infrastructure={infrastructure} />
+                          ))
+                        ) : (
+                          <NoInfraImage />
+                        )}
+                      </Loader>
+                    </Layout.Vertical>
+                    <Layout.Horizontal flex={{ justifyContent: 'center' }}>
+                      {pagination && <Container className={css.paginationContainer}>{pagination}</Container>}
+                    </Layout.Horizontal>
+                  </Layout.Vertical>
+                </Layout.Horizontal>
+              </Layout.Horizontal>
+              <Layout.Horizontal spacing="small" padding={{ right: 'medium' }} flex={{ justifyContent: 'flex-end' }}>
+                <Button
+                  variation={ButtonVariation.PRIMARY}
+                  text={getString('apply')}
+                  onClick={() => {
+                    close();
+                    setInfrastructureValue(selectedInfrastructure);
+                  }}
+                  disabled={!selectedInfrastructure}
+                />
+                <Button
+                  variation={ButtonVariation.TERTIARY}
+                  text={getString('cancel')}
+                  onClick={() => {
+                    close();
+                  }}
+                />
+              </Layout.Horizontal>
+            </Layout.Vertical>
+          ) : (
+            <NoInfraImage />
+          )}
+        </Dialog>
+      )}
     </FormGroup>
   );
 }

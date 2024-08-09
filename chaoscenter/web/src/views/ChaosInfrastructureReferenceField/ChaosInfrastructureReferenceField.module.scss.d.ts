@@ -8,7 +8,6 @@ declare namespace ChaosInfrastructureReferenceFieldModuleScssNamespace {
     dialog: string;
     editBtn: string;
     fixed: string;
-    gap4: string;
     gitBranchIcon: string;
     gitInfo: string;
     greenStatus: string;

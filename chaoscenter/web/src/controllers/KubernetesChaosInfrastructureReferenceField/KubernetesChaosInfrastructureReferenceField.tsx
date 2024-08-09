@@ -1,9 +1,9 @@
 import { Pagination, useToaster } from '@harnessio/uicore';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { listChaosInfra } from '@api/core';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
-import type { ChaosInfrastructureReferenceFieldProps } from '@models';
+import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
 import type { InfrastructureDetails } from '@views/ChaosInfrastructureReferenceField/ChaosInfrastructureReferenceField';
 import { listEnvironment } from '@api/core/environments';
 
@@ -16,14 +16,13 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const { showError } = useToaster();
   const [searchInfrastructure, setSearchInfrastructure] = React.useState<string>('');
   const [page, setPage] = React.useState<number>(0);
-  const limit = 5;
-  const [envID, setEnvID] = React.useState<string>('all');
+  const [limit, setLimit] = React.useState<number>(5);
+  const [envID, setEnvID] = React.useState<string>(AllEnv.AllEnv);
   const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number>(0);
-  const [activeEnv, setActiveEnv] = React.useState<string>('all');
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
-    environmentIDs: envID === 'all' ? undefined : [envID],
+    environmentIDs: envID === AllEnv.AllEnv ? undefined : [envID],
     filter: { name: searchInfrastructure },
     pagination: { page, limit },
     options: { onError: error => showError(error.message) }
@@ -39,8 +38,8 @@ function KubernetesChaosInfrastructureReferenceFieldController({
   const environmentList = listEnvironmentData?.listEnvironments?.environments;
 
   React.useEffect(() => {
-    if (envID === 'all' && listChaosInfraData?.listInfras?.totalNoOfInfras && searchInfrastructure === '') {
-      setInitialAllInfrastructureLength(listChaosInfraData.listInfras.totalNoOfInfras);
+    if (envID === AllEnv.AllEnv) {
+      setInitialAllInfrastructureLength(listChaosInfraData?.listInfras.totalNoOfInfras || 0);
     }
   }, [listChaosInfraData]);
 
@@ -67,9 +66,9 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     setPage(0);
   }, [envID]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (preSelectedEnvironment) {
-      setEnvID(preSelectedEnvironment?.environmentID), setActiveEnv(preSelectedEnvironment?.environmentID);
+      setEnvID(preSelectedEnvironment?.environmentID);
     }
   }, [preSelectedEnvironment, setFieldValue]);
 
@@ -82,7 +81,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     }
   }, [preSelectedInfrastructure, setFieldValue]);
 
-  const infrastructureList = listChaosInfraData?.listInfras?.infras.map(infra => {
+  const infrastructureList = listChaosInfraData?.listInfras.infras.map(infra => {
     const infraDetails: InfrastructureDetails = {
       id: infra.infraID,
       name: infra.name,
@@ -104,7 +103,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
         pageSize={limit}
         pageCount={Math.ceil(totalNoOfInfras / limit)}
         pageIndex={page}
-        gotoPage={pageNumber => setPage(pageNumber)}
+        gotoPage={setPage}
+        showPagination={true}
+        pageSizeOptions={[5, 10, 15]}
+        onPageSizeChange={event => setLimit(parseInt(event.toString()))}
       />
     );
   };
@@ -120,12 +122,11 @@ function KubernetesChaosInfrastructureReferenceFieldController({
           setFieldValue('chaosInfrastructure.environmentID', infrastructure.environmentID, false);
         }
       }}
-      activeEnv={activeEnv}
-      setActiveEnv={setActiveEnv}
       searchInfrastructure={searchInfrastructure}
       setSearchInfrastructure={setSearchInfrastructure}
       allInfrastructureLength={initialAllInfrastructureLength}
       environmentList={environmentList}
+      envID={envID}
       setEnvID={setEnvID}
       loading={{
         listChaosInfra: listChaosInfraLoading

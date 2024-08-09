@@ -65,6 +65,10 @@ export interface InitialValueProps {
   tolerationValues?: Array<Toleration>;
 }
 
+export enum AllEnv {
+  AllEnv = 'all'
+}
+
 export interface DeploymentScopeItem extends CollapsableSelectOptions {
   type: DeploymentScopeOptions;
   name: string;

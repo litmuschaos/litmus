@@ -60,28 +60,25 @@
   background: #effbff;
   border: 1.5px solid #0278d5;
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 8px !important;
+  border-radius: 8px;
 }
 
 .notSelected {
   background: #fafbfc;
-  // border: 1px solid rgba(40, 41, 61, 0.3);
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 8px !important;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .agentList {
   flex-grow: 1;
   gap: 1rem;
-  overflow: auto;
 }
 
 .agentListInnerContainer {
   flex-grow: 1;
-  // overflow: auto;
   gap: 1rem;
-  max-height: calc(100% - 48px);
+  overflow: auto;
 }
 
 .item {
@@ -178,11 +175,6 @@
   position: fixed;
 }
 
-.gap-4 {
-  gap: 1rem;
-  overflow: hidden;
-}
-
 .paginationContainer {
   padding-top: 8px;
   overflow: hidden;
@@ -200,16 +192,16 @@
 }
 
 .listEnvContainer {
-  background: #effbff;
+  background: var(--primary-1);
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 8px !important;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .itemEnv {
   width: 100%;
   display: grid;
-  grid-template-columns: 3fr 25px;
+  grid-template-columns: 1fr 25px;
   align-items: center;
   gap: 0.5rem;
 }
