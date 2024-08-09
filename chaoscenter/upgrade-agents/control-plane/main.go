@@ -2,13 +2,13 @@ package main
 
 import (
 	"log"
-	"os"
-	"strings"
+	// "os"
+	// "strings"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
-	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions"
-	"go.uber.org/zap"
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions"
+	logger "github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -29,34 +29,36 @@ func init() {
 
 func main() {
 	// logging level, dev mode enables debug logs
-	dev := os.Getenv("DEV_MODE")
-	var logger *zap.Logger
-	var err error
+	// dev := os.Getenv("DEV_MODE")
+	// var logger *logger.Logger
+	// var err error
 
-	// set log level
-	if strings.ToLower(dev) == "true" {
-		logger, err = zap.NewDevelopment()
-	} else {
-		logger, err = zap.NewProduction()
-	}
-	if err != nil {
-		log.Fatal("failed to create logger")
-	}
+	// // set log level
+	// if strings.ToLower(dev) == "true" {
+	// 	logger, err = logger.
+	// } else {
+	// 	logger, err = logger.NewProduction()
+	// }
+	// if err != nil {
+	// 	log.Fatal("failed to create logger")
+	// }
 
 	// create database connection
+	var err error
+	logger := logger.New()
 	dbClient, err := database.Connect()
 	if err != nil {
-		logger.Fatal("failed to get db client", zap.Error(err))
+		logger.WithError(err).Fatal("failed to get db client")
 	}
 	// create new upgrade manager
 	mg, err := versions.NewUpgradeManager(logger, dbClient)
 	if err != nil {
-		logger.Fatal("failed to create upgrade manager", zap.Error(err))
+		logger.WithError(err).Fatal("failed to create upgrade manager")
 	}
 	if mg != nil {
 		// execute upgrade manager
 		if err = mg.Run(); err != nil {
-			logger.Fatal("failed to run upgrade manager", zap.Error(err))
+			logger.WithError(err).Fatal("failed to run upgrade manager")
 		}
 	}
 

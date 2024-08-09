@@ -1,31 +1,26 @@
 package v2_6_0
 
 import (
-	"context"
-	"fmt"
-
-	"go.mongodb.org/mongo-driver/bson"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.uber.org/zap"
 )
 
-// upgradeWorkflowCollection updated the index related changes in workflow-collection
-func upgradeWorkflowCollection(logger *zap.Logger, dbClient *mongo.Client) error {
-	workflowCollection := dbClient.Database("litmus").Collection("workflow-collection")
+// VersionManager implements IVersionManger
+type VersionManager struct {
+	Logger   *log.Logger
+	DBClient *mongo.Client
+}
 
-	//delete the existing workflow_name index
-	_, err := workflowCollection.Indexes().DropOne(context.Background(), "workflow_name_1")
-	if err != nil {
-		fmt.Errorf("error: %w", err)
+// NewVersionManger provides a new instance of a new VersionManager
+func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManager {
+	return &VersionManager{Logger: logger, DBClient: dbClient}
+}
+
+// Run executes all the steps required for the Version Manger
+// to upgrade from the previous version to `this` version
+func (vm VersionManager) Run() error {
+	if err := upgradeExecutor(vm.Logger, vm.DBClient); err != nil {
+		return nil
 	}
-
-	//create a new workflow index with partial filter expression
-	_, err = workflowCollection.Indexes().CreateOne(context.Background(),
-		mongo.IndexModel{Keys: bson.M{"workflow_name": 1},
-			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{{
-				"isRemoved", false,
-			}})})
-
-	return err
+	return nil
 }

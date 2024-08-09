@@ -34,6 +34,7 @@ func Connect() (*mongo.Client, error) {
 
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(context.Background(), clientOptions)
+	// fmt.Println(client)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to db, error=%w", err)
 	}
