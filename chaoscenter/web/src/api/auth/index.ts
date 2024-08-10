@@ -39,6 +39,14 @@ export type {
 } from './hooks/useDeclineInvitationMutation';
 export { declineInvitation, useDeclineInvitationMutation } from './hooks/useDeclineInvitationMutation';
 export type {
+  DeleteProjectErrorResponse,
+  DeleteProjectMutationPathParams,
+  DeleteProjectMutationProps,
+  DeleteProjectOkResponse,
+  DeleteProjectProps
+} from './hooks/useDeleteProjectMutation';
+export { deleteProject, useDeleteProjectMutation } from './hooks/useDeleteProjectMutation';
+export type {
   GetApiTokensErrorResponse,
   GetApiTokensOkResponse,
   GetApiTokensProps,
@@ -123,7 +131,8 @@ export { listInvitations, useListInvitationsQuery } from './hooks/useListInvitat
 export type {
   ListProjectsErrorResponse,
   ListProjectsOkResponse,
-  ListProjectsProps
+  ListProjectsProps,
+  ListProjectsQueryQueryParams
 } from './hooks/useListProjectsQuery';
 export { listProjects, useListProjectsQuery } from './hooks/useListProjectsQuery';
 export type {

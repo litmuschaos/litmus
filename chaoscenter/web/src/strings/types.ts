@@ -171,9 +171,12 @@ export interface StringsMap {
   'createNamespace': unknown
   'createNewToken': unknown
   'createNewUser': unknown
+  'createProject': unknown
   'createRecurringSchedule': unknown
   'created': unknown
   'createdAt': unknown
+  'createdBy': unknown
+  'createdByUser': unknown
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
@@ -213,6 +216,8 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
+  'deleteProject': unknown
+  'deleteProjectWarning': unknown
   'deleteSuccess': unknown
   'deployChaosInfrastructure': unknown
   'deployProbe': unknown
@@ -362,7 +367,6 @@ export interface StringsMap {
   'genericResourceNotFoundError': PrimitiveObject<'resource' | 'resourceID' | 'projectID'>
   'gitConnection': unknown
   'gitOps': unknown
-  'githubRepo': unknown
   'gitops': unknown
   'goBack': unknown
   'goChaosHome': unknown
@@ -420,6 +424,7 @@ export interface StringsMap {
   'invitations': unknown
   'inviteAs': unknown
   'invitedBy': unknown
+  'invitedByOthers': unknown
   'isRequired': PrimitiveObject<'field'>
   'issueSupport': unknown
   'k8sDescription': unknown
@@ -567,6 +572,8 @@ export interface StringsMap {
   'noProbesFound.errorMessage': unknown
   'noProbesFound.message': unknown
   'noProbesFound.title': unknown
+  'noProject.subtitle': unknown
+  'noProject.title': unknown
   'noProjectFoundMatchingSearch': PrimitiveObject<'searchTerm'>
   'noProjectsFound': unknown
   'noProjectsJoined': unknown
@@ -610,6 +617,7 @@ export interface StringsMap {
   'overallResiliencyScore': unknown
   'overview': unknown
   'overwriteYaml': unknown
+  'owner': unknown
   'parallel': unknown
   'passed': unknown
   'passedRuns': unknown
@@ -702,8 +710,15 @@ export interface StringsMap {
   'prod': unknown
   'project': unknown
   'projectCreatedByYou': unknown
+  'projectDashboard.noProjectDescription': unknown
+  'projectDashboard.noProjectText': unknown
+  'projectDeletedSuccess': unknown
+  'projectDescription': unknown
+  'projectFilters': unknown
   'projectNameIsRequired': unknown
   'projectNameValidText': unknown
+  'projectSetup': unknown
+  'projects': unknown
   'projectsByInvite': unknown
   'projectsInTotal': unknown
   'projectsJoined': unknown
@@ -737,6 +752,7 @@ export interface StringsMap {
   'registry': unknown
   'registryName': unknown
   'registryType': unknown
+  'remoteRepo': unknown
   'remove': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
@@ -858,6 +874,8 @@ export interface StringsMap {
   'signInWithDex': unknown
   'signOut': unknown
   'singleRun': unknown
+  'sortDirection': unknown
+  'sortField': unknown
   'source': unknown
   'sourceModeDesction': unknown
   'specificNamespaceAccess': unknown
@@ -872,6 +890,7 @@ export interface StringsMap {
   'startedAt': unknown
   'startedOn': unknown
   'startingWith': unknown
+  'state': unknown
   'status': unknown
   'statusCheck': unknown
   'stayOnThisPage': unknown

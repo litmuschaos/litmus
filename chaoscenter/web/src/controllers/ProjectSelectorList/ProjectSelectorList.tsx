@@ -6,11 +6,13 @@ import { useListProjectsQuery } from '@api/auth';
 export default function ProjectSelectorListController(): React.ReactElement {
   const [searchText, setSearchText] = React.useState<string>('');
 
-  const { data: projectList, isLoading } = useListProjectsQuery({});
+  const { data: projectList, isLoading } = useListProjectsQuery({ queryParams: {} });
 
   const filteredProjectList = React.useMemo(() => {
     if (!projectList?.data) return undefined;
-    return projectList.data.filter(project => project?.name?.toLowerCase().includes(searchText.toLowerCase()));
+    return projectList.data.projects?.filter(project =>
+      project?.name?.toLowerCase().includes(searchText.toLowerCase())
+    );
   }, [projectList, searchText]);
 
   const searchBar = <ExpandingSearchInput alwaysExpanded onChange={e => setSearchText(e)} />;
@@ -19,7 +21,7 @@ export default function ProjectSelectorListController(): React.ReactElement {
     <ProjectSelectorListView
       projectList={filteredProjectList}
       searchBar={searchBar}
-      totalProjects={projectList?.data?.length ?? 0}
+      totalProjects={projectList?.data?.totalNumberOfProjects ?? 0}
       searchTerm={searchText}
       loading={isLoading}
     />
