@@ -524,7 +524,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -913,7 +913,7 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}

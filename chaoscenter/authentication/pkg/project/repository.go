@@ -210,7 +210,7 @@ func (r repository) CreateProject(project *entities.Project) error {
 
 // AddMember adds a new member into the project whose projectID is passed
 func (r repository) AddMember(projectID string, member *entities.Member) error {
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{{"$push", bson.D{
 		{"members", member},
 	}}}
@@ -228,7 +228,7 @@ func (r repository) AddMember(projectID string, member *entities.Member) error {
 
 // RemoveInvitation removes member or cancels the invitation
 func (r repository) RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error {
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{
 		{"$pull", bson.D{
 			{"members", bson.D{
@@ -301,7 +301,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 
 // UpdateProjectName :Updates Name of the project
 func (r repository) UpdateProjectName(projectID string, projectName string) error {
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{{"$set", bson.M{"name": projectName}}}
 
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update)
@@ -319,7 +319,7 @@ func (r repository) UpdateMemberRole(projectID string, userID string, role *enti
 			bson.D{{"elem.user_id", userID}},
 		},
 	})
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{{"$set", bson.M{"members.$[elem].role": role}}}
 
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
@@ -436,7 +436,7 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 
 // GetProjectOwners takes projectID and returns the owners
 func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, error) {
-	filter := bson.D{{"_id", projectID}}
+	filter := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 
 	var project struct {
 		Members []*entities.Member `bson:"members"`
@@ -634,7 +634,7 @@ func NewRepo(collection *mongo.Collection) Repository {
 
 // DeleteProject deletes the project with given projectID
 func (r repository) DeleteProject(projectID string) error {
-	query := bson.D{{"_id", projectID}}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 
 	result, err := r.Collection.DeleteOne(context.TODO(), query)
 	if err != nil {
