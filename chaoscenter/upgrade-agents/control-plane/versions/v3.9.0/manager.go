@@ -26,7 +26,6 @@ func (vm VersionManager) Run() error {
 
 	defer session.EndSession(ctx)
 
-
 	logVersion := log.Fields{
 		"version": "3.9.0",
 	}
@@ -49,7 +48,7 @@ func (vm VersionManager) Run() error {
 			return err
 		}
 
-		if err := upgradeUsersCollection(vm.Logger,vm.DBClient, sc); err != nil {
+		if err := upgradeUsersCollection(vm.Logger, vm.DBClient, sc); err != nil {
 			return err
 		}
 		// Commit the transaction

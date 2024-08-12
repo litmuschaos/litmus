@@ -120,7 +120,7 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 	// value :{ Version Manger that upgrades the system from priv version to next, NextVersion points to next version in the path}
 	return map[string]UpgradeExecutor{
 		"0.0.0": {
-			NextVersion: "",
+			NextVersion:    "",
 			VersionManager: v0_0_0.NewVersionManger(m.Logger, m.DBClient),
 		},
 

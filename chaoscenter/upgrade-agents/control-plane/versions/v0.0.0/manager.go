@@ -34,12 +34,11 @@ func (vm VersionManager) Run() error {
 		return err
 	}
 
-	err = upgradeWorkflow(vm.Logger, vm.DBClient, ctx) 
-	
+	err = upgradeWorkflow(vm.Logger, vm.DBClient, ctx)
+
 	if err != nil {
 		return err
 	}
-
 
 	return err
 }

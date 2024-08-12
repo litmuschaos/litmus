@@ -33,8 +33,8 @@ func upgradeProjectCollection(logger *log.Logger, dbClient *mongo.Client, ctx co
 	})
 
 	logVersion := log.Fields{
-		"version": "3.9.0",
-		"database": "auth",
+		"version":    "3.9.0",
+		"database":   "auth",
 		"collection": "project",
 	}
 	updateResult, err := collection.UpdateMany(ctx, filter, update, arrayFilters)
@@ -59,8 +59,8 @@ func upgradeUsersCollection(logger *log.Logger, dbClient *mongo.Client, ctx cont
 	usersCollection := dbClient.Database(database.AuthDB).Collection(database.UsersCollection)
 
 	logVersion := log.Fields{
-		"version": "3.9.0",
-		"database": "auth",
+		"version":    "3.9.0",
+		"database":   "auth",
 		"collection": "users",
 	}
 
