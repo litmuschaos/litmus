@@ -16,7 +16,7 @@ const (
 	newRole = "Executor"
 )
 
-func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
+func upgradeProjectCollection(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
 
 	var err error
 	collection := dbClient.Database(database.AuthDB).Collection(database.ProjectCollection)
@@ -34,10 +34,12 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 
 	logVersion := log.Fields{
 		"version": "3.9.0",
+		"database": "auth",
+		"collection": "project",
 	}
 	updateResult, err := collection.UpdateMany(ctx, filter, update, arrayFilters)
 	if err != nil {
-		logger.WithFields(logVersion).Fatal("Error while updating documents in intermediate version v3.9.0")
+		logger.WithFields(logVersion).Fatal("Error while updating documents in version v3.9.0")
 		return err
 	}
 
@@ -49,15 +51,26 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 
 	logger.WithFields(logUpdateDocuments).Infof("Matched %v documents and updated %v documents in project collection", updateResult.MatchedCount, updateResult.ModifiedCount)
 
+	return nil
+
+}
+
+func upgradeUsersCollection(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
 	usersCollection := dbClient.Database(database.AuthDB).Collection(database.UsersCollection)
 
+	logVersion := log.Fields{
+		"version": "3.9.0",
+		"database": "auth",
+		"collection": "users",
+	}
+
 	// Add the new field is_initial_lgin to all documents in Users Collection
-	filter = bson.M{}
-	update = bson.M{
+	filter := bson.M{}
+	update := bson.M{
 		"$set": bson.M{"is_initial_login": false},
 	}
 
-	updateResult, err = usersCollection.UpdateMany(ctx, filter, update)
+	updateResult, err := usersCollection.UpdateMany(ctx, filter, update)
 	if err != nil {
 		logger.WithFields(logVersion).Fatal("Error while updating documents in intermediate version v3.9.0: ", err)
 		return err

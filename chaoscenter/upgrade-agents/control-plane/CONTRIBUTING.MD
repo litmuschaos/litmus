@@ -58,3 +58,7 @@ In version 3.9.0 the following changes are done in DB schema
 - New `is_initial_login` field in users collection (auth DB) whose value is set as false
 
 Run the upgrade-agent while specifying the version `VERSION=3.9.0` in the environmental variable, and it should now be upgraded.
+
+## **Best Practices**
+
+1) If upgrade volume is huge, then transaction is not favorable.

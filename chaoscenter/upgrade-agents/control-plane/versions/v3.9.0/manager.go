@@ -26,8 +26,14 @@ func (vm VersionManager) Run() error {
 
 	defer session.EndSession(ctx)
 
+
+	logVersion := log.Fields{
+		"version": "3.9.0",
+	}
+
 	if err != nil {
-		log.Fatal("error starting session: %w", err)
+		// log.Fatal(logVersion, err)
+		log.WithFields(logVersion).Fatal("Error while starting session")
 	}
 
 	defer session.EndSession(ctx)
@@ -39,7 +45,11 @@ func (vm VersionManager) Run() error {
 			log.Fatal("error starting transaction: %w", err)
 		}
 
-		if err := upgradeExecutor(vm.Logger, vm.DBClient, sc); err != nil {
+		if err := upgradeProjectCollection(vm.Logger, vm.DBClient, sc); err != nil {
+			return err
+		}
+
+		if err := upgradeUsersCollection(vm.Logger,vm.DBClient, sc); err != nil {
 			return err
 		}
 		// Commit the transaction

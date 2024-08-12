@@ -7,10 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	v2_6_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v2.6.0"
-
-	v2_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v2.4.0"
-
 	v0_0_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v0.0.0"
 
 	v3_9_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.9.0"
@@ -127,19 +123,10 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 			NextVersion: "",
 			VersionManager: v0_0_0.NewVersionManger(m.Logger, m.DBClient),
 		},
-		"2.3.0": {
-			NextVersion:    "2.4.0",
-			VersionManager: v2_4_0.NewVersionManger(m.Logger, m.DBClient),
-		},
 
 		"2.4.0": {
 			NextVersion:    "2.5.0",
 			VersionManager: nil,
-		},
-
-		"2.5.0": {
-			NextVersion:    "2.6.0",
-			VersionManager: v2_6_0.NewVersionManger(m.Logger, m.DBClient),
 		},
 
 		"2.6.0": {

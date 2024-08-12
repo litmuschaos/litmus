@@ -24,9 +24,22 @@ func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManage
 // to upgrade from the previous version to `this` version
 func (vm VersionManager) Run() error {
 	ctx := context.Background()
-	err := upgradeMany(vm.Logger, vm.DBClient, ctx)
+	err := upgradeUsersCollection(vm.Logger, vm.DBClient, ctx)
 	if err != nil {
 		return err
 	}
+
+	err = upgradeEnvironmentCollectionIndexes(vm.Logger, vm.DBClient, ctx)
+	if err != nil {
+		return err
+	}
+
+	err = upgradeWorkflow(vm.Logger, vm.DBClient, ctx) 
+	
+	if err != nil {
+		return err
+	}
+
+
 	return err
 }
