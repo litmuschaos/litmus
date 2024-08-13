@@ -38,12 +38,12 @@ jobs:
     outputs:
       changed-paths: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.find-latest-commit-sha.outputs.commit-sha }}
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           ref: ${{ needs.find-latest-commit-sha.outputs.commit-sha }}
@@ -64,7 +64,7 @@ jobs:
       matrix:
         path: ${{ fromJSON(needs.find-changes.outputs.changed-paths) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.find-latest-commit-sha.outputs.commit-sha }}
           fetch-depth: 0
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout litmus-E2E Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: litmuschaos/litmus-e2e
           path: litmus-e2e
