@@ -125,6 +125,35 @@ func FuzzReadExperimentYAMLFile(f *testing.F) {
 	})
 }
 
+func FuzzIsFileExisting(f *testing.F) {
+    f.Fuzz(func(t *testing.T, filename string) {
+        // Create a temporary directory
+        tmpDir, err := os.MkdirTemp("", "*-fuzztest")
+        if err != nil {
+            t.Fatal(err)
+        }
+        defer os.RemoveAll(tmpDir) // clean up
+
+        // Ensure the filename is valid and unique
+        safeFilename := filepath.Clean(filepath.Base(filename))
+        if isInvalidFilename(safeFilename) {
+            safeFilename = "test.yaml"
+        }
+        filePath := filepath.Join(tmpDir, safeFilename)
+        _, _ = os.Create(filePath)
+
+        result, err := IsFileExisting(filePath)
+        if !result {
+            t.Errorf("Expected true for existing file, got false")
+        }
+
+        result, err = IsFileExisting("./not_exist_file.yaml")
+        if result {
+            t.Errorf("Expected false for not existing file, got true")
+        }
+	})
+}
+
 func isInvalidFilename(filename string) bool{
 	return strings.IndexByte(filename, 0) != -1 || filename == "" || filename == "." || filename == ".." || filename == "/" || len(filename) > 255
 }
