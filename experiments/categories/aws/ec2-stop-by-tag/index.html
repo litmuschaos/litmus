@@ -4568,9 +4568,9 @@ Make sure to drain the target node if any application is running on it and also 
     <th> Notes </th>
   </tr>
   <tr> 
-    <td> INSTANCE_TAG </td>
+    <td> EC2_INSTANCE_TAG </td>
     <td> Instance Tag to filter the target ec2 instance.</td>
-    <td> The <code>INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
+    <td> The <code>EC2_INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
   </tr>
   <tr>
     <td> REGION </td>
@@ -4621,7 +4621,7 @@ Make sure to drain the target node if any application is running on it and also 
 <h3 id="common-and-aws-specific-tunables">Common and AWS specific tunables<a class="headerlink" href="#common-and-aws-specific-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../AWS-experiments-tunables/">AWS specific tunable</a> to tune the common tunables for all experiments and aws specific tunables.  </p>
 <h3 id="target-single-instance">Target single instance<a class="headerlink" href="#target-single-instance" title="Permanent link">&para;</a></h3>
-<p>It will stop a random single ec2 instance with the given <code>INSTANCE_TAG</code> tag and the <code>REGION</code> region.</p>
+<p>It will stop a random single ec2 instance with the given <code>EC2_INSTANCE_TAG</code> tag and the <code>REGION</code> region.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># target the ec2 instances with matching tag</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -4638,7 +4638,7 @@ Make sure to drain the target node if any application is running on it and also 
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span>
 <span class="w">        </span><span class="c1"># tag of the ec2 instance</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_TAG</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EC2_INSTANCE_TAG</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;key:value&#39;</span>
 <span class="w">        </span><span class="c1"># region for the ec2 instance</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REGION</span>
@@ -4647,7 +4647,7 @@ Make sure to drain the target node if any application is running on it and also 
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="target-percent-of-instances">Target Percent of instances<a class="headerlink" href="#target-percent-of-instances" title="Permanent link">&para;</a></h3>
-<p>It will stop the <code>INSTANCE_AFFECTED_PERC</code> percentage of ec2 instances with the given <code>INSTANCE_TAG</code> tag and <code>REGION</code> region.</p>
+<p>It will stop the <code>INSTANCE_AFFECTED_PERC</code> percentage of ec2 instances with the given <code>EC2_INSTANCE_TAG</code> tag and <code>REGION</code> region.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># percentage of ec2 instances, needs to terminate with provided tags</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
@@ -4667,7 +4667,7 @@ Make sure to drain the target node if any application is running on it and also 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_AFFECTED_PERC</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;100&#39;</span>
 <span class="w">        </span><span class="c1"># tag of the ec2 instance</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_TAG</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EC2_INSTANCE_TAG</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;key:value&#39;</span>
 <span class="w">        </span><span class="c1"># region for the ec2 instance</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REGION</span>
