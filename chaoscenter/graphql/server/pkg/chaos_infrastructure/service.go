@@ -74,7 +74,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	infraDetails, err := in.infraOperator.GetInfras(c, bson.D{
 		{"infra_name", input.Name},
 		{"is_removed", false},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 	})
 	if err != nil {
 		return nil, err
@@ -176,7 +176,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	}
 
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", input.EnvironmentID},
 	}
 	update := bson.D{
@@ -227,7 +227,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 
 	query := bson.D{
 		{"infra_id", infraId},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -251,7 +251,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 		return "", err
 	}
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
 	}
 	updateQuery := bson.D{
@@ -315,8 +315,8 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 	// Match with identifiers and infra ID
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"infra_id", infraID},
-			{"project_id", projectID},
+			{"infra_id", bson.D{{"$eq", infraID}}},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -471,7 +471,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -808,7 +808,7 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
