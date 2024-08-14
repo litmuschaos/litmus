@@ -158,5 +158,5 @@ LitmusChaos는 CNCF 프로젝트의 일부입니다.
 </a>
 <br>
 <a href="https://landscape.cncf.io/?selected=litmus">
-  CNCF Landscape <img src="https://raw.githubusercontent.com/cncf/landscape/34050e7ca713650f7e2813f53c3b0a697cbb274b/hosted_logos/cncf.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png" alt="CNCF Landscape의 리트머스" height="15">
 </a>
