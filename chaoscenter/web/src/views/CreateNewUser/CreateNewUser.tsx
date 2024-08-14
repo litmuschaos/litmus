@@ -1,7 +1,7 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
 import { FontVariation } from '@harnessio/design-system';
-import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
+import { Layout, Container, FormInput, ButtonVariation, Text, Button, useToaster } from '@harnessio/uicore';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
@@ -28,17 +28,28 @@ interface CreateNewUserFormProps {
 export default function CreateNewUserView(props: CreateNewUserViewProps): React.ReactElement {
   const { createNewUserMutation, createNewUserMutationLoading, handleClose } = props;
   const { getString } = useStrings();
+  const { showError } = useToaster();
 
   function handleSubmit(values: CreateNewUserFormProps): void {
-    createNewUserMutation({
-      body: {
-        name: values.name,
-        email: values.email,
-        username: values.username,
-        password: values.password,
-        role: 'user'
+    createNewUserMutation(
+      {
+        body: {
+          name: values.name,
+          email: values.email,
+          username: values.username,
+          password: values.password,
+          role: 'user'
+        }
+      },
+      {
+        onSuccess: () => {
+          handleClose();
+        },
+        onError: (err: any) => {
+          showError(err.errorDescription);
+        }
       }
-    });
+    );
   }
 
   return (
