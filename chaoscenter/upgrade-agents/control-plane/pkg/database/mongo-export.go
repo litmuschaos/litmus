@@ -6,7 +6,6 @@ import (
 
 	"github.com/mongodb/mongo-tools/mongoexport"
 	"github.com/mongodb/mongo-tools/mongoimport"
-	// "github.com/mongodb/mongo-tools/mongoimport"
 )
 
 func Export(filename string, RawArgs []string) error {
@@ -35,19 +34,6 @@ func Export(filename string, RawArgs []string) error {
 }
 
 func Import(filename string, RawArgs []string) error {
-	// client := db.GetDB() // Assuming db.GetDB() returns a *mongo.Client
-	// testCollection := client.Database("post").Collection("test")
-
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-
-	// RawArgsTest := []string{
-	// 	fmt.Sprintf("--uri=%s", db.GetDBURI()),
-	// 	"--db=post",
-	// 	"--collection=test",
-	// 	fmt.Sprintf("--file=%s", filename),
-	// 	"--jsonArray",
-	// }
 
 	Options, err := mongoimport.ParseOptions(RawArgs, "", "")
 	if err != nil {

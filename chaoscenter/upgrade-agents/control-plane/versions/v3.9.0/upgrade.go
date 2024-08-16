@@ -32,14 +32,15 @@ func upgradeProjectCollection(logger *log.Logger, dbClient *mongo.Client, ctx co
 		},
 	})
 
-	logVersion := log.Fields{
+	logFields := log.Fields{
 		"version":    "3.9.0",
-		"database":   "auth",
-		"collection": "project",
+		"database":   database.AuthDB,
+		"collection": database.ProjectCollection,
 	}
+	logger.WithFields(logFields).Info("Updating editor to executor")
 	updateResult, err := collection.UpdateMany(ctx, filter, update, arrayFilters)
 	if err != nil {
-		logger.WithFields(logVersion).Fatal("Error while updating documents in version v3.9.0")
+		logger.WithFields(logFields).Fatal("Error while updating documents in version v3.9.0")
 		return err
 	}
 
@@ -58,11 +59,13 @@ func upgradeProjectCollection(logger *log.Logger, dbClient *mongo.Client, ctx co
 func upgradeUsersCollection(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
 	usersCollection := dbClient.Database(database.AuthDB).Collection(database.UsersCollection)
 
-	logVersion := log.Fields{
+	logFields := log.Fields{
 		"version":    "3.9.0",
-		"database":   "auth",
-		"collection": "users",
+		"database":   database.AuthDB,
+		"collection": database.UsersCollection,
 	}
+
+	logger.WithFields(logFields).Info("Adding is_initial_login field")
 
 	// Add the new field is_initial_lgin to all documents in Users Collection
 	filter := bson.M{}
@@ -72,7 +75,7 @@ func upgradeUsersCollection(logger *log.Logger, dbClient *mongo.Client, ctx cont
 
 	updateResult, err := usersCollection.UpdateMany(ctx, filter, update)
 	if err != nil {
-		logger.WithFields(logVersion).Fatal("Error while updating documents in intermediate version v3.9.0: ", err)
+		logger.WithFields(logFields).Fatal("Error while updating documents in version v3.9.0: ", err)
 		return err
 	}
 	logDocumentsCount := log.Fields{

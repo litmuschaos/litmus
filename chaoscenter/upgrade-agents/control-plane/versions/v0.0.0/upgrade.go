@@ -44,7 +44,6 @@ func upgradeEnvironmentCollectionIndexes(logger *log.Logger, dbClient *mongo.Cli
 	indexView := environmentCollection.Indexes()
 	cursor, err := indexView.List(ctx)
 	if err != nil {
-		// session.AbortTransaction(ctx)
 		log.Error("error listing indexes: %w", err)
 		return err
 	}
@@ -69,8 +68,6 @@ func upgradeEnvironmentCollectionIndexes(logger *log.Logger, dbClient *mongo.Cli
 			}
 		}
 	}
-
-	// logIndexes := append(logVersion,)
 
 	logIndexes := log.Fields{
 		"version": "3.4.0",

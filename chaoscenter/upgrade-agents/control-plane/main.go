@@ -2,8 +2,6 @@ package main
 
 import (
 	"log"
-	// "os"
-	// "strings"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
@@ -28,20 +26,6 @@ func init() {
 }
 
 func main() {
-	// logging level, dev mode enables debug logs
-	// dev := os.Getenv("DEV_MODE")
-	// var logger *logger.Logger
-	// var err error
-
-	// // set log level
-	// if strings.ToLower(dev) == "true" {
-	// 	logger, err = logger.
-	// } else {
-	// 	logger, err = logger.NewProduction()
-	// }
-	// if err != nil {
-	// 	log.Fatal("failed to create logger")
-	// }
 
 	// create database connection
 	var err error
