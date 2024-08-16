@@ -62,3 +62,6 @@ Run the upgrade-agent while specifying the version `VERSION=3.9.0` in the enviro
 ## **Best Practices**
 
 1) If upgrade volume is huge, then transaction is not favorable.
+2) Split the upgrades into proprietary functions depending on their purpose and database/collection names.
+3) Use logging techniques as used in other versions to provide the user an insight of how the upgrades are being done.
+4) While using a transaction, make sure the session context is properly passed into the relevant mongo operations and related functions.
