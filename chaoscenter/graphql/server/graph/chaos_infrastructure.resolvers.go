@@ -270,8 +270,10 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
 		return infraAction, err
 	}
 	data_store.Store.Mutex.Lock()
-	if _, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
+	if infra_channel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
 		data_store.Store.Mutex.Unlock()
+		logrus.Print("ALREADY CONNECTED, FORCED DISCONNECT: ", request.InfraID)
+		close(infra_channel)
 		return infraAction, errors.New("CLUSTER ALREADY CONNECTED")
 	}
 	data_store.Store.ConnectedInfra[request.InfraID] = infraAction
@@ -279,7 +281,7 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
 	go func() {
 		<-ctx.Done()
 		verifiedInfra.IsActive = false
-
+		logrus.Print("Context Done, will handle disconnection for: ", request.InfraID)
 		newVerifiedInfra := model.Infra{}
 		copier.Copy(&newVerifiedInfra, &verifiedInfra)
 
