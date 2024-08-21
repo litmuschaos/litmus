@@ -66,7 +66,7 @@ export interface InitialValueProps {
 }
 
 export enum AllEnv {
-  AllEnv = 'all'
+  AllEnv = 'All'
 }
 
 export interface DeploymentScopeItem extends CollapsableSelectOptions {

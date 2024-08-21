@@ -106,7 +106,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
         gotoPage={setPage}
         showPagination={true}
         pageSizeOptions={[5, 10, 15]}
-        onPageSizeChange={event => setLimit(parseInt(event.toString()))}
+        onPageSizeChange={setLimit}
       />
     );
   };
