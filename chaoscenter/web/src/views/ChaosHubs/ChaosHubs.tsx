@@ -68,7 +68,7 @@ const RemoteHubImage = ({ remoteHubName }: { remoteHubName: string }): React.Rea
     }
   };
 
-  return <>{hubSvg()}</>;
+  return hubSvg();
 };
 
 export const ChaosHubsView: React.FC<ChaosHubParams> = ({

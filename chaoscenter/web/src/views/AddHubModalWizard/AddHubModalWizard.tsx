@@ -192,7 +192,8 @@ const GitConnectionStep: React.FC<
         }}
         validationSchema={Yup.object().shape({
           repoBranch: Yup.string().trim().required('Hub Branch name is a required field'),
-          repoURL: Yup.string().trim().required('Hub Repo name is a required field')
+          repoURL: Yup.string().trim().required('Hub Repo name is a required field'),
+          remoteHub: Yup.string().trim().required('Remote Hub name is a required field')
         })}
       >
         {formikProps => {
@@ -238,7 +239,7 @@ const GitConnectionStep: React.FC<
                 <FormInput.DropDown
                   name="remoteHub"
                   label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Remote Hub</Text>}
-                  placeholder={'Select Remote hub'}
+                  placeholder={getString('remoteHub')}
                   items={[
                     { label: 'GitHub', value: 'GitHub' },
                     { label: 'Bitbucket', value: 'Bitbucket' },

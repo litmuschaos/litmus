@@ -8,7 +8,7 @@ export interface CreateChaosHubRequest {
   description?: string;
   repoURL: string;
   repoBranch: string;
-  remoteHub?: string;
+  remoteHub: string;
   isPrivate: boolean;
   authType: AuthType;
   token?: string;
