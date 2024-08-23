@@ -75,7 +75,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	infraDetails, err := in.infraOperator.GetInfras(c, bson.D{
 		{"infra_name", input.Name},
 		{"is_removed", false},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 	})
 	if err != nil {
 		return nil, err
@@ -177,7 +177,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	}
 
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", input.EnvironmentID},
 	}
 	update := bson.D{
@@ -228,7 +228,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 
 	query := bson.D{
 		{"infra_id", infraId},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -252,7 +252,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 		return "", err
 	}
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
 	}
 	updateQuery := bson.D{
@@ -316,8 +316,8 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 	// Match with identifiers and infra ID
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"infra_id", infraID},
-			{"project_id", projectID},
+			{"infra_id", bson.D{{"$eq", infraID}}},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -472,7 +472,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -809,7 +809,7 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -933,6 +933,9 @@ func fetchLatestVersion(versions map[int]string) int {
 
 // updateVersionFormat converts string array to int by removing decimal points, 1.0.0 will be returned as 100, 0.1.0 will be returned as 10, 0.0.1 will be returned as 1
 func updateVersionFormat(str string) (int, error) {
+	if str == CIVersion {
+		return 0, nil
+	}
 	var versionInt int
 	versionSlice := strings.Split(str, ".")
 	for i, val := range versionSlice {

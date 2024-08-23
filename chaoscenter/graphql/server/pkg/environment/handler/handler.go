@@ -88,7 +88,7 @@ func (e *EnvironmentService) UpdateEnvironment(ctx context.Context, projectID st
 
 	query := bson.D{
 		{"environment_id", request.EnvironmentID},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -148,7 +148,7 @@ func (e *EnvironmentService) DeleteEnvironment(ctx context.Context, projectID st
 
 	query := bson.D{
 		{"environment_id", environmentID},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -208,7 +208,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}

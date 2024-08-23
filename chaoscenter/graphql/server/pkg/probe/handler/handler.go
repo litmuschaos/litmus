@@ -327,7 +327,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	matchIdentifierStage := bson.D{
 		{
 			Key: "$match", Value: bson.D{
-				{"project_id", projectID},
+				{"project_id", bson.D{{"$eq", projectID}}},
 				{"is_removed", false},
 			},
 		},
@@ -386,7 +386,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	matchIdentifierStage := bson.D{
 		{
 			"$match", bson.D{
-				{"project_id", projectID},
+				{"project_id", bson.D{{"$eq", projectID}}},
 				{"probes.probe_names", probeName},
 			},
 		},
@@ -520,7 +520,7 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName, projectID stri
 				{
 					"$and", bson.A{
 						bson.D{
-							{"project_id", projectID},
+							{"project_id", bson.D{{"$eq", projectID}}},
 							{"name", probeName},
 							{"is_removed", false},
 						},
@@ -698,7 +698,7 @@ func (p *probe) ValidateUniqueProbe(ctx context.Context, probeName, projectID st
 
 	query := bson.D{
 		{"name", probeName},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 	}
 
 	isUnique, err := dbSchemaProbe.IsProbeUnique(ctx, query)
