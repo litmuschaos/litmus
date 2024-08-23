@@ -1,42 +1,38 @@
 package main
 
 import (
-	"regexp"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
-	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-
 	"context"
 	"fmt"
 	"net"
 	"net/http"
+	"regexp"
 	"runtime"
+	"strconv"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
-	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
+	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 func init() {
@@ -49,7 +45,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func validateVersion() error {
@@ -100,7 +95,20 @@ func main() {
 	if err := validateVersion(); err != nil {
 		log.Fatal(err)
 	}
-	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
+	if err != nil {
+		log.Errorf("unable to parse boolean value %v", err)
+	}
+
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
+			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+	} else {
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
 	srv.AddTransport(transport.POST{})
@@ -127,7 +135,8 @@ func main() {
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
 		log.Errorf("unable to parse boolean value %v", err)
-	} else if err == nil && enableIntrospection == true {
+	}
+	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
 
@@ -152,8 +161,27 @@ func main() {
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
-	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
-	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
+			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
+		}
+
+		log.Infof("graphql server running at https://localhost:%s", utils.Config.RestPort)
+		// configuring TLS config based on provided certificates & keys
+		conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+		server := http.Server{
+			Addr:      ":" + utils.Config.RestPort,
+			Handler:   router,
+			TLSConfig: conf,
+		}
+		if err := server.ListenAndServeTLS("", ""); err != nil {
+			log.Fatalf("Failure to start litmus-portal graphql REST server due to %v", err)
+		}
+	} else {
+		log.Infof("graphql server running at http://localhost:%s", utils.Config.RestPort)
+		log.Fatal(http.ListenAndServe(":"+utils.Config.RestPort, router))
+	}
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
@@ -164,6 +192,31 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	}
 
 	grpcServer := grpc.NewServer()
+
+	// Register services
+
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
+
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
+
+	lis, err := net.Listen("tcp", ":"+utils.Config.GrpcPort)
+	if err != nil {
+		log.Fatal("failed to listen: %w", err)
+	}
+
+	// configuring TLS config based on provided certificates & keys
+	conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+	// create tls credentials
+	tlsCredentials := credentials.NewTLS(conf)
+
+	// create grpc server with tls credential
+	grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
 
 	// Register services
 

@@ -5,12 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
-
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -287,13 +286,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		user, err := service.FindUserByUsername(userRequest.Username)
 		if err != nil {
 			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
 		// Checking if user is deactivated
 		if user.DeactivatedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
@@ -305,7 +304,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := service.GetSignedJWT(user)
+		salt, err := service.GetConfig("salt")
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		token, err := service.GetSignedJWT(user, salt.Value)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -425,6 +430,15 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		username := c.MustGet("username").(string)
+
+		// Fetching userDetails
+		user, err := service.FindUserByUsername(username)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			return
+		}
+
 		userPasswordRequest.Username = username
 		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
@@ -442,13 +456,63 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			log.Info(err)
 			if strings.Contains(err.Error(), "old and new passwords can't be same") {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrOldPassword], presenter.CreateErrorResponse(utils.ErrOldPassword))
+			} else if strings.Contains(err.Error(), "invalid credentials") {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			} else {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			}
 			return
 		}
+
+		var defaultProject string
+		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
+
+		if len(ownerProjects) > 0 {
+			defaultProject = ownerProjects[0].ID
+		} else {
+			// Adding user as project owner in project's member list
+			newMember := &entities.Member{
+				UserID:     user.ID,
+				Role:       entities.RoleOwner,
+				Invitation: entities.AcceptedInvitation,
+				Username:   user.Username,
+				Name:       user.Name,
+				Email:      user.Email,
+				JoinedAt:   time.Now().UnixMilli(),
+			}
+			var members []*entities.Member
+			members = append(members, newMember)
+			state := "active"
+			newProject := &entities.Project{
+				ID:      uuid.Must(uuid.NewRandom()).String(),
+				Name:    user.Username + "-project",
+				Members: members,
+				State:   &state,
+				Audit: entities.Audit{
+					IsRemoved: false,
+					CreatedAt: time.Now().UnixMilli(),
+					CreatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
+					UpdatedAt: time.Now().UnixMilli(),
+					UpdatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
+				},
+			}
+			err := service.CreateProject(newProject)
+			if err != nil {
+				return
+			}
+			defaultProject = newProject.ID
+		}
 		c.JSON(http.StatusOK, gin.H{
-			"message": "password has been updated successfully",
+			"message":   "password has been updated successfully",
+			"projectID": defaultProject,
 		})
 	}
 }

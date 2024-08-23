@@ -1,10 +1,7 @@
 {
   "swagger": "2.0",
   "host": "localhost:3000",
-  "schemes": [
-    "https",
-    "http"
-  ],
+  "schemes": ["https", "http"],
   "info": {
     "title": "Litmus Portal Authentication API",
     "version": "2.7.0",
@@ -15,15 +12,9 @@
       "get": {
         "description": "Returns capabilities that can be leveraged by frontend services to toggle certain features.",
         "operationId": "getCapabilities",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "CapabilitiesRouter"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["CapabilitiesRouter"],
         "summary": "Get capabilities of Auth Server.",
         "responses": {
           "200": {
@@ -58,9 +49,7 @@
           }
         },
         "parameters": [],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/login": {
@@ -100,10 +89,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "username",
-                "password"
-              ],
+              "required": ["username", "password"],
               "properties": {
                 "username": {
                   "type": "string"
@@ -119,12 +105,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/logout": {
@@ -156,12 +138,8 @@
             }
           }
         },
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/token/{user_id}": {
@@ -210,9 +188,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/create_token": {
@@ -251,11 +227,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "user_id",
-                "name",
-                "days_until_expiration"
-              ],
+              "required": ["user_id", "name", "days_until_expiration"],
               "properties": {
                 "user_id": {
                   "type": "string"
@@ -275,12 +247,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/remove_token": {
@@ -318,9 +286,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "string"
@@ -332,12 +298,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/users": {
@@ -365,9 +327,7 @@
           }
         },
         "parameters": [],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/get_user/{user_id}": {
@@ -401,9 +361,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/update/password": {
@@ -434,11 +392,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "username",
-                "oldPassword",
-                "newPassword"
-              ],
+              "required": ["username", "oldPassword", "newPassword"],
               "properties": {
                 "username": {
                   "type": "string"
@@ -458,12 +412,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/create_user": {
@@ -495,11 +445,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "required": [
-                  "username",
-                  "password",
-                  "role"
-                ],
+                "required": ["username", "password", "role"],
                 "username": {
                   "type": "string"
                 },
@@ -526,12 +472,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/reset/password": {
@@ -562,11 +504,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "username",
-                "oldPassword",
-                "newPassword"
-              ],
+              "required": ["username", "oldPassword", "newPassword"],
               "properties": {
                 "username": {
                   "type": "string"
@@ -585,12 +523,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/update/details": {
@@ -636,12 +570,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/update/state": {
@@ -672,10 +602,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "username",
-                "isDeactivate"
-              ],
+              "required": ["username", "isDeactivate"],
               "properties": {
                 "username": {
                   "type": "string"
@@ -691,12 +618,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/create_project": {
@@ -742,12 +665,19 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectName"
-              ],
+              "required": ["projectName"],
               "properties": {
                 "projectName": {
                   "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "example": {
@@ -756,12 +686,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/get_project/{project_id}": {
@@ -814,9 +740,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/get_user_with_project/{username}": {
@@ -874,9 +798,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/list_projects": {
@@ -888,7 +810,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "data": [
+                "projects": [
                   {
                     "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
                     "Name": "my project",
@@ -905,26 +827,77 @@
                     "UpdatedAt": "1627040799",
                     "RemovedAt": ""
                   }
-                ]
+                ],
+                "totalNumberOfProjects": 1
               }
             },
             "schema": {
               "type": "object",
               "properties": {
                 "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Project"
+                  "type": "object",
+                  "properties": {
+                    "projects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Project"
+                      }
+                    },
+                    "totalNumberOfProjects": {
+                      "type": "integer"
+                    }
                   }
                 }
               }
             }
           }
         },
-        "parameters": [],
-        "produces": [
-          "application/json"
-        ]
+        "parameters": [
+          {
+            "name": "sortField",
+            "required": false,
+            "description": "field for sorting the data",
+            "in": "query",
+            "type": "string",
+            "enum": ["name", "time"]
+          },
+          {
+            "name": "sortAscending",
+            "required": false,
+            "description": "field order for sorting the data",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "createdByMe",
+            "required": false,
+            "description": "filter option for self created projects.",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "projectName",
+            "required": false,
+            "description": "filter on the basis of projects name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "description": "page number for pagination.",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "description": "page limit for pagination.",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json"]
       }
     },
     "/get_projects_stats": {
@@ -959,9 +932,7 @@
           }
         },
         "parameters": [],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/update_project_name": {
@@ -992,10 +963,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectID",
-                "projectName"
-              ],
+              "required": ["projectID", "projectName"],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1011,12 +979,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/send_invitation": {
@@ -1056,11 +1020,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectID",
-                "userID",
-                "role"
-              ],
+              "required": ["projectID", "userID", "role"],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1070,11 +1030,7 @@
                 },
                 "role": {
                   "type": "string",
-                  "enum": [
-                    "Owner",
-                    "Executor",
-                    "Viewer"
-                  ]
+                  "enum": ["Owner", "Executor", "Viewer"]
                 }
               },
               "example": {
@@ -1085,12 +1041,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/accept_invitation": {
@@ -1121,10 +1073,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectID",
-                "userID"
-              ],
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1140,12 +1089,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/decline_invitation": {
@@ -1176,10 +1121,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectID",
-                "userID"
-              ],
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1195,12 +1137,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/remove_invitation": {
@@ -1231,10 +1169,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": [
-                "projectID",
-                "userID"
-              ],
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1250,12 +1185,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/leave_project": {
@@ -1287,10 +1218,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "required": [
-                  "projectID",
-                  "userID"
-                ],
+                "required": ["projectID", "userID"],
                 "projectID": {
                   "type": "string"
                 },
@@ -1305,12 +1233,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ]
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
       }
     },
     "/get_owner_projects": {
@@ -1334,9 +1258,7 @@
           }
         },
         "parameters": [],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/list_invitations_with_filters/{invitation_state}": {
@@ -1366,17 +1288,10 @@
             "description": "state of the invitation",
             "in": "path",
             "type": "string",
-            "enum": [
-              "Accepted",
-              "Pending",
-              "Declined",
-              "Exited"
-            ]
+            "enum": ["Accepted", "Pending", "Declined", "Exited"]
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/get_project_role/{project_id}": {
@@ -1410,9 +1325,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     },
     "/get_project_members/{project_id}/{state}": {
@@ -1473,16 +1386,50 @@
             "description": "state of the invitation",
             "in": "path",
             "type": "string",
-            "enum": [
-              "accepted",
-              "not_accepted",
-              "all"
-            ]
+            "enum": ["accepted", "not_accepted", "all"]
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
+      }
+    },
+    "/delete_project/{project_id}": {
+      "post": {
+        "description": "This API is used to delete project, which helps owners to delete their projects.",
+        "operationId": "deleteProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "message": "Successfully deleted project."
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project to delete",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"],
+        "tags": ["ProjectRouter"],
+        "consumes": ["application/json"]
       }
     },
     "/invite_users/{project_id}": {
@@ -1514,9 +1461,7 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json"
-        ]
+        "produces": ["application/json"]
       }
     }
   },
@@ -1578,9 +1523,7 @@
     },
     "LogoutResponse": {
       "type": "object",
-      "required": [
-        "message"
-      ],
+      "required": ["message"],
       "properties": {
         "message": {
           "type": "string"
@@ -1589,9 +1532,7 @@
     },
     "GetApiTokensResponse": {
       "type": "object",
-      "required": [
-        "apiTokens"
-      ],
+      "required": ["apiTokens"],
       "properties": {
         "apiTokens": {
           "type": "array",
@@ -1656,12 +1597,7 @@
     },
     "User": {
       "type": "object",
-      "required": [
-        "userID",
-        "username",
-        "role",
-        "isRemoved"
-      ],
+      "required": ["userID", "username", "role", "isRemoved"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1703,12 +1639,7 @@
     },
     "ProjectMember": {
       "type": "object",
-      "required": [
-        "userID",
-        "username",
-        "invitation",
-        "role"
-      ],
+      "required": ["userID", "username", "invitation", "role"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1724,20 +1655,11 @@
         },
         "role": {
           "type": "string",
-          "enum": [
-            "Owner",
-            "Executor",
-            "Viewer"
-          ]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "invitation": {
           "type": "string",
-          "enum": [
-            "Accepted",
-            "Pending",
-            "Declined",
-            "Exited"
-          ]
+          "enum": ["Accepted", "Pending", "Declined", "Exited"]
         },
         "joinedAt": {
           "type": "string"
@@ -1761,11 +1683,7 @@
         },
         "invitationRole": {
           "type": "string",
-          "enum": [
-            "Owner",
-            "Executor",
-            "Viewer"
-          ]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "projectOwner": {
           "$ref": "#/definitions/ProjectMember"
@@ -1774,11 +1692,7 @@
     },
     "Project": {
       "type": "object",
-      "required": [
-        "projectID",
-        "name",
-        "members"
-      ],
+      "required": ["projectID", "name", "members"],
       "properties": {
         "updatedBy": {
           "$ref": "#/definitions/ActionBy"
@@ -1800,6 +1714,15 @@
         },
         "projectID": {
           "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "state": {
           "type": "string"
@@ -1829,6 +1752,20 @@
           }
         }
       ]
+    },
+    "ListProjectResponse": {
+      "type": "object",
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Project"
+          }
+        },
+        "totalNumberOfProjects": {
+          "type": "integer"
+        }
+      }
     }
   }
 }
