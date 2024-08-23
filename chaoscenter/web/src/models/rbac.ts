@@ -1,6 +1,6 @@
 export enum PermissionGroup {
   OWNER = 'Owner',
-  EDITOR = 'Editor',
+  Executor = 'Executor',
   VIEWER = 'Viewer'
 }
 

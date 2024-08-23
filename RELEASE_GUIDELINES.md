@@ -32,8 +32,6 @@ reach out by [filing an issue](https://github.com/litmuschaos/litmus/issues).
 
 -   The chaos chart bundles are created by publishing the github releases for the [chaos-charts](https://github.com/litmuschaos/chaos-charts) repo. This is picked by the chaos [charthub](https://hub.litmuschaos.io) for user download.
 
--   Tracking of releases is done on Github [project board](https://github.com/litmuschaos/litmus/projects)
-
 -   The release flow consists of the following steps:
 
     -   Sprint Planning based on backlogs & feature requests from the community
@@ -56,16 +54,16 @@ considered "pre-releases".
 
 ### Major and Minor Releases
 
-Major and minor releases of LitmusChaos will be made from main. Releases of
+Major and minor releases of LitmusChaos will be made from master. Releases of
 LitmusChaos will be marked with GPG signed tags and announced at
-https://github.com/LitmusChaos/LitmusChaos/releases. The tag will be of the
-format `v<major>.<minor>.<patch>` and should be made with the command `git tag
--s v<major>.<minor>.<patch>`.
+https://github.com/litmuschaos/litmus/releases. The tag will be of the
+format `<major>.<minor>.<patch>` and should be made with the command `git tag
+-s <major>.<minor>.<patch>`.
 
 After a minor release, a branch will be created, with the format
-`release/<major>.<minor>` from the minor tag. All further patch releases will
-be done from that branch. For example, once we release `v1.0.0`, a branch
-`release/1.0` will be created from that tag. All future patch releases will be
+`release-<major>.<minor>.x` from the minor tag. All further patch releases will
+be done from that branch. For example, once we release `1.0.0`, a branch
+`release-1.0.x` will be created from that tag. All future patch releases will be
 done against that branch.
 
 ### Pre-releases
@@ -161,13 +159,13 @@ for the list of actively tested versions. Kubernetes only supports n-3 minor
 release versions and LitmusChaos will ensure there is always a supported version
 of LitmusChaos for every supported version of Kubernetes.
 
-| Kubernetes Version | LitmusChaos Version           | 
-|--------------------|-------------------------------|
-| 1.26               | 1.x, 2.x          | 
-| 1.27               | 1.x, 2.x            | 
-| 1.28               | 2.x, 3.x         | 
-| 1.29               | 3.x          | 
-| 1.30(wip)          | 4.0 (wip), 3.x  |
+| Kubernetes Version  | LitmusChaos Version | 
+|---------------------|---------------------|
+| 1.26                | 1.x, 2.x, 3.x       | 
+| 1.27                | 3.x                 | 
+| 1.28                | 3.x                 | 
+| 1.29                | 3.x                 | 
+| 1.30                | 3.x, 4.0(wip)       |
 
 
 ## Public API Stability

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
@@ -16,9 +15,9 @@ import (
 )
 
 type EnvironmentHandler interface {
-	CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error)
-	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
-	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
+	CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest, username string) (*model.Environment, error)
+	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest, username string) (string, error)
+	DeleteEnvironment(ctx context.Context, projectID string, environmentID string, username string) (string, error)
 	GetEnvironment(projectID string, environmentID string) (*model.Environment, error)
 	ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
 }
@@ -33,17 +32,11 @@ func NewEnvironmentService(EnvironmentOperator *dbOperationsEnvironment.Operator
 	}
 }
 
-func (e *EnvironmentService) CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error) {
+func (e *EnvironmentService) CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest, username string) (*model.Environment, error) {
 
 	currentTime := time.Now()
 	if input.Tags == nil || len(input.Tags) == 0 {
 		input.Tags = []string{}
-	}
-
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
-	if err != nil {
-		return nil, err
 	}
 
 	desc := ""
@@ -75,7 +68,7 @@ func (e *EnvironmentService) CreateEnvironment(ctx context.Context, projectID st
 		},
 	}
 
-	err = e.EnvironmentOperator.InsertEnvironment(context.Background(), newEnv)
+	err := e.EnvironmentOperator.InsertEnvironment(context.Background(), newEnv)
 	if err != nil {
 		return &model.Environment{}, err
 	}
@@ -91,23 +84,17 @@ func (e *EnvironmentService) CreateEnvironment(ctx context.Context, projectID st
 
 }
 
-func (e *EnvironmentService) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error) {
+func (e *EnvironmentService) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest, username string) (string, error) {
 
 	query := bson.D{
 		{"environment_id", request.EnvironmentID},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
 	_, err := e.EnvironmentOperator.GetEnvironments(context.TODO(), query)
 	if err != nil {
 		return "couldn't update environment", err
-	}
-
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
-	if err != nil {
-		return "", err
 	}
 
 	updateQuery := bson.D{}
@@ -156,20 +143,16 @@ func (e *EnvironmentService) UpdateEnvironment(ctx context.Context, projectID st
 	return "environment updated successfully", nil
 }
 
-func (e *EnvironmentService) DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error) {
+func (e *EnvironmentService) DeleteEnvironment(ctx context.Context, projectID string, environmentID string, username string) (string, error) {
 	currTime := time.Now().UnixMilli()
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
-	if err != nil {
-		return "", err
-	}
+
 	query := bson.D{
 		{"environment_id", environmentID},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
-	_, err = e.EnvironmentOperator.GetEnvironment(query)
+	_, err := e.EnvironmentOperator.GetEnvironment(query)
 	if err != nil {
 		return "couldn't fetch environment details", err
 	}
@@ -225,7 +208,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}

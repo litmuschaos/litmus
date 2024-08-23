@@ -27,9 +27,6 @@ export default function OverviewController(): React.ReactElement {
     refetch: refetchExperiments
   } = listExperiment({
     ...scope,
-    // filter: {
-    //   infraTypes: [InfrastructureType.KUBERNETES]
-    // },
     pagination: { page: 0, limit: 7 },
     options: {
       onError: error => showError(error.message),

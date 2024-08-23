@@ -22,7 +22,7 @@ jobs:
       # dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
       # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -41,17 +41,28 @@ jobs:
             # dex-server:
             #   - 'chaoscenter/dex-server/**'
 
+  gitleaks-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run GitLeaks
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz && \
+          tar -zxvf gitleaks_8.18.2_linux_x64.tar.gz && \
+          sudo mv gitleaks /usr/local/bin && gitleaks detect --source . -v
+
   backend-checks:
     runs-on: ubuntu-latest
     needs: changes
     if: needs.changes.outputs.graphql-server == 'true' || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.subscriber == 'true' || needs.changes.outputs.event-tracker == 'true'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - uses: actions/setup-go@v2
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: "1.20" # By default, the go version is v1.15 in runner.
+          go-version: "1.22" # By default, the go version is v1.15 in runner.
 
       - name: Check Golang imports order
         uses: Jerome1337/goimports-action@v1.0.3
@@ -70,9 +81,8 @@ jobs:
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
 
@@ -89,10 +99,10 @@ jobs:
        - backend-checks
      steps:
        - name: Checkout repository
-         uses: actions/checkout@v2
-       - uses: actions/setup-go@v2
+         uses: actions/checkout@v4
+       - uses: actions/setup-go@v5
          with:
-           go-version: "1.20" # By default, the go version is v1.15 in runner.
+           go-version: "1.22" # By default, the go version is v1.15 in runner.
        - name: Backend unit tests
          shell: bash
          run: |
@@ -106,8 +116,8 @@ jobs:
        - frontend-checks
      steps:
        - name: Checkout repository
-         uses: actions/checkout@v2
-       - uses: actions/setup-node@v3
+         uses: actions/checkout@v4
+       - uses: actions/setup-node@v4
          with:
            node-version: 16
        - name: Chaoscenter web unit tests
@@ -125,7 +135,7 @@ jobs:
     if: ${{ needs.changes.outputs.graphql-server == 'true' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build graphql server docker image
         shell: bash
@@ -138,7 +148,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-server:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'          
@@ -152,7 +162,7 @@ jobs:
     if: ${{ needs.changes.outputs.authentication == 'true' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build auth server docker image
         shell: bash
@@ -165,7 +175,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -179,7 +189,7 @@ jobs:
     if: ${{ needs.changes.outputs.subscriber == 'true' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build subscriber docker image
         shell: bash
@@ -192,7 +202,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -205,7 +215,7 @@ jobs:
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: yarn build check
         run: |
@@ -236,7 +246,7 @@ jobs:
     if: ${{ needs.changes.outputs.event-tracker == 'true' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build event tracker docker image
         shell: bash
@@ -249,7 +259,7 @@ jobs:
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
