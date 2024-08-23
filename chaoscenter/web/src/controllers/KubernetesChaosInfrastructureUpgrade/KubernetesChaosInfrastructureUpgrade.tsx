@@ -22,7 +22,7 @@ export default function KubernetesChaosInfrastructureUpgradeController({
     ...scope,
     options: {
       skip: !isUpgradeAvailable,
-      onError: err => showError(err)
+      onError: err => showError(err.message)
     }
   });
 
