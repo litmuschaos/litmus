@@ -98,7 +98,7 @@ Bitte schaue bei den jeweiligen Projekt nach.
 
 Litmus Chaos ist Teil der CNCF Projekte.
 
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## Gemeinschaft
 
@@ -120,5 +120,5 @@ Kommunikationskanäle zum Austausch und für weitere Informationen:
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
