@@ -34,10 +34,14 @@ func TestGetUserWithProject(t *testing.T) {
 			Username: "testUser",
 			Email:    "test@example.com",
 		}
-		project := &entities.Project{}
+		response := &entities.ListProjectResponse{}
+
+		request := &entities.ListProjectRequest{
+			UserID: "testUID",
+		}
 
 		service.On("FindUserByUsername", "testUser").Return(user, errors.New("failed"))
-		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, errors.New("failed"))
+		service.On("GetProjectsByUserID", request).Return(response, errors.New("failed"))
 
 		rest.GetUserWithProject(service)(c)
 
@@ -60,10 +64,30 @@ func TestGetUserWithProject(t *testing.T) {
 			Username: "testUser1",
 			Email:    "test@example.com",
 		}
-		project := &entities.Project{}
+
+		response := &entities.ListProjectResponse{}
+
+		fieldName := entities.ProjectSortingFieldTime
+
+		request := &entities.ListProjectRequest{
+			UserID: "testUID",
+			Pagination: &entities.Pagination{
+				Page:  0,
+				Limit: 15,
+			},
+			Sort: &entities.SortInput{
+				Field:     &fieldName,
+				Ascending: nil,
+			},
+			Filter: &entities.ListProjectInputFilter{
+				CreatedByMe:     nil,
+				InvitedByOthers: nil,
+				ProjectName:     nil,
+			},
+		}
 
 		service.On("FindUserByUsername", "testUser1").Return(user, nil)
-		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
+		service.On("GetProjectsByUserID", request).Return(response, nil)
 
 		rest.GetUserWithProject(service)(c)
 
@@ -87,10 +111,29 @@ func TestGetUserWithProject(t *testing.T) {
 			Email:    "test@example.com",
 			Role:     entities.RoleAdmin,
 		}
-		project := &entities.Project{}
+		response := &entities.ListProjectResponse{}
+
+		fieldName := entities.ProjectSortingFieldTime
+
+		request := &entities.ListProjectRequest{
+			UserID: "testUID",
+			Pagination: &entities.Pagination{
+				Page:  0,
+				Limit: 15,
+			},
+			Sort: &entities.SortInput{
+				Field:     &fieldName,
+				Ascending: nil,
+			},
+			Filter: &entities.ListProjectInputFilter{
+				CreatedByMe:     nil,
+				InvitedByOthers: nil,
+				ProjectName:     nil,
+			},
+		}
 
 		service.On("FindUserByUsername", "testUser").Return(user, nil)
-		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
+		service.On("GetProjectsByUserID", request).Return(response, nil)
 
 		rest.GetUserWithProject(service)(c)
 
@@ -106,14 +149,30 @@ func TestGetProjectsByUserID(t *testing.T) {
 		w := httptest.NewRecorder()
 		ctx := GetTestGinContext(w)
 		ctx.Set("uid", "testUserID")
-		projects := []*entities.Project{
-			{
-				ID:   "testProjectID",
-				Name: "Test Project",
+
+		response := &entities.ListProjectResponse{}
+
+		fieldName := entities.ProjectSortingFieldTime
+
+		request := &entities.ListProjectRequest{
+			UserID: "testUserID",
+			Pagination: &entities.Pagination{
+				Page:  0,
+				Limit: 15,
+			},
+			Sort: &entities.SortInput{
+				Field:     &fieldName,
+				Ascending: nil,
+			},
+			Filter: &entities.ListProjectInputFilter{
+				CreatedByMe:     nil,
+				InvitedByOthers: nil,
+				ProjectName:     nil,
 			},
 		}
+
 		service := new(mocks.MockedApplicationService)
-		service.On("GetProjectsByUserID", "testUserID", false).Return(projects, errors.New("Failed"))
+		service.On("GetProjectsByUserID", request).Return(response, errors.New("Failed"))
 		rest.GetProjectsByUserID(service)(ctx)
 		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrServerError], w.Code)
 	})
@@ -129,8 +188,32 @@ func TestGetProjectsByUserID(t *testing.T) {
 				Name: "Test Project",
 			},
 		}
+
+		response := &entities.ListProjectResponse{
+			Projects: projects,
+		}
+
+		fieldName := entities.ProjectSortingFieldTime
+
+		request := &entities.ListProjectRequest{
+			UserID: "testUserID",
+			Pagination: &entities.Pagination{
+				Page:  0,
+				Limit: 15,
+			},
+			Sort: &entities.SortInput{
+				Field:     &fieldName,
+				Ascending: nil,
+			},
+			Filter: &entities.ListProjectInputFilter{
+				CreatedByMe:     nil,
+				InvitedByOthers: nil,
+				ProjectName:     nil,
+			},
+		}
+
 		service := new(mocks.MockedApplicationService)
-		service.On("GetProjectsByUserID", "testUserID", false).Return(projects, nil)
+		service.On("GetProjectsByUserID", request).Return(response, nil)
 		rest.GetProjectsByUserID(service)(ctx)
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
