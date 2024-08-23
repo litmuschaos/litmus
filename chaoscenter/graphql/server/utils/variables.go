@@ -22,15 +22,12 @@ type Configuration struct {
 	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
-	LitmusAuthGrpcPort          string   `split_words:"true" default:":3030"`
-	LitmusAuthGrpcPortHttps     string   `split_words:"true" default:":3031"`
+	LitmusAuthGrpcPort          string   `split_words:"true" default:"3030"`
 	KubeConfigFilePath          string   `split_words:"true"`
 	RemoteHubMaxSize            string   `split_words:"true"`
 	SkipSslVerify               string   `split_words:"true"`
-	HttpPort                    string   `split_words:"true" default:"8080"`
-	HttpsPort                   string   `split_words:"true" default:"8081"`
-	RpcPort                     string   `split_words:"true" default:"8000"`
-	RpcPortHttps                string   `split_words:"true" default:"8001"`
+	RestPort                    string   `split_words:"true" default:"8080"`
+	GrpcPort                    string   `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string   `required:"true" split_words:"true"`
 	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string   `required:"true" split_words:"true"`
@@ -38,11 +35,9 @@ type Configuration struct {
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string   `split_words:"true" default:"false"`
 	EnableInternalTls           string   `split_words:"true" default:"false"`
-	ServerTlsCertPath           string   `split_words:"true"`
-	ServerTlsKeyPath            string   `split_words:"true"`
-	ClientTlsCertPath           string   `split_words:"true"`
-	ClientTlsKeyPath            string   `split_words:"true"`
-	CaCertPath                  string   `split_words:"true"`
+	TlsCertPath                 string   `split_words:"true"`
+	TlsKeyPath                  string   `split_words:"true"`
+	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
 }
 

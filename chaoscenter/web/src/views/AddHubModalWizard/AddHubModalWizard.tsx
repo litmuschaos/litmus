@@ -133,12 +133,12 @@ const OverviewStep: React.FC<StepProps<StepData>> = props => {
 };
 
 const GitConnectionStep: React.FC<
-  StepProps<StepData> & Pick<AddHubModalWizardViewProps, 'addChaosHubMutation'>
+  StepProps<StepData> & Pick<AddHubModalWizardViewProps, 'addChaosHubMutation' | 'loading'>
 > = props => {
   const scope = getScope();
   const currentStep = props.currentStep?.();
   const { getString } = useStrings();
-  const { /*error, loading,*/ addChaosHubMutation, formData, setFormData } = props;
+  const { /*error,*/ loading, addChaosHubMutation, formData, setFormData } = props;
   const [accessType, setAccessType] = React.useState<RepoType>(RepoType.PUBLIC);
   const [sshPublicKey, setPublicSshKey] = React.useState<string>('');
   const { showError, showSuccess } = useToaster();
@@ -310,7 +310,7 @@ const GitConnectionStep: React.FC<
               </Layout.Vertical>
               <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
                 <Button
-                  disabled={currentStep === 1}
+                  disabled={currentStep === 1 || loading.addChaosHubMutation}
                   onClick={() => props.previousStep?.()}
                   icon="chevron-left"
                   variation={ButtonVariation.SECONDARY}
@@ -323,7 +323,9 @@ const GitConnectionStep: React.FC<
                   // }}
                   rightIcon="chevron-right"
                   variation={ButtonVariation.PRIMARY}
-                  text={getString('connectHub')}
+                  text={loading.addChaosHubMutation ? <Icon name="loading" size={16} /> : getString('connectHub')}
+                  loading={loading.addChaosHubMutation}
+                  disabled={loading.addChaosHubMutation}
                 />
               </Layout.Horizontal>
             </Form>
@@ -336,7 +338,8 @@ const GitConnectionStep: React.FC<
 
 export default function AddHubModalWizardView({
   hideDarkModal,
-  addChaosHubMutation
+  addChaosHubMutation,
+  loading
 }: AddHubModalWizardViewProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -366,6 +369,7 @@ export default function AddHubModalWizardView({
           formData={formData}
           setFormData={setFormData}
           addChaosHubMutation={addChaosHubMutation}
+          loading={loading}
         />
       </StepWizard>
     </>
