@@ -29,7 +29,7 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 
 	logrus.WithFields(logFields).Info("request received to run chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.CreateChaosExperiment],
+		authorization.MutationRbacRules[authorization.ReRunChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (r *mutationResolver) StopExperimentRuns(ctx context.Context, projectID str
 		return false, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.StopExperimentRuns(ctx, projectID, experimentID, experimentRunID, data_store.Store)
+	uiResponse, err := r.chaosExperimentHandler.StopExperimentRuns(ctx, projectID, experimentID, experimentRunID, data_store.Store, "")
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err
