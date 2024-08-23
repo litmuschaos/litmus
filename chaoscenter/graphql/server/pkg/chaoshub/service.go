@@ -320,7 +320,6 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		SSHPrivateKey: chaosHub.SSHPrivateKey,
 		IsDefault:     false,
 	}
-	fmt.Println(chaosHub.SSHPrivateKey)
 	prevChaosHub, err := c.chaosHubOperator.GetHubByID(ctx, chaosHub.ID, projectID)
 	if err != nil {
 		return nil, err
@@ -405,6 +404,9 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return false, err
+	}
 	chaosHub, err := c.chaosHubOperator.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		log.Error(err)
@@ -522,7 +524,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -911,7 +913,7 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}

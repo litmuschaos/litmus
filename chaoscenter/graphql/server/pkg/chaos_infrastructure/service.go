@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +16,6 @@ import (
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
@@ -40,13 +40,11 @@ type Service interface {
 	RegisterInfra(c context.Context, projectID string, input model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(request model.InfraIdentity, r store.StateData) (*model.ConfirmInfraRegistrationResponse, error)
 	VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra.ChaosInfra, error)
-	//NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (string, error)
 	DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error)
 	ListInfras(projectID string, request *model.ListInfraRequest) (*model.ListInfraResponse, error)
 	GetInfraDetails(ctx context.Context, infraID string, projectID string) (*model.Infra, error)
 	SendInfraEvent(eventType, eventName, description string, infra model.Infra, r store.StateData)
-	GetManifest(token string) ([]byte, int, error)
-	GetManifestWithInfraID(infraID string, accessKey string) ([]byte, error)
+	GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error)
 	GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error)
 	GetInfraStats(ctx context.Context, projectID string) (*model.GetInfraStatsResponse, error)
 	GetVersionDetails() (*model.InfraVersionDetails, error)
@@ -76,7 +74,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	infraDetails, err := in.infraOperator.GetInfras(c, bson.D{
 		{"infra_name", input.Name},
 		{"is_removed", false},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 	})
 	if err != nil {
 		return nil, err
@@ -99,8 +97,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		infraID     = uuid.New().String()
 		currentTime = time.Now()
 	)
+
 	tkn := c.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	token, err := InfraCreateJWT(infraID)
 	if err != nil {
@@ -174,7 +176,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	}
 
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", input.EnvironmentID},
 	}
 	update := bson.D{
@@ -187,7 +189,22 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
-	manifestYaml, err := GetK8sInfraYaml(newInfra)
+	reqHeader, ok := c.Value("request-header").(http.Header)
+	if !ok {
+		return nil, fmt.Errorf("unable to parse request header")
+	}
+
+	referrer := reqHeader.Get("Referer")
+	if referrer == "" {
+		return nil, fmt.Errorf("unable to parse referer header")
+	}
+
+	referrerURL, err := url.Parse(referrer)
+	if err != nil {
+		return nil, err
+	}
+
+	manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
 	if err != nil {
 		return nil, err
 	}
@@ -204,9 +221,13 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+
 	query := bson.D{
 		{"infra_id", infraId},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -230,7 +251,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 		return "", err
 	}
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
 	}
 	updateQuery := bson.D{
@@ -285,14 +306,17 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	var pipeline mongo.Pipeline
 
 	// Match with identifiers and infra ID
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"infra_id", infraID},
-			{"project_id", projectID},
+			{"infra_id", bson.D{{"$eq", infraID}}},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -447,7 +471,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -784,7 +808,7 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -1061,57 +1085,8 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 	return &infra, nil
 }
 
-func (in *infraService) GetManifest(token string) ([]byte, int, error) {
-	infraID, err := InfraValidateJWT(token)
-	if err != nil {
-		return nil, http.StatusNotFound, err
-	}
-
-	reqinfra, err := in.infraOperator.GetInfra(infraID)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var configurations SubscriberConfigurations
-	configurations.ServerEndpoint, err = GetEndpoint(reqinfra.InfraType)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-	}
-
-	if scope == NamespaceScope {
-		configurations.TLSCert = utils.Config.TlsCertB64
-	}
-
-	if !reqinfra.IsRegistered {
-		var respData []byte
-		if reqinfra.InfraScope == "cluster" {
-
-			respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
-		} else if reqinfra.InfraScope == "namespace" {
-			respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
-		} else {
-			logrus.Error("INFRA_SCOPE env is empty!")
-		}
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-
-		return respData, http.StatusOK, nil
-	} else {
-		return []byte("infra is already registered"), http.StatusConflict, nil
-	}
-}
-
 // GetManifestWithInfraID returns manifest for a given infra
-func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string) ([]byte, error) {
+func (in *infraService) GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error) {
 	reqinfra, err := in.infraOperator.GetInfra(infraID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the infra %v", err)
@@ -1123,22 +1098,12 @@ func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string)
 	}
 
 	var configurations SubscriberConfigurations
-	configurations.ServerEndpoint, err = GetEndpoint(reqinfra.InfraType)
+	configurations.ServerEndpoint, err = GetEndpoint(host)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the server endpoint %v", err)
 	}
 
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
-		}
-	}
-
-	if scope == NamespaceScope {
-		configurations.TLSCert = utils.Config.TlsCertB64
-	}
+	configurations.TLSCert = utils.Config.TlsCertB64
 
 	var respData []byte
 	if reqinfra.InfraScope == ClusterScope {
