@@ -2,6 +2,7 @@ package fuzz_tests
 
 import (
 	"context"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"testing"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/handler"
@@ -45,8 +46,9 @@ func NewMockServices() *MockServices {
 		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
 		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+		probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
 	)
-	var chaosExperimentHandler = handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+	var chaosExperimentHandler = handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeOperator, mongodbMockOperator)
 	return &MockServices{
 		ChaosExperimentService:     chaosExperimentService,
 		ChaosExperimentRunService:  chaosExperimentRunService,

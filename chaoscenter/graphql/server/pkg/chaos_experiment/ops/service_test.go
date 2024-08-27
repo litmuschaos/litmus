@@ -3,6 +3,7 @@ package ops
 import (
 	"context"
 	"errors"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"io"
 	"log"
 	"math/rand"
@@ -28,10 +29,11 @@ import (
 
 var (
 	mongodbMockOperator        = new(dbMocks.MongoOperator)
+	probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
 	infraOperator              = dbChaosInfra.NewInfrastructureOperator(mongodbMockOperator)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
-	probeService               = probe.NewProbeService()
+	probeService               = probe.NewProbeService(probeOperator)
 )
 
 var chaosExperimentRunTestService = NewChaosExperimentService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator, probeService)
