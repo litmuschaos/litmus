@@ -697,7 +697,7 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 }
 
 // GenerateExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template for Non Cron Workflow
-func GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error) {
+func GenerateExperimentManifestWithProbes(manifest string, projectID string, probeOperator *dbSchemaProbe.Operator) (argoTypes.Workflow, error) {
 	var (
 		backgroundContext = context.Background()
 		nonCronManifest   argoTypes.Workflow
@@ -750,7 +750,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 							}
 							for _, annotationKey := range manifestAnnotation {
-								probe, err := dbSchemaProbe.GetProbeByName(ctx, annotationKey.Name, projectID)
+								probe, err := probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
 								if err != nil {
 									return argoTypes.Workflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
 								}
@@ -855,7 +855,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 }
 
 // GenerateCronExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template
-func GenerateCronExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.CronWorkflow, error) {
+func GenerateCronExperimentManifestWithProbes(manifest string, projectID string, probeOperator *dbSchemaProbe.Operator) (argoTypes.CronWorkflow, error) {
 	var (
 		backgroundContext = context.Background()
 		cronManifest      argoTypes.CronWorkflow
@@ -906,7 +906,7 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 							return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 						}
 						for _, annotationKey := range manifestAnnotation {
-							probe, err := dbSchemaProbe.GetProbeByName(ctx, annotationKey.Name, projectID)
+							probe, err := probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
 							if err != nil {
 								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
 							}

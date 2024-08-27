@@ -36,10 +36,14 @@ type Service interface {
 	ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error)
 }
 
-type probe struct{}
+type probeService struct {
+	probeOperator *dbSchemaProbe.Operator
+}
 
-func NewProbeService() Service {
-	return &probe{}
+func NewProbeService(probeOperator *dbSchemaProbe.Operator) Service {
+	return &probeService{
+		probeOperator: probeOperator,
+	}
 }
 
 func Error(logFields logrus.Fields, message string) error {
@@ -48,7 +52,7 @@ func Error(logFields logrus.Fields, message string) error {
 }
 
 // AddProbe - Create a new Probe
-func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
+func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
 	// TODO: Add check if probe exists
 
 	var (
@@ -118,7 +122,7 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest, projectI
 	}
 
 	// Adding the new probe into database.
-	err = dbSchemaProbe.CreateProbe(ctx, *newProbe)
+	err = p.probeOperator.CreateProbe(ctx, *newProbe)
 	if err != nil {
 		return nil, err
 	}
@@ -127,14 +131,14 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest, projectI
 }
 
 // UpdateProbe - Update a new Probe
-func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
+func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
 	if err != nil {
 		return "", err
 	}
 
-	pr, err := dbSchemaProbe.GetProbeByName(ctx, request.Name, projectID)
+	pr, err := p.probeOperator.GetProbeByName(ctx, request.Name, projectID)
 	if err != nil {
 		return "", err
 	}
@@ -197,7 +201,7 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest, pro
 		{"is_removed", false},
 	}
 
-	_, err = dbSchemaProbe.UpdateProbe(ctx, filterQuery, updateQuery)
+	_, err = p.probeOperator.UpdateProbe(ctx, filterQuery, updateQuery)
 	if err != nil {
 		return "", err
 	}
@@ -206,9 +210,9 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest, pro
 }
 
 // GetProbe - List a single Probe
-func (p *probe) GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error) {
+func (p *probeService) GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error) {
 
-	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+	probe, err := p.probeOperator.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -217,9 +221,9 @@ func (p *probe) GetProbe(ctx context.Context, probeName, projectID string) (*mod
 }
 
 // GetProbeYAMLData - Get the probe yaml data compatible with the chaos engine manifest
-func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProbeYAMLRequest, projectID string) (string, error) {
+func (p *probeService) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProbeYAMLRequest, projectID string) (string, error) {
 
-	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeRequest.ProbeName, projectID)
+	probe, err := p.probeOperator.GetProbeByName(ctx, probeRequest.ProbeName, projectID)
 	if err != nil {
 		return "", err
 	}
@@ -233,7 +237,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 }
 
 // ListProbes - List a single/all Probes
-func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
+func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
 	var pipeline mongo.Pipeline
 
 	// Match the Probe Names from the input array
@@ -336,7 +340,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 
 	var allProbes []dbSchemaProbe.Probe
 
-	probeCursor, err := dbSchemaProbe.GetAggregateProbes(ctx, pipeline)
+	probeCursor, err := p.probeOperator.GetAggregateProbes(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -474,9 +478,9 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 }
 
 // DeleteProbe - Deletes a single Probe
-func (p *probe) DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error) {
+func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error) {
 
-	_, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+	_, err := p.probeOperator.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {
 		return false, err
 	}
@@ -500,7 +504,7 @@ func (p *probe) DeleteProbe(ctx context.Context, probeName, projectID string) (b
 		}},
 	}
 
-	_, err = dbSchemaProbe.UpdateProbe(ctx, query, update)
+	_, err = p.probeOperator.UpdateProbe(ctx, query, update)
 	if err != nil {
 		return false, err
 	}
@@ -509,7 +513,7 @@ func (p *probe) DeleteProbe(ctx context.Context, probeName, projectID string) (b
 }
 
 // GetProbeReference - Get the experiment details the probe is referencing to
-func (p *probe) GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error) {
+func (p *probeService) GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error) {
 
 	var pipeline mongo.Pipeline
 
@@ -564,7 +568,7 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName, projectID stri
 	pipeline = append(pipeline, experimentWithSelectedProbeName)
 
 	// Call aggregation on pipeline
-	probeCursor, err := dbSchemaProbe.GetAggregateProbes(ctx, pipeline)
+	probeCursor, err := p.probeOperator.GetAggregateProbes(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -694,14 +698,14 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName, projectID stri
 }
 
 // ValidateUniqueProbe - Validates the uniqueness of the probe, returns true if unique
-func (p *probe) ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error) {
+func (p *probeService) ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error) {
 
 	query := bson.D{
 		{"name", probeName},
 		{"project_id", bson.D{{"$eq", projectID}}},
 	}
 
-	isUnique, err := dbSchemaProbe.IsProbeUnique(ctx, query)
+	isUnique, err := p.probeOperator.IsProbeUnique(ctx, query)
 	if err != nil {
 		return false, err
 	}

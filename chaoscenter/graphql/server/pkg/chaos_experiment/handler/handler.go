@@ -48,6 +48,7 @@ type ChaosExperimentHandler struct {
 	gitOpsService              gitops.Service
 	chaosExperimentOperator    *dbChaosExperiment.Operator
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	probeOperator              *dbSchemaProbe.Operator
 	mongodbOperator            mongodb.MongoOperator
 }
 
@@ -59,6 +60,7 @@ func NewChaosExperimentHandler(
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
+	probeOperator *dbSchemaProbe.Operator,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentHandler {
 	return &ChaosExperimentHandler{
@@ -68,6 +70,7 @@ func NewChaosExperimentHandler(
 		gitOpsService:              gitOpsService,
 		chaosExperimentOperator:    chaosExperimentOperator,
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		probeOperator:              probeOperator,
 		mongodbOperator:            mongodbOperator,
 	}
 }
@@ -1321,7 +1324,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 			}
 
 			for _, probeName := range _probe.ProbeNames {
-				singleProbe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+				singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, probeName, projectID)
 				if err != nil {
 					return nil, err
 				}
@@ -1430,7 +1433,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 		return false, errors.New("failed to marshal workflow manifest")
 	}
 
-	cronWorkflowManifest, err = probeUtils.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
+	cronWorkflowManifest, err = probeUtils.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID, c.probeOperator)
 	if err != nil {
 		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
 	}
