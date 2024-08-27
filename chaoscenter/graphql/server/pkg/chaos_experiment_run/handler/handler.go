@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/common"
 
 	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
@@ -505,37 +506,29 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
 
 	// Pagination or adding a default limit of 15 if pagination not provided
-	paginatedExperiments := bson.A{
-		sortStage,
-	}
+	_, skip, limit := common.CreatePaginationStage(request.Pagination)
 
-	if request.Pagination != nil {
-		paginationSkipStage := bson.D{
-			{"$skip", request.Pagination.Page * request.Pagination.Limit},
-		}
-		paginationLimitStage := bson.D{
-			{"$limit", request.Pagination.Limit},
-		}
+	pipeline = append(pipeline, sortStage)
 
-		paginatedExperiments = append(paginatedExperiments, paginationSkipStage, paginationLimitStage)
-	} else {
-		limitStage := bson.D{
-			{"$limit", 15},
-		}
-
-		paginatedExperiments = append(paginatedExperiments, limitStage)
-	}
-
-	// Add two stages where we first count the number of filtered workflow and then paginate the results
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_filtered_experiment_runs", bson.A{
-				bson.D{{"$count", "count"}},
-			}},
-			{"flattened_experiment_runs", paginatedExperiments},
+	// Count total project and get top-level document to array
+	countStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+			{"total_filtered_experiment_runs", bson.D{{"$sum", 1}}},
+			{"flattened_experiment_runs", bson.D{{"$push", "$$ROOT"}}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	// Paging results
+	pagingStage := bson.D{
+		{"$project", bson.D{
+			{"total_filtered_experiment_runs", 1},
+			{"flattened_experiment_runs", bson.D{
+				{"$slice", bson.A{"$flattened_experiment_runs", skip, limit}},
+			}},
+		}}}
+
+	pipeline = append(pipeline, countStage, pagingStage)
 
 	// Call aggregation on pipeline
 	workflowsCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
@@ -548,12 +541,13 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 		workflows []dbChaosExperiment.AggregatedExperimentRuns
 	)
 
-	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
 		return &model.ListExperimentRunResponse{
 			TotalNoOfExperimentRuns: 0,
 			ExperimentRuns:          result,
 		}, errors.New("error decoding experiment runs cursor: " + err.Error())
 	}
+
 	if len(workflows) == 0 {
 		return &model.ListExperimentRunResponse{
 			TotalNoOfExperimentRuns: 0,
@@ -637,8 +631,8 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	}
 
 	totalFilteredExperimentRunsCounter := 0
-	if len(workflows) > 0 && len(workflows[0].TotalFilteredExperimentRuns) > 0 {
-		totalFilteredExperimentRunsCounter = workflows[0].TotalFilteredExperimentRuns[0].Count
+	if len(workflows) > 0 && workflows[0].TotalFilteredExperimentRuns > 0 {
+		totalFilteredExperimentRunsCounter = workflows[0].TotalFilteredExperimentRuns
 	}
 
 	output := model.ListExperimentRunResponse{
