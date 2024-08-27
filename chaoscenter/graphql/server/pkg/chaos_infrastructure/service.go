@@ -814,43 +814,43 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 		}},
 	}
 
-	// Group by infra status and count their total number by each group
-	groupByInfraStatusStage := bson.D{
-		{
-			"$group", bson.D{
-				{"_id", "$is_active"},
-				{"count", bson.D{
-					{"$sum", 1},
+	// Group by infra status, confirmed stage and count their total number by each group
+	groupByStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+
+			// Count for active status
+			{"total_active_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_active", true}}}, 1, 0}},
 				}},
-			},
-		},
-	}
-
-	// Group by infra confirmed stage and count their total number by each group
-	groupByInfraConfirmedStage := bson.D{
-		{
-			"$group", bson.D{
-				{"_id", "$is_infra_confirmed"},
-				{"count", bson.D{
-					{"$sum", 1},
-				}},
-			},
-		},
-	}
-
-	facetStage := bson.D{
-		{"$facet", bson.D{
-
-			{"total_active_infras", bson.A{
-				matchIdentifierStage, groupByInfraStatusStage,
 			}},
-			{"total_confirmed_infras", bson.A{
-				matchIdentifierStage, groupByInfraConfirmedStage,
+			{"total_not_active_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_active", false}}}, 1, 0}},
+				}},
+			}},
+
+			// Count for confirmed status
+			{"total_confirmed_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_infra_confirmed", true}}}, 1, 0}},
+				}},
+			}},
+
+			{"total_not_confirmed_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_infra_confirmed", true}}}, 1, 0}},
+				}},
 			}},
 		}},
 	}
 
-	pipeline = append(pipeline, facetStage)
+	pipeline = append(pipeline, matchIdentifierStage, groupByStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -863,30 +863,12 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 		return nil, err
 	}
 
-	stateMap := map[bool]int{
-		false: 0,
-		true:  0,
-	}
-
-	infraConfirmedMap := map[bool]int{
-		false: 0,
-		true:  0,
-	}
-
-	for _, data := range res[0].TotalConfirmedInfrastructures {
-		infraConfirmedMap[data.Id] = data.Count
-	}
-
-	for _, data := range res[0].TotalActiveInfrastructure {
-		stateMap[data.Id] = data.Count
-	}
-
 	return &model.GetInfraStatsResponse{
-		TotalInfrastructures:             infraConfirmedMap[true] + infraConfirmedMap[false],
-		TotalActiveInfrastructure:        stateMap[true],
-		TotalInactiveInfrastructures:     stateMap[false],
-		TotalConfirmedInfrastructure:     infraConfirmedMap[true],
-		TotalNonConfirmedInfrastructures: infraConfirmedMap[false],
+		TotalInfrastructures:             res[0].TotalActiveInfrastructure + res[0].TotalNotActiveInfrastructure,
+		TotalActiveInfrastructure:        res[0].TotalActiveInfrastructure,
+		TotalInactiveInfrastructures:     res[0].TotalNotActiveInfrastructure,
+		TotalConfirmedInfrastructure:     res[0].TotalConfirmedInfrastructures,
+		TotalNonConfirmedInfrastructures: res[0].TotalNotConfirmedInfrastructures,
 	}, nil
 
 }
