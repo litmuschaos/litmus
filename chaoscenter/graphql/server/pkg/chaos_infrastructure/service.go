@@ -14,6 +14,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/common"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/sirupsen/logrus"
@@ -642,34 +643,29 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 
 	pipeline = append(pipeline, fetchExperimentDetailsStage)
 
-	//Pagination
-	paginatedInfras := bson.A{
-		fetchExperimentDetailsStage,
-	}
+	// Pagination or adding a default limit of 15 if pagination not provided
+	_, skip, limit := common.CreatePaginationStage(request.Pagination)
 
-	if request != nil {
-		if request.Pagination != nil {
-			paginationSkipStage := bson.D{
-				{"$skip", request.Pagination.Page * request.Pagination.Limit},
-			}
-			paginationLimitStage := bson.D{
-				{"$limit", request.Pagination.Limit},
-			}
-
-			paginatedInfras = append(paginatedInfras, paginationSkipStage, paginationLimitStage)
-		}
-	}
-
-	// Add two stages where we first count the number of filtered workflow and then paginate the results
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_filtered_infras", bson.A{
-				bson.D{{"$count", "count"}},
-			}},
-			{"infras", paginatedInfras},
+	// Count total project and get top-level document to array
+	countStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+			{"total_filtered_infras", bson.D{{"$sum", 1}}},
+			{"infras", bson.D{{"$push", "$$ROOT"}}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	// Paging results
+	pagingStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"total_filtered_infras", 1},
+			{"infras", bson.D{
+				{"$slice", bson.A{"$infras", skip, limit}},
+			}},
+		}}}
+
+	pipeline = append(pipeline, countStage, pagingStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -776,8 +772,8 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	}
 
 	totalFilteredInfrasCounter := 0
-	if len(infras) > 0 && len(infras[0].TotalFilteredInfras) > 0 {
-		totalFilteredInfrasCounter = infras[0].TotalFilteredInfras[0].Count
+	if len(infras) > 0 && infras[0].TotalFilteredInfras > 0 {
+		totalFilteredInfrasCounter = infras[0].TotalFilteredInfras
 	}
 
 	output := model.ListInfraResponse{

@@ -67,7 +67,7 @@ type AggregatedGetInfras struct {
 }
 
 type AggregatedInfras struct {
-	TotalFilteredInfras []TotalFilteredData `bson:"total_filtered_infras"`
+	TotalFilteredInfras int                 `bson:"total_filtered_infras"`
 	Infras              []ChaosInfraDetails `bson:"infras"`
 }
 
