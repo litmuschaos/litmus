@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"io"
 	"log"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

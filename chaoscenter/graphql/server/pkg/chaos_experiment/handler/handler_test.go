@@ -3,9 +3,10 @@ package handler
 import (
 	"context"
 	"errors"
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"reflect"
 	"testing"
+
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
