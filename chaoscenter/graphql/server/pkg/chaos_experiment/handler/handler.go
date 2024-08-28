@@ -1096,16 +1096,28 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	}
 
 	// This stage buckets the number of experiments by avg resiliency score in the ranges of 0-39, 40-79, 80-100
-	bucketByResScoreStage := bson.D{
-		{"$bucket", bson.D{
-			{"groupBy", "$avg_resiliency_score.avg"},
-			{"boundaries", bson.A{0, 40, 80, 101}},
-			{"default", 101},
-			{"output", bson.D{
-				{"count", bson.D{
-					{"$sum", 1},
+	groupByResScoreStage := bson.D{
+		{"$group", bson.D{
+			{"_id", bson.D{
+				{"$switch", bson.D{
+					{"branches", bson.A{
+						bson.D{
+							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 40}}}},
+							{"then", "0"},
+						},
+						bson.D{
+							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 80}}}},
+							{"then", "40"},
+						},
+						bson.D{
+							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 101}}}},
+							{"then", "80"},
+						},
+					}},
+					{"default", "101"},
 				}},
 			}},
+			{"count", bson.D{{"$sum", 1}}},
 		}},
 	}
 
@@ -1137,7 +1149,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 				projectstage,
 				fetchRunDetailsStage,
 				unwindStage,
-				bucketByResScoreStage,
+				groupByResScoreStage,
 			}},
 		}},
 	}
