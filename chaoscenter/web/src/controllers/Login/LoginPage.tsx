@@ -4,7 +4,7 @@ import { useToaster } from '@harnessio/uicore';
 import jwtDecode from 'jwt-decode';
 import LoginPageView from '@views/Login';
 import { useLoginMutation, useGetCapabilitiesQuery, useGetUserQuery } from '@api/auth';
-import { getUserDetails, setUserDetails } from '@utils';
+import { getUserDetails, setUserDetails, toTitleCase } from '@utils';
 import { normalizePath } from '@routes/RouteDefinitions';
 import type { DecodedTokenType, PermissionGroup } from '@models';
 import { useSearchParams } from '@hooks';
@@ -37,7 +37,13 @@ const LoginController: React.FC = () => {
   const { isLoading, mutate: handleLogin } = useLoginMutation(
     {},
     {
-      onError: err => showError(err.error),
+      onError: err =>
+        showError(
+          toTitleCase({
+            separator: '_',
+            text: err.error ?? ''
+          })
+        ),
       onSuccess: response => {
         if (response.accessToken) {
           setUserDetails(response);
@@ -60,9 +66,13 @@ const LoginController: React.FC = () => {
         setUserDetails({
           isInitialLogin: response.isInitialLogin
         });
-        history.push(
-          normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID ?? ''}/dashboard`)
-        );
+        if (response.isInitialLogin) {
+          history.push(`/account/${userDetails.accountID}/settings/password-reset`);
+        } else {
+          history.push(
+            normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID ?? ''}/dashboard`)
+          );
+        }
       }
     }
   );
