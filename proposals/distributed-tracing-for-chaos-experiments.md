@@ -93,6 +93,7 @@ Because the OpenTelemetry SDK performs additional tasks, it can cause latency. S
 ## References
 - [Environment Variables as Carrier for Inter-Process Propagation to transport context](https://github.com/open-telemetry/opentelemetry-specification/issues/740)
 - [Tekton's distributed tracing proposal](https://github.com/tektoncd/community/blob/main/teps/0124-distributed-tracing-for-tasks-and-pipelines.md)
+- [noop tracer](https://github.com/open-telemetry/opentelemetry-go/discussions/2659)
 
 ## Implementation PRs
 
