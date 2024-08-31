@@ -1103,18 +1103,18 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 					{"branches", bson.A{
 						bson.D{
 							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 40}}}},
-							{"then", "0"},
+							{"then", 0},
 						},
 						bson.D{
 							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 80}}}},
-							{"then", "40"},
+							{"then", 40},
 						},
 						bson.D{
 							{"case", bson.D{{"$lt", bson.A{"$avg_resiliency_score.avg", 101}}}},
-							{"then", "80"},
+							{"then", 80},
 						},
 					}},
-					{"default", "101"},
+					{"default", 101},
 				}},
 			}},
 			{"count", bson.D{{"$sum", 1}}},
