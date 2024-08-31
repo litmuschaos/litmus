@@ -1038,18 +1038,37 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 			{"is_removed", false},
 		}},
 	}
-	// Project experiment ID
-	projectstage := bson.D{
-		{"$project", bson.D{
-			{"experiment_id", 1},
-		}},
+
+	pipeline = append(pipeline, matchIdentifierStage)
+
+	// Groups to count total number of experiments and get experiments to array
+	groupByTotalCount := bson.D{
+		{
+			"$group", bson.D{
+				{"_id", nil},
+				{"total_experiments", bson.D{
+					{"$sum", 1},
+				}},
+				{"experiments", bson.D{
+					{"$push", "$$ROOT"},
+				}},
+			},
+		},
 	}
+
+	pipeline = append(pipeline, groupByTotalCount)
+
+	unwindStage := bson.D{
+		{"$unwind", "$experiments"},
+	}
+
+	pipeline = append(pipeline, unwindStage)
 
 	// fetchRunDetailsStage fetches experiment runs and calculates their avg resiliency score which have completed
 	fetchRunDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperimentRuns"},
-			{"let", bson.D{{"expID", "$experiment_id"}}},
+			{"let", bson.D{{"expID", "$experiments.experiment_id"}}},
 			{"pipeline", bson.A{
 				bson.D{
 					{"$match", bson.D{
@@ -1078,14 +1097,16 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 		}},
 	}
 
-	unwindStage := bson.D{
-		{"$unwind", bson.D{
-			{"path", "$avg_resiliency_score"},
-		}},
+	pipeline = append(pipeline, fetchRunDetailsStage)
+
+	unwindResiliencySocreStage := bson.D{
+		{"$unwind", "$avg_resiliency_score"},
 	}
 
+	pipeline = append(pipeline, unwindResiliencySocreStage)
+
 	// This stage buckets the number of experiments by avg resiliency score in the ranges of 0-39, 40-79, 80-100
-	groupByResScoreStage := bson.D{
+	groupByResiliencyScore := bson.D{
 		{"$group", bson.D{
 			{"_id", bson.D{
 				{"$switch", bson.D{
@@ -1106,43 +1127,33 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 					{"default", 101},
 				}},
 			}},
+			{"total_experiments", bson.D{
+				{"$first", "$total_experiments"},
+			}},
 			{"count", bson.D{{"$sum", 1}}},
 		}},
 	}
 
-	// Groups to count total number of experiments
-	groupByTotalCount := bson.D{
-		{
-			"$group", bson.D{
-				{"_id", nil},
-				{"count", bson.D{
-					{"$sum", 1},
-				}},
-			},
-		},
-	}
+	pipeline = append(pipeline, groupByResiliencyScore)
 
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_experiments", bson.A{
-				matchIdentifierStage,
-				groupByTotalCount,
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"by_resiliency_score", bson.A{
 				bson.D{
-					{"$project", bson.D{
-						{"_id", 0},
-					}},
+					{"_id", "$_id"},
+					{"count", "$count"},
 				},
 			}},
-			{"categorized_by_resiliency_score", bson.A{
-				matchIdentifierStage,
-				projectstage,
-				fetchRunDetailsStage,
-				unwindStage,
-				groupByResScoreStage,
+			{"total_experiments", bson.A{
+				bson.D{
+					{"count", "$total_experiments"},
+				},
 			}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	pipeline = append(pipeline, projectStage)
 
 	// Call aggregation on pipeline
 	experimentCursor, err := c.chaosExperimentOperator.GetAggregateExperiments(pipeline)
@@ -1152,7 +1163,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 
 	var res []dbChaosExperiment.AggregatedExperimentStats
 
-	if err = experimentCursor.All(context.Background(), &res); err != nil || len(res) == 0 {
+	if err = experimentCursor.All(context.Background(), &res); err != nil {
 		return nil, errors.New("error decoding experiment details cursor: " + err.Error())
 	}
 
