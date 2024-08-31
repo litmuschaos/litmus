@@ -892,66 +892,55 @@ func (c *ChaosExperimentHandler) getWfRunDetails(workflowIDs []string) (map[stri
 	}
 	pipeline = append(pipeline, sortStage)
 
-	var workflowRunPipeline mongo.Pipeline
-	// Get details of the latest wf run
-	wfRunDetails := bson.D{
+	// Get details of the latest wf run and total_experiment_runs and avg_resiliency_score
+	groupStage := bson.D{
 		{"$group", bson.D{
 			{"_id", "$experiment_id"},
-
-			// Fetch the latest workflowRun details
-			{"experiment_run_details", bson.D{
-				{
-					"$first", "$$ROOT",
-				},
+			{"latest_experiment_run", bson.D{
+				{"$first", bson.D{
+					{"_id", "$experiment_id"},
+					{"experiment_run_details", "$$ROOT"},
+				}},
 			}},
-		}},
-	}
-	workflowRunPipeline = append(workflowRunPipeline, wfRunDetails)
-
-	var resScorePipeline mongo.Pipeline
-	// Filtering out running workflow runs to calculate average resiliency score
-	filterRunningWfRuns := bson.D{
-		{
-			"$match",
-			bson.D{{
-				"$and", bson.A{
-					bson.D{{
-						"experiment_id", bson.D{{"$in", workflowIDs}},
-					}},
-					bson.D{{"phase", bson.D{
-						{"$ne", "Running"},
-					}}},
-				},
-			}},
-		},
-	}
-	resScorePipeline = append(resScorePipeline, filterRunningWfRuns)
-	//// Calculating average resiliency score
-	avgResiliencyScore := bson.D{
-		{"$group", bson.D{
-			{"_id", "$experiment_id"},
-
-			// Count all workflowRuns in a workflow
 			{"total_experiment_runs", bson.D{
-				{"$sum", 1},
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$ne", bson.A{"$phase", "Running"}}}, 1, 0}},
+				}},
 			}},
-
-			// Calculate average
 			{"avg_resiliency_score", bson.D{
-				{"$avg", "$resiliency_score"},
+				{"$avg", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$ne", bson.A{"$phase", "Running"}}}, "$resiliency_score", nil}},
+				}},
 			}},
 		}},
 	}
-	resScorePipeline = append(resScorePipeline, avgResiliencyScore)
 
-	// Add two stages where we first calculate the avg resiliency score of filtered workflow runs and then fetch details of the latest workflow run
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"avg_resiliency_score", resScorePipeline},
-			{"latest_experiment_run", workflowRunPipeline},
+	pipeline = append(pipeline, groupStage)
+
+	// the latest workflow run is wrapped in array and avg_resiliency_score is formatted as object
+	finalProjectStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"latest_experiment_run", bson.D{
+				{"$cond", bson.A{
+					bson.M{"$isArray": "$latest_experiment_run"},
+					"$latest_experiment_run",
+					bson.A{"$latest_experiment_run"},
+				}},
+			}},
+			{"avg_resiliency_score", bson.A{
+				bson.D{
+					{"_id", "$_id"},
+					{"total_experiment_runs", "$total_experiment_runs"},
+					{"avg_resiliency_score", "$avg_resiliency_score"},
+				},
+			}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	pipeline = append(pipeline, finalProjectStage)
 	// Call aggregation on pipeline
 	workflowsRunDetailCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
