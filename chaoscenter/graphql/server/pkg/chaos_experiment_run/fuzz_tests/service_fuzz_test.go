@@ -12,7 +12,10 @@ import (
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MockServices struct {
@@ -59,8 +62,9 @@ func FuzzProcessExperimentRunDelete(f *testing.F) {
 		if err != nil {
 			return
 		}
-
 		mockServices := NewMockServices()
+		mockServices.MongodbOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil).Once()
+
 		err = mockServices.ChaosExperimentRunService.ProcessExperimentRunDelete(
 			context.Background(),
 			targetStruct.Query,
@@ -121,7 +125,13 @@ func FuzzProcessCompletedExperimentRun(f *testing.F) {
 			return
 		}
 
+		findResult := []interface{}{bson.D{
+			{Key: "experiment_id", Value: targetStruct.WfID},
+		}}
 		mockServices := NewMockServices()
+		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+		mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+
 		_, err = mockServices.ChaosExperimentRunService.ProcessCompletedExperimentRun(
 			targetStruct.ExecData,
 			targetStruct.WfID,
