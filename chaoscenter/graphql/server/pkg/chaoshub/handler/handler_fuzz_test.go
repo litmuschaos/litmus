@@ -116,7 +116,7 @@ func FuzzGetExperimentData(f *testing.F) {
 
 		_, err = GetExperimentData(filePath)
 		
-		if err != nil && (!isInvalidYAML(jsonContent) || json.Valid(jsonContent)) {
+		if err != nil && !isInvalidYAML(jsonContent) && json.Valid(jsonContent) {
 			t.Errorf("UnExpected error for valid YAML, got error: %v", err)
 		}
 		if err == nil && isInvalidYAML(jsonContent) {
