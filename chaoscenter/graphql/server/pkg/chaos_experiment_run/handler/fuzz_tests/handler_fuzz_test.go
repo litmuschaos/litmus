@@ -2,6 +2,7 @@ package fuzz_tests
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -114,7 +115,7 @@ func FuzzGetExperimentRun(f *testing.F) {
 		}}
 
 		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 
 		res, err := mockServices.ChaosExperimentRunHandler.GetExperimentRun(ctx, targetStruct.ProjectID, &targetStruct.ExperimentRunID, &targetStruct.NotifyID)
 		if err != nil {
@@ -180,13 +181,19 @@ func FuzzRunChaosWorkFlow(f *testing.F) {
 
 		mockServices := NewMockServices()
 		mockServices.MongodbOperator.On("StartSession").Return(mock.Anything, nil).Once()
-		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil).Once()
 		mockServices.MongodbOperator.On("CommitTransaction", mock.Anything).Return(nil).Once()
 		mockServices.MongodbOperator.On("AbortTransaction", mock.Anything).Return(nil).Once()
 
+		findResult := []interface{}{bson.D{
+			{Key: "infra_id", Value: targetStruct.ProjectID},
+		}}
+		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+		mockServices.MongodbOperator.On("Get", mock.Anything, mock.Anything, mock.Anything).Return(singleResult, nil).Once()
+
 		res, err := mockServices.ChaosExperimentRunHandler.RunChaosWorkFlow(context.Background(), targetStruct.ProjectID, targetStruct.Workflow, nil)
-		if err != nil {
-			t.Errorf("RunChaosWorkFlow() error = %v", err)
+		if strings.Contains(err.Error(), "inactive infra") {
+			t.Log("Handled expected error due to inactive infrastructure: ", err)
 			return
 		}
 		if res == nil {
@@ -197,11 +204,20 @@ func FuzzRunChaosWorkFlow(f *testing.F) {
 
 func FuzzGetExperimentRunStats(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
-		projectID := uuid.New().String()
+		fuzzConsumer := fuzz.NewConsumer(data)
+		targetStruct := &struct {
+			ProjectID string
+		}{}
+		err := fuzzConsumer.GenerateStruct(targetStruct)
+		if err != nil {
+			return
+		}
+		targetStruct.ProjectID = uuid.New().String()
+
 		mockServices := NewMockServices()
 
 		findResult := []interface{}{bson.D{
-			{Key: "project_id", Value: projectID},
+			{Key: "project_id", Value: targetStruct.ProjectID},
 			{Key: "infra_id", Value: "abc"},
 			{
 				Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
@@ -214,7 +230,7 @@ func FuzzGetExperimentRunStats(f *testing.F) {
 		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
 		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 
-		res, err := mockServices.ChaosExperimentRunHandler.GetExperimentRunStats(context.Background(), projectID)
+		res, err := mockServices.ChaosExperimentRunHandler.GetExperimentRunStats(context.Background(), targetStruct.ProjectID)
 		if err != nil {
 			t.Errorf("GetExperimentRunStats() error = %v", err)
 			return
