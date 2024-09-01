@@ -7,8 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"os"
-	"bytes"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"testing"
