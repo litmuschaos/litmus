@@ -3,13 +3,14 @@ package handler
 import (
 	"archive/zip"
 	"encoding/json"
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
+	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 )
 
 func FuzzGetChartsPath(f *testing.F) {
@@ -115,7 +116,7 @@ func FuzzGetExperimentData(f *testing.F) {
 		}
 
 		_, err = GetExperimentData(filePath)
-		
+
 		if err != nil && !isInvalidYAML(jsonContent) && json.Valid(jsonContent) {
 			t.Errorf("UnExpected error for valid YAML, got error: %v", err)
 		}
