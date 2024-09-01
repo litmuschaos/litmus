@@ -97,6 +97,7 @@ func FuzzProcessExperimentRunStop(f *testing.F) {
 		}
 
 		mockServices := NewMockServices()
+		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil).Once()
 		err = mockServices.ChaosExperimentRunService.ProcessExperimentRunStop(
 			context.Background(),
 			targetStruct.Query,
@@ -130,7 +131,7 @@ func FuzzProcessCompletedExperimentRun(f *testing.F) {
 		}}
 		mockServices := NewMockServices()
 		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-		mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+		mockServices.MongodbOperator.On("Get", mock.Anything, mock.Anything, mock.Anything).Return(singleResult, nil).Once()
 
 		_, err = mockServices.ChaosExperimentRunService.ProcessCompletedExperimentRun(
 			targetStruct.ExecData,
