@@ -10,7 +10,6 @@ import { useStrings } from '@strings';
 import ProjectDashboardCardMenuController from '@controllers/ProjectDashboardCardMenu';
 import { setUserDetails, toSentenceCase } from '@utils';
 import { useAppStore } from '@context';
-import { useRouteWithBaseUrl } from '@hooks';
 import css from './ProjectDashboardCardContainer.module.scss';
 
 interface ProjectDashboardCardProps {
@@ -25,16 +24,16 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>();
   const { getString } = useStrings();
   const history = useHistory();
-  const { updateAppStore } = useAppStore();
-
-  const paths = useRouteWithBaseUrl();
+  const { updateAppStore, currentUserInfo } = useAppStore();
 
   const handleProjectSelect = (project: Project): void => {
+    const projectRole = project.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
     updateAppStore({ projectID: project.projectID, projectName: project.name });
     setUserDetails({
+      projectRole,
       projectID: project.projectID
     });
-    history.push(paths.toRoot());
+    history.replace(`/`);
   };
 
   return (
