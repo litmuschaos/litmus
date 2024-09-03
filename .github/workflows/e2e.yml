@@ -110,7 +110,7 @@ jobs:
           kubectl get pods -n kube-system
 
       - name: download docker artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           name: Docker-Images
           path: Images
