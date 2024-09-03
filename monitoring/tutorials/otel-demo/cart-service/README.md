@@ -22,4 +22,5 @@
 1. Click on the `Run` button
 2. Check Experiment Status and Logs
 3. Check the Resilience Score
-4. Check cart service Spanmetrics Metrics using Grafana ![cartservice_spanmetrics.png](../screenshots/cartservice_spanmetrics.png)
+4. Check the Chaos Exporter metrics using Grafana and confirm if the experiment failed. ![cart_service_pod_network_latency_experiment_result_dashboard.png](../screenshots/cart_service_pod_network_latency_experiment_result_dashboard.png)
+5. Check cart service Spanmetrics Metrics using Grafana ![cartservice_spanmetrics.png](../screenshots/cartservice_spanmetrics.png)

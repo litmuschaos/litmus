@@ -1,7 +1,8 @@
 # recommendation service pod delete
 ## Description
 - This experiment injects pod delete chaos to the recommendation service pod.
-- The Probe checks the Prometheus metrics for the error rate of the ListRecommendations span.
+- The Probe checks the Prometheus metrics for the error rate of the ListRecommendations span 
+  - ListRecommendations is included in the frontend service, even though it utilizes the recommendation service.
 ## Steps
 ### 1. Probe Settings
 - probe type: `Prometheus Probe`
@@ -22,4 +23,5 @@
 1. Click on the `Run` button
 2. Check Experiment Status and Logs
 3. Check the Resilience Score
-4. Check Error Rate for frontend using Grafana ![frontend_spanmetrics.png](../screenshots/frontend_spanmetrics.png)
+4. Check the Chaos Exporter metrics using Grafana and confirm if the experiment passed. ![recommendation_service_pod_delete_experiment_result_dashboard.png](../screenshots/recommendation_service_pod_delete_experiment_result_dashboard.png)
+5. Check Error Rate in frontend service Spanmetrics  using Grafana ![frontend_spanmetrics.png](../screenshots/frontend_spanmetrics.png)
