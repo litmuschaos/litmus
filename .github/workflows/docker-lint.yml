@@ -1,0 +1,20 @@
+name: Docker Linting
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: hadolint/hadolint:latest-debian
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Lint Dockerfiles
+        run: |
+          find . -name 'Dockerfile' -print0 | xargs -0 -n1 hadolint
