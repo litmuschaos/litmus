@@ -1172,6 +1172,10 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 		TotalExpCategorizedByResiliencyScore: nil,
 	}
 
+	if len(res) == 0 {
+		return result, nil
+	}
+
 	if len(res[0].TotalExperiments) > 0 {
 		result.TotalExperiments = res[0].TotalExperiments[0].Count
 	}
