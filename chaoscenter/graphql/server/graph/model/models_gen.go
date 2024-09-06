@@ -138,6 +138,8 @@ type ChaosHub struct {
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
 	RepoBranch string `json:"repoBranch"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 	// ID of the project in which the chaos hub is present
 	ProjectID string `json:"projectID"`
 	// Default Hub Identifier
@@ -213,6 +215,8 @@ type ChaosHubStatus struct {
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
 	RepoBranch string `json:"repoBranch"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 	// Bool value indicating whether the hub is available or not.
 	IsAvailable bool `json:"isAvailable"`
 	// Total number of experiments in the hub
@@ -292,6 +296,8 @@ type CloningInput struct {
 	RepoBranch string `json:"repoBranch"`
 	// URL of the git repository
 	RepoURL string `json:"repoURL"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 	// Bool value indicating whether the hub is private or not.
 	IsPrivate bool `json:"isPrivate"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
@@ -344,6 +350,8 @@ type CreateChaosHubRequest struct {
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
 	RepoBranch string `json:"repoBranch"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 	// Bool value indicating whether the hub is private or not.
 	IsPrivate bool `json:"isPrivate"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
@@ -377,6 +385,8 @@ type CreateRemoteChaosHub struct {
 	Description *string `json:"description,omitempty"`
 	// URL of the git repository
 	RepoURL string `json:"repoURL"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 }
 
 // Defines the start date and end date for the filtering the data
@@ -1945,6 +1955,8 @@ type UpdateChaosHubRequest struct {
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
 	RepoBranch string `json:"repoBranch"`
+	// Connected Hub of remote repository
+	RemoteHub string `json:"remoteHub"`
 	// Bool value indicating whether the hub is private or not.
 	IsPrivate bool `json:"isPrivate"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
