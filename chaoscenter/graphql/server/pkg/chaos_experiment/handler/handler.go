@@ -1237,7 +1237,33 @@ func (c *ChaosExperimentHandler) GetKubeObjData(reqID string, kubeObject model.K
 	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
 		resp := model.KubeObjectResponse{
 			InfraID: kubeObject.InfraID,
-			KubeObj: []*model.KubeObject{},
+			KubeObj: &model.KubeObject{},
+		}
+		reqChan <- &resp
+		close(reqChan)
+	}
+}
+
+func (c *ChaosExperimentHandler) GetKubeNamespaceData(reqID string, kubeNamespace model.KubeNamespaceRequest, r store.StateData) {
+	reqType := "namespace"
+	data, err := json.Marshal(kubeNamespace)
+	if err != nil {
+		logrus.Print("ERROR WHILE MARSHALLING POD DETAILS")
+	}
+	externalData := string(data)
+	payload := model.InfraActionResponse{
+		Action: &model.ActionPayload{
+			RequestID:    reqID,
+			RequestType:  reqType,
+			ExternalData: &externalData,
+		},
+	}
+	if clusterChan, ok := r.ConnectedInfra[kubeNamespace.InfraID]; ok {
+		clusterChan <- &payload
+	} else if reqChan, ok := r.KubeNamespaceData[reqID]; ok {
+		resp := model.KubeNamespaceResponse{
+			InfraID:       kubeNamespace.InfraID,
+			KubeNamespace: []*model.KubeNamespace{},
 		}
 		reqChan <- &resp
 		close(reqChan)

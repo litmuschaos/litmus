@@ -1159,7 +1159,37 @@ type KubeGVRRequest struct {
 	Resource string `json:"resource"`
 }
 
-// KubeObject consists of the namespace and the available resources in the same
+// Define name in the infra (not really useful at the moment but maybe we will need other field later)
+type KubeNamespace struct {
+	// Name of the namespace
+	Name string `json:"name"`
+}
+
+// Defines the details of Kubernetes namespace
+type KubeNamespaceData struct {
+	// Unique request ID for fetching Kubernetes namespace details
+	RequestID string `json:"requestID"`
+	// ID of the infra in which the Kubernetes namespace is present
+	InfraID *InfraIdentity `json:"infraID"`
+	// List of KubeNamespace return by subscriber
+	KubeNamespace string `json:"kubeNamespace"`
+}
+
+// Defines details for fetching Kubernetes namespace data
+type KubeNamespaceRequest struct {
+	// ID of the infra
+	InfraID string `json:"infraID"`
+}
+
+// Response received for querying Kubernetes Namespaces
+type KubeNamespaceResponse struct {
+	// ID of the infra in which the Kubernetes namespace is present
+	InfraID string `json:"infraID"`
+	// List of the Kubernetes namespace
+	KubeNamespace []*KubeNamespace `json:"kubeNamespace"`
+}
+
+// KubeObject consists of the available resources in a namespace
 type KubeObject struct {
 	// Namespace of the resource
 	Namespace string `json:"namespace"`
@@ -1183,8 +1213,10 @@ type KubeObjectRequest struct {
 	InfraID string `json:"infraID"`
 	// GVR Request
 	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest,omitempty"`
-	ObjectType     string          `json:"objectType"`
-	Workloads      []*Workload     `json:"workloads,omitempty"`
+	// Namespace in which the Kubernetes object is present
+	Namespace  string      `json:"namespace"`
+	ObjectType string      `json:"objectType"`
+	Workloads  []*Workload `json:"workloads,omitempty"`
 }
 
 // Response received for querying Kubernetes Object
@@ -1192,7 +1224,7 @@ type KubeObjectResponse struct {
 	// ID of the infra in which the Kubernetes object is present
 	InfraID string `json:"infraID"`
 	// Type of the Kubernetes object
-	KubeObj []*KubeObject `json:"kubeObj"`
+	KubeObj *KubeObject `json:"kubeObj"`
 }
 
 // Defines the CMD probe properties
