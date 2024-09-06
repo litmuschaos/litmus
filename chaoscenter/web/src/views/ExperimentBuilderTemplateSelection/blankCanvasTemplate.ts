@@ -65,7 +65,7 @@ function kubernetesBlankCanvasTemplate(
             image: `${imageRegistry.repo}/k8s:2.11.0`,
             command: ['sh', '-c'],
             args: [
-              'kubectl delete chaosexperiments -n {{workflow.parameters.adminModeNamespace}} --all && kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} && faultCount=$(ls /tmp/ | grep -E "(.yaml$|.yml$)" | wc -l) && until [[ $(kubectl get -f /tmp/ --no-headers | wc -l) -eq $faultCount ]]; do sleep 1; kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} ; done; echo "ChaosExperiment CR Ready"'
+              'kubectl delete chaosexperiments -n {{workflow.parameters.adminModeNamespace}} --all && kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} && faultCount=$(ls /tmp/ | grep -E "(.yaml$|.yml$)" | wc -l) && until [[ $(kubectl get -f /tmp/ --no-headers | wc -l) -eq $faultCount ]]; do sleep 1; kubectl apply -f /tmp/ -n {{workflow.parameters.adminModeNamespace}} ; done; echo "ChaosExperiment CR Ready"',
             ]
           }
         },
