@@ -91,6 +91,7 @@ type ComplexityRoot struct {
 		Name          func(childComplexity int) int
 		Password      func(childComplexity int) int
 		ProjectID     func(childComplexity int) int
+		RemoteHub     func(childComplexity int) int
 		RepoBranch    func(childComplexity int) int
 		RepoURL       func(childComplexity int) int
 		SSHPrivateKey func(childComplexity int) int
@@ -115,6 +116,7 @@ type ComplexityRoot struct {
 		LastSyncedAt     func(childComplexity int) int
 		Name             func(childComplexity int) int
 		Password         func(childComplexity int) int
+		RemoteHub        func(childComplexity int) int
 		RepoBranch       func(childComplexity int) int
 		RepoURL          func(childComplexity int) int
 		SSHPrivateKey    func(childComplexity int) int
@@ -1044,6 +1046,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ChaosHub.ProjectID(childComplexity), true
 
+	case "ChaosHub.remoteHub":
+		if e.complexity.ChaosHub.RemoteHub == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.RemoteHub(childComplexity), true
+
 	case "ChaosHub.repoBranch":
 		if e.complexity.ChaosHub.RepoBranch == nil {
 			break
@@ -1190,6 +1199,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ChaosHubStatus.Password(childComplexity), true
+
+	case "ChaosHubStatus.remoteHub":
+		if e.complexity.ChaosHubStatus.RemoteHub == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.RemoteHub(childComplexity), true
 
 	case "ChaosHubStatus.repoBranch":
 		if e.complexity.ChaosHubStatus.RepoBranch == nil {
@@ -6152,6 +6168,10 @@ type ChaosHub implements ResourceDetails & Audit {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   ID of the project in which the chaos hub is present
   """
   projectID: ID!
@@ -6327,6 +6347,10 @@ type ChaosHubStatus implements ResourceDetails & Audit {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is available or not.
   """
   isAvailable: Boolean!
@@ -6441,6 +6465,10 @@ input CreateChaosHubRequest {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -6503,6 +6531,10 @@ input CloningInput {
   """
   repoURL: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -6547,6 +6579,10 @@ input CreateRemoteChaosHub {
   URL of the git repository
   """
   repoURL: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
 }
 
 
@@ -6575,6 +6611,10 @@ input UpdateChaosHubRequest {
   Branch of the git repository
   """
   repoBranch: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -10919,6 +10959,50 @@ func (ec *executionContext) fieldContext_ChaosHub_repoBranch(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _ChaosHub_remoteHub(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChaosHub_remoteHub(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemoteHub, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChaosHub_remoteHub(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChaosHub",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ChaosHub_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ChaosHub_projectID(ctx, field)
 	if err != nil {
@@ -11823,6 +11907,50 @@ func (ec *executionContext) _ChaosHubStatus_repoBranch(ctx context.Context, fiel
 }
 
 func (ec *executionContext) fieldContext_ChaosHubStatus_repoBranch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChaosHubStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChaosHubStatus_remoteHub(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemoteHub, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChaosHubStatus_remoteHub(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -24396,6 +24524,8 @@ func (ec *executionContext) fieldContext_Mutation_addChaosHub(ctx context.Contex
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24515,6 +24645,8 @@ func (ec *executionContext) fieldContext_Mutation_addRemoteChaosHub(ctx context.
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24634,6 +24766,8 @@ func (ec *executionContext) fieldContext_Mutation_saveChaosHub(ctx context.Conte
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24898,6 +25032,8 @@ func (ec *executionContext) fieldContext_Mutation_updateChaosHub(ctx context.Con
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -29578,6 +29714,8 @@ func (ec *executionContext) fieldContext_Query_listChaosHub(ctx context.Context,
 				return ec.fieldContext_ChaosHubStatus_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHubStatus_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
 			case "isAvailable":
 				return ec.fieldContext_ChaosHubStatus_isAvailable(ctx, field)
 			case "totalFaults":
@@ -29703,6 +29841,8 @@ func (ec *executionContext) fieldContext_Query_getChaosHub(ctx context.Context, 
 				return ec.fieldContext_ChaosHubStatus_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHubStatus_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
 			case "isAvailable":
 				return ec.fieldContext_ChaosHubStatus_isAvailable(ctx, field)
 			case "totalFaults":
@@ -35562,7 +35702,7 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "repoBranch", "repoURL", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "isDefault"}
+	fieldsInOrder := [...]string{"name", "repoBranch", "repoURL", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "isDefault"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35590,6 +35730,13 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 				return it, err
 			}
 			it.RepoURL = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -35693,7 +35840,7 @@ func (ec *executionContext) unmarshalInputCreateChaosHubRequest(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "repoBranch", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
+	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "repoBranch", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35735,6 +35882,13 @@ func (ec *executionContext) unmarshalInputCreateChaosHubRequest(ctx context.Cont
 				return it, err
 			}
 			it.RepoBranch = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -35852,7 +36006,7 @@ func (ec *executionContext) unmarshalInputCreateRemoteChaosHub(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL"}
+	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "remoteHub"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35887,6 +36041,13 @@ func (ec *executionContext) unmarshalInputCreateRemoteChaosHub(ctx context.Conte
 				return it, err
 			}
 			it.RepoURL = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		}
 	}
 
@@ -38323,7 +38484,7 @@ func (ec *executionContext) unmarshalInputUpdateChaosHubRequest(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "tags", "repoURL", "repoBranch", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
+	fieldsInOrder := [...]string{"id", "name", "description", "tags", "repoURL", "repoBranch", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38372,6 +38533,13 @@ func (ec *executionContext) unmarshalInputUpdateChaosHubRequest(ctx context.Cont
 				return it, err
 			}
 			it.RepoBranch = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -38939,6 +39107,11 @@ func (ec *executionContext) _ChaosHub(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "remoteHub":
+			out.Values[i] = ec._ChaosHub_remoteHub(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "projectID":
 			out.Values[i] = ec._ChaosHub_projectID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -39051,6 +39224,11 @@ func (ec *executionContext) _ChaosHubStatus(ctx context.Context, sel ast.Selecti
 			}
 		case "repoBranch":
 			out.Values[i] = ec._ChaosHubStatus_repoBranch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "remoteHub":
+			out.Values[i] = ec._ChaosHubStatus_remoteHub(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

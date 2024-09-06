@@ -486,6 +486,7 @@ infrastructureRegistered: >-
   Environment -> Infrastructure list.
 infrastructureStates: Learn more about the states of Infrastructure
 infrastructureType: Infrastructure type
+infrastructures: Infrastructures
 initialDelay: Initial Delay
 initialDelaySeconds: Initial Delay Seconds
 insecureSkipVerify: Insecure skip verify
