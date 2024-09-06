@@ -400,6 +400,15 @@ type ComplexityRoot struct {
 		Version              func(childComplexity int) int
 	}
 
+	KubeNamespace struct {
+		Name func(childComplexity int) int
+	}
+
+	KubeNamespaceResponse struct {
+		InfraID       func(childComplexity int) int
+		KubeNamespace func(childComplexity int) int
+	}
+
 	KubeObject struct {
 		Data      func(childComplexity int) int
 		Namespace func(childComplexity int) int
@@ -499,6 +508,7 @@ type ComplexityRoot struct {
 		GenerateSSHKey            func(childComplexity int) int
 		GetManifestWithInfraID    func(childComplexity int, projectID string, infraID string, accessKey string) int
 		GitopsNotifier            func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
+		KubeNamespace             func(childComplexity int, request model.KubeNamespaceData) int
 		KubeObj                   func(childComplexity int, request model.KubeObjectData) int
 		PodLog                    func(childComplexity int, request model.PodLog) int
 		RegisterInfra             func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
@@ -696,10 +706,11 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		GetInfraEvents func(childComplexity int, projectID string) int
-		GetKubeObject  func(childComplexity int, request model.KubeObjectRequest) int
-		GetPodLog      func(childComplexity int, request model.PodLogRequest) int
-		InfraConnect   func(childComplexity int, request model.InfraIdentity) int
+		GetInfraEvents   func(childComplexity int, projectID string) int
+		GetKubeNamespace func(childComplexity int, request model.KubeNamespaceRequest) int
+		GetKubeObject    func(childComplexity int, request model.KubeObjectRequest) int
+		GetPodLog        func(childComplexity int, request model.PodLogRequest) int
+		InfraConnect     func(childComplexity int, request model.InfraIdentity) int
 	}
 
 	UserDetails struct {
@@ -729,6 +740,7 @@ type MutationResolver interface {
 	GetManifestWithInfraID(ctx context.Context, projectID string, infraID string, accessKey string) (string, error)
 	PodLog(ctx context.Context, request model.PodLog) (string, error)
 	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
+	KubeNamespace(ctx context.Context, request model.KubeNamespaceData) (string, error)
 	AddChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
 	AddRemoteChaosHub(ctx context.Context, projectID string, request model.CreateRemoteChaosHub) (*model.ChaosHub, error)
 	SaveChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
@@ -788,6 +800,7 @@ type SubscriptionResolver interface {
 	InfraConnect(ctx context.Context, request model.InfraIdentity) (<-chan *model.InfraActionResponse, error)
 	GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
+	GetKubeNamespace(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error)
 }
 
 type executableSchema struct {
@@ -2573,6 +2586,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.K8SProbe.Version(childComplexity), true
 
+	case "KubeNamespace.name":
+		if e.complexity.KubeNamespace.Name == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespace.Name(childComplexity), true
+
+	case "KubeNamespaceResponse.infraID":
+		if e.complexity.KubeNamespaceResponse.InfraID == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespaceResponse.InfraID(childComplexity), true
+
+	case "KubeNamespaceResponse.kubeNamespace":
+		if e.complexity.KubeNamespaceResponse.KubeNamespace == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespaceResponse.KubeNamespace(childComplexity), true
+
 	case "KubeObject.data":
 		if e.complexity.KubeObject.Data == nil {
 			break
@@ -3096,6 +3130,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string)), true
+
+	case "Mutation.kubeNamespace":
+		if e.complexity.Mutation.KubeNamespace == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_kubeNamespace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.KubeNamespace(childComplexity, args["request"].(model.KubeNamespaceData)), true
 
 	case "Mutation.kubeObj":
 		if e.complexity.Mutation.KubeObj == nil {
@@ -4272,6 +4318,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.GetInfraEvents(childComplexity, args["projectID"].(string)), true
 
+	case "Subscription.getKubeNamespace":
+		if e.complexity.Subscription.GetKubeNamespace == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_getKubeNamespace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.GetKubeNamespace(childComplexity, args["request"].(model.KubeNamespaceRequest)), true
+
 	case "Subscription.getKubeObject":
 		if e.complexity.Subscription.GetKubeObject == nil {
 			break
@@ -4377,6 +4435,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputInfraIdentity,
 		ec.unmarshalInputK8SProbeRequest,
 		ec.unmarshalInputKubeGVRRequest,
+		ec.unmarshalInputKubeNamespaceData,
+		ec.unmarshalInputKubeNamespaceRequest,
 		ec.unmarshalInputKubeObjectData,
 		ec.unmarshalInputKubeObjectRequest,
 		ec.unmarshalInputKubernetesCMDProbeRequest,
@@ -5698,11 +5758,11 @@ type KubeObjectResponse {
   """
   Type of the Kubernetes object
   """
-  kubeObj: [KubeObject]!
+  kubeObj: KubeObject!
 }
 
 """
-KubeObject consists of the namespace and the available resources in the same
+KubeObject consists of the available resources in a namespace
 """
 type KubeObject {
   """
@@ -5744,15 +5804,74 @@ input KubeObjectRequest {
   GVR Request
   """
   kubeObjRequest: KubeGVRRequest
+  """
+  Namespace in which the Kubernetes object is present
+  """
+  namespace: String!
   objectType: String!
   workloads: [Workload]
 }
+
+"""
+Defines details for fetching Kubernetes namespace data
+"""
+input KubeNamespaceRequest {
+  """
+  ID of the infra
+  """
+  infraID: ID!
+}
+
+"""
+Define name in the infra (not really useful at the moment but maybe we will need other field later)
+"""
+type KubeNamespace{
+  """
+  Name of the namespace
+  """
+  name: String!
+}
+
+
 
 input KubeGVRRequest {
   group: String!
   version: String!
   resource: String!
 }
+
+"""
+Response received for querying Kubernetes Namespaces
+"""
+type KubeNamespaceResponse {
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: ID!
+  """
+  List of the Kubernetes namespace
+  """
+  kubeNamespace: [KubeNamespace]!
+}
+
+"""
+Defines the details of Kubernetes namespace
+"""
+input KubeNamespaceData {
+  """
+  Unique request ID for fetching Kubernetes namespace details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
+}
+
 
 """
 Defines the details of Kubernetes object
@@ -5978,6 +6097,12 @@ extend type Mutation {
   """
   # authorized directive not required
   kubeObj(request: KubeObjectData!): String!
+
+  """
+  Receives kubernetes namespace data from subscriber
+  """
+  # authorized directive not required
+  kubeNamespace(request: KubeNamespaceData!): String!
 }
 
 extend type Subscription {
@@ -6003,6 +6128,11 @@ extend type Subscription {
   Returns a kubernetes object given an input
   """
   getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+
+  """
+  Returns a kubernetes namespaces given an input
+  """
+  getKubeNamespace(request: KubeNamespaceRequest!): KubeNamespaceResponse!
 }
 `, BuiltIn: false},
 	{Name: "../../../definitions/shared/chaoshub.graphqls", Input: `enum AuthType {
@@ -8647,6 +8777,21 @@ func (ec *executionContext) field_Mutation_gitopsNotifier_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_kubeNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeNamespaceData
+	if tmp, ok := rawArgs["request"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
+		arg0, err = ec.unmarshalNKubeNamespaceData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceData(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -9754,6 +9899,21 @@ func (ec *executionContext) field_Subscription_getInfraEvents_args(ctx context.C
 		}
 	}
 	args["projectID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_getKubeNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeNamespaceRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
+		arg0, err = ec.unmarshalNKubeNamespaceRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -21157,6 +21317,142 @@ func (ec *executionContext) fieldContext_K8SProbe_operation(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _KubeNamespace_name(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespace_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespace_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _KubeNamespaceResponse_infraID(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespaceResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespaceResponse_infraID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InfraID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespaceResponse_infraID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespaceResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _KubeNamespaceResponse_kubeNamespace(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespaceResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespaceResponse_kubeNamespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubeNamespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.KubeNamespace)
+	fc.Result = res
+	return ec.marshalNKubeNamespace2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespaceResponse_kubeNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespaceResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_KubeNamespace_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type KubeNamespace", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _KubeObject_namespace(ctx context.Context, field graphql.CollectedField, obj *model.KubeObject) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_KubeObject_namespace(ctx, field)
 	if err != nil {
@@ -21321,9 +21617,9 @@ func (ec *executionContext) _KubeObjectResponse_kubeObj(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.KubeObject)
+	res := resTmp.(*model.KubeObject)
 	fc.Result = res
-	return ec.marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, field.Selections, res)
+	return ec.marshalNKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_KubeObjectResponse_kubeObj(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -24102,6 +24398,61 @@ func (ec *executionContext) fieldContext_Mutation_kubeObj(ctx context.Context, f
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_kubeObj_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_kubeNamespace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_kubeNamespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().KubeNamespace(rctx, fc.Args["request"].(model.KubeNamespaceData))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_kubeNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_kubeNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -33041,6 +33392,81 @@ func (ec *executionContext) fieldContext_Subscription_getKubeObject(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Subscription_getKubeNamespace(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_getKubeNamespace(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().GetKubeNamespace(rctx, fc.Args["request"].(model.KubeNamespaceRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.KubeNamespaceResponse):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNKubeNamespaceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_getKubeNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "infraID":
+				return ec.fieldContext_KubeNamespaceResponse_infraID(ctx, field)
+			case "kubeNamespace":
+				return ec.fieldContext_KubeNamespaceResponse_kubeNamespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type KubeNamespaceResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_getKubeNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserDetails_userID(ctx context.Context, field graphql.CollectedField, obj *model.UserDetails) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserDetails_userID(ctx, field)
 	if err != nil {
@@ -36681,6 +37107,74 @@ func (ec *executionContext) unmarshalInputKubeGVRRequest(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputKubeNamespaceData(ctx context.Context, obj interface{}) (model.KubeNamespaceData, error) {
+	var it model.KubeNamespaceData
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"requestID", "infraID", "kubeNamespace"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "requestID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RequestID = data
+		case "infraID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
+			data, err := ec.unmarshalNInfraIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfraIdentity(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InfraID = data
+		case "kubeNamespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kubeNamespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KubeNamespace = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubeNamespaceRequest(ctx context.Context, obj interface{}) (model.KubeNamespaceRequest, error) {
+	var it model.KubeNamespaceRequest
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"infraID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "infraID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InfraID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputKubeObjectData(ctx context.Context, obj interface{}) (model.KubeObjectData, error) {
 	var it model.KubeObjectData
 	asMap := map[string]interface{}{}
@@ -36729,7 +37223,7 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"infraID", "kubeObjRequest", "objectType", "workloads"}
+	fieldsInOrder := [...]string{"infraID", "kubeObjRequest", "namespace", "objectType", "workloads"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36750,6 +37244,13 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 				return it, err
 			}
 			it.KubeObjRequest = data
+		case "namespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Namespace = data
 		case "objectType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectType"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -40507,6 +41008,89 @@ func (ec *executionContext) _K8SProbe(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var kubeNamespaceImplementors = []string{"KubeNamespace"}
+
+func (ec *executionContext) _KubeNamespace(ctx context.Context, sel ast.SelectionSet, obj *model.KubeNamespace) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubeNamespaceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubeNamespace")
+		case "name":
+			out.Values[i] = ec._KubeNamespace_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var kubeNamespaceResponseImplementors = []string{"KubeNamespaceResponse"}
+
+func (ec *executionContext) _KubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, obj *model.KubeNamespaceResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubeNamespaceResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubeNamespaceResponse")
+		case "infraID":
+			out.Values[i] = ec._KubeNamespaceResponse_infraID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kubeNamespace":
+			out.Values[i] = ec._KubeNamespaceResponse_kubeNamespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var kubeObjectImplementors = []string{"KubeObject"}
 
 func (ec *executionContext) _KubeObject(ctx context.Context, sel ast.SelectionSet, obj *model.KubeObject) graphql.Marshaler {
@@ -41192,6 +41776,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "kubeObj":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_kubeObj(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kubeNamespace":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_kubeNamespace(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -43099,6 +43690,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_getPodLog(ctx, fields[0])
 	case "getKubeObject":
 		return ec._Subscription_getKubeObject(ctx, fields[0])
+	case "getKubeNamespace":
+		return ec._Subscription_getKubeNamespace(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -44401,7 +44994,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v []*model.KubeObject) graphql.Marshaler {
+func (ec *executionContext) marshalNKubeNamespace2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx context.Context, sel ast.SelectionSet, v []*model.KubeNamespace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -44425,7 +45018,7 @@ func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaos�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, sel, v[i])
+			ret[i] = ec.marshalOKubeNamespace2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -44437,6 +45030,40 @@ func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaos�
 	wg.Wait()
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNKubeNamespaceData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceData(ctx context.Context, v interface{}) (model.KubeNamespaceData, error) {
+	res, err := ec.unmarshalInputKubeNamespaceData(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNKubeNamespaceRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceRequest(ctx context.Context, v interface{}) (model.KubeNamespaceRequest, error) {
+	res, err := ec.unmarshalInputKubeNamespaceRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKubeNamespaceResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, v model.KubeNamespaceResponse) graphql.Marshaler {
+	return ec._KubeNamespaceResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKubeNamespaceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, v *model.KubeNamespaceResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._KubeNamespaceResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v *model.KubeObject) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._KubeObject(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObjectData(ctx context.Context, v interface{}) (model.KubeObjectData, error) {
@@ -45990,11 +46617,11 @@ func (ec *executionContext) unmarshalOKubeGVRRequest2ᚖgithubᚗcomᚋlitmuscha
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v *model.KubeObject) graphql.Marshaler {
+func (ec *executionContext) marshalOKubeNamespace2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx context.Context, sel ast.SelectionSet, v *model.KubeNamespace) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._KubeObject(ctx, sel, v)
+	return ec._KubeNamespace(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOKubernetesCMDProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx context.Context, sel ast.SelectionSet, v *model.KubernetesCMDProbe) graphql.Marshaler {
