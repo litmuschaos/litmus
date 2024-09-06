@@ -227,10 +227,6 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 			NextVersion:    "",
 			VersionManager: v3_9_0.NewVersionManger(m.Logger, m.DBClient),
 		},
-		"4.0.0-beta8": {
-			NextVersion:    "",
-			VersionManager: nil,
-		},
 	}
 }
 
