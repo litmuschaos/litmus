@@ -31,9 +31,11 @@ import (
 
 const (
 	// CIVersion specifies the version tag used for ci builds
-	CIVersion             = "ci"
-	ClusterScope   string = "cluster"
-	NamespaceScope string = "namespace"
+	CIVersion                   = "ci"
+	ClusterScope         string = "cluster"
+	NamespaceScope       string = "namespace"
+	InstallationManifest string = "kubernetes"
+	InstallationHelm     string = "helm"
 )
 
 type Service interface {
@@ -205,17 +207,31 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
-	manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
-	if err != nil {
-		return nil, err
-	}
+	switch *input.InstallationType {
+	case InstallationManifest:
+		manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
+		if err != nil {
+			return nil, err
+		}
 
-	return &model.RegisterInfraResponse{
-		InfraID:  newInfra.InfraID,
-		Token:    token,
-		Name:     newInfra.Name,
-		Manifest: string(manifestYaml),
-	}, nil
+		return &model.RegisterInfraResponse{
+			InfraID:  newInfra.InfraID,
+			Token:    token,
+			Name:     newInfra.Name,
+			Manifest: string(manifestYaml),
+		}, nil
+	case InstallationHelm:
+		helmCommand := GetHelmCommand(newInfra)
+
+		return &model.RegisterInfraResponse{
+			InfraID:     newInfra.InfraID,
+			Token:       token,
+			Name:        newInfra.Name,
+			HelmCommand: helmCommand,
+		}, nil
+	default:
+		return nil, errors.New("invalid installation type")
+	}
 }
 
 // DeleteInfra takes infraIDs and r parameters, deletes the infras from the database and sends a request to the subscriber for clean-up

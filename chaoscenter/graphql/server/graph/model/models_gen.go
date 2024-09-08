@@ -1871,6 +1871,8 @@ type RegisterInfraRequest struct {
 	Tolerations []*Toleration `json:"tolerations,omitempty"`
 	// Tags of the infra
 	Tags []string `json:"tags,omitempty"`
+	// Installation type indicating if the infra uses helm or kubernetes manifest
+	InstallationType *string `json:"installationType,omitempty"`
 }
 
 // Response received for registering a new infra
@@ -1883,6 +1885,8 @@ type RegisterInfraResponse struct {
 	Name string `json:"name"`
 	// Infra Manifest
 	Manifest string `json:"manifest"`
+	// Infra Helm Command
+	HelmCommand string `json:"helmCommand"`
 }
 
 type ResilienceScoreCategory struct {

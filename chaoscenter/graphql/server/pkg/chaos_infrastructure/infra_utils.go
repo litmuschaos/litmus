@@ -28,6 +28,28 @@ func GetEndpoint(host string) (string, error) {
 	return host + "/api/query", nil
 }
 
+func GetHelmCommand(infra dbChaosInfra.ChaosInfra) string {
+	commands := fmt.Sprintf(`helm install litmus-agent litmuschaos/litmus-agent \
+--namespace litmus --create-namespace \
+--set "LITMUS_URL=http://litmusportal-frontend-service.litmus.svc.cluster.local:9091" \ # FOR SELF AGENT (SVC)
+--set "LITMUS_BACKEND_URL=http://litmusportal-server-service.litmus.svc.cluster.local:9002" \ # FOR SELF AGENT (SVC)
+--set "INFRA_ID=%s" \
+--set "ACCESS_KEY=%s" \
+--set "global.INFRA_MODE=%s"`,
+		infra.InfraID,
+		infra.AccessKey,
+		infra.InfraScope,
+	)
+
+	if infra.InfraScope == NamespaceScope {
+		commands += ` \
+--set "crds.create=false" \
+--set "workflow-controller.crds.create=false"`
+	}
+
+	return commands
+}
+
 func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 
 	var config SubscriberConfigurations
