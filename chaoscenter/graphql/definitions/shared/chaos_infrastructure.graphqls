@@ -358,11 +358,11 @@ type KubeObjectResponse {
   """
   Type of the Kubernetes object
   """
-  kubeObj: [KubeObject]!
+  kubeObj: KubeObject!
 }
 
 """
-KubeObject consists of the namespace and the available resources in the same
+KubeObject consists of the available resources in a namespace
 """
 type KubeObject {
   """
@@ -404,15 +404,74 @@ input KubeObjectRequest {
   GVR Request
   """
   kubeObjRequest: KubeGVRRequest
+  """
+  Namespace in which the Kubernetes object is present
+  """
+  namespace: String!
   objectType: String!
   workloads: [Workload]
 }
+
+"""
+Defines details for fetching Kubernetes namespace data
+"""
+input KubeNamespaceRequest {
+  """
+  ID of the infra
+  """
+  infraID: ID!
+}
+
+"""
+Define name in the infra (not really useful at the moment but maybe we will need other field later)
+"""
+type KubeNamespace{
+  """
+  Name of the namespace
+  """
+  name: String!
+}
+
+
 
 input KubeGVRRequest {
   group: String!
   version: String!
   resource: String!
 }
+
+"""
+Response received for querying Kubernetes Namespaces
+"""
+type KubeNamespaceResponse {
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: ID!
+  """
+  List of the Kubernetes namespace
+  """
+  kubeNamespace: [KubeNamespace]!
+}
+
+"""
+Defines the details of Kubernetes namespace
+"""
+input KubeNamespaceData {
+  """
+  Unique request ID for fetching Kubernetes namespace details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
+}
+
 
 """
 Defines the details of Kubernetes object
@@ -638,6 +697,12 @@ extend type Mutation {
   """
   # authorized directive not required
   kubeObj(request: KubeObjectData!): String!
+
+  """
+  Receives kubernetes namespace data from subscriber
+  """
+  # authorized directive not required
+  kubeNamespace(request: KubeNamespaceData!): String!
 }
 
 extend type Subscription {
@@ -663,4 +728,9 @@ extend type Subscription {
   Returns a kubernetes object given an input
   """
   getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+
+  """
+  Returns a kubernetes namespaces given an input
+  """
+  getKubeNamespace(request: KubeNamespaceRequest!): KubeNamespaceResponse!
 }

@@ -116,6 +116,11 @@ func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObject
 	return r.chaosInfrastructureService.KubeObj(request, *data_store.Store)
 }
 
+// KubeNamespace is the resolver for the kubeNamespace field.
+func (r *mutationResolver) KubeNamespace(ctx context.Context, request model.KubeNamespaceData) (string, error) {
+	return r.chaosInfrastructureService.KubeNamespace(request, *data_store.Store)
+}
+
 // GetInfra is the resolver for the getInfra field.
 func (r *queryResolver) GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error) {
 	logFields := logrus.Fields{
@@ -348,6 +353,24 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 	go r.chaosExperimentHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
 
 	return kubeObjData, nil
+}
+
+// GetKubeNamespace is the resolver for the getKubeNamespace field.
+func (r *subscriptionResolver) GetKubeNamespace(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error) {
+	logrus.Print("NEW NAMESPACE REQUEST", request.InfraID)
+	kubeNamespaceData := make(chan *model.KubeNamespaceResponse)
+	reqID := uuid.New()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.KubeNamespaceData[reqID.String()] = kubeNamespaceData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		logrus.Println("Closed KubeNamespace Listener")
+		delete(data_store.Store.KubeNamespaceData, reqID.String())
+	}()
+	go r.chaosExperimentHandler.GetKubeNamespaceData(reqID.String(), request, *data_store.Store)
+
+	return kubeNamespaceData, nil
 }
 
 // Subscription returns generated.SubscriptionResolver implementation.
