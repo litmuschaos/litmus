@@ -128,6 +128,7 @@ export default function StudioOverviewView({
                       <Layout.Vertical background={Color.WHITE} padding="medium" spacing="large">
                         {getChaosInfrastructureReferenceField({
                           initialInfrastructureID: formikProps.values.chaosInfrastructure.id,
+                          initialEnvironmentID: formikProps.values.chaosInfrastructure.environmentID,
                           setFieldValue: formikProps.setFieldValue
                         })}
                         <ErrorMessage name="chaosInfrastructure.id">
