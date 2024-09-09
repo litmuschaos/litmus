@@ -1,5 +1,5 @@
 import React from 'react';
-import { KubeGVRRequest, kubeObjectSubscription } from '@api/core';
+import { KubeGVRRequest, kubeObjectSubscription, kubeNamespaceSubscription } from '@api/core';
 import type { ChaosEngine, FaultData } from '@models';
 import { TargetApplicationTab } from '@views/ExperimentCreationFaultConfiguration/Tabs';
 import type { AppInfoData, TargetApplicationData } from './types';
@@ -16,17 +16,26 @@ export default function TargetApplicationTabController({
   infrastructureID,
   setFaultData
 }: TargetApplicationControllerProps): React.ReactElement {
-  const [appInfoData, setAppInfoData] = React.useState<AppInfoData[]>([]);
+  const [namespaceData, setNamespaceData] = React.useState<string[]>([]);
+  const [appInfoData, setAppInfoData] = React.useState<AppInfoData>({ appLabel: [] });
   const [targetApp, setTargetApp] = React.useState<TargetApplicationData>({
     ...engineCR?.spec?.appinfo
   });
   const [selectedGVR, setSelectedGVR] = React.useState<KubeGVRRequest>();
-  const { data: result, loading } = kubeObjectSubscription({
+  const { data: resultNamespace, loading: loadingNamespace } = kubeNamespaceSubscription({
+    request: {
+      infraID: infrastructureID ?? ''
+    },
     shouldResubscribe: true,
-    skip: targetApp?.appkind === undefined || selectedGVR === undefined,
+    skip: targetApp?.appkind === undefined || selectedGVR === undefined
+  });
+  const { data: resultObject, loading: loadingObject } = kubeObjectSubscription({
+    shouldResubscribe: true,
+    skip: targetApp?.appns === undefined || targetApp?.appns === '',
     request: {
       infraID: infrastructureID ?? '',
       kubeObjRequest: selectedGVR,
+      namespace: targetApp?.appns ?? '',
       objectType: 'kubeobject'
     }
   });
@@ -37,51 +46,44 @@ export default function TargetApplicationTabController({
       if (data.resource === targetApp?.appkind) {
         setSelectedGVR({
           group: data.group,
-          version: data.version,
-          resource: `${data.resource}s`
+          resource: `${data.resource}s`,
+          version: data.version
         });
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetApp?.appkind]);
 
-  /**
-   * UseEffect to filter the labels according to the namespace provided
-   * Required to populate the appLabels dropdown
-   */
   React.useEffect(() => {
-    if (result?.getKubeObject) {
-      const appInfo: AppInfoData[] = [];
-      const kubeData = result.getKubeObject.kubeObj;
-      kubeData.forEach(obj => {
-        const applabels: string[] = [];
-        obj.data.forEach(objData => {
-          if (objData.labels) {
-            applabels.push(...objData.labels.filter(() => obj.namespace === targetApp?.appns));
-          }
-        });
-        /**
-         * Push these labels corresponding to their namespaces
-         */
-        appInfo.push({
-          namespace: obj.namespace,
-          appLabel: applabels
-        });
-      });
+    if (resultNamespace?.getKubeNamespace) {
+      setNamespaceData(resultNamespace.getKubeNamespace.kubeNamespace.map(data => data.name));
+    }
+  }, [resultNamespace?.getKubeNamespace, targetApp?.appkind]);
 
+  React.useEffect(() => {
+    if (resultObject?.getKubeObject) {
+      const applabels: string[] = [];
+      resultObject.getKubeObject.kubeObj.data.forEach(objData => {
+        if (objData.labels) {
+          applabels.push(...objData.labels);
+        }
+      });
+      const appInfo: AppInfoData = { appLabel: applabels };
       setAppInfoData(appInfo);
     }
-  }, [result?.getKubeObject, targetApp?.appns]);
+  }, [resultObject?.getKubeObject, targetApp?.appns]);
 
   return (
     <TargetApplicationTab
       appInfoData={appInfoData}
+      namespaceData={namespaceData}
       targetApp={targetApp}
       setTargetApp={setTargetApp}
       engineCR={engineCR}
       setFaultData={setFaultData}
       infrastructureID={infrastructureID}
-      loading={loading}
+      loadingNamespace={loadingNamespace}
+      loadingObject={loadingObject}
     />
   );
 }

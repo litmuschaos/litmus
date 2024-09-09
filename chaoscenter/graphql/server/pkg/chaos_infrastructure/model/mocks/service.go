@@ -83,6 +83,11 @@ func (s *InfraService) KubeObj(request model.KubeObjectData, r store.StateData) 
 	return args.String(0), args.Error(1)
 }
 
+func (s *InfraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
+	args := s.Called(request, r)
+	return args.String(0), args.Error(1)
+}
+
 func (s *InfraService) UpdateInfra(query bson.D, update bson.D) error {
 	args := s.Called(query, update)
 	return args.Error(0)
