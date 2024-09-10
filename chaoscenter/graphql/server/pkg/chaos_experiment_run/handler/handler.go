@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 
 	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
@@ -43,7 +45,6 @@ import (
 
 	"github.com/google/uuid"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 )
 
 // ChaosExperimentRunHandler is the handler for chaos experiment
@@ -53,7 +54,7 @@ type ChaosExperimentRunHandler struct {
 	gitOpsService              gitops.Service
 	chaosExperimentOperator    *dbChaosExperiment.Operator
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-	probeOperator              *dbSchemaProbe.Operator
+	probeService               probe.Service
 	mongodbOperator            mongodb.MongoOperator
 }
 
@@ -64,7 +65,7 @@ func NewChaosExperimentRunHandler(
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
-	probeOperator *dbSchemaProbe.Operator,
+	probeService probe.Service,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentRunHandler {
 	return &ChaosExperimentRunHandler{
@@ -73,7 +74,7 @@ func NewChaosExperimentRunHandler(
 		gitOpsService:              gitOpsService,
 		chaosExperimentOperator:    chaosExperimentOperator,
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
-		probeOperator:              probeOperator,
+		probeService:               probeService,
 		mongodbOperator:            mongodbOperator,
 	}
 }
@@ -914,7 +915,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	// Generate Probe in the manifest
-	workflowManifest, err = probeUtils.GenerateExperimentManifestWithProbes(string(manifestString), projectID, c.probeOperator)
+	workflowManifest, err = c.probeService.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
 	}
@@ -947,7 +948,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return workflow.Revision[i].UpdatedAt > workflow.Revision[j].UpdatedAt
 	})
 
-	cronExperimentManifest, err := probeUtils.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID, c.probeOperator)
+	cronExperimentManifest, err := c.probeService.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
 	if err != nil {
 		return errors.New("failed to unmarshal experiment manifest")
 	}
