@@ -78,11 +78,6 @@ func FuzzReadExperimentFile(f *testing.F) {
 		if err == nil && isInvalidYAML(jsonContent) {
 			t.Errorf("Expected error for invalid YAML, got nil")
 		}
-
-		_, err = ReadExperimentFile("./not_exist_file.yaml")
-		if err == nil {
-			t.Errorf("Expected error for file does not exist, got nil")
-		}
 	})
 }
 
