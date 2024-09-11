@@ -3,6 +3,8 @@ package handler
 import (
 	"context"
 	"errors"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 	"io"
 	"log"
 	"os"
@@ -10,8 +12,6 @@ import (
 	"strconv"
 	"testing"
 	"time"
-
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -38,12 +38,12 @@ var (
 	infrastructureService      = new(chaosInfraMocks.InfraService)
 	chaosExperimentRunService  = new(choasExperimentRunMocks.ChaosExperimentRunService)
 	gitOpsService              = new(dbGitOpsMocks.GitOpsService)
-	probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+	probeService               = new(dbProbeMocks.ProbeService)
 )
 
-var chaosExperimentRunHandler = NewChaosExperimentRunHandler(chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeOperator, mongodbMockOperator)
+var chaosExperimentRunHandler = NewChaosExperimentRunHandler(chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeService, mongodbMockOperator)
 
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
@@ -59,7 +59,7 @@ func TestNewChaosExperimentRunHandler(t *testing.T) {
 		gitOpsService              gitops.Service
 		chaosExperimentOperator    *dbChaosExperiment.Operator
 		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-		probeOperator              *dbSchemaProbe.Operator
+		probeService               probe.Service
 		mongodbOperator            mongodb.MongoOperator
 	}
 	tests := []struct {
@@ -75,7 +75,7 @@ func TestNewChaosExperimentRunHandler(t *testing.T) {
 				gitOpsService:              gitOpsService,
 				chaosExperimentOperator:    chaosExperimentOperator,
 				chaosExperimentRunOperator: chaosExperimentRunOperator,
-				probeOperator:              probeOperator,
+				probeService:               probeService,
 				mongodbOperator:            mongodbMockOperator,
 			},
 			want: &ChaosExperimentRunHandler{
@@ -84,14 +84,14 @@ func TestNewChaosExperimentRunHandler(t *testing.T) {
 				gitOpsService:              gitOpsService,
 				chaosExperimentOperator:    chaosExperimentOperator,
 				chaosExperimentRunOperator: chaosExperimentRunOperator,
-				probeOperator:              probeOperator,
+				probeService:               probeService,
 				mongodbOperator:            mongodbMockOperator,
 			},
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := NewChaosExperimentRunHandler(tc.args.chaosExperimentRunService, tc.args.infrastructureService, tc.args.gitOpsService, tc.args.chaosExperimentOperator, tc.args.chaosExperimentRunOperator, tc.args.probeOperator, tc.args.mongodbOperator); !reflect.DeepEqual(got, tc.want) {
+			if got := NewChaosExperimentRunHandler(tc.args.chaosExperimentRunService, tc.args.infrastructureService, tc.args.gitOpsService, tc.args.chaosExperimentOperator, tc.args.chaosExperimentRunOperator, tc.args.probeService, tc.args.mongodbOperator); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("NewChaosExperimentRunHandler() = %v, want %v", got, tc.want)
 			}
 		})

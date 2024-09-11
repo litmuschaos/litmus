@@ -3,10 +3,9 @@ package handler
 import (
 	"context"
 	"errors"
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 	"reflect"
 	"testing"
-
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -48,9 +47,9 @@ func NewMockServices() *MockServices {
 		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
 		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
-		probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
+		probeService               = new(dbProbeMocks.ProbeService)
 	)
-	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeOperator, mongodbMockOperator)
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeService, mongodbMockOperator)
 	return &MockServices{
 		ChaosExperimentService:     chaosExperimentService,
 		ChaosExperimentRunService:  chaosExperimentRunService,
