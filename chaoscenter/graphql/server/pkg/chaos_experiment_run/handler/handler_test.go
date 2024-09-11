@@ -3,8 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
-	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 	"io"
 	"log"
 	"os"
@@ -12,6 +10,9 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

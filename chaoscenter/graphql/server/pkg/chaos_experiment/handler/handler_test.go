@@ -3,9 +3,10 @@ package handler
 import (
 	"context"
 	"errors"
-	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 	"reflect"
 	"testing"
+
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
