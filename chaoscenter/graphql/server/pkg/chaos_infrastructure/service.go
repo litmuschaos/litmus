@@ -51,6 +51,7 @@ type Service interface {
 	GetVersionDetails() (*model.InfraVersionDetails, error)
 	QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
 	PodLog(request model.PodLog, r store.StateData) (string, error)
+	KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error)
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
@@ -938,6 +939,9 @@ func fetchLatestVersion(versions map[int]string) int {
 
 // updateVersionFormat converts string array to int by removing decimal points, 1.0.0 will be returned as 100, 0.1.0 will be returned as 10, 0.0.1 will be returned as 1
 func updateVersionFormat(str string) (int, error) {
+	if str == CIVersion {
+		return 0, nil
+	}
 	var versionInt int
 	versionSlice := strings.Split(str, ".")
 	for i, val := range versionSlice {
@@ -991,7 +995,7 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		return "", err
 	}
 	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
-		var kubeObjData []*model.KubeObject
+		var kubeObjData *model.KubeObject
 		err = json.Unmarshal([]byte(request.KubeObj), &kubeObjData)
 		if err != nil {
 			return "", fmt.Errorf("failed to unmarshal kubeObj data %w", err)
@@ -1000,6 +1004,31 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		resp := model.KubeObjectResponse{
 			InfraID: request.InfraID.InfraID,
 			KubeObj: kubeObjData,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "KubeData sent successfully", nil
+	}
+	return "KubeData sent successfully", nil
+}
+
+// KubeNamespace receives Kubernetes Namespace data from subscriber
+func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
+	_, err := in.VerifyInfra(*request.InfraID)
+	if err != nil {
+		log.Print("Error", err)
+		return "", err
+	}
+	if reqChan, ok := r.KubeNamespaceData[request.RequestID]; ok {
+		var kubeNamespaceData []*model.KubeNamespace
+		err = json.Unmarshal([]byte(request.KubeNamespace), &kubeNamespaceData)
+		if err != nil {
+			return "", fmt.Errorf("failed to unmarshal kubeNamespace data %w", err)
+		}
+
+		resp := model.KubeNamespaceResponse{
+			InfraID:       request.InfraID.InfraID,
+			KubeNamespace: kubeNamespaceData,
 		}
 		reqChan <- &resp
 		close(reqChan)
@@ -1077,8 +1106,8 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 	} else {
 		splitCPVersion := strings.Split(currentVersion, ".")
 		splitSubVersion := strings.Split(identity.Version, ".")
-		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] || splitSubVersion[1] != splitCPVersion[1] {
-			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.%v.x got %v)", splitCPVersion[0], splitCPVersion[1], identity.Version)
+		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] {
+			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.x.x got %v)", splitCPVersion[0], identity.Version)
 		}
 	}
 	infra, err := in.infraOperator.GetInfra(identity.InfraID)

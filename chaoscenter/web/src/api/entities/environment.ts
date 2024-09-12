@@ -23,3 +23,9 @@ export interface EnvironmentSortInput {
   field: SortType;
   ascending: boolean;
 }
+
+export interface EnvironmentDetail {
+  envName: string;
+  envID: string;
+  totalInfra?: number | null;
+}

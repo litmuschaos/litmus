@@ -7,24 +7,28 @@ import { useStrings } from '@strings';
 import type { AppInfoData, TargetApplicationData } from '@controllers/TargetApplicationTab/types';
 
 interface TargetApplicationViewProps {
-  appInfoData: AppInfoData[];
+  appInfoData: AppInfoData;
+  namespaceData: string[];
   targetApp: TargetApplicationData | undefined;
   setTargetApp: React.Dispatch<React.SetStateAction<TargetApplicationData>>;
   engineCR: ChaosEngine | undefined;
   setFaultData: React.Dispatch<React.SetStateAction<FaultData | undefined>>;
   // getKubeObjectLazyQueryFunction: LazyQueryFunction<KubeObjResponse, KubeObjRequest>;
   infrastructureID: string | undefined;
-  loading: boolean;
+  loadingNamespace: boolean;
+  loadingObject: boolean;
 }
 
 export default function TargetApplicationTab({
   appInfoData,
+  namespaceData,
   targetApp,
   setTargetApp,
   engineCR,
   setFaultData,
   // getKubeObjectLazyQueryFunction,
-  loading
+  loadingNamespace,
+  loadingObject
 }: TargetApplicationViewProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -36,18 +40,19 @@ export default function TargetApplicationTab({
   }
 
   function getAppNamespaceItems(): SelectOption[] {
-    return appInfoData.map(data => ({
-      label: data.namespace,
-      value: data.namespace
+    if (loadingNamespace) return [];
+    return namespaceData.map(data => ({
+      label: data,
+      value: data
     }));
   }
 
   function getAppLabelItems(): SelectOption[] {
-    if (loading) return [];
-    const filteredAppInfo = appInfoData.filter(data => data.namespace === targetApp?.appns)[0];
-    return filteredAppInfo?.appLabel.map(label => ({
-      label: label,
-      value: label
+    if (loadingObject) return [];
+    //    const filteredAppInfo = appInfoData.filter(data => data.namespace === targetApp?.appns)[0];
+    return appInfoData?.appLabel.map(data => ({
+      label: data,
+      value: data
     }));
   }
 
@@ -66,8 +71,8 @@ export default function TargetApplicationTab({
               onChange={selectedItem => {
                 setTargetApp({
                   appkind: selectedItem.label,
-                  appns: '',
-                  applabel: ''
+                  applabel: '',
+                  appns: ''
                 });
                 if (engineCR?.spec?.appinfo?.appkind !== undefined) engineCR.spec.appinfo.appkind = selectedItem.label;
                 setFaultData(faultData => {

@@ -263,7 +263,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		400	{object}	response.ErrUserNotFound
 //	@Failure		400	{object}	response.ErrUserDeactivated
-//	@Failure		400	{object}	response.ErrInvalidCredentials
+//	@Failure		401	{object}	response.ErrInvalidCredentials
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.LoginResponse{}
 //	@Router			/login [post]
