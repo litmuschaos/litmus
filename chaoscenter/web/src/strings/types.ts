@@ -753,6 +753,7 @@ export interface StringsMap {
   'registry': unknown
   'registryName': unknown
   'registryType': unknown
+  'remoteHub': unknown
   'remoteRepo': unknown
   'remove': unknown
   'removeMember': unknown

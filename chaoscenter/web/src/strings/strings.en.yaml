@@ -909,6 +909,7 @@ referencedBy: Referenced By
 registry: Registry
 registryName: Registry Name
 registryType: Registry Type
+remoteHub: Select Remote hub
 remoteRepo: Remote Repository
 remove: Remove
 removeMember: Remove Member
