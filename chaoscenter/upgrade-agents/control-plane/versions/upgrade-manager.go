@@ -38,6 +38,8 @@ type Version struct {
 }
 
 // Converts version from type string to type Version
+// For example, "3.0.0-beta1" -> Version{Major: 3, Minor: 0, Patch: 0, Beta: 1}
+// "3.1.0" -> Version{Major: 3, Minor: 1, Patch: 0, Beta: 0}, "3.1.1" -> Version{Major: 3, Minor: 1, Patch: 1, Beta: 0}
 func ParseVersion(version string) *Version {
 	parts := strings.Split(version, "-beta")
 	mainParts := strings.Split(parts[0], ".")
@@ -123,106 +125,6 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 			NextVersion:    "",
 			VersionManager: v0_0_0.NewVersionManger(m.Logger, m.DBClient),
 		},
-
-		"2.4.0": {
-			NextVersion:    "2.5.0",
-			VersionManager: nil,
-		},
-
-		"2.6.0": {
-			NextVersion:    "2.7.0",
-			VersionManager: nil,
-		},
-
-		"2.7.0": {
-			NextVersion:    "2.8.0",
-			VersionManager: nil,
-		},
-
-		"2.8.0": {
-			NextVersion:    "2.9.0",
-			VersionManager: nil,
-		},
-
-		"2.9.0": {
-			NextVersion:    "2.10.0",
-			VersionManager: nil,
-		},
-
-		"2.10.0": {
-			NextVersion:    "2.11.0",
-			VersionManager: nil,
-		},
-
-		"2.11.0": {
-			NextVersion:    "2.12.0",
-			VersionManager: nil,
-		},
-
-		"2.12.0": {
-			NextVersion:    "2.13.0",
-			VersionManager: nil,
-		},
-
-		"2.13.0": {
-			NextVersion:    "2.14.0",
-			VersionManager: nil,
-		},
-
-		"2.14.0": {
-			NextVersion:    "3.0-beta1",
-			VersionManager: nil,
-		},
-
-		"3.0-beta1": {
-			NextVersion:    "3.0.0-beta2",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta2": {
-			NextVersion:    "3.0.0-beta3",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta3": {
-			NextVersion:    "3.0.0-beta4",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta4": {
-			NextVersion:    "3.0.0-beta5",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta5": {
-			NextVersion:    "3.0.0-beta6",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta6": {
-			NextVersion:    "3.0.0-beta7",
-			VersionManager: nil,
-		},
-
-		"3.0.0-beta7": {
-			NextVersion:    "3.0.0-beta8",
-			VersionManager: nil,
-		},
-
-		// latest version, no more upgrades available
-		"3.0.0-beta8": {
-			NextVersion:    "",
-			VersionManager: nil,
-		},
-
-		"3.6.0": {
-			NextVersion:    "3.7.0",
-			VersionManager: nil,
-		},
-		"3.7.7-beta8": {
-			NextVersion:    "",
-			VersionManager: nil,
-		},
 		"3.9.0": {
 			NextVersion:    "",
 			VersionManager: v3_9_0.NewVersionManger(m.Logger, m.DBClient),
@@ -246,6 +148,7 @@ func (v Version) getVersion() string {
 	}
 }
 
+// sortVersionArray sorts the version array containing the versions as strings in ascending order
 func sortVersionArray(versionArray []string) []string {
 	var versionMatrix [][]int
 

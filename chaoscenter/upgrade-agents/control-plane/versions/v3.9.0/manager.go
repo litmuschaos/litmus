@@ -2,6 +2,8 @@ package v3_9_0
 
 import (
 	"context"
+
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,7 +29,9 @@ func (vm VersionManager) Run() error {
 	defer session.EndSession(ctx)
 
 	logVersion := log.Fields{
-		"version": "3.9.0",
+		"version":    "3.9.0",
+		"database":   database.LitmusDB,
+		"collection": database.ProjectCollection,
 	}
 
 	if err != nil {

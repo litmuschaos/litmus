@@ -9,4 +9,5 @@ const (
 	AuthDB                 = "auth"
 	AdminDB                = "admin"
 	UsersCollection        = "users"
+	WorkflowCollection     = "workflow-collection"
 )

@@ -17,7 +17,9 @@ import (
 func upgradeUsersCollection(logger *log.Logger, dbClient *mongo.Client, ctx context.Context) error {
 
 	logVersion := log.Fields{
-		"version": "0.0.0",
+		"version":    "0.0.0",
+		"database":   database.AdminDB,
+		"collection": database.UsersCollection,
 	}
 
 	res := dbClient.Database(database.AdminDB).RunCommand(
@@ -52,7 +54,9 @@ func upgradeEnvironmentCollectionIndexes(logger *log.Logger, dbClient *mongo.Cli
 	environmentIDIndexExists := false
 
 	logVersion := log.Fields{
-		"version": "0.0.0",
+		"version":    "0.0.0",
+		"database":   database.LitmusDB,
+		"collection": database.EnvironmentCollection,
 	}
 
 	for cursor.Next(ctx) {
@@ -70,8 +74,10 @@ func upgradeEnvironmentCollectionIndexes(logger *log.Logger, dbClient *mongo.Cli
 	}
 
 	logIndexes := log.Fields{
-		"version": "3.4.0",
-		"indexes": indexes,
+		"version":    "3.4.0",
+		"database":   database.LitmusDB,
+		"collection": database.EnvironmentCollection,
+		"indexes":    indexes,
 	}
 
 	logger.WithFields(logIndexes).Info("Indexes found in environment collection while upgrading to intermediate version v3.4.0")
@@ -115,7 +121,9 @@ func upgradeWorkflow(logger *log.Logger, dbClient *mongo.Client, ctx context.Con
 	workflowCollection := dbClient.Database("litmus").Collection("workflow-collection")
 
 	logVersion := log.Fields{
-		"version": "0.0.0",
+		"version":    "0.0.0",
+		"database":   database.LitmusDB,
+		"collection": database.WorkflowCollection,
 	}
 
 	//delete the existing workflow_name index

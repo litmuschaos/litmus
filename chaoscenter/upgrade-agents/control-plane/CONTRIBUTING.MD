@@ -50,7 +50,7 @@ The upgrade-manager would get the current version of Litmus through the DB.
 
 There are some other files not mentioned here.
 
-## **Upgrade to version 3.9.0**
+## **Example: Upgrade to version 3.9.0**
 
 In version 3.9.0 the following changes are done in DB schema
 
@@ -65,6 +65,7 @@ Run the upgrade-agent while specifying the version `VERSION=3.9.0` in the enviro
 2) Split the upgrades into proprietary functions depending on their purpose and database/collection names.
 3) Use logging techniques as used in other versions to provide the user an insight of how the upgrades are being done.
 4) While using a transaction, make sure the session context is properly passed into the relevant mongo operations and related functions.
+5) Script should be written in a way that even if run twice, should not affect the already updated documents.
 
 
 Below is the basic technical flow for the upgrade-agent
