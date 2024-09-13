@@ -51,6 +51,7 @@ interface AddHubFormData {
   sshPublicKey?: string;
   sshPrivateKey?: string;
   token?: string;
+  remoteHub: string;
 }
 interface StepData {
   value?: AddHubFormData;
@@ -78,7 +79,8 @@ export const initialValues: AddHubFormData = {
   repoBranch: '',
   repoURL: '',
   isPrivate: false,
-  authType: AuthType.NONE
+  authType: AuthType.NONE,
+  remoteHub: ''
 };
 
 const OverviewStep: React.FC<StepProps<StepData>> = props => {
@@ -160,6 +162,7 @@ const GitConnectionStep: React.FC<
             // name: values.name,
             isPrivate: values.isPrivate,
             repoURL: values.repoURL,
+            remoteHub: values.remoteHub,
             authType: values.authType,
             token: values.token,
             sshPublicKey: values.sshPublicKey,
@@ -174,6 +177,7 @@ const GitConnectionStep: React.FC<
                 description: formData.description,
                 tags: formData.tags,
                 repoURL: values.repoURL,
+                remoteHub: values.remoteHub,
                 authType: values.authType,
                 isPrivate: values.isPrivate,
                 token: values.token,
@@ -188,7 +192,8 @@ const GitConnectionStep: React.FC<
         }}
         validationSchema={Yup.object().shape({
           repoBranch: Yup.string().trim().required('Hub Branch name is a required field'),
-          repoURL: Yup.string().trim().required('Hub Repo name is a required field')
+          repoURL: Yup.string().trim().required('Hub Repo name is a required field'),
+          remoteHub: Yup.string().trim().required('Remote Hub name is a required field')
         })}
       >
         {formikProps => {
@@ -229,6 +234,22 @@ const GitConnectionStep: React.FC<
                   name="repoBranch"
                   label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('hubRepositoryBranch')}</Text>}
                   placeholder={getString('enterHubRepositoryBranch')}
+                />
+
+                <FormInput.DropDown
+                  name="remoteHub"
+                  label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Remote Hub</Text>}
+                  placeholder={getString('remoteHub')}
+                  items={[
+                    { label: 'GitHub', value: 'GitHub' },
+                    { label: 'Bitbucket', value: 'Bitbucket' },
+                    { label: 'Azure Repo', value: 'Azure Repo' },
+                    { label: 'GitLab', value: 'GitLab' },
+                    { label: 'Others', value: 'Others' }
+                  ]}
+                  onChange={item => {
+                    formikProps.setFieldValue('remoteHub', item.value);
+                  }}
                 />
 
                 {formikProps.values.isPrivate && (
@@ -350,7 +371,8 @@ export default function AddHubModalWizardView({
     repoBranch: '',
     repoURL: '',
     isPrivate: false,
-    authType: AuthType.NONE
+    authType: AuthType.NONE,
+    remoteHub: ''
   });
 
   return (
