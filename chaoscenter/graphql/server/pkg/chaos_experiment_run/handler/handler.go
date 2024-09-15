@@ -195,31 +195,24 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 	fetchKubernetesInfraDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosInfrastructures"},
-			{"let", bson.M{"infraID": "$infra_id"}},
-			{
-				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
-						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
-				},
-			},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "kubernetesInfraDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
+
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"kubernetesInfraDetails.token", 0},
+			{"kubernetesInfraDetails.infra_ns_exists", 0},
+			{"kubernetesInfraDetails.infra_sa_exists", 0},
+			{"kubernetesInfraDetails.access_key", 0},
+		}},
+	}
+
+	pipeline = append(pipeline, projectStage)
 
 	// Call aggregation on pipeline
 	expRunCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
@@ -572,31 +565,24 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	fetchKubernetesInfraDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosInfrastructures"},
-			{"let", bson.M{"infraID": "$infra_id"}},
-			{
-				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
-						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
-				},
-			},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "kubernetesInfraDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
+
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"kubernetesInfraDetails.token", 0},
+			{"kubernetesInfraDetails.infra_ns_exists", 0},
+			{"kubernetesInfraDetails.infra_sa_exists", 0},
+			{"kubernetesInfraDetails.access_key", 0},
+		}},
+	}
+
+	pipeline = append(pipeline, projectStage)
 
 	// Pagination or adding a default limit of 15 if pagination not provided
 	_, skip, limit := common.CreatePaginationStage(request.Pagination)

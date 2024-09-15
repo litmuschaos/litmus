@@ -352,30 +352,24 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	fetchKubernetesInfraDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosInfrastructures"},
-			{"let", bson.M{"infraID": "$infra_id"}},
-			{
-				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
-						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
-				},
-			},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "kubernetesInfraDetails"},
 		}},
 	}
+
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
+
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"kubernetesInfraDetails.token", 0},
+			{"kubernetesInfraDetails.infra_ns_exists", 0},
+			{"kubernetesInfraDetails.infra_sa_exists", 0},
+			{"kubernetesInfraDetails.access_key", 0},
+		}},
+	}
+
+	pipeline = append(pipeline, projectStage)
 
 	// Call aggregation on pipeline
 	expCursor, err := c.chaosExperimentOperator.GetAggregateExperiments(pipeline)
@@ -612,31 +606,24 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 	fetchKubernetesInfraDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosInfrastructures"},
-			{"let", bson.M{"infraID": "$infra_id"}},
-			{
-				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
-						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
-				},
-			},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "kubernetesInfraDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
+
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"kubernetesInfraDetails.token", 0},
+			{"kubernetesInfraDetails.infra_ns_exists", 0},
+			{"kubernetesInfraDetails.infra_sa_exists", 0},
+			{"kubernetesInfraDetails.access_key", 0},
+		}},
+	}
+
+	pipeline = append(pipeline, projectStage)
 
 	if request.Filter != nil && request.Filter.InfraActive != nil {
 		filterInfraStatusStage := bson.D{
