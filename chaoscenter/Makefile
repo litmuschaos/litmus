@@ -61,12 +61,30 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 	@echo "------------------"
+	@echo "--> Check chaos-center graphql-server [aws documentDB support operator]"
+	@echo "------------------"
+	@curl -Os https://raw.githubusercontent.com/awslabs/amazon-documentdb-tools/master/compat-tool/compat.py
+	@result=$$(python3 compat.py --version 5.0 --directory graphql/server); \
+	if echo "$${result}" | grep -qi 'unsupported operators were found'; then \
+		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
+		&& exit 1; \
+	fi
+	@echo "------------------"
 	@echo "--> Check chaos-center authentication [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd authentication && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
+		&& exit 1; \
+	fi
+	@echo "------------------"
+	@echo "--> Check chaos-center authentication [aws documentDB support operator]"
+	@echo "------------------"
+	@curl -Os https://raw.githubusercontent.com/awslabs/amazon-documentdb-tools/master/compat-tool/compat.py
+	@result=$$(python3 compat.py --version 5.0 --directory authentication); \
+	if echo "$${result}" | grep -qi 'unsupported operators were found'; then \
+		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
 		&& exit 1; \
 	fi
 	@echo "------------------"
