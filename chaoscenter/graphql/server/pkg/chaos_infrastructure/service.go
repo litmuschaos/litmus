@@ -328,42 +328,41 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 	fetchExperimentDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperiments"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$and", bson.A{
-								bson.D{
-									{"$eq", bson.A{"$infra_id", "$$infraID"}},
-								},
-								bson.D{
-									{"$eq", bson.A{"$is_removed", false}},
-								},
-							}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"exp_run_count", bson.D{
-							{"$sum", "$total_experiment_runs"},
-						}},
-						{"last_run_timestamp", bson.D{
-							{"$max", "$updated_at"},
-						}},
-						{"experiments_count", bson.D{
-							{"$sum", 1},
-						},
-						},
-					}},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "experimentDetails"},
 		}},
 	}
+
 	pipeline = append(pipeline, fetchExperimentDetailsStage)
+
+	matchStage := bson.D{
+		{"$match", bson.D{
+			{"experimentDetails.is_removed", false},
+		}},
+	}
+
+	pipeline = append(pipeline, matchStage)
+
+	addExpDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"experimentDetails", bson.A{
+				bson.D{
+					{"exp_run_count", bson.D{
+						{"$sum", "$experimentDetails.total_experiment_runs"},
+					}},
+					{"last_run_timestamp", bson.D{
+						{"$max", "$experimentDetails.updated_at"},
+					}},
+					{"experiments_count", bson.D{
+						{"$sum", 1},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addExpDetailsFieldsStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -588,60 +587,55 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	fetchRunDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperimentRuns"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
-						}},
-					}},
-				},
-
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"exp_run_count", bson.D{
-							{"$sum", 1},
-						}},
-						{"last_run_timestamp", bson.D{
-							{"$last", "$updated_at"},
-						}},
-					}},
-				},
-				bson.D{
-					{"$project", bson.D{
-						{"_id", 0},
-					}},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "expRunDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchRunDetailsStage)
 
+	addExpRunDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"expRunDetails", bson.A{
+				bson.D{
+					{"exp_run_count", bson.D{
+						{"$size", "$expRunDetails"},
+					}},
+					{"last_run_timestamp", bson.D{
+						{"$max", "$expRunDetails.updated_at"},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addExpRunDetailsFieldsStage)
+
 	fetchExperimentDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperiments"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$count", "experiments_count"},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "experimentDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchExperimentDetailsStage)
+
+	addExpDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"experimentDetails", bson.A{
+				bson.D{
+					{"experiments_count", bson.D{
+						{"$size", "$experimentDetails"},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addExpDetailsFieldsStage)
 
 	// Pagination or adding a default limit of 15 if pagination not provided
 	_, skip, limit := common.CreatePaginationStage(request.Pagination)
