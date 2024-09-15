@@ -318,35 +318,35 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	fetchRunDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperimentRuns"},
-			{"let", bson.D{{"expID", "$experiment_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$and", bson.A{
-								bson.D{
-									{"$eq", bson.A{"$experiment_id", "$$expID"}},
-								},
-								bson.D{
-									{"$eq", bson.A{"$completed", true}},
-								},
-							}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"avg", bson.D{
-							{"$avg", "$resiliency_score"},
-						}},
-					}},
-				},
-			}},
+			{"localField", "experiment_id"},
+			{"foreignField", "experiment_id"},
 			{"as", "avg_resiliency_score"},
 		}},
 	}
+
 	pipeline = append(pipeline, fetchRunDetailsStage)
+
+	matchStage := bson.D{
+		{"$match", bson.D{
+			{"avg_resiliency_score.completed", true},
+		}},
+	}
+
+	pipeline = append(pipeline, matchStage)
+
+	addAvgResiliencyScoreFieldStage := bson.D{
+		{"$addFields", bson.D{
+			{"avg_resiliency_score", bson.A{
+				bson.D{
+					{"avg", bson.D{
+						{"$avg", "$avg_resiliency_score.resiliency_score"},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addAvgResiliencyScoreFieldStage)
 
 	// fetchKubernetesInfraDetailsStage adds infra details of corresponding experiment_id to each document
 	fetchKubernetesInfraDetailsStage := bson.D{
@@ -1068,36 +1068,35 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	fetchRunDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperimentRuns"},
-			{"let", bson.D{{"expID", "$experiments.experiment_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$and", bson.A{
-								bson.D{
-									{"$eq", bson.A{"$experiment_id", "$$expID"}},
-								},
-								bson.D{
-									{"$eq", bson.A{"$completed", true}},
-								},
-							}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"avg", bson.D{
-							{"$avg", "$resiliency_score"},
-						}},
-					}},
-				},
-			}},
+			{"localField", "experiments.experiment_id"},
+			{"foreignField", "experiment_id"},
 			{"as", "avg_resiliency_score"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchRunDetailsStage)
+
+	matchStage := bson.D{
+		{"$match", bson.D{
+			{"avg_resiliency_score.completed", true},
+		}},
+	}
+
+	pipeline = append(pipeline, matchStage)
+
+	addAvgResiliencyScoreFieldStage := bson.D{
+		{"$addFields", bson.D{
+			{"avg_resiliency_score", bson.A{
+				bson.D{
+					{"avg", bson.D{
+						{"$avg", "$avg_resiliency_score.resiliency_score"},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addAvgResiliencyScoreFieldStage)
 
 	unwindResiliencySocreStage := bson.D{
 		{"$unwind", "$avg_resiliency_score"},
