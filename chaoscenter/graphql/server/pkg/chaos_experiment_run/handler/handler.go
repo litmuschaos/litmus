@@ -113,36 +113,83 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 
 	// Adds details of experiment
 	addExperimentDetails := bson.D{
-		{"$lookup",
-			bson.D{
-				{"from", "chaosExperiments"},
-				{"let", bson.D{{"experimentID", "$experiment_id"}, {"revID", "$revision_id"}}},
-				{
-					"pipeline", bson.A{
-						bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
-						bson.D{
-							{"$project", bson.D{
-								{"name", 1},
-								{"is_custom_experiment", 1},
-								{"experiment_type", 1},
-								{"revision", bson.D{{
-									"$filter", bson.D{
-										{"input", "$revision"},
-										{"as", "revs"},
-										{"cond", bson.D{{
-											"$eq", bson.A{"$$revs.revision_id", "$$revID"},
-										}}},
-									},
-								}}},
-							}},
-						},
-					},
-				},
-				{"as", "experiment"},
-			},
-		},
+		{"$lookup", bson.D{
+			{"from", "chaosExperiments"},
+			{"localField", "experiment_id"},
+			{"foreignField", "experiment_id"},
+			{"as", "experiment"},
+		}},
 	}
+
 	pipeline = append(pipeline, addExperimentDetails)
+
+	unwindStage := bson.D{
+		{"$unwind", "$experiment"},
+	}
+
+	pipeline = append(pipeline, unwindStage)
+
+	projectRunDetailsWithFilteredRevisionStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 1},
+			{"completed", 1},
+			{"created_at", 1},
+			{"created_by", 1},
+			{"experiment_id", 1},
+			{"experiment_name", 1},
+			{"experiment_run_id", 1},
+			{"faults_awaited", 1},
+			{"faults_failed", 1},
+			{"faults_na", 1},
+			{"faults_passed", 1},
+			{"faults_stopped", 1},
+			{"infra_id", 1},
+			{"is_removed", 1},
+			{"notify_id", 1},
+			{"phase", 1},
+			{"probes", 1},
+			{"project_id", 1},
+			{"resiliency_score", 1},
+			{"revision_id", 1},
+			{"run_sequence", 1},
+			{"total_faults", 1},
+			{"updated_at", 1},
+			{"updated_by", 1},
+			{"experiment", bson.D{
+				{"$map", bson.D{
+					{"input", bson.D{
+						{"$filter", bson.D{
+							{"input", "$experiment.revision"},
+							{"as", "revs"},
+							{"cond", bson.D{
+								{"$eq", bson.A{
+									"$$revs.revision_id",
+									"$revision_id",
+								}},
+							}},
+						}},
+					}},
+					{"as", "filtered_revs"},
+					{"in", bson.D{
+						{"_id", "$experiment._id"},
+						{"experiment_type", "$experiment.experiment_type"},
+						{"is_custom_experiment", "$experiment.is_custom_experiment"},
+						{"name", "$experiment.name"},
+						{"revision", bson.A{
+							bson.D{
+								{"revision_id", "$$filtered_revs.revision_id"},
+								{"probes", "$$filtered_revs.probes"},
+								{"updated_at", "$$filtered_revs.updated_at"},
+								{"weightages", "$$filtered_revs.weightages"},
+							},
+						}},
+					}},
+				}},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, projectRunDetailsWithFilteredRevisionStage)
 
 	// fetchKubernetesInfraDetailsStage adds kubernetes infra details of corresponding experiment_id to each document
 	fetchKubernetesInfraDetailsStage := bson.D{
@@ -323,37 +370,83 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	pipeline = append(pipeline, matchExpIsRemovedStage)
 
 	addExperimentDetails := bson.D{
-		{
-			"$lookup",
-			bson.D{
-				{"from", "chaosExperiments"},
-				{"let", bson.D{{"experimentID", "$experiment_id"}, {"revID", "$revision_id"}}},
-				{
-					"pipeline", bson.A{
-						bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
-						bson.D{
-							{"$project", bson.D{
-								{"name", 1},
-								{"experiment_type", 1},
-								{"is_custom_experiment", 1},
-								{"revision", bson.D{{
-									"$filter", bson.D{
-										{"input", "$revision"},
-										{"as", "revs"},
-										{"cond", bson.D{{
-											"$eq", bson.A{"$$revs.revision_id", "$$revID"},
-										}}},
-									},
-								}}},
-							}},
-						},
-					},
-				},
-				{"as", "experiment"},
-			},
-		},
+		{"$lookup", bson.D{
+			{"from", "chaosExperiments"},
+			{"localField", "experiment_id"},
+			{"foreignField", "experiment_id"},
+			{"as", "experiment"},
+		}},
 	}
+
 	pipeline = append(pipeline, addExperimentDetails)
+
+	unwindStage := bson.D{
+		{"$unwind", "$experiment"},
+	}
+
+	pipeline = append(pipeline, unwindStage)
+
+	projectRunDetailsWithFilteredRevisionStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 1},
+			{"completed", 1},
+			{"created_at", 1},
+			{"created_by", 1},
+			{"experiment_id", 1},
+			{"experiment_name", 1},
+			{"experiment_run_id", 1},
+			{"faults_awaited", 1},
+			{"faults_failed", 1},
+			{"faults_na", 1},
+			{"faults_passed", 1},
+			{"faults_stopped", 1},
+			{"infra_id", 1},
+			{"is_removed", 1},
+			{"notify_id", 1},
+			{"phase", 1},
+			{"probes", 1},
+			{"project_id", 1},
+			{"resiliency_score", 1},
+			{"revision_id", 1},
+			{"run_sequence", 1},
+			{"total_faults", 1},
+			{"updated_at", 1},
+			{"updated_by", 1},
+			{"experiment", bson.D{
+				{"$map", bson.D{
+					{"input", bson.D{
+						{"$filter", bson.D{
+							{"input", "$experiment.revision"},
+							{"as", "revs"},
+							{"cond", bson.D{
+								{"$eq", bson.A{
+									"$$revs.revision_id",
+									"$revision_id",
+								}},
+							}},
+						}},
+					}},
+					{"as", "filtered_revs"},
+					{"in", bson.D{
+						{"_id", "$experiment._id"},
+						{"experiment_type", "$experiment.experiment_type"},
+						{"is_custom_experiment", "$experiment.is_custom_experiment"},
+						{"name", "$experiment.name"},
+						{"revision", bson.A{
+							bson.D{
+								{"revision_id", "$$filtered_revs.revision_id"},
+								{"probes", "$$filtered_revs.probes"},
+								{"updated_at", "$$filtered_revs.updated_at"},
+								{"weightages", "$$filtered_revs.weightages"},
+							},
+						}},
+					}},
+				}},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, projectRunDetailsWithFilteredRevisionStage)
 
 	// Filtering based on multiple parameters
 	if request.Filter != nil {
