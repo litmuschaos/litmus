@@ -6,6 +6,7 @@
 # NOTE - These will be executed when any make target is invoked.
 #
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
+SHELL := /bin/bash
 
 .PHONY: help
 help:
@@ -69,6 +70,22 @@ backend-services-checks:
 		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
 		&& exit 1; \
 	fi
+	@lookupResults=""; \
+	while read file; do \
+		fileLookupResult=$$(awk 'BEGIN {found_lookup=0} \
+			/\$$lookup/ {found_lookup=1} \
+			found_lookup && NF==0 {found_lookup=0} \
+			found_lookup && /"let"|"pipeline"/ { \
+				print "Found let or pipeline in file " FILENAME " at line " NR; \
+			}' "$${file}"); \
+		if [ -n "$${fileLookupResult}" ]; then \
+			lookupResults="$${lookupResults}$${fileLookupResult}\n"; \
+		fi; \
+	done < <(find graphql/server -name "*.go"); \
+	if [ -n "$${lookupResults}" ]; then \
+		echo -e "$${lookupResults}" \
+		&& exit 1; \
+	fi 
 	@echo "------------------"
 	@echo "--> Check chaos-center authentication [go mod tidy]"
 	@echo "------------------"
@@ -87,6 +104,22 @@ backend-services-checks:
 		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
 		&& exit 1; \
 	fi
+		@lookupResults=""; \
+	while read file; do \
+		fileLookupResult=$$(awk 'BEGIN {found_lookup=0} \
+			/\$$lookup/ {found_lookup=1} \
+			found_lookup && NF==0 {found_lookup=0} \
+			found_lookup && /"let"|"pipeline"/ { \
+				print "Found let or pipeline in file " FILENAME " at line " NR; \
+			}' "$${file}"); \
+		if [ -n "$${fileLookupResult}" ]; then \
+			lookupResults="$${lookupResults}$${fileLookupResult}\n"; \
+		fi; \
+	done < <(find authentication -name "*.go"); \
+	if [ -n "$${lookupResults}" ]; then \
+		echo -e "$${lookupResults}" \
+		&& exit 1; \
+	fi 
 	@echo "------------------"
 	@echo "--> Check chaos-center subscriber [go mod tidy]"
 	@echo "------------------"
