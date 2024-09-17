@@ -180,6 +180,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 							bson.D{
 								{"revision_id", "$$filtered_revs.revision_id"},
 								{"probes", "$$filtered_revs.probes"},
+								{"experiment_manifest", "$$filtered_revs.experiment_manifest"},
 								{"updated_at", "$$filtered_revs.updated_at"},
 								{"weightages", "$$filtered_revs.weightages"},
 							},
@@ -431,6 +432,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 							bson.D{
 								{"revision_id", "$$filtered_revs.revision_id"},
 								{"probes", "$$filtered_revs.probes"},
+								{"experiment_manifest", "$$filtered_revs.experiment_manifest"},
 								{"updated_at", "$$filtered_revs.updated_at"},
 								{"weightages", "$$filtered_revs.weightages"},
 							},
