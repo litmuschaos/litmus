@@ -23,9 +23,9 @@ import { ChaosInfrastructureReferenceFieldProps, StudioErrorState, StudioTabs } 
 import experimentYamlService from 'services/experiment';
 import KubernetesChaosInfrastructureReferenceFieldController from '@controllers/KubernetesChaosInfrastructureReferenceField';
 import { InfrastructureType } from '@api/entities';
-import css from './StudioOverview.module.scss';
 import { getImageRegistry } from '@api/core/ImageRegistry'; 
 import { getScope } from '@utils'; 
+import css from './StudioOverview.module.scss';
 
 interface StudioOverviewViewProps {
   formRef: React.MutableRefObject<FormikProps<ExperimentMetadata> | undefined>;
