@@ -617,7 +617,7 @@ type ServerVersionResponse {
   value: String!
 }
 
-extend type Query {
+type Query {
   # INFRA OPERATIONS
   """
   Returns infra with a particular infraID in the project
@@ -656,7 +656,7 @@ extend type Query {
   getServerVersion: ServerVersionResponse!
 }
 
-extend type Mutation {
+type Mutation {
   """
   Connect a new infra for a user in a specified project
   """
@@ -705,7 +705,7 @@ extend type Mutation {
   kubeNamespace(request: KubeNamespaceData!): String!
 }
 
-extend type Subscription {
+type Subscription {
   # INFRA OPERATIONS
   """
   Listens infra events from the graphql server
