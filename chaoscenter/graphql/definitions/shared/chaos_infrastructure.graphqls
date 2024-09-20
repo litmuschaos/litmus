@@ -617,7 +617,7 @@ type ServerVersionResponse {
   value: String!
 }
 
-type Query {
+extend type Query {
   # INFRA OPERATIONS
   """
   Returns infra with a particular infraID in the project
@@ -656,7 +656,7 @@ type Query {
   getServerVersion: ServerVersionResponse!
 }
 
-type Mutation {
+extend type Mutation {
   """
   Connect a new infra for a user in a specified project
   """

@@ -5293,7 +5293,7 @@ type GetExperimentStatsResponse {
   totalExpCategorizedByResiliencyScore: [ResilienceScoreCategory]!
 }
 
-extend type Query {
+type Query {
 
 
   """
@@ -5315,7 +5315,7 @@ extend type Query {
   getExperimentStats(projectID: ID!): GetExperimentStatsResponse!
 }
 
-extend type Mutation {
+type Mutation {
   """
   Creates a new experiment and applies its manifest
   """
@@ -6105,7 +6105,7 @@ extend type Mutation {
   kubeNamespace(request: KubeNamespaceData!): String!
 }
 
-extend type Subscription {
+type Subscription {
   # INFRA OPERATIONS
   """
   Listens infra events from the graphql server
