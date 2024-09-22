@@ -31,11 +31,16 @@ import (
 
 const (
 	// CIVersion specifies the version tag used for ci builds
-	CIVersion                   = "ci"
-	ClusterScope         string = "cluster"
-	NamespaceScope       string = "namespace"
-	InstallationManifest string = "kubernetes"
-	InstallationHelm     string = "helm"
+	CIVersion             = "ci"
+	ClusterScope   string = "cluster"
+	NamespaceScope string = "namespace"
+)
+
+type InstallationMode string
+
+const (
+	Manifest InstallationMode = "kubernetes"
+	Helm     InstallationMode = "helm"
 )
 
 type Service interface {
@@ -207,8 +212,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
+	if input.InstallationType == nil {
+		return nil, fmt.Errorf("installation type is required")
+	}
+
 	switch *input.InstallationType {
-	case InstallationManifest:
+	case string(Manifest):
 		manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
 		if err != nil {
 			return nil, err
@@ -220,8 +229,8 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			Name:     newInfra.Name,
 			Manifest: string(manifestYaml),
 		}, nil
-	case InstallationHelm:
-		helmCommand := GetHelmCommand(newInfra)
+	case string(Helm):
+		helmCommand := GetHelmCommand(newInfra, fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host))
 
 		return &model.RegisterInfraResponse{
 			InfraID:     newInfra.InfraID,

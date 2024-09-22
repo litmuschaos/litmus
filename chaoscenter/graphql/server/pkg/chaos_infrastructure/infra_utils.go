@@ -28,14 +28,26 @@ func GetEndpoint(host string) (string, error) {
 	return host + "/api/query", nil
 }
 
-func GetHelmCommand(infra dbChaosInfra.ChaosInfra) string {
+func GetHelmCommand(infra dbChaosInfra.ChaosInfra, infraURL string) string {
+	var (
+		infraNamespace        string
+		DefaultInfraNamespace = "litmus"
+	)
+
+	if infra.InfraNamespace != nil && *infra.InfraNamespace != "" {
+		infraNamespace = *infra.InfraNamespace
+	} else {
+		infraNamespace = DefaultInfraNamespace
+	}
+
 	commands := fmt.Sprintf(`helm install litmus-agent litmuschaos/litmus-agent \
---namespace litmus --create-namespace \
---set "LITMUS_URL=http://litmusportal-frontend-service.litmus.svc.cluster.local:9091" \ # FOR SELF AGENT (SVC)
---set "LITMUS_BACKEND_URL=http://litmusportal-server-service.litmus.svc.cluster.local:9002" \ # FOR SELF AGENT (SVC)
+--namespace %s --create-namespace \ 
+--set "LITMUS_URL=%s" \ 
 --set "INFRA_ID=%s" \
 --set "ACCESS_KEY=%s" \
 --set "global.INFRA_MODE=%s"`,
+		infraNamespace,
+		infraURL,
 		infra.InfraID,
 		infra.AccessKey,
 		infra.InfraScope,
