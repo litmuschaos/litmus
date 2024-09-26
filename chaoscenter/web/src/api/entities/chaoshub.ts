@@ -27,6 +27,7 @@ export interface ChaosHub extends Audit, ResourceDetails {
   id: string;
   repoURL: string;
   repoBranch: string;
+  remoteHub: string;
   projectID: string;
   name: string;
   tags?: [string];
