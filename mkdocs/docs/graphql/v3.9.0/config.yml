@@ -1,9 +1,9 @@
 spectaql:
-  targetDir: ./mkdocs/docs/graphql/v3.9.x
+  targetDir: ./mkdocs/docs/graphql/v3.9.0
   logoFile: ./mkdocs/docs/graphql/logo.png
   faviconFile: ./mkdocs/docs/graphql/logo.png
   displayAllServers: true
-  themeDir: ./mkdocs/docs/graphql/v3.9.x/custom-theme
+  themeDir: ./mkdocs/docs/graphql/v3.9.0/custom-theme
 
 introspection:
   removeTrailingPeriodFromDescriptions: false
@@ -23,7 +23,7 @@ info:
 
   x-introItems:
     - title: Common Error Response
-      file: ./mkdocs/docs/graphql/v3.9.x/error_response_guide.md
+      file: ./mkdocs/docs/graphql/v3.9.0/error_response_guide.md
 
 servers:
   - url: http://localhost:8080
