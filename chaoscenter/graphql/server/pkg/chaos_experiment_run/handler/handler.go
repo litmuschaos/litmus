@@ -1222,7 +1222,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.Error("Failed to update experiment collection ", err)
 				return err
 			}
 		} else if experimentRunCount > 0 {
@@ -1257,7 +1257,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.Error("Failed to update experiment collection ", err)
 				return err
 			}
 		}
