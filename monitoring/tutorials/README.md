@@ -1,8 +1,7 @@
 # Tutorials
 
-This directory contains tutorials on monitoring target applications under chaos using various tools.
+This directory contains tutorials for users on monitoring target applications under chaos using various tools.
 
 - [Otel-demo](./otel-demo)
 
-  > Contains a tutorial on setting up and using OpenTelemetry for monitoring target applications under chaos.
-
+  > Contains a tutorial on injecting chaos into target applications using LitmusChaos and observing the chaos with OpenTelemetry.

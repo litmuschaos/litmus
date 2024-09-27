@@ -14,7 +14,7 @@ This directory contains chaos interleaved grafana dashboards along with the util
 
 - [Tutorials](./tutorials)
   
-  > Contains tutorials on monitoring target applications under chaos using various tools.
+  > Contains tutorials for users on monitoring target applications under chaos using various tools.
 
 ## Setup the LitmusChaos Infrastructure
 
