@@ -12,13 +12,14 @@ export interface KubeObjRequest {
     infraID: string;
     objectType: string;
     kubeObjRequest?: KubeGVRRequest;
+    namespace: string;
   };
 }
 
 export interface KubeObjResponse {
   getKubeObject: {
     infraID: string;
-    kubeObj: Array<KubeObj>;
+    kubeObj: KubeObj;
   };
 }
 
@@ -32,13 +33,30 @@ interface KubeObjData {
   name: string;
 }
 
-export function kubeObjectSubscription({
+interface KubeNamespace {
+  name: string;
+}
+
+export interface KubeNamespaceRequest {
+  request: {
+    infraID: string;
+  };
+}
+
+export interface KubeNamespaceResponse {
+  getKubeNamespace: {
+    infraID: string;
+    kubeNamespace: Array<KubeNamespace>;
+  };
+}
+
+export const kubeObjectSubscription = ({
   request,
   ...options
 }: GqlAPISubscriptionRequest<KubeObjResponse, KubeObjRequest>): GqlAPISubscriptionResponse<
   KubeObjResponse,
   KubeObjRequest
-> {
+> => {
   const { data, loading, error } = useSubscription<KubeObjResponse, KubeObjRequest>(
     gql`
       subscription getKubeObject($request: KubeObjectRequest!) {
@@ -59,6 +77,7 @@ export function kubeObjectSubscription({
         request: {
           infraID: request.infraID,
           kubeObjRequest: request.kubeObjRequest,
+          namespace: request.namespace,
           objectType: request.objectType
         }
       },
@@ -67,4 +86,35 @@ export function kubeObjectSubscription({
   );
 
   return { data, loading, error };
-}
+};
+
+export const kubeNamespaceSubscription = ({
+  request,
+  ...options
+}: GqlAPISubscriptionRequest<KubeNamespaceResponse, KubeNamespaceRequest>): GqlAPISubscriptionResponse<
+  KubeNamespaceResponse,
+  KubeNamespaceRequest
+> => {
+  const { data, loading, error } = useSubscription<KubeNamespaceResponse, KubeNamespaceRequest>(
+    gql`
+      subscription getKubeNamespace($request: KubeNamespaceRequest!) {
+        getKubeNamespace(request: $request) {
+          infraID
+          kubeNamespace {
+            name
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        request: {
+          infraID: request.infraID
+        }
+      },
+      ...options
+    }
+  );
+
+  return { data, loading, error };
+};
