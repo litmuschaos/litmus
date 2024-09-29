@@ -1305,14 +1305,22 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		} else if experimentRunCount > 0 {
 			filter := bson.D{
 				{"experiment_id", event.ExperimentID},
-				{"recent_experiment_run_details.experiment_run_id", event.ExperimentRunID},
-				{"recent_experiment_run_details.completed", false},
+				{"recent_experiment_run_details", bson.D{
+					{"$elemMatch", bson.D{
+						{"experiment_run_id", event.ExperimentRunID},
+						{"completed", false},
+					}},
+				}},
 			}
 			if event.NotifyID != nil {
 				filter = bson.D{
 					{"experiment_id", event.ExperimentID},
-					{"recent_experiment_run_details.completed", false},
-					{"recent_experiment_run_details.notify_id", event.NotifyID},
+					{"recent_experiment_run_details", bson.D{
+						{"$elemMatch", bson.D{
+							{"notify_id", event.NotifyID},
+							{"completed", false},
+						}},
+					}},
 				}
 			}
 			updatedByModel := mongodb.UserDetailResponse{
