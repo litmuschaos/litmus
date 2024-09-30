@@ -14,7 +14,7 @@ export default function blankCanvasTemplate(
         experimentName, 
         experiment?.chaosInfrastructure?.namespace,
         undefined, 
-        experiment?.imageRegistry
+        experiment?.imageRegistry,
       );
   }
 }
