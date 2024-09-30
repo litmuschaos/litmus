@@ -203,14 +203,10 @@ spec:
           type: object
           properties:
             apiVersion:
-              description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
               type: string
             kind:
-              description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
               type: string
             metadata:
               type: object
@@ -425,17 +421,7 @@ spec:
                                                   Must be a C_IDENTIFIER.
                                                 type: string
                                               value:
-                                                description: 'Variable references $(VAR_NAME)
-                                                are expanded using the previous defined
-                                                environment variables in the container
-                                                and any service environment variables.
-                                                If a variable cannot be resolved, the
-                                                reference in the input string will be
-                                                unchanged. The $(VAR_NAME) syntax can
-                                                be escaped with a double $$, ie: $$(VAR_NAME).
-                                                Escaped references will never be expanded,
-                                                regardless of whether the variable exists
-                                                or not. Defaults to "".'
+                                                description: 'Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any service environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "".'
                                                 type: string
                                               valueFrom:
                                                 description: Source for the environment
@@ -449,10 +435,7 @@ spec:
                                                         description: The key to select.
                                                         type: string
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                       optional:
                                                         description: Specify whether the
@@ -463,11 +446,7 @@ spec:
                                                       - key
                                                     type: object
                                                   fieldRef:
-                                                    description: 'Selects a field of the
-                                                    pod: supports metadata.name, metadata.namespace,
-                                                    metadata.labels, metadata.annotations,
-                                                    spec.nodeName, spec.serviceAccountName,
-                                                    status.hostIP, status.podIP.'
+                                                    description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP.'
                                                     properties:
                                                       apiVersion:
                                                         description: Version of the schema
@@ -483,17 +462,10 @@ spec:
                                                       - fieldPath
                                                     type: object
                                                   resourceFieldRef:
-                                                    description: 'Selects a resource of
-                                                    the container: only resources limits
-                                                    and requests (limits.cpu, limits.memory,
-                                                    limits.ephemeral-storage, requests.cpu,
-                                                    requests.memory and requests.ephemeral-storage)
-                                                    are currently supported.'
+                                                    description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
                                                     properties:
                                                       containerName:
-                                                        description: 'Container name:
-                                                        required for volumes, optional
-                                                        for env vars'
+                                                        description: 'Container name: required for volumes, optional for env vars'
                                                         type: string
                                                       divisor:
                                                         description: Specifies the output
@@ -501,8 +473,7 @@ spec:
                                                           defaults to "1"
                                                         type: string
                                                       resource:
-                                                        description: 'Required: resource
-                                                        to select'
+                                                        description: 'Required: resource to select'
                                                         type: string
                                                     required:
                                                       - resource
@@ -517,10 +488,7 @@ spec:
                                                           secret key.
                                                         type: string
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                       optional:
                                                         description: Specify whether the
@@ -631,46 +599,20 @@ spec:
                                               in the pod.
                                             properties:
                                               awsElasticBlockStore:
-                                                description: 'AWSElasticBlockStore represents
-                                                an AWS Disk resource that is attached
-                                                to a kubelet''s host machine and then
-                                                exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
+                                                description: 'AWSElasticBlockStore represents an AWS Disk resource that is attached to a kubelet''s host machine and then exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
                                                 properties:
                                                   fsType:
-                                                    description: 'Filesystem type of the
-                                                    volume that you want to mount. Tip:
-                                                    Ensure that the filesystem type
-                                                    is supported by the host operating
-                                                    system. Examples: "ext4", "xfs",
-                                                    "ntfs". Implicitly inferred to be
-                                                    "ext4" if unspecified. More info:
-                                                    https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-                                                    TODO: how do we prevent errors in
-                                                    the filesystem from compromising
-                                                    the machine'
+                                                    description: 'Filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore TODO: how do we prevent errors in the filesystem from compromising the machine'
                                                     type: string
                                                   partition:
-                                                    description: 'The partition in the
-                                                    volume that you want to mount. If
-                                                    omitted, the default is to mount
-                                                    by volume name. Examples: For volume
-                                                    /dev/sda1, you specify the partition
-                                                    as "1". Similarly, the volume partition
-                                                    for /dev/sda is "0" (or you can
-                                                    leave the property empty).'
+                                                    description: 'The partition in the volume that you want to mount. If omitted, the default is to mount by volume name. Examples: For volume /dev/sda1, you specify the partition as "1". Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).'
                                                     format: int32
                                                     type: integer
                                                   readOnly:
-                                                    description: 'Specify "true" to force
-                                                    and set the ReadOnly property in
-                                                    VolumeMounts to "true". If omitted,
-                                                    the default is "false". More info:
-                                                    https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
+                                                    description: 'Specify "true" to force and set the ReadOnly property in VolumeMounts to "true". If omitted, the default is "false". More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
                                                     type: boolean
                                                   volumeID:
-                                                    description: 'Unique ID of the persistent
-                                                    disk resource in AWS (Amazon EBS
-                                                    volume). More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
+                                                    description: 'Unique ID of the persistent disk resource in AWS (Amazon EBS volume). More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore'
                                                     type: string
                                                 required:
                                                   - volumeID
@@ -681,8 +623,7 @@ spec:
                                                   mount to the pod.
                                                 properties:
                                                   cachingMode:
-                                                    description: 'Host Caching mode: None,
-                                                    Read Only, Read Write.'
+                                                    description: 'Host Caching mode: None, Read Only, Read Write.'
                                                     type: string
                                                   diskName:
                                                     description: The Name of the data
@@ -700,13 +641,7 @@ spec:
                                                       inferred to be "ext4" if unspecified.
                                                     type: string
                                                   kind:
-                                                    description: 'Expected values Shared:
-                                                    multiple blob disks per storage
-                                                    account  Dedicated: single blob
-                                                    disk per storage account  Managed:
-                                                    azure managed data disk (only in
-                                                    managed availability set). defaults
-                                                    to shared'
+                                                    description: 'Expected values Shared: multiple blob disks per storage account  Dedicated: single blob disk per storage account  Managed: azure managed data disk (only in managed availability set). defaults to shared'
                                                     type: string
                                                   readOnly:
                                                     description: Defaults to false (read/write).
@@ -745,85 +680,50 @@ spec:
                                                   lifetime
                                                 properties:
                                                   monitors:
-                                                    description: 'Required: Monitors is
-                                                    a collection of Ceph monitors More
-                                                    info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
+                                                    description: 'Required: Monitors is a collection of Ceph monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                                                     items:
                                                       type: string
                                                     type: array
                                                   path:
-                                                    description: 'Optional: Used as the
-                                                    mounted root, rather than the full
-                                                    Ceph tree, default is /'
+                                                    description: 'Optional: Used as the mounted root, rather than the full Ceph tree, default is /'
                                                     type: string
                                                   readOnly:
-                                                    description: 'Optional: Defaults to
-                                                    false (read/write). ReadOnly here
-                                                    will force the ReadOnly setting
-                                                    in VolumeMounts. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
+                                                    description: 'Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                                                     type: boolean
                                                   secretFile:
-                                                    description: 'Optional: SecretFile
-                                                    is the path to key ring for User,
-                                                    default is /etc/ceph/user.secret
-                                                    More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
+                                                    description: 'Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                                                     type: string
                                                   secretRef:
-                                                    description: 'Optional: SecretRef
-                                                    is reference to the authentication
-                                                    secret for User, default is empty.
-                                                    More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
+                                                    description: 'Optional: SecretRef is reference to the authentication secret for User, default is empty. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   user:
-                                                    description: 'Optional: User is the
-                                                    rados user name, default is admin
-                                                    More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
+                                                    description: 'Optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                                                     type: string
                                                 required:
                                                   - monitors
                                                 type: object
                                               cinder:
-                                                description: 'Cinder represents a cinder
-                                                volume attached and mounted on kubelets
-                                                host machine. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
+                                                description: 'Cinder represents a cinder volume attached and mounted on kubelets host machine. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                                                 properties:
                                                   fsType:
-                                                    description: 'Filesystem type to mount.
-                                                    Must be a filesystem type supported
-                                                    by the host operating system. Examples:
-                                                    "ext4", "xfs", "ntfs". Implicitly
-                                                    inferred to be "ext4" if unspecified.
-                                                    More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
+                                                    description: 'Filesystem type to mount. Must be a filesystem type supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                                                     type: string
                                                   readOnly:
-                                                    description: 'Optional: Defaults to
-                                                    false (read/write). ReadOnly here
-                                                    will force the ReadOnly setting
-                                                    in VolumeMounts. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
+                                                    description: 'Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                                                     type: boolean
                                                   secretRef:
-                                                    description: 'Optional: points to
-                                                    a secret object containing parameters
-                                                    used to connect to OpenStack.'
+                                                    description: 'Optional: points to a secret object containing parameters used to connect to OpenStack.'
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   volumeID:
-                                                    description: 'volume id used to identify
-                                                    the volume in cinder. More info:
-                                                    https://examples.k8s.io/mysql-cinder-pd/README.md'
+                                                    description: 'volume id used to identify the volume in cinder. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                                                     type: string
                                                 required:
                                                   - volumeID
@@ -833,15 +733,7 @@ spec:
                                                   that should populate this volume
                                                 properties:
                                                   defaultMode:
-                                                    description: 'Optional: mode bits
-                                                    to use on created files by default.
-                                                    Must be a value between 0 and 0777.
-                                                    Defaults to 0644. Directories within
-                                                    the path are not affected by this
-                                                    setting. This might be in conflict
-                                                    with other options that affect the
-                                                    file mode, like fsGroup, and the
-                                                    result can be other mode bits set.'
+                                                    description: 'Optional: mode bits to use on created files by default. Must be a value between 0 and 0777. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                     format: int32
                                                     type: integer
                                                   items:
@@ -868,16 +760,7 @@ spec:
                                                           description: The key to project.
                                                           type: string
                                                         mode:
-                                                          description: 'Optional: mode
-                                                          bits to use on this file,
-                                                          must be a value between 0
-                                                          and 0777. If not specified,
-                                                          the volume defaultMode will
-                                                          be used. This might be in
-                                                          conflict with other options
-                                                          that affect the file mode,
-                                                          like fsGroup, and the result
-                                                          can be other mode bits set.'
+                                                          description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                           format: int32
                                                           type: integer
                                                         path:
@@ -894,10 +777,7 @@ spec:
                                                       type: object
                                                     type: array
                                                   name:
-                                                    description: 'Name of the referent.
-                                                    More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                    TODO: Add other useful fields. apiVersion,
-                                                    kind, uid?'
+                                                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                     type: string
                                                   optional:
                                                     description: Specify whether the ConfigMap
@@ -937,10 +817,7 @@ spec:
                                                       are passed.
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   readOnly:
@@ -966,15 +843,7 @@ spec:
                                                   this volume
                                                 properties:
                                                   defaultMode:
-                                                    description: 'Optional: mode bits
-                                                    to use on created files by default.
-                                                    Must be a value between 0 and 0777.
-                                                    Defaults to 0644. Directories within
-                                                    the path are not affected by this
-                                                    setting. This might be in conflict
-                                                    with other options that affect the
-                                                    file mode, like fsGroup, and the
-                                                    result can be other mode bits set.'
+                                                    description: 'Optional: mode bits to use on created files by default. Must be a value between 0 and 0777. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                     format: int32
                                                     type: integer
                                                   items:
@@ -986,10 +855,7 @@ spec:
                                                         the file containing the pod field
                                                       properties:
                                                         fieldRef:
-                                                          description: 'Required: Selects
-                                                          a field of the pod: only annotations,
-                                                          labels, name and namespace
-                                                          are supported.'
+                                                          description: 'Required: Selects a field of the pod: only annotations, labels, name and namespace are supported.'
                                                           properties:
                                                             apiVersion:
                                                               description: Version of
@@ -1006,40 +872,17 @@ spec:
                                                             - fieldPath
                                                           type: object
                                                         mode:
-                                                          description: 'Optional: mode
-                                                          bits to use on this file,
-                                                          must be a value between 0
-                                                          and 0777. If not specified,
-                                                          the volume defaultMode will
-                                                          be used. This might be in
-                                                          conflict with other options
-                                                          that affect the file mode,
-                                                          like fsGroup, and the result
-                                                          can be other mode bits set.'
+                                                          description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                           format: int32
                                                           type: integer
                                                         path:
-                                                          description: 'Required: Path
-                                                          is  the relative path name
-                                                          of the file to be created.
-                                                          Must not be absolute or contain
-                                                          the ''..'' path. Must be utf-8
-                                                          encoded. The first item of
-                                                          the relative path must not
-                                                          start with ''..'''
+                                                          description: 'Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the ''..'' path. Must be utf-8 encoded. The first item of the relative path must not start with ''..'''
                                                           type: string
                                                         resourceFieldRef:
-                                                          description: 'Selects a resource
-                                                          of the container: only resources
-                                                          limits and requests (limits.cpu,
-                                                          limits.memory, requests.cpu
-                                                          and requests.memory) are currently
-                                                          supported.'
+                                                          description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.'
                                                           properties:
                                                             containerName:
-                                                              description: 'Container
-                                                              name: required for volumes,
-                                                              optional for env vars'
+                                                              description: 'Container name: required for volumes, optional for env vars'
                                                               type: string
                                                             divisor:
                                                               description: Specifies the
@@ -1048,8 +891,7 @@ spec:
                                                                 "1"
                                                               type: string
                                                             resource:
-                                                              description: 'Required:
-                                                              resource to select'
+                                                              description: 'Required: resource to select'
                                                               type: string
                                                           required:
                                                             - resource
@@ -1060,30 +902,13 @@ spec:
                                                     type: array
                                                 type: object
                                               emptyDir:
-                                                description: 'EmptyDir represents a temporary
-                                                directory that shares a pod''s lifetime.
-                                                More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir'
+                                                description: 'EmptyDir represents a temporary directory that shares a pod''s lifetime. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir'
                                                 properties:
                                                   medium:
-                                                    description: 'What type of storage
-                                                    medium should back this directory.
-                                                    The default is "" which means to
-                                                    use the node''s default medium.
-                                                    Must be an empty string (default)
-                                                    or Memory. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir'
+                                                    description: 'What type of storage medium should back this directory. The default is "" which means to use the node''s default medium. Must be an empty string (default) or Memory. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir'
                                                     type: string
                                                   sizeLimit:
-                                                    description: 'Total amount of local
-                                                    storage required for this EmptyDir
-                                                    volume. The size limit is also applicable
-                                                    for memory medium. The maximum usage
-                                                    on memory medium EmptyDir would
-                                                    be the minimum value between the
-                                                    SizeLimit specified here and the
-                                                    sum of memory limits of all containers
-                                                    in a pod. The default is nil which
-                                                    means that the limit is undefined.
-                                                    More info: http://kubernetes.io/docs/user-guide/volumes#emptydir'
+                                                    description: 'Total amount of local storage required for this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers in a pod. The default is nil which means that the limit is undefined. More info: http://kubernetes.io/docs/user-guide/volumes#emptydir'
                                                     type: string
                                                 type: object
                                               fc:
@@ -1093,38 +918,22 @@ spec:
                                                   pod.
                                                 properties:
                                                   fsType:
-                                                    description: 'Filesystem type to mount.
-                                                    Must be a filesystem type supported
-                                                    by the host operating system. Ex.
-                                                    "ext4", "xfs", "ntfs". Implicitly
-                                                    inferred to be "ext4" if unspecified.
-                                                    TODO: how do we prevent errors in
-                                                    the filesystem from compromising
-                                                    the machine'
+                                                    description: 'Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. TODO: how do we prevent errors in the filesystem from compromising the machine'
                                                     type: string
                                                   lun:
-                                                    description: 'Optional: FC target
-                                                    lun number'
+                                                    description: 'Optional: FC target lun number'
                                                     format: int32
                                                     type: integer
                                                   readOnly:
-                                                    description: 'Optional: Defaults to
-                                                    false (read/write). ReadOnly here
-                                                    will force the ReadOnly setting
-                                                    in VolumeMounts.'
+                                                    description: 'Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.'
                                                     type: boolean
                                                   targetWWNs:
-                                                    description: 'Optional: FC target
-                                                    worldwide names (WWNs)'
+                                                    description: 'Optional: FC target worldwide names (WWNs)'
                                                     items:
                                                       type: string
                                                     type: array
                                                   wwids:
-                                                    description: 'Optional: FC volume
-                                                    world wide identifiers (wwids) Either
-                                                    wwids or combination of targetWWNs
-                                                    and lun must be set, but not both
-                                                    simultaneously.'
+                                                    description: 'Optional: FC volume world wide identifiers (wwids) Either wwids or combination of targetWWNs and lun must be set, but not both simultaneously.'
                                                     items:
                                                       type: string
                                                     type: array
@@ -1149,31 +958,16 @@ spec:
                                                   options:
                                                     additionalProperties:
                                                       type: string
-                                                    description: 'Optional: Extra command
-                                                    options if any.'
+                                                    description: 'Optional: Extra command options if any.'
                                                     type: object
                                                   readOnly:
-                                                    description: 'Optional: Defaults to
-                                                    false (read/write). ReadOnly here
-                                                    will force the ReadOnly setting
-                                                    in VolumeMounts.'
+                                                    description: 'Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.'
                                                     type: boolean
                                                   secretRef:
-                                                    description: 'Optional: SecretRef
-                                                    is reference to the secret object
-                                                    containing sensitive information
-                                                    to pass to the plugin scripts. This
-                                                    may be empty if no secret object
-                                                    is specified. If the secret object
-                                                    contains more than one secret, all
-                                                    secrets are passed to the plugin
-                                                    scripts.'
+                                                    description: 'Optional: SecretRef is reference to the secret object containing sensitive information to pass to the plugin scripts. This may be empty if no secret object is specified. If the secret object contains more than one secret, all secrets are passed to the plugin scripts.'
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                 required:
@@ -1198,57 +992,26 @@ spec:
                                                     type: string
                                                 type: object
                                               gcePersistentDisk:
-                                                description: 'GCEPersistentDisk represents
-                                                a GCE Disk resource that is attached
-                                                to a kubelet''s host machine and then
-                                                exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
+                                                description: 'GCEPersistentDisk represents a GCE Disk resource that is attached to a kubelet''s host machine and then exposed to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
                                                 properties:
                                                   fsType:
-                                                    description: 'Filesystem type of the
-                                                    volume that you want to mount. Tip:
-                                                    Ensure that the filesystem type
-                                                    is supported by the host operating
-                                                    system. Examples: "ext4", "xfs",
-                                                    "ntfs". Implicitly inferred to be
-                                                    "ext4" if unspecified. More info:
-                                                    https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
-                                                    TODO: how do we prevent errors in
-                                                    the filesystem from compromising
-                                                    the machine'
+                                                    description: 'Filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk TODO: how do we prevent errors in the filesystem from compromising the machine'
                                                     type: string
                                                   partition:
-                                                    description: 'The partition in the
-                                                    volume that you want to mount. If
-                                                    omitted, the default is to mount
-                                                    by volume name. Examples: For volume
-                                                    /dev/sda1, you specify the partition
-                                                    as "1". Similarly, the volume partition
-                                                    for /dev/sda is "0" (or you can
-                                                    leave the property empty). More
-                                                    info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
+                                                    description: 'The partition in the volume that you want to mount. If omitted, the default is to mount by volume name. Examples: For volume /dev/sda1, you specify the partition as "1". Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty). More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
                                                     format: int32
                                                     type: integer
                                                   pdName:
-                                                    description: 'Unique name of the PD
-                                                    resource in GCE. Used to identify
-                                                    the disk in GCE. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
+                                                    description: 'Unique name of the PD resource in GCE. Used to identify the disk in GCE. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
                                                     type: string
                                                   readOnly:
-                                                    description: 'ReadOnly here will force
-                                                    the ReadOnly setting in VolumeMounts.
-                                                    Defaults to false. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
+                                                    description: 'ReadOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk'
                                                     type: boolean
                                                 required:
                                                   - pdName
                                                 type: object
                                               gitRepo:
-                                                description: 'GitRepo represents a git
-                                                repository at a particular revision.
-                                                DEPRECATED: GitRepo is deprecated. To
-                                                provision a container with a git repo,
-                                                mount an EmptyDir into an InitContainer
-                                                that clones the repo using git, then
-                                                mount the EmptyDir into the Pod''s container.'
+                                                description: 'GitRepo represents a git repository at a particular revision. DEPRECATED: GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir into an InitContainer that clones the repo using git, then mount the EmptyDir into the Pod''s container.'
                                                 properties:
                                                   directory:
                                                     description: Target directory name.
@@ -1270,61 +1033,35 @@ spec:
                                                   - repository
                                                 type: object
                                               glusterfs:
-                                                description: 'Glusterfs represents a Glusterfs
-                                                mount on the host that shares a pod''s
-                                                lifetime. More info: https://examples.k8s.io/volumes/glusterfs/README.md'
+                                                description: 'Glusterfs represents a Glusterfs mount on the host that shares a pod''s lifetime. More info: https://examples.k8s.io/volumes/glusterfs/README.md'
                                                 properties:
                                                   endpoints:
-                                                    description: 'EndpointsName is the
-                                                    endpoint name that details Glusterfs
-                                                    topology. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
+                                                    description: 'EndpointsName is the endpoint name that details Glusterfs topology. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                                                     type: string
                                                   path:
-                                                    description: 'Path is the Glusterfs
-                                                    volume path. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
+                                                    description: 'Path is the Glusterfs volume path. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                                                     type: string
                                                   readOnly:
-                                                    description: 'ReadOnly here will force
-                                                    the Glusterfs volume to be mounted
-                                                    with read-only permissions. Defaults
-                                                    to false. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
+                                                    description: 'ReadOnly here will force the Glusterfs volume to be mounted with read-only permissions. Defaults to false. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                                                     type: boolean
                                                 required:
                                                   - endpoints
                                                   - path
                                                 type: object
                                               hostPath:
-                                                description: 'HostPath represents a pre-existing
-                                                file or directory on the host machine
-                                                that is directly exposed to the container.
-                                                This is generally used for system agents
-                                                or other privileged things that are
-                                                allowed to see the host machine. Most
-                                                containers will NOT need this. More
-                                                info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-                                                --- TODO(jonesdl) We need to restrict
-                                                who can use host directory mounts and
-                                                who can/can not mount host directories
-                                                as read/write.'
+                                                description: 'HostPath represents a pre-existing file or directory on the host machine that is directly exposed to the container. This is generally used for system agents or other privileged things that are allowed to see the host machine. Most containers will NOT need this. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath --- TODO(jonesdl) We need to restrict who can use host directory mounts and who can/can not mount host directories as read/write.'
                                                 properties:
                                                   path:
-                                                    description: 'Path of the directory
-                                                    on the host. If the path is a symlink,
-                                                    it will follow the link to the real
-                                                    path. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath'
+                                                    description: 'Path of the directory on the host. If the path is a symlink, it will follow the link to the real path. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath'
                                                     type: string
                                                   type:
-                                                    description: 'Type for HostPath Volume
-                                                    Defaults to "" More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath'
+                                                    description: 'Type for HostPath Volume Defaults to "" More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath'
                                                     type: string
                                                 required:
                                                   - path
                                                 type: object
                                               iscsi:
-                                                description: 'ISCSI represents an ISCSI
-                                                Disk resource that is attached to a
-                                                kubelet''s host machine and then exposed
-                                                to the pod. More info: https://examples.k8s.io/volumes/iscsi/README.md'
+                                                description: 'ISCSI represents an ISCSI Disk resource that is attached to a kubelet''s host machine and then exposed to the pod. More info: https://examples.k8s.io/volumes/iscsi/README.md'
                                                 properties:
                                                   chapAuthDiscovery:
                                                     description: whether support iSCSI
@@ -1335,17 +1072,7 @@ spec:
                                                       Session CHAP authentication
                                                     type: boolean
                                                   fsType:
-                                                    description: 'Filesystem type of the
-                                                    volume that you want to mount. Tip:
-                                                    Ensure that the filesystem type
-                                                    is supported by the host operating
-                                                    system. Examples: "ext4", "xfs",
-                                                    "ntfs". Implicitly inferred to be
-                                                    "ext4" if unspecified. More info:
-                                                    https://kubernetes.io/docs/concepts/storage/volumes#iscsi
-                                                    TODO: how do we prevent errors in
-                                                    the filesystem from compromising
-                                                    the machine'
+                                                    description: 'Filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#iscsi TODO: how do we prevent errors in the filesystem from compromising the machine'
                                                     type: string
                                                   initiatorName:
                                                     description: Custom iSCSI Initiator
@@ -1385,10 +1112,7 @@ spec:
                                                       target and initiator authentication
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   targetPortal:
@@ -1403,44 +1127,29 @@ spec:
                                                   - targetPortal
                                                 type: object
                                               name:
-                                                description: 'Volume''s name. Must be
-                                                a DNS_LABEL and unique within the pod.
-                                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                                description: 'Volume''s name. Must be a DNS_LABEL and unique within the pod. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                                                 type: string
                                               nfs:
-                                                description: 'NFS represents an NFS mount
-                                                on the host that shares a pod''s lifetime
-                                                More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
+                                                description: 'NFS represents an NFS mount on the host that shares a pod''s lifetime More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
                                                 properties:
                                                   path:
-                                                    description: 'Path that is exported
-                                                    by the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
+                                                    description: 'Path that is exported by the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
                                                     type: string
                                                   readOnly:
-                                                    description: 'ReadOnly here will force
-                                                    the NFS export to be mounted with
-                                                    read-only permissions. Defaults
-                                                    to false. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
+                                                    description: 'ReadOnly here will force the NFS export to be mounted with read-only permissions. Defaults to false. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
                                                     type: boolean
                                                   server:
-                                                    description: 'Server is the hostname
-                                                    or IP address of the NFS server.
-                                                    More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
+                                                    description: 'Server is the hostname or IP address of the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs'
                                                     type: string
                                                 required:
                                                   - path
                                                   - server
                                                 type: object
                                               persistentVolumeClaim:
-                                                description: 'PersistentVolumeClaimVolumeSource
-                                                represents a reference to a PersistentVolumeClaim
-                                                in the same namespace. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
+                                                description: 'PersistentVolumeClaimVolumeSource represents a reference to a PersistentVolumeClaim in the same namespace. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
                                                 properties:
                                                   claimName:
-                                                    description: 'ClaimName is the name
-                                                    of a PersistentVolumeClaim in the
-                                                    same namespace as the pod using
-                                                    this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
+                                                    description: 'ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
                                                     type: string
                                                   readOnly:
                                                     description: Will force the ReadOnly
@@ -1553,21 +1262,7 @@ spec:
                                                                       to project.
                                                                     type: string
                                                                   mode:
-                                                                    description: 'Optional:
-                                                                    mode bits to use
-                                                                    on this file, must
-                                                                    be a value between
-                                                                    0 and 0777. If not
-                                                                    specified, the volume
-                                                                    defaultMode will
-                                                                    be used. This might
-                                                                    be in conflict with
-                                                                    other options that
-                                                                    affect the file
-                                                                    mode, like fsGroup,
-                                                                    and the result can
-                                                                    be other mode bits
-                                                                    set.'
+                                                                    description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                                     format: int32
                                                                     type: integer
                                                                   path:
@@ -1587,11 +1282,7 @@ spec:
                                                                 type: object
                                                               type: array
                                                             name:
-                                                              description: 'Name of the
-                                                              referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                              TODO: Add other useful
-                                                              fields. apiVersion, kind,
-                                                              uid?'
+                                                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                               type: string
                                                             optional:
                                                               description: Specify whether
@@ -1614,12 +1305,7 @@ spec:
                                                                   the pod field
                                                                 properties:
                                                                   fieldRef:
-                                                                    description: 'Required:
-                                                                    Selects a field
-                                                                    of the pod: only
-                                                                    annotations, labels,
-                                                                    name and namespace
-                                                                    are supported.'
+                                                                    description: 'Required: Selects a field of the pod: only annotations, labels, name and namespace are supported.'
                                                                     properties:
                                                                       apiVersion:
                                                                         description: Version
@@ -1640,52 +1326,17 @@ spec:
                                                                       - fieldPath
                                                                     type: object
                                                                   mode:
-                                                                    description: 'Optional:
-                                                                    mode bits to use
-                                                                    on this file, must
-                                                                    be a value between
-                                                                    0 and 0777. If not
-                                                                    specified, the volume
-                                                                    defaultMode will
-                                                                    be used. This might
-                                                                    be in conflict with
-                                                                    other options that
-                                                                    affect the file
-                                                                    mode, like fsGroup,
-                                                                    and the result can
-                                                                    be other mode bits
-                                                                    set.'
+                                                                    description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                                     format: int32
                                                                     type: integer
                                                                   path:
-                                                                    description: 'Required:
-                                                                    Path is  the relative
-                                                                    path name of the
-                                                                    file to be created.
-                                                                    Must not be absolute
-                                                                    or contain the ''..''
-                                                                    path. Must be utf-8
-                                                                    encoded. The first
-                                                                    item of the relative
-                                                                    path must not start
-                                                                    with ''..'''
+                                                                    description: 'Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the ''..'' path. Must be utf-8 encoded. The first item of the relative path must not start with ''..'''
                                                                     type: string
                                                                   resourceFieldRef:
-                                                                    description: 'Selects
-                                                                    a resource of the
-                                                                    container: only
-                                                                    resources limits
-                                                                    and requests (limits.cpu,
-                                                                    limits.memory, requests.cpu
-                                                                    and requests.memory)
-                                                                    are currently supported.'
+                                                                    description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.'
                                                                     properties:
                                                                       containerName:
-                                                                        description: 'Container
-                                                                        name: required
-                                                                        for volumes,
-                                                                        optional for
-                                                                        env vars'
+                                                                        description: 'Container name: required for volumes, optional for env vars'
                                                                         type: string
                                                                       divisor:
                                                                         description: Specifies
@@ -1695,9 +1346,7 @@ spec:
                                                                           to "1"
                                                                         type: string
                                                                       resource:
-                                                                        description: 'Required:
-                                                                        resource to
-                                                                        select'
+                                                                        description: 'Required: resource to select'
                                                                         type: string
                                                                     required:
                                                                       - resource
@@ -1742,21 +1391,7 @@ spec:
                                                                       to project.
                                                                     type: string
                                                                   mode:
-                                                                    description: 'Optional:
-                                                                    mode bits to use
-                                                                    on this file, must
-                                                                    be a value between
-                                                                    0 and 0777. If not
-                                                                    specified, the volume
-                                                                    defaultMode will
-                                                                    be used. This might
-                                                                    be in conflict with
-                                                                    other options that
-                                                                    affect the file
-                                                                    mode, like fsGroup,
-                                                                    and the result can
-                                                                    be other mode bits
-                                                                    set.'
+                                                                    description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                                     format: int32
                                                                     type: integer
                                                                   path:
@@ -1776,11 +1411,7 @@ spec:
                                                                 type: object
                                                               type: array
                                                             name:
-                                                              description: 'Name of the
-                                                              referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                              TODO: Add other useful
-                                                              fields. apiVersion, kind,
-                                                              uid?'
+                                                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                               type: string
                                                             optional:
                                                               description: Specify whether
@@ -1884,64 +1515,37 @@ spec:
                                                   - volume
                                                 type: object
                                               rbd:
-                                                description: 'RBD represents a Rados Block
-                                                Device mount on the host that shares
-                                                a pod''s lifetime. More info: https://examples.k8s.io/volumes/rbd/README.md'
+                                                description: 'RBD represents a Rados Block Device mount on the host that shares a pod''s lifetime. More info: https://examples.k8s.io/volumes/rbd/README.md'
                                                 properties:
                                                   fsType:
-                                                    description: 'Filesystem type of the
-                                                    volume that you want to mount. Tip:
-                                                    Ensure that the filesystem type
-                                                    is supported by the host operating
-                                                    system. Examples: "ext4", "xfs",
-                                                    "ntfs". Implicitly inferred to be
-                                                    "ext4" if unspecified. More info:
-                                                    https://kubernetes.io/docs/concepts/storage/volumes#rbd
-                                                    TODO: how do we prevent errors in
-                                                    the filesystem from compromising
-                                                    the machine'
+                                                    description: 'Filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#rbd TODO: how do we prevent errors in the filesystem from compromising the machine'
                                                     type: string
                                                   image:
-                                                    description: 'The rados image name.
-                                                    More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'The rados image name. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     type: string
                                                   keyring:
-                                                    description: 'Keyring is the path
-                                                    to key ring for RBDUser. Default
-                                                    is /etc/ceph/keyring. More info:
-                                                    https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     type: string
                                                   monitors:
-                                                    description: 'A collection of Ceph
-                                                    monitors. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'A collection of Ceph monitors. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     items:
                                                       type: string
                                                     type: array
                                                   pool:
-                                                    description: 'The rados pool name.
-                                                    Default is rbd. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'The rados pool name. Default is rbd. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     type: string
                                                   readOnly:
-                                                    description: 'ReadOnly here will force
-                                                    the ReadOnly setting in VolumeMounts.
-                                                    Defaults to false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'ReadOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     type: boolean
                                                   secretRef:
-                                                    description: 'SecretRef is name of
-                                                    the authentication secret for RBDUser.
-                                                    If provided overrides keyring. Default
-                                                    is nil. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'SecretRef is name of the authentication secret for RBDUser. If provided overrides keyring. Default is nil. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   user:
-                                                    description: 'The rados user name.
-                                                    Default is admin. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
+                                                    description: 'The rados user name. Default is admin. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                                                     type: string
                                                 required:
                                                   - image
@@ -1981,10 +1585,7 @@ spec:
                                                       will fail.
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   sslEnabled:
@@ -2017,20 +1618,10 @@ spec:
                                                   - system
                                                 type: object
                                               secret:
-                                                description: 'Secret represents a secret
-                                                that should populate this volume. More
-                                                info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
+                                                description: 'Secret represents a secret that should populate this volume. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
                                                 properties:
                                                   defaultMode:
-                                                    description: 'Optional: mode bits
-                                                    to use on created files by default.
-                                                    Must be a value between 0 and 0777.
-                                                    Defaults to 0644. Directories within
-                                                    the path are not affected by this
-                                                    setting. This might be in conflict
-                                                    with other options that affect the
-                                                    file mode, like fsGroup, and the
-                                                    result can be other mode bits set.'
+                                                    description: 'Optional: mode bits to use on created files by default. Must be a value between 0 and 0777. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                     format: int32
                                                     type: integer
                                                   items:
@@ -2057,16 +1648,7 @@ spec:
                                                           description: The key to project.
                                                           type: string
                                                         mode:
-                                                          description: 'Optional: mode
-                                                          bits to use on this file,
-                                                          must be a value between 0
-                                                          and 0777. If not specified,
-                                                          the volume defaultMode will
-                                                          be used. This might be in
-                                                          conflict with other options
-                                                          that affect the file mode,
-                                                          like fsGroup, and the result
-                                                          can be other mode bits set.'
+                                                          description: 'Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.'
                                                           format: int32
                                                           type: integer
                                                         path:
@@ -2087,9 +1669,7 @@ spec:
                                                       or its keys must be defined
                                                     type: boolean
                                                   secretName:
-                                                    description: 'Name of the secret in
-                                                    the pod''s namespace to use. More
-                                                    info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
+                                                    description: 'Name of the secret in the pod''s namespace to use. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
                                                     type: string
                                                 type: object
                                               storageos:
@@ -2117,10 +1697,7 @@ spec:
                                                       attempted.
                                                     properties:
                                                       name:
-                                                        description: 'Name of the referent.
-                                                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                        TODO: Add other useful fields.
-                                                        apiVersion, kind, uid?'
+                                                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                                         type: string
                                                     type: object
                                                   volumeName:
@@ -2292,15 +1869,7 @@ spec:
                                         Must be a C_IDENTIFIER.
                                       type: string
                                     value:
-                                      description: 'Variable references $(VAR_NAME)
-                                      are expanded using the previous defined environment
-                                      variables in the container and any service environment
-                                      variables. If a variable cannot be resolved,
-                                      the reference in the input string will be unchanged.
-                                      The $(VAR_NAME) syntax can be escaped with a
-                                      double $$, ie: $$(VAR_NAME). Escaped references
-                                      will never be expanded, regardless of whether
-                                      the variable exists or not. Defaults to "".'
+                                      description: 'Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any service environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "".'
                                       type: string
                                     valueFrom:
                                       description: Source for the environment variable's
@@ -2313,10 +1882,7 @@ spec:
                                               description: The key to select.
                                               type: string
                                             name:
-                                              description: 'Name of the referent. More
-                                              info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                              TODO: Add other useful fields. apiVersion,
-                                              kind, uid?'
+                                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                               type: string
                                             optional:
                                               description: Specify whether the ConfigMap
@@ -2326,11 +1892,7 @@ spec:
                                             - key
                                           type: object
                                         fieldRef:
-                                          description: 'Selects a field of the pod:
-                                          supports metadata.name, metadata.namespace,
-                                          metadata.labels, metadata.annotations, spec.nodeName,
-                                          spec.serviceAccountName, status.hostIP,
-                                          status.podIP.'
+                                          description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP.'
                                           properties:
                                             apiVersion:
                                               description: Version of the schema the
@@ -2345,15 +1907,10 @@ spec:
                                             - fieldPath
                                           type: object
                                         resourceFieldRef:
-                                          description: 'Selects a resource of the container:
-                                          only resources limits and requests (limits.cpu,
-                                          limits.memory, limits.ephemeral-storage,
-                                          requests.cpu, requests.memory and requests.ephemeral-storage)
-                                          are currently supported.'
+                                          description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
                                           properties:
                                             containerName:
-                                              description: 'Container name: required
-                                              for volumes, optional for env vars'
+                                              description: 'Container name: required for volumes, optional for env vars'
                                               type: string
                                             divisor:
                                               anyOf:
@@ -2380,10 +1937,7 @@ spec:
                                                 key.
                                               type: string
                                             name:
-                                              description: 'Name of the referent. More
-                                              info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                              TODO: Add other useful fields. apiVersion,
-                                              kind, uid?'
+                                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                               type: string
                                             optional:
                                               description: Specify whether the Secret
@@ -2479,18 +2033,14 @@ spec:
           type: object
           properties:
             apiVersion:
-              description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
               type: string
             description:
               type: object
               additionalProperties:
                 type: string
             kind:
-              description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
               type: string
             metadata:
               type: object
@@ -2524,15 +2074,7 @@ spec:
                               Must be a C_IDENTIFIER.
                             type: string
                           value:
-                            description: 'Variable references $(VAR_NAME)
-                            are expanded using the previous defined environment
-                            variables in the container and any service environment
-                            variables. If a variable cannot be resolved,
-                            the reference in the input string will be unchanged.
-                            The $(VAR_NAME) syntax can be escaped with a
-                            double $$, ie: $$(VAR_NAME). Escaped references
-                            will never be expanded, regardless of whether
-                            the variable exists or not. Defaults to "".'
+                            description: 'Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any service environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "".'
                             type: string
                           valueFrom:
                             description: Source for the environment variable's
@@ -2545,10 +2087,7 @@ spec:
                                     description: The key to select.
                                     type: string
                                   name:
-                                    description: 'Name of the referent. More
-                                    info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                    TODO: Add other useful fields. apiVersion,
-                                    kind, uid?'
+                                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                     type: string
                                   optional:
                                     description: Specify whether the ConfigMap
@@ -2558,11 +2097,7 @@ spec:
                                   - key
                                 type: object
                               fieldRef:
-                                description: 'Selects a field of the pod:
-                                supports metadata.name, metadata.namespace,
-                                metadata.labels, metadata.annotations, spec.nodeName,
-                                spec.serviceAccountName, status.hostIP,
-                                status.podIP.'
+                                description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP.'
                                 properties:
                                   apiVersion:
                                     description: Version of the schema the
@@ -2577,15 +2112,10 @@ spec:
                                   - fieldPath
                                 type: object
                               resourceFieldRef:
-                                description: 'Selects a resource of the container:
-                                only resources limits and requests (limits.cpu,
-                                limits.memory, limits.ephemeral-storage,
-                                requests.cpu, requests.memory and requests.ephemeral-storage)
-                                are currently supported.'
+                                description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
                                 properties:
                                   containerName:
-                                    description: 'Container name: required
-                                    for volumes, optional for env vars'
+                                    description: 'Container name: required for volumes, optional for env vars'
                                     type: string
                                   divisor:
                                     anyOf:
@@ -2612,10 +2142,7 @@ spec:
                                       key.
                                     type: string
                                   name:
-                                    description: 'Name of the referent. More
-                                    info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                    TODO: Add other useful fields. apiVersion,
-                                    kind, uid?'
+                                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
                                     type: string
                                   optional:
                                     description: Specify whether the Secret
@@ -2745,14 +2272,10 @@ spec:
           type: object
           properties:
             apiVersion:
-              description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
               type: string
             kind:
-              description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
               type: string
             metadata:
               type: object
