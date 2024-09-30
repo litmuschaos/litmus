@@ -58,7 +58,7 @@ export default function StudioOverviewView({
 
    // Fetch the image registry data using Apollo's useQuery hook
    const { data: getImageRegistryData, loading: imageRegistryLoading } = getImageRegistry({
-    projectID: scope.projectID
+    projectID: scope.projectID,
   });
 
   const imageRegistry = getImageRegistryData?.getImageRegistry?{
@@ -163,7 +163,13 @@ export default function StudioOverviewView({
                       text={getString('cancel')}
                       onClick={openDiscardDialog}
                     />
-                    <Button type="submit" intent="primary" text={getString('next')} rightIcon="chevron-right" disabled={imageRegistryLoading}/>
+                    <Button
+                      type="submit" 
+                      intent="primary" 
+                      text={getString('next')} 
+                      rightIcon="chevron-right" 
+                      disabled={imageRegistryLoading}
+                    />
                   </Layout.Horizontal>
                 </Form>
               </Layout.Vertical>
