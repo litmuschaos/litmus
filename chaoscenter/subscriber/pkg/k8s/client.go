@@ -16,11 +16,8 @@ var KubeConfig *string
 
 // getKubeConfig setup the config for access cluster resource
 func (k8s *k8sSubscriber) GetKubeConfig() (*rest.Config, error) {
-	if KubeConfig == nil {
-		return rest.InClusterConfig()
-	}
-
-	if *KubeConfig == "" {
+	// Use in-cluster config if kubeconfig path is not specified
+	if *KubeConfig == "" || KubeConfig == nil {
 		return rest.InClusterConfig()
 	}
 
