@@ -360,6 +360,7 @@ executionID: Execution ID
 executionOverview: Execution Overview
 executionStatus: Execution Status
 exhausted: Exhausted
+expand: expand
 expCategory: Experiment Category Tag
 expDesc: Experiment Description
 expName: Experiment Name
@@ -1054,6 +1055,7 @@ stopOnFailure: Stop On Failure
 stopped: Stopped
 stoppedRuns: Stopped Runs
 stoppedSuccessfully: stopped successfully
+collapse: collapse
 succeeded: Succeeded
 success: Success
 successSummary: Success Summary

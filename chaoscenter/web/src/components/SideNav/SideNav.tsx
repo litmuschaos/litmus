@@ -137,7 +137,7 @@ export default function SideNav(): ReactElement {
             >
               <Icon name="log-out" color={Color.WHITE} />
               <Text font={{ variation: FontVariation.BODY }} color={Color.WHITE}>
-                Sign Out
+                {getString('signOut')}
               </Text>
             </Layout.Horizontal>
           ) : (
