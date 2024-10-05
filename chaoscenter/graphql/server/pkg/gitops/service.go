@@ -21,6 +21,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	"github.com/mrz1836/go-sanitize"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -154,7 +155,7 @@ func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID stri
 		return false, errors.New("Failed to delete git config from DB : " + err.Error())
 	}
 
-	err = os.RemoveAll(DefaultPath + projectID)
+	err = os.RemoveAll(DefaultPath + sanitize.PathName(projectID))
 	if err != nil {
 		return false, errors.New("Failed to delete git repo from disk : " + err.Error())
 	}
@@ -183,7 +184,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectI
 
 	gitConfig := GetGitOpsConfig(gitDB)
 	originalPath := gitConfig.LocalPath
-	gitConfig.LocalPath = tempPath + gitConfig.ProjectID
+	gitConfig.LocalPath = tempPath + sanitize.PathName(gitConfig.ProjectID)
 	commit, err := SetupGitOps(GitUserFromContext(ctx), gitConfig)
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
@@ -319,7 +320,7 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Sync Error | " + err.Error())
 	}
 
-	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
+	experimentPath := ProjectDataPath + "/" + sanitize.PathName(gitConfig.ProjectID) + "/" + sanitize.PathName(experiment.ExperimentName) + ".yaml"
 	exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
 	if err != nil {
 		return errors.New("Cannot delete experiment from git : " + err.Error())
@@ -457,7 +458,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			continue
 		}
 		// check if file was deleted or not
-		exists, err := PathExists(config.LocalPath + "/" + file)
+		exists, err := PathExists(config.LocalPath + "/" + sanitize.PathName(file))
 		if err != nil {
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}

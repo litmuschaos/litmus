@@ -155,13 +155,13 @@ func IsFileExisting(path string) (bool, error) {
 
 // DownloadRemoteHub is used to download a remote hub from the url provided by the user
 func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) error {
-	dirPath := DefaultPath + projectID
+	dirPath := DefaultPath + sanitize.PathName(projectID)
 	err := os.MkdirAll(dirPath, 0755)
 	if err != nil {
 		return err
 	}
 	//create the destination directory where the hub will be downloaded
-	hubPath := dirPath + "/" + hubDetails.Name + ".zip"
+	hubPath := dirPath + "/" + sanitize.PathName(hubDetails.Name) + ".zip"
 	destDir, err := os.Create(hubPath)
 	if err != nil {
 		log.Error(err)
@@ -278,7 +278,7 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 
 // SyncRemoteRepo is used to sync the remote ChaosHub
 func SyncRemoteRepo(hubData model.CloningInput, projectID string) error {
-	hubPath := DefaultPath + projectID + "/" + hubData.Name
+	hubPath := DefaultPath + sanitize.PathName(projectID) + "/" + sanitize.PathName(hubData.Name)
 	err := os.RemoveAll(hubPath)
 	if err != nil {
 		return err
@@ -320,8 +320,13 @@ func ChaosHubIconHandler() gin.HandlerFunc {
 			responseStatusCode int
 		)
 
+		projectID := sanitize.PathName(c.Param("projectId"))
+		hubName := sanitize.PathName(c.Param("hubName"))
+		chartName := sanitize.PathName(c.Param("chartName"))
+		iconName := sanitize.PathName(c.Param("iconName"))
+
 		if strings.ToLower(c.Param("chartName")) == "predefined" {
-			img, err = os.Open(utils.Config.CustomChaosHubPath + c.Param("projectId") + "/" + c.Param("hubName") + "/experiments/icons/" + c.Param("iconName"))
+			img, err = os.Open(utils.Config.CustomChaosHubPath + projectID + "/" + hubName + "/experiments/icons/" + iconName)
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -329,7 +334,7 @@ func ChaosHubIconHandler() gin.HandlerFunc {
 				fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
 			}
 		} else {
-			img, err = os.Open(utils.Config.CustomChaosHubPath + c.Param("projectId") + "/" + c.Param("hubName") + "/faults/" + c.Param("chartName") + "/icons/" + c.Param("iconName"))
+			img, err = os.Open(utils.Config.CustomChaosHubPath + projectID + "/" + hubName + "/faults/" + chartName + "/icons/" + iconName)
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -354,8 +359,12 @@ func DefaultChaosHubIconHandler() gin.HandlerFunc {
 			responseStatusCode int
 		)
 
+		hubName := sanitize.PathName(c.Param("hubName"))
+		chartName := sanitize.PathName(c.Param("chartName"))
+		iconName := sanitize.PathName(c.Param("iconName"))
+
 		if strings.ToLower(c.Param("chartName")) == "predefined" {
-			img, err = os.Open(utils.Config.DefaultChaosHubPath + c.Param("hubName") + "/experiments/icons/" + c.Param("iconName"))
+			img, err = os.Open(utils.Config.DefaultChaosHubPath + hubName + "/experiments/icons/" + iconName)
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -363,7 +372,7 @@ func DefaultChaosHubIconHandler() gin.HandlerFunc {
 				fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
 			}
 		} else {
-			img, err = os.Open(utils.Config.DefaultChaosHubPath + c.Param("hubName") + "/faults/" + c.Param("chartName") + "/icons/" + c.Param("iconName"))
+			img, err = os.Open(utils.Config.DefaultChaosHubPath + hubName + "/faults/" + chartName + "/icons/" + iconName)
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError

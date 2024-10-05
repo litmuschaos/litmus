@@ -24,6 +24,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	"github.com/mrz1836/go-sanitize"
 	log "github.com/sirupsen/logrus"
 	ssh2 "golang.org/x/crypto/ssh"
 )
@@ -84,7 +85,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 		RepositoryURL: repoData.RepositoryURL,
 		RemoteName:    "origin",
 		Branch:        repoData.Branch,
-		LocalPath:     DefaultPath + repoData.ProjectID,
+		LocalPath:     DefaultPath + sanitize.PathName(repoData.ProjectID),
 		LatestCommit:  repoData.LatestCommit,
 		UserName:      repoData.UserName,
 		Password:      repoData.Password,
@@ -98,7 +99,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 
 // setupGitRepo helps clones and sets up the repo for GitOps
 func (c GitConfig) setupGitRepo(user GitUser) error {
-	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
+	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + sanitize.PathName(c.ProjectID)
 
 	// clone repo
 	_, err := c.GitClone()
