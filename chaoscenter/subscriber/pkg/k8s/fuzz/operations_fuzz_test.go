@@ -1,11 +1,12 @@
 package fuzz
 
 import (
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	pkgTypes "subscriber/pkg/types"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
 )
 
 func FuzzCheckComponentStatus(f *testing.F) {

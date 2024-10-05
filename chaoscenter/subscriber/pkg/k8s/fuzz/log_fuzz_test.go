@@ -1,11 +1,12 @@
 package fuzz
 
 import (
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
 )
 
 func FuzzGetLogs(f *testing.F) {

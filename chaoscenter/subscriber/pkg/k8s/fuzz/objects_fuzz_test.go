@@ -1,13 +1,14 @@
 package fuzz
 
 import (
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
 )
 
 func FuzzGetKubernetesNamespaces(f *testing.F) {

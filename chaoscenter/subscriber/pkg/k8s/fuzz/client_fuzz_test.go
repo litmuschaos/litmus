@@ -1,10 +1,11 @@
 package fuzz
 
 import (
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
 )
 
 func FuzzGenerateArgoClient(f *testing.F) {
