@@ -62,7 +62,7 @@ function MemoizedUserCreatedProjectsTable({
       },
       {
         id: 'members',
-        Header: 'Members',
+        Header: getString('members'),
         Cell: ({ row: { original: data } }: { row: Row<Project> }) => {
           return (
             <AvatarGroup

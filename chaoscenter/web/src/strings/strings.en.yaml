@@ -360,6 +360,7 @@ executedBy: Executed by
 executedOn: Executed on
 executionDetails: Execution details goes here
 executionError: Execution Error
+expand: expand
 executionHistory: Execution History
 executionID: Execution ID
 executionOverview: Execution Overview
