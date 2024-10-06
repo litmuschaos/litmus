@@ -39,16 +39,52 @@ func clearCloneRepository(projectID string) {
 
 // TestGetClonePath is used to test the GetClonePath function
 func TestGetClonePath(t *testing.T) {
-	// given
 	projectID := uuid.New().String()
-	chaosHubConfig := chaosHubOps.ChaosHubConfig{
-		ProjectID: projectID,
-		HubName:   "test",
+
+	testCases := []struct {
+		name      string
+		projectID string
+		hubName   string
+		isDefault bool
+		expected  string
+	}{
+		{
+			name:      "default hub",
+			projectID: projectID,
+			hubName:   "defaultHub",
+			isDefault: true,
+			expected:  "/tmp/default/defaultHub",
+		},
+		{
+			name:      "non-default hub",
+			projectID: projectID,
+			hubName:   "testHub",
+			isDefault: false,
+			expected:  "/tmp/" + projectID + "/testHub",
+		},
+		{
+			name:      "path injection",
+			projectID: projectID,
+			hubName:   "testHub/../Path/Injection",
+			isDefault: false,
+			expected:  "/tmp/" + projectID + "/testHubPathInjection",
+		},
 	}
-	// when
-	path := chaosHubOps.GetClonePath(chaosHubConfig)
-	// then
-	assert.Equal(t, "/tmp/"+projectID+"/test", path)
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// given
+			chaosHubConfig := chaosHubOps.ChaosHubConfig{
+				ProjectID: tc.projectID,
+				HubName:   tc.hubName,
+				IsDefault: tc.isDefault,
+			}
+			// when
+			path := chaosHubOps.GetClonePath(chaosHubConfig)
+			// then
+			assert.Equal(t, tc.expected, path)
+		})
+	}
 }
 
 // TestGitConfigConstruct is used to test the GitConfigConstruct function
