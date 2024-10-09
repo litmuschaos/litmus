@@ -99,7 +99,11 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 
 // setupGitRepo helps clones and sets up the repo for GitOps
 func (c GitConfig) setupGitRepo(user GitUser) error {
-	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + sanitize.PathName(c.ProjectID)
+	if c.ProjectID != sanitize.PathName(c.ProjectID) {
+		return fmt.Errorf("err: invalid projectID '%s', potential path injection detected", c.ProjectID)
+	}
+
+	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
 
 	// clone repo
 	_, err := c.GitClone()

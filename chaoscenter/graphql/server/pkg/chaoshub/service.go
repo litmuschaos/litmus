@@ -330,7 +330,16 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	if err != nil {
 		return nil, err
 	}
-	clonePath := DefaultPath + sanitize.PathName(prevChaosHub.ProjectID) + "/" + sanitize.PathName(prevChaosHub.Name)
+
+	if prevChaosHub.ProjectID != sanitize.PathName(prevChaosHub.ProjectID) {
+		return nil, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	if prevChaosHub.Name != sanitize.PathName(prevChaosHub.Name) {
+		return nil, fmt.Errorf("err: invalid hub name '%s', potential path injection detected", chaosHub.Name)
+	}
+
+	clonePath := DefaultPath + prevChaosHub.ProjectID + "/" + prevChaosHub.Name
 	if prevChaosHub.HubType == string(model.HubTypeRemote) {
 		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RemoteHub != chaosHub.RemoteHub {
 			remoteHub := model.CreateRemoteChaosHub{
@@ -440,7 +449,16 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 		log.Error(err)
 		return false, err
 	}
-	clonePath := DefaultPath + sanitize.PathName(projectID) + "/" + sanitize.PathName(chaosHub.Name)
+
+	if projectID != sanitize.PathName(projectID) {
+		return false, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	if chaosHub.Name != sanitize.PathName(chaosHub.Name) {
+		return false, fmt.Errorf("err: invalid hub name '%s', potential path injection detected", chaosHub.Name)
+	}
+
+	clonePath := DefaultPath + projectID + "/" + chaosHub.Name
 	err = os.RemoveAll(clonePath)
 	if err != nil {
 		log.Error(err)
@@ -734,11 +752,19 @@ func (c *chaosHubService) ListPredefinedExperiments(ctx context.Context, hubID s
 		return nil, err
 	}
 
+	if projectID != sanitize.PathName(projectID) {
+		return nil, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	if hub.Name != sanitize.PathName(hub.Name) {
+		return nil, fmt.Errorf("err: invalid hub name '%s', potential path injection detected", hub.Name)
+	}
+
 	var hubPath string
 	if hub.IsDefault {
-		hubPath = "/tmp/default/" + sanitize.PathName(hub.Name) + "/experiments/"
+		hubPath = "/tmp/default/" + hub.Name + "/experiments/"
 	} else {
-		hubPath = DefaultPath + sanitize.PathName(projectID) + "/" + sanitize.PathName(hub.Name) + "/experiments/"
+		hubPath = DefaultPath + projectID + "/" + hub.Name + "/experiments/"
 	}
 	var predefinedWorkflows []*model.PredefinedExperimentList
 	files, err := os.ReadDir(hubPath)
@@ -793,11 +819,20 @@ func (c *chaosHubService) GetPredefinedExperiment(ctx context.Context, hubID str
 	if err != nil {
 		return nil, err
 	}
+
+	if projectID != sanitize.PathName(projectID) {
+		return nil, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	if hub.Name != sanitize.PathName(hub.Name) {
+		return nil, fmt.Errorf("err: invalid hub name '%s', potential path injection detected", hub.Name)
+	}
+
 	var hubPath string
 	if hub.IsDefault {
-		hubPath = "/tmp/default/" + sanitize.PathName(hub.Name) + "/experiments/"
+		hubPath = "/tmp/default/" + hub.Name + "/experiments/"
 	} else {
-		hubPath = DefaultPath + sanitize.PathName(projectID) + "/" + sanitize.PathName(hub.Name) + "/experiments/"
+		hubPath = DefaultPath + projectID + "/" + hub.Name + "/experiments/"
 	}
 	var predefinedWorkflows []*model.PredefinedExperimentList
 

@@ -155,13 +155,22 @@ func IsFileExisting(path string) (bool, error) {
 
 // DownloadRemoteHub is used to download a remote hub from the url provided by the user
 func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) error {
-	dirPath := DefaultPath + sanitize.PathName(projectID)
+	if projectID != sanitize.PathName(projectID) {
+		return fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	dirPath := DefaultPath + projectID
 	err := os.MkdirAll(dirPath, 0755)
 	if err != nil {
 		return err
 	}
+
+	if hubDetails.Name != sanitize.PathName(hubDetails.Name) {
+		return fmt.Errorf("err: invalid hub name '%s', potential path injection detected", hubDetails.Name)
+	}
+
 	//create the destination directory where the hub will be downloaded
-	hubPath := dirPath + "/" + sanitize.PathName(hubDetails.Name) + ".zip"
+	hubPath := dirPath + "/" + hubDetails.Name + ".zip"
 	destDir, err := os.Create(hubPath)
 	if err != nil {
 		log.Error(err)
@@ -278,7 +287,15 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 
 // SyncRemoteRepo is used to sync the remote ChaosHub
 func SyncRemoteRepo(hubData model.CloningInput, projectID string) error {
-	hubPath := DefaultPath + sanitize.PathName(projectID) + "/" + sanitize.PathName(hubData.Name)
+	if projectID != sanitize.PathName(projectID) {
+		return fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
+	if hubData.Name != sanitize.PathName(hubData.Name) {
+		return fmt.Errorf("err: invalid hub name '%s', potential path injection detected", hubData.Name)
+	}
+
+	hubPath := DefaultPath + projectID + "/" + hubData.Name
 	err := os.RemoveAll(hubPath)
 	if err != nil {
 		return err
@@ -320,13 +337,36 @@ func ChaosHubIconHandler() gin.HandlerFunc {
 			responseStatusCode int
 		)
 
-		projectID := sanitize.PathName(c.Param("projectId"))
-		hubName := sanitize.PathName(c.Param("hubName"))
-		chartName := sanitize.PathName(c.Param("chartName"))
-		iconName := sanitize.PathName(c.Param("iconName"))
+		if c.Param("projectId") != sanitize.PathName(c.Param("projectId")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid projectID '%s', potential path injection detected", c.Param("projectId"))
+			fmt.Fprintf(c.Writer, "err: invalid projectID '%s', potential path injection detected", c.Param("projectId"))
+			return
+		}
+
+		if c.Param("hubName") != sanitize.PathName(c.Param("hubName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid hub name '%s', potential path injection detected", c.Param("hubName"))
+			fmt.Fprintf(c.Writer, "err: invalid hub name '%s', potential path injection detected", c.Param("hubName"))
+			return
+		}
+
+		if c.Param("chartName") != sanitize.PathName(c.Param("chartName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid chart name '%s', potential path injection detected", c.Param("chartName"))
+			fmt.Fprintf(c.Writer, "err: invalid chart name '%s', potential path injection detected", c.Param("chartName"))
+			return
+		}
+
+		if c.Param("iconName") != sanitize.PathName(c.Param("iconName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid icon name '%s', potential path injection detected", c.Param("iconName"))
+			fmt.Fprintf(c.Writer, "err: invalid icon name '%s', potential path injection detected", c.Param("iconName"))
+			return
+		}
 
 		if strings.ToLower(c.Param("chartName")) == "predefined" {
-			img, err = os.Open(utils.Config.CustomChaosHubPath + projectID + "/" + hubName + "/experiments/icons/" + iconName)
+			img, err = os.Open(utils.Config.CustomChaosHubPath + c.Param("projectId") + "/" + c.Param("hubName") + "/experiments/icons/" + c.Param("iconName"))
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -334,7 +374,7 @@ func ChaosHubIconHandler() gin.HandlerFunc {
 				fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
 			}
 		} else {
-			img, err = os.Open(utils.Config.CustomChaosHubPath + projectID + "/" + hubName + "/faults/" + chartName + "/icons/" + iconName)
+			img, err = os.Open(utils.Config.CustomChaosHubPath + c.Param("projectId") + "/" + c.Param("hubName") + "/faults/" + c.Param("chartName") + "/icons/" + c.Param("iconName"))
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -359,12 +399,29 @@ func DefaultChaosHubIconHandler() gin.HandlerFunc {
 			responseStatusCode int
 		)
 
-		hubName := sanitize.PathName(c.Param("hubName"))
-		chartName := sanitize.PathName(c.Param("chartName"))
-		iconName := sanitize.PathName(c.Param("iconName"))
+		if c.Param("hubName") != sanitize.PathName(c.Param("hubName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid hub name '%s', potential path injection detected", c.Param("hubName"))
+			fmt.Fprintf(c.Writer, "err: invalid hub name '%s', potential path injection detected", c.Param("hubName"))
+			return
+		}
+
+		if c.Param("chartName") != sanitize.PathName(c.Param("chartName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid chart name '%s', potential path injection detected", c.Param("chartName"))
+			fmt.Fprintf(c.Writer, "err: invalid chart name '%s', potential path injection detected", c.Param("chartName"))
+			return
+		}
+
+		if c.Param("iconName") != sanitize.PathName(c.Param("iconName")) {
+			responseStatusCode = http.StatusBadRequest
+			log.Errorf("err: invalid icon name '%s', potential path injection detected", c.Param("iconName"))
+			fmt.Fprintf(c.Writer, "err: invalid icon name '%s', potential path injection detected", c.Param("iconName"))
+			return
+		}
 
 		if strings.ToLower(c.Param("chartName")) == "predefined" {
-			img, err = os.Open(utils.Config.DefaultChaosHubPath + hubName + "/experiments/icons/" + iconName)
+			img, err = os.Open(utils.Config.DefaultChaosHubPath + c.Param("hubName") + "/experiments/icons/" + c.Param("iconName"))
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
@@ -372,7 +429,7 @@ func DefaultChaosHubIconHandler() gin.HandlerFunc {
 				fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
 			}
 		} else {
-			img, err = os.Open(utils.Config.DefaultChaosHubPath + hubName + "/faults/" + chartName + "/icons/" + iconName)
+			img, err = os.Open(utils.Config.DefaultChaosHubPath + c.Param("hubName") + "/faults/" + c.Param("chartName") + "/icons/" + c.Param("iconName"))
 			responseStatusCode = http.StatusOK
 			if err != nil {
 				responseStatusCode = http.StatusInternalServerError
