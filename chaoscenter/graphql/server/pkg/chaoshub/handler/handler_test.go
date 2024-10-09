@@ -164,6 +164,7 @@ func TestDownloadRemoteHub(t *testing.T) {
 				Name:    uuid.New().String() + "../path/injection",
 				RepoURL: "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
 			},
+			isError: true,
 		},
 	}
 	for _, tc := range testcases {
@@ -224,6 +225,7 @@ func TestSyncRemoteRepo(t *testing.T) {
 				Name:    uuid.New().String() + "../path/injection",
 				RepoURL: "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
 			},
+			isError: true,
 		},
 	}
 	for _, tc := range testcases {
