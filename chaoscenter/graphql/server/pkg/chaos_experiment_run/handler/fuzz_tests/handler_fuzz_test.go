@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/handler"
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -32,6 +34,7 @@ type MockServices struct {
 	ChaosExperimentRunOperator *dbChaosExperimentRun.Operator
 	MongodbOperator            *dbMocks.MongoOperator
 	ChaosExperimentRunHandler  *handler.ChaosExperimentRunHandler
+	ProbeService               *dbProbeMocks.ProbeService
 }
 
 func NewMockServices() *MockServices {
@@ -42,6 +45,7 @@ func NewMockServices() *MockServices {
 		chaosExperimentRunService  = new(typesMocks.ChaosExperimentRunService)
 		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		probeService               = new(dbProbeMocks.ProbeService)
 	)
 	var chaosExperimentRunHandler = handler.NewChaosExperimentRunHandler(
 		chaosExperimentRunService,
@@ -49,6 +53,7 @@ func NewMockServices() *MockServices {
 		gitOpsService,
 		chaosExperimentOperator,
 		chaosExperimentRunOperator,
+		probeService,
 		mongodbMockOperator,
 	)
 	return &MockServices{
@@ -58,6 +63,7 @@ func NewMockServices() *MockServices {
 		ChaosExperimentOperator:    chaosExperimentOperator,
 		ChaosExperimentRunOperator: chaosExperimentRunOperator,
 		MongodbOperator:            mongodbMockOperator,
+		ProbeService:               probeService,
 		ChaosExperimentRunHandler:  chaosExperimentRunHandler,
 	}
 }
