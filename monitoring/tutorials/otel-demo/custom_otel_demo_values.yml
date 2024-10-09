@@ -1,0 +1,79 @@
+opentelemetry-collector:
+  config:
+    receivers:
+      otlp:
+        protocols:
+          http:
+            # Since this collector needs to receive data from the web, enable cors for all origins
+            # `allowed_origins` can be refined for your deployment domain
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'chaos-exporter'
+              static_configs:
+                - targets: [ 'chaos-exporter.litmus.svc.cluster.local:8080' ]
+              relabel_configs:
+                - target_label: instance
+                  replacement: 'chaos-exporter-service'
+      httpcheck/frontendproxy:
+        targets:
+          - endpoint: 'http://{{ include "otel-demo.name" . }}-frontendproxy:8080'
+      redis:
+        endpoint: "valkey-cart:6379"
+        collection_interval: 10s
+
+    exporters:
+      ## Create an exporter to Jaeger using the standard `otlp` export format
+      otlp:
+        endpoint: '{{ include "otel-demo.name" . }}-jaeger-collector:4317'
+        tls:
+          insecure: true
+      # Create an exporter to Prometheus (metrics)
+      otlphttp/prometheus:
+        endpoint: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090/api/v1/otlp'
+        tls:
+          insecure: true
+      opensearch:
+        logs_index: otel
+        http:
+          endpoint: "http://otel-demo-opensearch:9200"
+          tls:
+            insecure: true
+
+    processors:
+      # This processor is used to help limit high cardinality on next.js span names
+      # When this PR is merged (and released) we can remove this transform processor
+      # https://github.com/vercel/next.js/pull/64852
+      transform:
+        error_mode: ignore
+        trace_statements:
+          - context: span
+            statements:
+              # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+              - replace_pattern(name, "\\?.*", "")
+              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+      resource:
+        attributes:
+          - key: service.instance.id
+            from_attribute: k8s.pod.uid
+            action: insert
+
+    connectors:
+      spanmetrics: {}
+
+    service:
+      pipelines:
+        traces:
+          processors: [memory_limiter, resource, transform, batch]
+          exporters: [otlp, debug, spanmetrics]
+        metrics:
+          receivers: [httpcheck/frontendproxy, redis, otlp, spanmetrics, prometheus]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/prometheus, debug]
+        logs:
+          processors: [memory_limiter, resource, batch]
+          exporters: [opensearch, debug]
