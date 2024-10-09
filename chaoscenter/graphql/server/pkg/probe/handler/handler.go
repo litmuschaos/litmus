@@ -38,8 +38,15 @@ type Service interface {
 
 type probe struct{}
 
-func NewProbeService() Service {
-	return &probe{}
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewProbeOperator retuurns a new instance of operator
+func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
 }
 
 func Error(logFields logrus.Fields, message string) error {
@@ -395,7 +402,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	pipeline = append(pipeline, matchIdentifierStage)
 
 	// Call aggregation on pipeline
-	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodb.Operator)
+	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(NewProbeOperator.operator)
 	expRunCursor, err := experimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, errors.New("DB aggregate stage error: " + err.Error())
