@@ -157,6 +157,15 @@ func TestDownloadRemoteHub(t *testing.T) {
 			},
 			isError: true,
 		},
+		{
+			name:      "path injection",
+			projectID: uuid.New().String(),
+			chaosHub: model.CreateRemoteChaosHub{
+				Name:    uuid.New().String() + "../path/injection",
+				RepoURL: "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
+			},
+			isError: true,
+		},
 	}
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -206,6 +215,15 @@ func TestSyncRemoteRepo(t *testing.T) {
 			chaosHub: model.CloningInput{
 				Name:    uuid.New().String(),
 				RepoURL: "https://github.com/litmuschaos/chaos-charts",
+			},
+			isError: true,
+		},
+		{
+			name:      "path injection",
+			projectID: uuid.New().String(),
+			chaosHub: model.CloningInput{
+				Name:    uuid.New().String() + "../path/injection",
+				RepoURL: "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
 			},
 			isError: true,
 		},
