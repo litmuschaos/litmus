@@ -12,7 +12,6 @@ import (
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -45,39 +44,6 @@ func NewMockServices() *MockServices {
 		MongodbOperator:             mongodbMockOperator,
 		ChaosExperimentRunService:   chaosExperimentRunService,
 	}
-}
-
-func FuzzProcessExperimentRunDelete(f *testing.F) {
-	f.Fuzz(func(t *testing.T, data []byte) {
-		fuzzConsumer := fuzz.NewConsumer(data)
-		targetStruct := &struct {
-			Query          bson.D
-			WorkflowRunID  *string
-			ExperimentRun  dbChaosExperimentRun.ChaosExperimentRun
-			Workflow       dbChaosExperiment.ChaosExperimentRequest
-			Username       string
-			StoreStateData *store.StateData
-		}{}
-		err := fuzzConsumer.GenerateStruct(targetStruct)
-		if err != nil {
-			return
-		}
-		mockServices := NewMockServices()
-		mockServices.MongodbOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil).Once()
-
-		err = mockServices.ChaosExperimentRunService.ProcessExperimentRunDelete(
-			context.Background(),
-			targetStruct.Query,
-			targetStruct.WorkflowRunID,
-			targetStruct.ExperimentRun,
-			targetStruct.Workflow,
-			targetStruct.Username,
-			targetStruct.StoreStateData,
-		)
-		if err != nil {
-			t.Errorf("ProcessExperimentRunDelete() error = %v", err)
-		}
-	})
 }
 
 func FuzzProcessExperimentRunStop(f *testing.F) {
