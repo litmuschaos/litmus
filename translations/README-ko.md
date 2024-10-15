@@ -141,7 +141,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 
 (카오스 엔지니어링 사례로 Litmus를 사용하고 있는 조직은 위 페이지로 PR을 보내주세요)
 
-## 라이센스
+## 라이선스
 
 Litmus는 아파치(Apache) 라이선스 버전 2.0을 적용합니다. 전체 라이선스 텍스트는 [LICENSE](./LICENSE)를 참고하세요. Litmus 프로젝트에서 사용하는 일부 프로젝트는 다른 라이선스에 적용받을 수 있으며, 별도의 라이선스를 참고하세요.
 
@@ -158,5 +158,5 @@ LitmusChaos는 CNCF 프로젝트의 일부입니다.
 </a>
 <br>
 <a href="https://landscape.cncf.io/?selected=litmus">
-  CNCF Landscape <img src="https://raw.githubusercontent.com/cncf/landscape/34050e7ca713650f7e2813f53c3b0a697cbb274b/hosted_logos/cncf.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png" alt="CNCF Landscape의 리트머스" height="15">
 </a>

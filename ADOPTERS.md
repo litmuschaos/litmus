@@ -29,7 +29,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Flipkart](https://www.flipkart.com/)|Chaos Engineering at Flipkart|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1966904935)|
 |[Talend](https://www.talend.com/)|Chaos Engineering for our pipelines and weekly checks|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-2005254600)|
 |[Delivery Hero](https://www.deliveryhero.com/)|Enhancing Resiliency of Our Services|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1997465958)|
-
+|[Wingie Enuygun Company](https://www.wingie.com/)|Chaos Engineering for an Online Travel and Finance Platform|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-2331265698)|
 
 ### Cloud-Native Vendors
 

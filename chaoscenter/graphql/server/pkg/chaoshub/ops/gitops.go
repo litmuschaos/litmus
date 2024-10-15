@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -284,7 +285,7 @@ func (c ChaosHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
 	var auth transport.AuthMethod
 	if c.AuthType == model.AuthTypeToken {
 		auth = &http.BasicAuth{
-			Username: "litmus", // this can be anything except an empty string
+			Username: utils.Config.GitUsername, // must be a non-empty string or 'x-token-auth' for Bitbucket
 			Password: *c.Token,
 		}
 	} else if c.AuthType == model.AuthTypeBasic {
