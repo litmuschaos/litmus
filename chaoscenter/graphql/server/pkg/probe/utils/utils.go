@@ -347,6 +347,15 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 			_probe.RunProperties.StopOnFailure = *probe.KubernetesCMDProperties.StopOnFailure
 		}
 
+		if probe.KubernetesCMDProperties.Source != nil {
+			var source v1alpha1.SourceDetails
+			err := json.Unmarshal([]byte(*probe.KubernetesCMDProperties.Source), &source)
+			if err != nil {
+				log.Warnf("error unmarshalling soruce: %s - the source part of the probe is being ignored", err.Error())
+			}
+			_probe.CmdProbeInputs.Source = &source
+		}
+
 		y, err := json.Marshal(_probe)
 		if err != nil {
 			return "", err
@@ -788,6 +797,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 										CmdProbeInputs: &v1alpha1.CmdProbeInputs{
 											Command:    cmdProbe.CmdProbeInputs.Command,
 											Comparator: cmdProbe.CmdProbeInputs.Comparator,
+											Source:     cmdProbe.CmdProbeInputs.Source,
 										},
 										RunProperties: cmdProbe.RunProperties,
 										Mode:          cmdProbe.Mode,
@@ -940,6 +950,7 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 									CmdProbeInputs: &v1alpha1.CmdProbeInputs{
 										Command:    cmdProbe.CmdProbeInputs.Command,
 										Comparator: cmdProbe.CmdProbeInputs.Comparator,
+										Source:     cmdProbe.CmdProbeInputs.Source,
 									},
 									RunProperties: cmdProbe.RunProperties,
 									Mode:          cmdProbe.Mode,
