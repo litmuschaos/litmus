@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"testing"
 
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -28,10 +30,11 @@ import (
 
 var (
 	mongodbMockOperator        = new(dbMocks.MongoOperator)
+	probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
 	infraOperator              = dbChaosInfra.NewInfrastructureOperator(mongodbMockOperator)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
-	probeService               = probe.NewProbeService()
+	probeService               = probe.NewProbeService(probeOperator)
 )
 
 var chaosExperimentRunTestService = NewChaosExperimentService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator, probeService)
