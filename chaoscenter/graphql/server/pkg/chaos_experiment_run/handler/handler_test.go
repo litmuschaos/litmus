@@ -262,11 +262,7 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{
-					{Key: "total_filtered_experiment_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
-						{
-							Count: 1,
-						},
-					}},
+					{Key: "total_filtered_experiment_runs", Value: 1},
 					{Key: "flattened_experiment_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
 						{
 							ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
@@ -308,11 +304,7 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{
-					{Key: "total_filtered_experiment_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
-						{
-							Count: 1,
-						},
-					}},
+					{Key: "total_filtered_experiment_runs", Value: 1},
 					{Key: "flattened_experiment_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
 						{
 							ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
@@ -354,11 +346,7 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{
-					{Key: "total_filtered_experiment_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
-						{
-							Count: 1,
-						},
-					}},
+					{Key: "total_filtered_experiment_runs", Value: 1},
 					{Key: "flattened_experiment_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
 						{
 							ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
