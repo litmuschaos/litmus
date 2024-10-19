@@ -11,6 +11,7 @@ interface CustomStepLogControllerProps {
   namespace: string | undefined;
   workflowRunID: string | undefined;
   infraID: string | undefined;
+  projectID: string | undefined;
   podName: string;
   requestID: string;
   phase: ExperimentRunStatus | undefined;
@@ -19,6 +20,7 @@ interface CustomStepLogControllerProps {
 export default function CustomStepLogController({
   workflowRunID,
   infraID,
+  projectID,
   podName,
   chaosData,
   nodeType,
@@ -36,6 +38,7 @@ export default function CustomStepLogController({
       ...scope,
       infraID: infraID ?? '',
       // requestID: requestID,
+      projectID: projectID ?? '',
       experimentRunID: workflowRunID,
       podName: podName,
       podNamespace: namespace ?? '',

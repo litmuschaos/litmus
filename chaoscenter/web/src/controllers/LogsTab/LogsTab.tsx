@@ -7,6 +7,7 @@ interface LogsTabControllerProps {
   nodeType: string | undefined;
   chaosData: ChaosData | undefined;
   infraID: string | undefined;
+  projectID: string | undefined;
   workflowRunID: string | undefined;
   podID: string;
   experimentPod?: string;

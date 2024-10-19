@@ -198,6 +198,7 @@ export default function ExperimentRunDetailsView({
             namespace={experimentExecutionDetails?.namespace}
             probeData={probeData}
             infraID={infra?.infraID}
+            projectID={scope.projectID}
             setSelectedNodeID={setSelectedNodeID}
             experimentRunID={experimentRunID}
             podID={selectedNodeID}
