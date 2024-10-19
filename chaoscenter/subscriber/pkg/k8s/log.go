@@ -149,6 +149,14 @@ func (k8s *k8sSubscriber) categorizeLogByPhase(phase string) string {
 		return "Queue"
 	case "NA":
 		return "NA"
+	case "Terminated":
+		return "Terminated"
+	case "Completed_With_Error":
+		return "Completed_With_Error"
+	case "Timeout":
+		return "Timeout"
+	case "Error":
+		return "it can't run experiment"
 	default:
 		return "Workflow Pod is initializing"
 	}
