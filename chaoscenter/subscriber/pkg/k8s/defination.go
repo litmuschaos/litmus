@@ -15,7 +15,9 @@ import (
 
 type SubscriberK8s interface {
 	GetLogs(podName, namespace, container string) (string, error)
-	CreatePodLog(infraData map[string]string, podLog types.PodLogRequest) (types.PodLog, error)
+	GetPodLogs(infraData map[string]string, podLog types.PodLogRequest) (types.PodLog, error)
+	categorizeLogByPhase(phase string) string
+	CreatePodLog(infraData map[string]string, logDetails types.PodLog, podLog types.PodLogRequest) (types.PodLog, error)
 	SendPodLogs(infraData map[string]string, podLog types.PodLogRequest)
 	GenerateLogPayload(cid, accessKey, version, processed string, podLog types.PodLogRequest) ([]byte, error)
 	GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error)

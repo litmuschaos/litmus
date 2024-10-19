@@ -53,36 +53,7 @@ func (k8s *k8sSubscriber) GetLogs(podName, namespace, container string) (string,
 }
 
 // create pod log for normal pods and chaos-engine pods
-func (k8s *k8sSubscriber) CreatePodLog(infraData map[string]string, podLog types.PodLogRequest) (types.PodLog, error) {
-	logDetails := types.PodLog{}
-	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
-	// try getting argo pod logs
-	if err != nil {
-
-		// fetch ExperimentRun Phase from graphql
-		experimentRun, _ := k8s.gqlSubscriberServer.SendExperimentRunRuquest(infraData, podLog)
-
-		// Categorizing log messages by experiment phase
-		switch experimentRun.Data.ExperimentRun.Phase {
-		case "Completed":
-			logDetails.MainPod = "Experiment pod is deleted"
-		case "Stopped":
-			logDetails.MainPod = "stopped"
-		case "Running":
-			logDetails.MainPod = "Workflow Pod is initailzing"
-		case "Queue":
-			logDetails.MainPod = "Queue"
-		case "NA":
-			logDetails.MainPod = "NA"
-		default:
-			logDetails.MainPod = "Workflow Pod is initailzing"
-		}
-
-		logrus.Errorf("Failed to get argo pod %v logs, err: %v", podLog.PodName, err)
-	} else {
-		logDetails.MainPod = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
-		logDetails.MainPod = logDetails.MainPod[1 : len(logDetails.MainPod)-1]
-	}
+func (k8s *k8sSubscriber) CreatePodLog(infraData map[string]string, logDetails types.PodLog, podLog types.PodLogRequest) (types.PodLog, error) {
 	// try getting experiment pod logs if requested
 	if strings.ToLower(podLog.PodType) == "chaosengine" && podLog.ChaosNamespace != nil {
 		chaosLog := make(map[string]string)
@@ -116,9 +87,9 @@ func (k8s *k8sSubscriber) CreatePodLog(infraData map[string]string, podLog types
 // SendPodLogs generates graphql mutation to send events updates to graphql server
 func (k8s *k8sSubscriber) SendPodLogs(infraData map[string]string, podLog types.PodLogRequest) {
 
-	logDetails, err := k8s.CreatePodLog(infraData, podLog)
+	logDetails, err := k8s.GetPodLogs(infraData, podLog)
 	if err != nil {
-		logrus.WithError(err).Print("failed to create pod logs")
+		logrus.WithError(err).Print("failed to get pod logs")
 	}
 
 	// MarashalGQLData
@@ -127,7 +98,7 @@ func (k8s *k8sSubscriber) SendPodLogs(infraData map[string]string, podLog types.
 		processed = " Could not get logs "
 	}
 
-	// generate graphql payload
+	// Generate graphql payload
 	payload, _ := k8s.GenerateLogPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], processed, podLog)
 
 	body, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
@@ -135,6 +106,52 @@ func (k8s *k8sSubscriber) SendPodLogs(infraData map[string]string, podLog types.
 		logrus.Print(err.Error())
 	}
 	logrus.Print("Response from the server: ", body)
+}
+
+func (k8s *k8sSubscriber) GetPodLogs(infraData map[string]string, podLog types.PodLogRequest) (types.PodLog, error) {
+	logDetails := types.PodLog{}
+	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
+
+	// try getting argo pod logs
+	if err != nil {
+
+		// fetch ExperimentRun Phase from graphql
+		experimentRun, _ := k8s.gqlSubscriberServer.SendExperimentRunRuquest(infraData, podLog)
+		logDetails.MainPod = k8s.categorizeLogByPhase(experimentRun.Data.ExperimentRun.Phase)
+
+		logrus.WithError(err).Print("Failed to get pod logs for attempting to fetch experiment run phase")
+
+	} else {
+
+		logDetails.MainPod = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
+		logDetails.MainPod = logDetails.MainPod[1 : len(logDetails.MainPod)-1]
+
+		logDetails, err = k8s.CreatePodLog(infraData, logDetails, podLog)
+
+		if err != nil {
+			return logDetails, err
+		}
+	}
+
+	return logDetails, nil
+}
+
+// Categorizing log messages by experiment phase
+func (k8s *k8sSubscriber) categorizeLogByPhase(phase string) string {
+	switch phase {
+	case "Completed":
+		return "Experiment pod is deleted"
+	case "Stopped":
+		return "Stopped"
+	case "Running":
+		return "Workflow Pod is initializing"
+	case "Queue":
+		return "Queue"
+	case "NA":
+		return "NA"
+	default:
+		return "Workflow Pod is initializing"
+	}
 }
 
 func (k8s *k8sSubscriber) GenerateLogPayload(cid, accessKey, version, processed string, podLog types.PodLogRequest) ([]byte, error) {
