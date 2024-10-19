@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"subscriber/pkg/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -47,4 +48,34 @@ func (gql *subscriberGql) MarshalGQLData(gqlData interface{}) (string, error) {
 	processed := strconv.Quote(string(data))
 	processed = strings.Replace(processed, `\"`, `\\\"`, -1)
 	return processed, nil
+}
+
+// Get an experiment run on the GraphQL server
+func (gql *subscriberGql) SendExperimentRunRuquest(infraData map[string]string, podLog types.PodLogRequest) (types.ExperimentRunResponse, error) {
+
+	payload, _ := gql.GenerateExperimentRunPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], podLog)
+
+	body, err := gql.SendRequest(infraData["SERVER_ADDR"], payload)
+	if err != nil {
+		log.WithError(err).Print("Failed to send experiment run request")
+	}
+
+	var respsone types.ExperimentRunResponse
+	err = json.Unmarshal([]byte(body), &respsone)
+	if err != nil {
+		log.WithError(err).WithField("data", string(body)).Fatal("Failed to parse ExperimentRun data")
+	}
+
+	log.Print("Response from the server: ", body)
+
+	return respsone, nil
+}
+
+func (gql *subscriberGql) GenerateExperimentRunPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
+	infraID := `{infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
+	query := `{ infraID: ` + infraID + `, experimentRunID:\"` + podLog.ExperimentRunID + `\", projectID: \"` + podLog.ProjectID + `\", notifyID: \"\"}`
+
+	var payload = []byte(`{"query":"query { getExperimentRunPhase(request:` + query + `){phase}}"}`)
+
+	return payload, nil
 }
