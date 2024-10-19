@@ -146,3 +146,20 @@ func (r *queryResolver) GetExperimentRunStats(ctx context.Context, projectID str
 	}
 	return uiResponse, err
 }
+
+// GetExperimentRunPhase is the resolver for the getExperimentRunPhase field.
+func (r *queryResolver) GetExperimentRunPhase(ctx context.Context, request model.ExperimentRunPhaseRequest) (*model.ExperimentRun, error) {
+	_, err := r.chaosInfrastructureService.VerifyInfra(*request.InfraID)
+
+	if err != nil {
+		logrus.Error("Validation failed : ", request.InfraID)
+		return nil, err
+	}
+
+	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, request.ProjectID, &request.ExperimentRunID, request.NotifyID)
+	if err != nil {
+		logrus.Error("failed to get chaosExpeirmentRun: ", err)
+		return nil, err
+	}
+	return expRunResponse, err
+}

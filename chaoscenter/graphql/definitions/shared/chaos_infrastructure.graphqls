@@ -288,6 +288,10 @@ input PodLogRequest {
   """
   infraID: ID!
   """
+
+  """
+  projectID: ID!
+  """
   ID of a experiment run
   """
   experimentRunID: ID!
