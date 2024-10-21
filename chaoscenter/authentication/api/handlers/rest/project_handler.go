@@ -326,7 +326,9 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
-		} else if initialLogin {
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 			return
 		}
