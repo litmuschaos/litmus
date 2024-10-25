@@ -43,7 +43,7 @@ type Annotation struct {
 type Spec struct {
 	DisplayName         string       `yaml:"displayName" json:"displayName"`
 	CategoryDescription string       `yaml:"categoryDescription" json:"categoryDescription"`
-	Plan                []string     `json:"plan" json:"plan"`
+	Plan                []string     `yaml:"plan" json:"plan"`
 	Keywords            []string     `yaml:"keywords" json:"keywords"`
 	Maturity            string       `yaml:"maturity" json:"maturity,omitempty"`
 	Maintainers         []Maintainer `yaml:"maintainers" json:"maintainers,omitempty"`
