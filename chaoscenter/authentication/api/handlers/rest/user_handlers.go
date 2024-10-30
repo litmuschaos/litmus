@@ -136,13 +136,18 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "User details updated successfully"})
 	}
@@ -554,8 +559,12 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		if userPasswordRequest.NewPassword != "" {
@@ -610,8 +619,12 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, adminUser.ID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		if entities.Role(userRole) != entities.RoleAdmin {
@@ -689,8 +702,12 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, apiTokenRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// Checking if user exists
@@ -785,8 +802,12 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, deleteApiTokenRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		token := deleteApiTokenRequest.Token
