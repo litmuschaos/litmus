@@ -2,7 +2,7 @@
   padding: var(--spacing-xlarge) !important;
 
   &.dialog {
-    width: 833px;
+    width: 912px;
     height: 86vh;
     max-height: 989px;
   }
@@ -60,14 +60,13 @@
   background: #effbff;
   border: 1.5px solid #0278d5;
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .notSelected {
   background: #fafbfc;
-  border: 1px solid rgba(40, 41, 61, 0.3);
   box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -78,14 +77,13 @@
 
 .agentListInnerContainer {
   flex-grow: 1;
-  overflow: auto;
   gap: 1rem;
-  max-height: calc(100% - 48px);
+  overflow: auto;
 }
 
 .item {
   display: grid;
-  grid-template-columns: 5fr 4fr 25px;
+  grid-template-columns: 3fr 4fr 25px;
   align-items: center;
   gap: 0.5rem;
 
@@ -95,7 +93,6 @@
   }
 
   .iconCheck {
-    visibility: hidden;
     margin-right: var(--spacing-xsmall);
     margin-left: var(--spacing-xsmall);
     cursor: pointer;
@@ -104,7 +101,15 @@
     > svg {
       > path {
         stroke-width: 1;
-        stroke: var(--grey-500);
+        stroke: var(--grey-100);
+      }
+    }
+  }
+  .iconCheck:hover {
+    > svg {
+      > path {
+        stroke-width: 1;
+        stroke: var(--green-500);
       }
     }
   }
@@ -134,7 +139,7 @@
 .gitInfo {
   display: grid;
   grid-template-columns: 4fr 5fr;
-  padding: 6px 8px;
+  padding: 4px 8px;
   background: var(--grey-100) !important;
   border-radius: 8px !important;
   width: 100%;
@@ -170,11 +175,6 @@
   position: fixed;
 }
 
-.gap-4 {
-  gap: 1rem;
-  overflow: auto;
-}
-
 .paginationContainer {
   padding-top: 8px;
   overflow: hidden;
@@ -189,4 +189,38 @@
       left: 5px !important;
     }
   }
+}
+
+.listEnvContainer {
+  background: var(--primary-1);
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.itemEnv {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 25px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.activeEnv {
+  border: 1px solid var(--primary-7);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+
+  img {
+    width: 200px;
+  }
+}
+
+.rounded {
+  border-radius: 999px;
 }
