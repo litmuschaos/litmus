@@ -4,18 +4,21 @@
 
 # Adding Litmus Java SDK
 
-- [Summary](#summary)
-- [Motivation](#motivation)
-  - [Goals](#goals)
-  - [Non-Goals](#non-goals)
-- [Proposal](#proposal)
-  - [Use Cases](#use-cases)
-  - [Implementation Details](#implementation-details)
-- [Risks and Mitigations](#risks-and-mitigations)
-- [Upgrade / Downgrade Strategy](#upgrade--downgrade-strategy)
-- [Drawbacks](#drawbacks)
-- [Alternatives](#alternatives)
-- [References](#references)
+- [Adding Litmus Java SDK](#adding-litmus-java-sdk)
+  - [Summary](#summary)
+  - [Motivation](#motivation)
+    - [Goals](#goals)
+    - [Non-Goals](#non-goals)
+  - [Proposal](#proposal)
+    - [Use Cases](#use-cases)
+    - [Implementation Details](#implementation-details)
+      - [Initialize client](#initialize-client)
+      - [Use Client](#use-client)
+  - [Risks and Mitigations](#risks-and-mitigations)
+  - [Upgrade / Downgrade Strategy](#upgrade--downgrade-strategy)
+  - [Drawbacks](#drawbacks)
+  - [Alternatives](#alternatives)
+  - [References](#references)
 
 ## Summary
 
@@ -47,15 +50,35 @@ In organization, litmusChaos administrators can call java SDK to manage multiple
 
 ### Implementation Details
 
+#### Initialize client
+
 ```java
-public void call(){
-    // create client
-    LitmusClient litmusClient = new LitmusClient("test_user");
-    // method call
-    CreateProjectResponse response = litmusClient.createProject("sample_project");
+public void init(){
+
+  String hostUrl = "http://localhost:3000";
+  String username = "admin";
+  String password = "litmus";
+
+  LitmusClient litmusClient = new LitmusClient(hostUrl, username, password);
 }
 ```
+#### Use Client
+```java
+public void execute(){
 
+    String projectName = "demo project";
+    String description = "demo project description";
+    List<String> tags = Arrays.asList("litmus", "chaos");
+
+    CreateProjectRequest request = CreateProjectRequest.builder()
+        .projectName("project")
+        .description("description")
+        .tags(tags)
+        .build();
+
+    CreateProjectResponse response = litmusClient.createProject(request);
+}
+```
 ## Risks and Mitigations
 
 ## Upgrade / Downgrade Strategy
