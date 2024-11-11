@@ -136,13 +136,18 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = service.UpdateUser(&userRequest)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "User details updated successfully"})
 	}
@@ -263,7 +268,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		400	{object}	response.ErrUserNotFound
 //	@Failure		400	{object}	response.ErrUserDeactivated
-//	@Failure		400	{object}	response.ErrInvalidCredentials
+//	@Failure		401	{object}	response.ErrInvalidCredentials
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.LoginResponse{}
 //	@Router			/login [post]
@@ -286,13 +291,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		user, err := service.FindUserByUsername(userRequest.Username)
 		if err != nil {
 			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
 		// Checking if user is deactivated
 		if user.DeactivatedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
 
@@ -554,8 +559,12 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		if userPasswordRequest.NewPassword != "" {
@@ -610,8 +619,12 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, adminUser.ID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		if entities.Role(userRole) != entities.RoleAdmin {
@@ -689,8 +702,12 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, apiTokenRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// Checking if user exists
@@ -785,8 +802,12 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, deleteApiTokenRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		token := deleteApiTokenRequest.Token

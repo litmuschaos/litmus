@@ -15,7 +15,7 @@ type ServerConfig struct {
 
 // GetVersion returns the control plane version that is stored in the ServerConfig collection
 func GetVersion(dbClient *mongo.Client) (ServerConfig, error) {
-	collection := dbClient.Database(DbName).Collection(ServerConfigCollection)
+	collection := dbClient.Database(LitmusDB).Collection(ServerConfigCollection)
 	result := collection.FindOne(context.Background(), bson.D{
 		{"key", "version"},
 	})
@@ -27,7 +27,7 @@ func GetVersion(dbClient *mongo.Client) (ServerConfig, error) {
 
 // UpdateVersion updates the control plane version in the ServerConfig collection
 func UpdateVersion(dbClient *mongo.Client, version string) error {
-	collection := dbClient.Database(DbName).Collection(ServerConfigCollection)
+	collection := dbClient.Database(LitmusDB).Collection(ServerConfigCollection)
 	_, err := collection.UpdateOne(context.Background(), bson.D{
 		{"key", "version"},
 	}, bson.D{{"$set", bson.D{{

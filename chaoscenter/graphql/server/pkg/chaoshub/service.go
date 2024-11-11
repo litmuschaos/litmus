@@ -86,6 +86,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 		ProjectID:  projectID,
 		RepoURL:    chaosHub.RepoURL,
 		RepoBranch: chaosHub.RepoBranch,
+		RemoteHub:  chaosHub.RemoteHub,
 		ResourceDetails: mongodb.ResourceDetails{
 			Name:        chaosHub.Name,
 			Description: description,
@@ -155,6 +156,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 		ProjectID:  projectID,
 		RepoURL:    chaosHub.RepoURL,
 		RepoBranch: "",
+		RemoteHub:  chaosHub.RemoteHub,
 		ResourceDetails: mongodb.ResourceDetails{
 			Name:        chaosHub.Name,
 			Description: description,
@@ -226,6 +228,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 		ProjectID:  projectID,
 		RepoURL:    chaosHub.RepoURL,
 		RepoBranch: chaosHub.RepoBranch,
+		RemoteHub:  chaosHub.RemoteHub,
 		ResourceDetails: mongodb.ResourceDetails{
 			Name:        chaosHub.Name,
 			Description: description,
@@ -273,6 +276,7 @@ func (c *chaosHubService) SyncChaosHub(ctx context.Context, hubID string, projec
 		Name:          chaosHub.Name,
 		RepoURL:       chaosHub.RepoURL,
 		RepoBranch:    chaosHub.RepoBranch,
+		RemoteHub:     chaosHub.RemoteHub,
 		IsPrivate:     chaosHub.IsPrivate,
 		UserName:      chaosHub.UserName,
 		Password:      chaosHub.Password,
@@ -311,6 +315,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	cloneHub := model.CloningInput{
 		RepoBranch:    chaosHub.RepoBranch,
 		RepoURL:       chaosHub.RepoURL,
+		RemoteHub:     chaosHub.RemoteHub,
 		Name:          chaosHub.Name,
 		IsPrivate:     chaosHub.IsPrivate,
 		UserName:      chaosHub.UserName,
@@ -326,10 +331,11 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	}
 	clonePath := DefaultPath + prevChaosHub.ProjectID + "/" + prevChaosHub.Name
 	if prevChaosHub.HubType == string(model.HubTypeRemote) {
-		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL {
+		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RemoteHub != chaosHub.RemoteHub {
 			remoteHub := model.CreateRemoteChaosHub{
-				Name:    chaosHub.Name,
-				RepoURL: chaosHub.RepoURL,
+				Name:      chaosHub.Name,
+				RepoURL:   chaosHub.RepoURL,
+				RemoteHub: chaosHub.RemoteHub,
 			}
 			err = os.RemoveAll(clonePath)
 			if err != nil {
@@ -342,7 +348,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		}
 	} else {
 		// Syncing/Cloning the repository at a path from ChaosHub link structure.
-		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RepoBranch != chaosHub.RepoBranch || prevChaosHub.IsPrivate != chaosHub.IsPrivate || prevChaosHub.AuthType != chaosHub.AuthType.String() {
+		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RepoBranch != chaosHub.RepoBranch || prevChaosHub.IsPrivate != chaosHub.IsPrivate || prevChaosHub.AuthType != chaosHub.AuthType.String() || prevChaosHub.RemoteHub != chaosHub.RemoteHub {
 			err = os.RemoveAll(clonePath)
 			if err != nil {
 				return nil, err
@@ -368,6 +374,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		{"$set", bson.D{
 			{"repo_url", chaosHub.RepoURL},
 			{"repo_branch", chaosHub.RepoBranch},
+			{"remote_hub", chaosHub.RemoteHub},
 			{"name", chaosHub.Name},
 			{"description", chaosHub.Description},
 			{"tags", chaosHub.Tags},
@@ -454,6 +461,7 @@ func (c *chaosHubService) ListChaosFaults(ctx context.Context, hubID string, pro
 		Name:       hub.Name,
 		RepoURL:    hub.RepoURL,
 		RepoBranch: hub.RepoBranch,
+		RemoteHub:  hub.RemoteHub,
 	}
 
 	ChartsPath := handler.GetChartsPath(chartsInput, projectID, hub.IsDefault)
@@ -516,6 +524,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 		},
 		RepoURL:    defaultHub.RepoURL,
 		RepoBranch: defaultHub.RepoBranch,
+		RemoteHub:  defaultHub.RemoteHub,
 		IsDefault:  true,
 	}
 
@@ -524,7 +533,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -651,6 +660,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 			UpdatedAt:        strconv.Itoa(int(hub.UpdatedAt)),
 			CreatedBy:        &model.UserDetails{Username: hub.CreatedBy.Username},
 			UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy.Username},
+			RemoteHub:        hub.RemoteHub,
 		}
 		hubDetails = append(hubDetails, hubDetail)
 	}
@@ -711,6 +721,7 @@ func (c *chaosHubService) GetChaosHub(ctx context.Context, chaosHubID string, pr
 		UpdatedAt:        strconv.Itoa(int(hub.UpdatedAt)),
 		CreatedBy:        &model.UserDetails{Username: hub.CreatedBy.Username},
 		UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy.Username},
+		RemoteHub:        hub.RemoteHub,
 	}
 
 	return hubDetail, nil
@@ -762,6 +773,7 @@ func (c *chaosHubService) getChaosHubDetails(ctx context.Context, hubID string, 
 		ProjectID:    hub.ProjectID,
 		RepoURL:      hub.RepoURL,
 		RepoBranch:   hub.RepoBranch,
+		RemoteHub:    hub.RemoteHub,
 		AuthType:     model.AuthType(hub.AuthType),
 		Name:         hub.Name,
 		CreatedAt:    strconv.Itoa(int(hub.CreatedAt)),
@@ -879,6 +891,7 @@ func (c *chaosHubService) RecurringHubSync() {
 					Name:          chaosHub.Name,
 					RepoURL:       chaosHub.RepoURL,
 					RepoBranch:    chaosHub.RepoBranch,
+					RemoteHub:     chaosHub.RemoteHub,
 					IsPrivate:     chaosHub.IsPrivate,
 					AuthType:      chaosHub.AuthType,
 					Token:         chaosHub.Token,
@@ -913,7 +926,7 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
