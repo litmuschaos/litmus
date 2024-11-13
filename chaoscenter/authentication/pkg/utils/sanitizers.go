@@ -16,7 +16,7 @@ func SanitizeString(input string) string {
 /*
 ValidateStrictPassword represents and checks for the following patterns:
 - Input is at least 8 characters long and at most 16 characters long
-- Input contains at least one special character of these @$!%*?_&
+- Input contains at least one special character of these @$!%*?_&#
 - Input contains at least one digit
 - Input contains at least one uppercase alphabet
 - Input contains at least one lowercase alphabet
@@ -33,7 +33,7 @@ func ValidateStrictPassword(input string) error {
 	digits := `[0-9]{1}`
 	lowerAlphabets := `[a-z]{1}`
 	capitalAlphabets := `[A-Z]{1}`
-	specialCharacters := `[@$!%*?_&]{1}`
+	specialCharacters := `[@$!%*?_&#]{1}`
 	if b, err := regexp.MatchString(digits, input); !b || err != nil {
 		return fmt.Errorf("password does not contain digits")
 	}
