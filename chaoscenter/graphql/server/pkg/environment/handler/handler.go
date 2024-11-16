@@ -353,6 +353,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	pipeline = append(pipeline, facetStage)
 
 	cursor, err := e.EnvironmentOperator.GetAggregateEnvironments(pipeline)
+
 	if err != nil {
 		return nil, err
 	}
