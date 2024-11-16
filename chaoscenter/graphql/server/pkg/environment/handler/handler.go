@@ -369,6 +369,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 			Environments:          envs,
 		}, errors.New("error decoding environment cursor: " + err.Error())
 	}
+
 	if len(aggregatedEnvironments) == 0 {
 		return &model.ListEnvironmentResponse{
 			TotalNoOfEnvironments: 0,
