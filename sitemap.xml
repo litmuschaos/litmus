@@ -412,4 +412,24 @@
          <loc>https://litmuschaos.github.io/litmus/experiments/troubleshooting/scheduler/</loc>
          <lastmod>2024-11-21</lastmod>
     </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/graphql/v3.10.0/error_response_guide/</loc>
+         <lastmod>2024-11-21</lastmod>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/graphql/v3.10.x/error_response_guide/</loc>
+         <lastmod>2024-11-21</lastmod>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/graphql/v3.11.0/error_response_guide/</loc>
+         <lastmod>2024-11-21</lastmod>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/graphql/v3.11.x/error_response_guide/</loc>
+         <lastmod>2024-11-21</lastmod>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/graphql/v3.9.0/error_response_guide/</loc>
+         <lastmod>2024-11-21</lastmod>
+    </url>
 </urlset>
