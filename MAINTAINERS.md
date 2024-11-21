@@ -37,7 +37,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Uma Mukkara",@umamukkara,umasankar.mukkara@harness.io
 "Sahil KR",@SahilKr24,sahil.kumar@harness.io
 "Ajesh Baby",@ajeshbaby,ajesh.baby@harness.io
-"Hrishav Jha",@hrishavjha,hrishav.jha@harness.io
+"Hrishav Kumar",@hrishavjha,hrishav.kumar@harness.io
 ```
 
 ### Consolidated Reviewers List
