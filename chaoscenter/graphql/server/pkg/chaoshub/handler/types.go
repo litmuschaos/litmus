@@ -20,9 +20,9 @@ type Link struct {
 
 type Faults struct {
 	Name        string   `yaml:"name" json:"name"`
-	DisplayName string   `json:"displayName" json:"displayName"`
+	DisplayName string   `yaml:"displayName" json:"displayName"`
 	Description string   `yaml:"description" json:"description"`
-	Plan        []string `json:"plan" json:"plan"`
+	Plan        []string `yaml:"plan" json:"plan"`
 }
 
 type Metadata struct {
@@ -43,7 +43,7 @@ type Annotation struct {
 type Spec struct {
 	DisplayName         string       `yaml:"displayName" json:"displayName"`
 	CategoryDescription string       `yaml:"categoryDescription" json:"categoryDescription"`
-	Plan                []string     `json:"plan" json:"plan"`
+	Plan                []string     `yaml:"plan" json:"plan"`
 	Keywords            []string     `yaml:"keywords" json:"keywords"`
 	Maturity            string       `yaml:"maturity" json:"maturity,omitempty"`
 	Maintainers         []Maintainer `yaml:"maintainers" json:"maintainers,omitempty"`
