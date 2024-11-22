@@ -10,6 +10,7 @@ var (
 	ErrServerError                   AppError = errors.New("server_error")
 	ErrInvalidRequest                AppError = errors.New("invalid_request")
 	ErrStrictPasswordPolicyViolation AppError = errors.New("password_policy_violation")
+	ErrStrictUsernamePolicyViolation AppError = errors.New("username_policy_violation")
 	ErrUnauthorized                  AppError = errors.New("unauthorized")
 	ErrUserExists                    AppError = errors.New("user_exists")
 	ErrUserNotFound                  AppError = errors.New("user does not exist")
@@ -21,6 +22,8 @@ var (
 	ErrEmptyProjectName              AppError = errors.New("invalid project name")
 	ErrInvalidRole                   AppError = errors.New("invalid role")
 	ErrInvalidEmail                  AppError = errors.New("invalid email")
+	ErrPasswordNotUpdated            AppError = errors.New("default password not updated")
+	ErrOldPassword                   AppError = errors.New("old and new passwords can't be same")
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -31,6 +34,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUnauthorized:                  401,
 	ErrUserExists:                    401,
 	ErrStrictPasswordPolicyViolation: 401,
+	ErrStrictUsernamePolicyViolation: 401,
 	ErrUserNotFound:                  400,
 	ErrProjectNotFound:               400,
 	ErrUpdatingAdmin:                 400,
@@ -39,6 +43,8 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrEmptyProjectName:              400,
 	ErrInvalidRole:                   400,
 	ErrInvalidEmail:                  400,
+	ErrPasswordNotUpdated:            401,
+	ErrOldPassword:                   400,
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
@@ -48,9 +54,12 @@ var ErrorDescriptions = map[AppError]string{
 	ErrInvalidRequest:                "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed",
 	ErrUnauthorized:                  "The user does not have requested authorization to access this resource",
 	ErrUserExists:                    "This username is already assigned to another user",
-	ErrStrictPasswordPolicyViolation: "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
+	ErrStrictPasswordPolicyViolation: "Please ensure the password is atleast 8 characters long and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
+	ErrStrictUsernamePolicyViolation: "The username should be atleast 3 characters long and atmost 16 characters long.",
 	ErrEmptyProjectName:              "Project name can't be empty",
 	ErrInvalidRole:                   "Role is invalid",
 	ErrProjectNotFound:               "This project does not exist",
 	ErrInvalidEmail:                  "Email address is invalid",
+	ErrPasswordNotUpdated:            "Please update your default password",
+	ErrOldPassword:                   "old and new passwords can't be same",
 }

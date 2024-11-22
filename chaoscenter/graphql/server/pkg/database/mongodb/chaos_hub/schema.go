@@ -15,6 +15,7 @@ type ChaosHub struct {
 	mongodb.Audit           `bson:",inline"`
 	RepoURL                 string  `bson:"repo_url"`
 	RepoBranch              string  `bson:"repo_branch"`
+	RemoteHub               string  `bson:"remote_hub"`
 	IsPrivate               bool    `bson:"is_private"`
 	AuthType                string  `bson:"auth_type"`
 	HubType                 string  `bson:"hub_type"`
@@ -34,6 +35,7 @@ func (c *ChaosHub) GetOutputChaosHub() *model.ChaosHub {
 		ProjectID:     c.ProjectID,
 		RepoURL:       c.RepoURL,
 		RepoBranch:    c.RepoBranch,
+		RemoteHub:     c.RemoteHub,
 		Name:          c.Name,
 		Description:   &c.Description,
 		Tags:          c.Tags,

@@ -33,7 +33,9 @@ export const MenuCell = ({
     onError: error => showError(error.message)
   });
 
-  const lastExperimentRunStatus = data.recentExecutions[0]?.experimentRunStatus;
+  const isDeleteButtonEnabled = !data.recentExecutions.some(
+    execution => execution?.experimentRunStatus === ExperimentRunStatus.RUNNING
+  );
 
   // <!-- confirmation dialog boxes -->
   const confirmationDialogProps = {
@@ -68,7 +70,7 @@ export const MenuCell = ({
                 search: `tab=${StudioTabs.BUILDER}`
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
           {/* <!-- clone experiment button --> */}
           <RbacMenuItem
@@ -79,7 +81,7 @@ export const MenuCell = ({
                 pathname: paths.toCloneExperiment({ experimentKey: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.Executor}
           />
           {/* <!-- view executions button --> */}
           <RbacMenuItem
@@ -108,11 +110,8 @@ export const MenuCell = ({
             icon="main-trash"
             text={getString('deleteExperiment')}
             onClick={openDeleteDialog}
-            disabled={
-              lastExperimentRunStatus === ExperimentRunStatus.RUNNING ||
-              lastExperimentRunStatus === ExperimentRunStatus.QUEUED
-            }
-            permission={PermissionGroup.EDITOR}
+            disabled={isDeleteButtonEnabled == false}
+            permission={PermissionGroup.OWNER}
           />
         </Menu>
       </Popover>

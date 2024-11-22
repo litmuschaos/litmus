@@ -47,7 +47,7 @@ export default function NoProbes({ loading }: NoProbesProps): React.ReactElement
           <Layout.Horizontal spacing={'medium'}>
             <ParentComponentErrorWrapper>
               <RbacButton
-                permission={PermissionGroup.EDITOR}
+                permission={PermissionGroup.OWNER}
                 variation={ButtonVariation.PRIMARY}
                 text={getString('addProbe')}
                 icon="plus"

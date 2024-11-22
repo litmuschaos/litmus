@@ -30,7 +30,7 @@ import type {
 import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
-import PassowrdInput from '@components/PasswordInput';
+import PasswordInput from '@components/PasswordInput';
 import css from './Gitops.module.scss';
 
 interface GitopsData {
@@ -139,7 +139,7 @@ export default function GitopsView({
             data-testid="gitops"
             iconProps={{ size: 10 }}
             text={getString('save')}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
             loading={
               loading.disableGitopsMutationLoading ||
               loading.enableGitopsMutationLoading ||
@@ -199,7 +199,7 @@ export default function GitopsView({
                                 font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                                 color={Color.BLACK}
                               >
-                                {getString('githubRepo')}
+                                {getString('remoteRepo')}
                               </Text>
                             </Layout.Vertical>
                             {gitopsType === GitopsValues.GITHUB && (
@@ -255,7 +255,7 @@ export default function GitopsView({
                                   ]}
                                 />
                                 {formikProps.values.authType === AuthType.TOKEN && (
-                                  <PassowrdInput
+                                  <PasswordInput
                                     name="token"
                                     label={getString('accessToken')}
                                     placeholder={getString('accessTokenPlaceholder')}

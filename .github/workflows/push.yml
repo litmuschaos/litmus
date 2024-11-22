@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: "1.20" # By default, the go version is v1.15 in runner.
+          go-version: "1.22" # By default, the go version is v1.15 in runner.
       - run: |
           make backend-services-checks
 
@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
       - run: |
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - run: |
           img_tag=""
           array=(`echo ${GITHUB_REF} | sed 's/\//\n/g'`)
@@ -63,7 +63,7 @@ jobs:
           # echo export DEX_SERVER="litmusportal-dex-server" >> env-vars
 
       - name: Uploading envs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter/env-vars
@@ -75,10 +75,10 @@ jobs:
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Downloading image artficate
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter
@@ -113,10 +113,10 @@ jobs:
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Downloading image artficate
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter
@@ -151,10 +151,10 @@ jobs:
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Downloading image artficate
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter
@@ -189,10 +189,10 @@ jobs:
       - backend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Downloading image artficate
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter
@@ -240,10 +240,10 @@ jobs:
       - frontend-checks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Downloading image artficate
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: env_artifact
           path: chaoscenter
@@ -254,7 +254,7 @@ jobs:
         with:
           version: latest
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
 

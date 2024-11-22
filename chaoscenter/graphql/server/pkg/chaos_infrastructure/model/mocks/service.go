@@ -48,13 +48,8 @@ func (s *InfraService) SendInfraEvent(eventType, eventName, description string, 
 	s.Called(eventType, eventName, description, infra, r)
 }
 
-func (s *InfraService) GetManifest(token string) ([]byte, int, error) {
-	args := s.Called(token)
-	return args.Get(0).([]byte), args.Int(1), args.Error(2)
-}
-
-func (s *InfraService) GetManifestWithInfraID(infraID string, accessKey string) ([]byte, error) {
-	args := s.Called(infraID, accessKey)
+func (s *InfraService) GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error) {
+	args := s.Called(host, infraID, accessKey)
 	return args.Get(0).([]byte), args.Error(1)
 }
 
@@ -84,6 +79,11 @@ func (s *InfraService) PodLog(request model.PodLog, r store.StateData) (string, 
 }
 
 func (s *InfraService) KubeObj(request model.KubeObjectData, r store.StateData) (string, error) {
+	args := s.Called(request, r)
+	return args.String(0), args.Error(1)
+}
+
+func (s *InfraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
 	args := s.Called(request, r)
 	return args.String(0), args.Error(1)
 }

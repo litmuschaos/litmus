@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -24,6 +26,7 @@ type Repository interface {
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
+	UpdateUserByQuery(filter bson.D, updateQuery bson.D) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
@@ -166,7 +169,7 @@ func (r repository) CheckPasswordHash(hash, password string) error {
 	return nil
 }
 
-// UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
+// UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to false
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
 	result.Username = userPassword.Username
@@ -176,21 +179,35 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 	if findOneErr != nil {
 		return findOneErr
 	}
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
+
+	updateQuery := bson.M{"$set": bson.M{
+		"password": string(newHashedPassword),
+	}}
+
 	if isAdminBeingReset {
 		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.OldPassword))
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid credentials")
 		}
+		// check if the new pwd is same as old pwd, if yes return err
+		err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.NewPassword))
+		if err == nil {
+			return fmt.Errorf("old and new passwords can't be same")
+		}
+		updateQuery = bson.M{"$set": bson.M{
+			"password":         string(newHashedPassword),
+			"is_initial_login": false,
+		}}
 	}
 
-	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
-	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
-		"password": string(newHashedPassword),
-	}})
+	res, err := r.Collection.UpdateOne(context.Background(), bson.M{"username": result.Username}, updateQuery)
 	if err != nil {
 		return err
 	}
-
+	if res.MatchedCount == 0 {
+		return errors.New("could not find matching username in database")
+	}
 	return nil
 }
 
@@ -206,10 +223,20 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
+// UpdateUserByQuery updates user details in the database
+func (r repository) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	_, err := r.Collection.UpdateOne(context.Background(), filter, updateQuery)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // UpdateUser updates user details in the database
 func (r repository) UpdateUser(user *entities.UserDetails) error {
 	data, _ := toDoc(user)
-	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
+	_, err := r.Collection.UpdateMany(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
 		return err
 	}

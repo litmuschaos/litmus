@@ -11,11 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+
 	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -88,7 +89,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			{
 				"$match", bson.D{
 					{"experiment_run_id", experimentRunID},
-					{"project_id", projectID},
+					{"project_id", bson.D{{"$eq", projectID}}},
 					{"is_removed", false},
 				},
 			},
@@ -100,8 +101,8 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 		matchIdentifiersStage := bson.D{
 			{
 				"$match", bson.D{
-					{"notify_id", notifyID},
-					{"project_id", projectID},
+					{"notify_id", bson.D{{"$eq", notifyID}}},
+					{"project_id", bson.D{{"$eq", projectID}}},
 					{"is_removed", false},
 				},
 			},
@@ -276,7 +277,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			"$match", bson.D{{
 				"$and", bson.A{
 					bson.D{
-						{"project_id", projectID},
+						{"project_id", bson.D{{"$eq", projectID}}},
 					},
 				},
 			}},
@@ -787,13 +788,17 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil, err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 	var (
 		wc      = writeconcern.New(writeconcern.WMajority())
 		rc      = readconcern.Snapshot()
 		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 	)
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	session, err := mongodb.MgoClient.StartSession()
 	if err != nil {
@@ -995,6 +1000,9 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return err
+	}
 
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
@@ -1012,7 +1020,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 		}},
 	}
 
@@ -1214,7 +1222,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.WithError(err).Error("Failed to update experiment collection")
 				return err
 			}
 		} else if experimentRunCount > 0 {
@@ -1249,7 +1257,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.WithError(err).Error("Failed to update experiment collection")
 				return err
 			}
 		}

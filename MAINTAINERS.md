@@ -12,9 +12,8 @@ chaos-sdk        |go/python/ansible sdk           |litmus-go,litmus-python,litmu
 e2e              |e2e-suite, e2e-dashboard         |litmus-e2e                                       |@uditgaurav, @Jonsy13                       |@neelanjan00, @S-ayanide, @avaakash         |
 integrations     |CI/CD plugins, wrappers          |chaos-ci-lib, gitlab-templates, github-actions   |@uditgaurav, @ksatchit                    |@ispeakc0de, @Adarshkumar14         | 
 helm-charts      |control-plane, agent, experiments|litmus-helm                                      |@Jasstkn, @ispeakc0de, @imrajdas, @Jonsy13             |@ksatchit, @uditgaurav         |
-documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |
-websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
-
+documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
+websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@SahilKr24, @hrishavjha, @ajeshbaby    |@umamukkara, @S-ayanide        |
 ### Consolidated Maintainers List 
 
 ```
@@ -25,7 +24,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
 "Namkyu Park",namkyu1999,lak9348@gmail.com
 "Neelanjan Manna",@neelanjan00,neelanjan.manna@harness.io
-"Oum Nivrati Kale",@oumkale,imkaleoum@gmail.com
+"Oum Nivrati Kale",@oumkale,oumk@jfrog.com
 "Raj Das",@imrajdas,rajbabu.das@harness.io
 "Rémi Ziolkowski",@Vr00mm,remi.ziolkowski-ext@pole-emploi.fr
 "Soumya Ghosh Dastidar",@gdsoumya,gdsoumya@gmail.com
@@ -36,6 +35,9 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Udit Gaurav",@uditgaurav,udit.gaurav@harness.io
 "Vedant Shrotria",@Jonsy13,vedant.shrotria@harness.io
 "Uma Mukkara",@umamukkara,umasankar.mukkara@harness.io
+"Sahil KR",@SahilKr24,sahil.kumar@harness.io
+"Ajesh Baby",@ajeshbaby,ajesh.baby@harness.io
+"Hrishav Jha",@hrishavjha,hrishav.jha@harness.io
 ```
 
 ### Consolidated Reviewers List
@@ -43,9 +45,6 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 ```
 "Adarsh Kumar",@Adarshkumar14,adarsh.kumar@harness.io
 "Akash Srivastava",@avaakash,akash.srivastava@harness.io
-"Ajesh Baby",@ajeshbaby,ajesh.baby@harness.io
-"Sahil Kumar",@SahilKr24,sahil.kumar@harness.io
-"Hrishav Kumar Jha",@hrishavjha,hrishav.kumar@harness.io
 ```
 
 ### Emeritus Maintainers

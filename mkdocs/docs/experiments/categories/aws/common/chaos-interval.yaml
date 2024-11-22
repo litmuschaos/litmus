@@ -12,7 +12,7 @@ spec:
     spec:
       components:
         env:
-         # delay between each iteration of chaos
+        # delay between each iteration of chaos
         - name: CHAOS_INTERVAL
           value: '15'
         # time duration for the chaos execution
@@ -20,6 +20,6 @@ spec:
           value: '60'
         - name: REGION
           value: '<region for instances>'
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
-        
+

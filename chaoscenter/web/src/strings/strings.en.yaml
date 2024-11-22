@@ -1,4 +1,5 @@
 404Error: Oops, we could not find this page.
+Executor: Executor
 FRI: FRI
 MON: MON
 NASlash: N/A
@@ -202,9 +203,12 @@ createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
 createNewToken: Create New Token
 createNewUser: Create New User
+createProject: Create Project
 createRecurringSchedule: Create recurring schedule
 created: Created
 createdAt: Created At
+createdBy: Created By
+createdByUser: Created By User
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -253,6 +257,8 @@ deleteProbeDesc: >-
   control plane. This will also misplace any analytics that had incurred for the
   previous runs for this probe.
 deleteProbeHeading: Delete this probe?
+deleteProject: Delete Project
+deleteProjectWarning: Do you want to delete selected project?
 deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
@@ -306,7 +312,6 @@ editSameExperimentDescription: >-
 editSameExperimentTitle: Edit on the existing Experiment
 editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
-editor: Editor
 effect: Effect
 email: Email
 emailIsRequired: Email is a required field
@@ -416,6 +421,8 @@ featureRestriction:
   resourceOveruseEnterprise: >-
     You have exceeded your resource subscription limit. Consider increasing your
     limits to keep shipping.
+fieldMaxLength: Length should be {{length}} characters maximum.
+fieldMinLength: Length should be {{length}} characters minimum.
 fieldSelector: Field Selector
 fixAllErrors: Fix all the errors indicated in the YAML Editor to resolve the issue.
 generateSSH: Generate New SSH Key
@@ -424,7 +431,6 @@ genericResourceNotFoundError: >-
   has been deleted.
 gitConnection: Repository Connection
 gitOps: GitOps
-githubRepo: Github Repository
 gitops: Gitops
 goBack: Go back to previous page
 goChaosHome: Go to Home
@@ -480,6 +486,7 @@ infrastructureRegistered: >-
   Environment -> Infrastructure list.
 infrastructureStates: Learn more about the states of Infrastructure
 infrastructureType: Infrastructure type
+infrastructures: Infrastructures
 initialDelay: Initial Delay
 initialDelaySeconds: Initial Delay Seconds
 insecureSkipVerify: Insecure skip verify
@@ -495,6 +502,7 @@ invitationSuccess: Invitation sent successfully
 invitations: Invitations
 inviteAs: Invite as
 invitedBy: Invited By
+invitedByOthers: Invited By Others
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
 k8sDescription: >-
@@ -601,7 +609,7 @@ nameIdDescriptionTags:
   tagsLabel: Tags
 nameIsARequiredField: Name is a required field
 nameIsRequired: Name is a required in order to update.
-nameVaidText: Name can only contain alphabets.
+nameValidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
@@ -681,6 +689,11 @@ noProbesFound:
   errorMessage: Error in fetching probes
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
+noProject:
+  subtitle: >-
+    Create a project to to run chaos experiments on your applications and verify
+    resilience.
+  title: Get Started with Chaos Engineering
 noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
 noProjectsFound: No projects found
 noProjectsJoined: No projects joined
@@ -732,12 +745,16 @@ overallNodeResult: Overall Node Result
 overallResiliencyScore: Overall Resilience Score
 overview: Overview
 overwriteYaml: Uploading a yaml will overwrite the existing one.
+owner: Owner
 parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
 password: Password
 passwordIsRequired: Password is a required field
 passwordResetSuccess: Password reset successfully
+passwordValidation: >-
+  Password must contain at least one uppercase letter, one lowercase letter, one
+  number and one special character
 passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
@@ -840,8 +857,16 @@ probesArePassed: probes are passed
 prod: Prod
 project: Project
 projectCreatedByYou: Your Projects
+projectDashboard:
+  noProjectDescription: There are no projects.
+  noProjectText: No Projects
+projectDeletedSuccess: Project Deleted Successfully
+projectDescription: Project Description
+projectFilters: Project Filters
 projectNameIsRequired: Project name is a required in order to update.
 projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
+projectSetup: Project Setup
+projects: Projects
 projectsByInvite: Projects By Invite
 projectsInTotal: project(s) in total
 projectsJoined: Projects Joined
@@ -884,6 +909,8 @@ referencedBy: Referenced By
 registry: Registry
 registryName: Registry Name
 registryType: Registry Type
+remoteHub: Select Remote hub
+remoteRepo: Remote Repository
 remove: Remove
 removeMember: Remove Member
 removeMemberConfirmation: Are you sure you want to remove {{username}}?
@@ -1014,6 +1041,8 @@ signIn: Sign In
 signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
+sortDirection: Sort Direction
+sortField: Sort Field
 source: Source
 sourceModeDesction: >-
   Source mode is where the command execution is carried out from within a new
@@ -1031,6 +1060,7 @@ startWith: Start with blank canvas
 startedAt: Started at
 startedOn: Started On
 startingWith: Starting with
+state: State
 status: Status
 statusCheck: >-
   Note: You may check the status of your Chaos Infrastructure in the status
@@ -1132,6 +1162,7 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
+usernameValidText: Username can only contain letters, digits, underscores, and hyphens
 usersNotAvailableMessage: No users available to send invitation
 usersNotAvailableTitle: No users available
 validationError: Validation Error

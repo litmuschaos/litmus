@@ -1,5 +1,5 @@
 # BUILD STAGE
-FROM golang:1.20 AS builder
+FROM golang:1.22 AS builder
 
 LABEL maintainer="LitmusChaos"
 
@@ -16,12 +16,17 @@ RUN go env
 RUN CGO_ENABLED=0 go build -o /output/subscriber -v
 
 # Packaging stage
-# Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
-# The base image is non-root (have litmus user) with default litmus directory.
-FROM litmuschaos/infra-alpine
+# Use RedHat UBI minimal image as base
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
 
 LABEL maintainer="LitmusChaos"
 
-COPY --from=builder /output/subscriber /litmus
+ENV APP_DIR="/litmus"
+
+COPY --from=builder /output/subscriber $APP_DIR/
+RUN chown 65534:0 $APP_DIR/subscriber && chmod 755 $APP_DIR/subscriber
+
+WORKDIR $APP_DIR
+USER 65534
 
 CMD ["./subscriber"]
