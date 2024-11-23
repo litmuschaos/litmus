@@ -16,6 +16,7 @@ extend type Query {
   Query to get experiment run stats
   """
   getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
+  getExperimentRunPhase(request: ExperimentRunPhaseRequest!): ExperimentRun!
 }
 
 extend type Mutation {
