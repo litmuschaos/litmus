@@ -257,7 +257,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "3.9.x"
+              value: "v3.9.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT

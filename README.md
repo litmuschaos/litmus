@@ -106,9 +106,18 @@ Fill out the [LitmusChaos Meetings invite form](https://forms.gle/xYZyZ2gTWMqz7x
 
 ### Videos
 
+- [What if Your System Experiences an Outage? Let's Build a Resilient Systems with Chaos Engineering](https://www.youtube.com/watch?v=3mjGEh905u4&t=1s) @ [CNCF](https://www.youtube.com/@cncf)
+- [Enhancing Cyber Resilience Through Zero Trust Chaos Experiments in Cloud Native Environments](https://youtu.be/BelNIk4Bkng) @ [CNCF](https://www.youtube.com/@cncf)
+- [LitmusChaos, with Karthik Satchitanand](https://www.youtube.com/watch?v=ks2R57hhFZk&t=503s) @ [The Kubernetes Podcast from Google](https://www.youtube.com/@TheKubernetesPodcast)
+- [Cultural Shifts: Fostering a Chaos First Mindset in Platform Engineering](https://www.youtube.com/watch?v=WUXFKxgZRsk) @ [CNCF](https://www.youtube.com/@cncf)
+- [Fire in the Cloud: Bringing Managed Services Under the Ambit of Cloud-Native Chaos Engineering](https://www.youtube.com/watch?v=xCDQp5E3VUs) @ [CNCF](https://www.youtube.com/@cncf)
+- [Security Controls for Safe Chaos Experimentation](https://www.youtube.com/watch?v=whCkvLKAw74) @ [CNCF](https://www.youtube.com/@cncf)
+- [Chaos Engineering For Hybrid Targets With LitmusChaos](https://www.youtube.com/watch?v=BZL-ngvbpbU&t=751s) @ [CNCF](https://www.youtube.com/@cncf)
 - [Cloud Native Live: Litmus Chaos Engine and a microservices demo app](https://youtu.be/hOghvd9qCzI)
 - [Chaos Engineering hands-on - An SRE ideating Chaos Experiments and using LitmusChaos | July 2022](https://youtu.be/_x_7SiesjF0) 
 - [Achieve Digital Product Resiliency with Chaos Engineering](https://youtu.be/PQrmBHgk0ps)
+- [Case Study: Bringing Chaos Engineering to the Cloud Native Developers](https://youtu.be/KSl-oKk6TPA) @ [CNCF](https://www.youtube.com/@cncf)
+- [Cloud Native Chaos Engineering with LitmusChaos](https://www.youtube.com/watch?v=ItUUqejdXr0) @ [CNCF](https://www.youtube.com/@cncf)
 - [How to create Chaos Experiments with Litmus | Litmus Chaos tutorial](https://youtu.be/mwu5eLgUKq4) @ [Is it Observable](https://www.youtube.com/c/IsitObservable)
 - [Cloud Native Chaos Engineering Preview With LitmusChaos](https://youtu.be/pMWqhS-F3tQ)
 - [Get started with Chaos Engineering with Litmus](https://youtu.be/5CI8d-SKBfc) @ [Containers from the Couch](https://www.youtube.com/c/ContainersfromtheCouch)
