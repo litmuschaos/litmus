@@ -117,7 +117,7 @@ func (k8s *k8sSubscriber) GetPodLogs(infraData map[string]string, podLog types.P
 
 		// fetch ExperimentRun Phase from graphql
 		experimentRun, _ := k8s.gqlSubscriberServer.SendExperimentRunRuquest(infraData, podLog)
-		logDetails.MainPod = k8s.categorizeLogByPhase(experimentRun.Data.ExperimentRun.Phase)
+		logDetails.MainPod = k8s.categorizeLogByPhase(experimentRun.Data.ExperimentRun.Phase) + " Pod name: " + podLog.PodName
 
 		logrus.WithError(err).Print("Failed to get pod logs for attempting to fetch experiment run phase")
 
@@ -140,25 +140,25 @@ func (k8s *k8sSubscriber) GetPodLogs(infraData map[string]string, podLog types.P
 func (k8s *k8sSubscriber) categorizeLogByPhase(phase string) string {
 	switch phase {
 	case "Completed":
-		return "Experiment pod is deleted"
+		return "Experiment pod was deleted."
 	case "Stopped":
-		return "Stopped"
+		return "Experiment is stopped."
 	case "Running":
-		return "Workflow Pod is initializing"
+		return "Experiment pod is initializing."
 	case "Queue":
-		return "Queue"
+		return "Queue."
 	case "NA":
-		return "NA"
+		return "NA."
 	case "Terminated":
-		return "Terminated"
+		return "Terminated."
 	case "Completed_With_Error":
-		return "Completed_With_Error"
+		return "Completed_With_Error."
 	case "Timeout":
-		return "Timeout"
+		return "Timeout."
 	case "Error":
-		return "it can't run experiment"
+		return "Experiment could not start."
 	default:
-		return "Workflow Pod is initializing"
+		return "Experiment pod is initializing."
 	}
 }
 

@@ -82,17 +82,33 @@ func (r *mutationResolver) StopExperimentRuns(ctx context.Context, projectID str
 }
 
 // GetExperimentRun is the resolver for the getExperimentRun field.
-func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {
+func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string, infraID *model.InfraIdentity) (*model.ExperimentRun, error) {
 	logFields := logrus.Fields{
 		"projectId":            projectID,
 		"chaosExperimentRunId": experimentRunID,
+		"infraID":              infraID,
 	}
+
 	logrus.WithFields(logFields).Info("request received to fetch chaos experiment run")
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowRun],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
+
+	// Infrastructure validation
+	if infraID != nil {
+		_, err := r.chaosInfrastructureService.VerifyInfra(*infraID)
+
+		if err != nil {
+			logrus.WithFields(logFields).Error(err)
+			return nil, err
+		}
+
+		// Authorization validation
+	} else {
+		err := authorization.ValidateRole(ctx, projectID,
+			authorization.MutationRbacRules[authorization.GetWorkflowRun],
+			model.InvitationAccepted.String())
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, projectID, experimentRunID, notifyID)
@@ -145,21 +161,4 @@ func (r *queryResolver) GetExperimentRunStats(ctx context.Context, projectID str
 		return nil, err
 	}
 	return uiResponse, err
-}
-
-// GetExperimentRunPhase is the resolver for the getExperimentRunPhase field.
-func (r *queryResolver) GetExperimentRunPhase(ctx context.Context, request model.ExperimentRunPhaseRequest) (*model.ExperimentRun, error) {
-	_, err := r.chaosInfrastructureService.VerifyInfra(*request.InfraID)
-
-	if err != nil {
-		logrus.Error("Validation failed : ", request.InfraID)
-		return nil, err
-	}
-
-	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, request.ProjectID, &request.ExperimentRunID, request.NotifyID)
-	if err != nil {
-		logrus.Error("failed to get chaosExpeirmentRun: ", err)
-		return nil, err
-	}
-	return expRunResponse, err
 }

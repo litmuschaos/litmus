@@ -5,7 +5,7 @@ type ExperimentRunResponse struct {
 }
 
 type ExperimentRun struct {
-	ExperimentRun Phase `json:"getExperimentRunPhase"`
+	ExperimentRun Phase `json:"getExperimentRun"`
 }
 
 type Phase struct {

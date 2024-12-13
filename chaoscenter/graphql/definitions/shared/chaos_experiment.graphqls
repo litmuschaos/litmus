@@ -326,27 +326,6 @@ type Weightages {
   weightage: Int!
 }
 
-
-input ExperimentRunPhaseRequest {
-  projectID: ID!
-  
-  """
-  ID of the infra infra in which the experiment is running
-  """
-  infraID: InfraIdentity!
-  
-  """
-  ID of the experiment run which is to be queried
-  """
-  experimentRunID: String!	
-  
-  """
-  notifyID is required to give an ack for non cron experiment execution
-  """
-  notifyID: String
-}
-
-
 """
 Defines the details of a experiment run
 """

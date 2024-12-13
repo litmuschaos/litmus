@@ -646,16 +646,6 @@ type ExperimentRunFilterInput struct {
 	InfraTypes []*InfrastructureType `json:"infraTypes,omitempty"`
 }
 
-type ExperimentRunPhaseRequest struct {
-	ProjectID string `json:"projectID"`
-	// ID of the infra infra in which the experiment is running
-	InfraID *InfraIdentity `json:"infraID"`
-	// ID of the experiment run which is to be queried
-	ExperimentRunID string `json:"experimentRunID"`
-	// notifyID is required to give an ack for non cron experiment execution
-	NotifyID *string `json:"notifyID,omitempty"`
-}
-
 // Defines the details for a experiment run
 type ExperimentRunRequest struct {
 	// ID of the experiment

@@ -72,10 +72,9 @@ func (gql *subscriberGql) SendExperimentRunRuquest(infraData map[string]string, 
 }
 
 func (gql *subscriberGql) GenerateExperimentRunPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
-	infraID := `{infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
-	query := `{ infraID: ` + infraID + `, experimentRunID:\"` + podLog.ExperimentRunID + `\", projectID: \"` + podLog.ProjectID + `\", notifyID: \"\"}`
+	infraID := `infraID: {infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
+	query := infraID + `, experimentRunID: \"` + podLog.ExperimentRunID + `\", projectID: \"` + podLog.ProjectID + `\", notifyID: \"\"`
 
-	var payload = []byte(`{"query":"query { getExperimentRunPhase(request:` + query + `){phase}}"}`)
-
+	var payload = []byte(`{"query": "query { getExperimentRun(` + query + `) { phase } }"}`)
 	return payload, nil
 }

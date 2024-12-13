@@ -2,7 +2,7 @@ extend type Query {
   """
   Returns experiment run based on experiment run ID
   """
-  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID): ExperimentRun!
+  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID, infraID: InfraIdentity): ExperimentRun!
 
   """
   Returns the list of experiment run based on various filter parameters
@@ -16,7 +16,6 @@ extend type Query {
   Query to get experiment run stats
   """
   getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
-  getExperimentRunPhase(request: ExperimentRunPhaseRequest!): ExperimentRun!
 }
 
 extend type Mutation {

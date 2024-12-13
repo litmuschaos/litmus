@@ -607,8 +607,7 @@ type ComplexityRoot struct {
 		GetChaosHubStats          func(childComplexity int, projectID string) int
 		GetEnvironment            func(childComplexity int, projectID string, environmentID string) int
 		GetExperiment             func(childComplexity int, projectID string, experimentID string) int
-		GetExperimentRun          func(childComplexity int, projectID string, experimentRunID *string, notifyID *string) int
-		GetExperimentRunPhase     func(childComplexity int, request model.ExperimentRunPhaseRequest) int
+		GetExperimentRun          func(childComplexity int, projectID string, experimentRunID *string, notifyID *string, infraID *model.InfraIdentity) int
 		GetExperimentRunStats     func(childComplexity int, projectID string) int
 		GetExperimentStats        func(childComplexity int, projectID string) int
 		GetGitOpsDetails          func(childComplexity int, projectID string) int
@@ -767,10 +766,9 @@ type QueryResolver interface {
 	GetExperiment(ctx context.Context, projectID string, experimentID string) (*model.GetExperimentResponse, error)
 	ListExperiment(ctx context.Context, projectID string, request model.ListExperimentRequest) (*model.ListExperimentResponse, error)
 	GetExperimentStats(ctx context.Context, projectID string) (*model.GetExperimentStatsResponse, error)
-	GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error)
+	GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string, infraID *model.InfraIdentity) (*model.ExperimentRun, error)
 	ListExperimentRun(ctx context.Context, projectID string, request model.ListExperimentRunRequest) (*model.ListExperimentRunResponse, error)
 	GetExperimentRunStats(ctx context.Context, projectID string) (*model.GetExperimentRunStatsResponse, error)
-	GetExperimentRunPhase(ctx context.Context, request model.ExperimentRunPhaseRequest) (*model.ExperimentRun, error)
 	GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error)
 	ListInfras(ctx context.Context, projectID string, request *model.ListInfraRequest) (*model.ListInfraResponse, error)
 	GetInfraDetails(ctx context.Context, infraID string, projectID string) (*model.Infra, error)
@@ -3731,19 +3729,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetExperimentRun(childComplexity, args["projectID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string)), true
-
-	case "Query.getExperimentRunPhase":
-		if e.complexity.Query.GetExperimentRunPhase == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getExperimentRunPhase_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetExperimentRunPhase(childComplexity, args["request"].(model.ExperimentRunPhaseRequest)), true
+		return e.complexity.Query.GetExperimentRun(childComplexity, args["projectID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string), args["infraID"].(*model.InfraIdentity)), true
 
 	case "Query.getExperimentRunStats":
 		if e.complexity.Query.GetExperimentRunStats == nil {
@@ -4437,7 +4423,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputExperimentFilterInput,
 		ec.unmarshalInputExperimentRequest,
 		ec.unmarshalInputExperimentRunFilterInput,
-		ec.unmarshalInputExperimentRunPhaseRequest,
 		ec.unmarshalInputExperimentRunRequest,
 		ec.unmarshalInputExperimentRunSortInput,
 		ec.unmarshalInputExperimentSortInput,
@@ -4919,27 +4904,6 @@ type Weightages {
   weightage: Int!
 }
 
-
-input ExperimentRunPhaseRequest {
-  projectID: ID!
-  
-  """
-  ID of the infra infra in which the experiment is running
-  """
-  infraID: InfraIdentity!
-  
-  """
-  ID of the experiment run which is to be queried
-  """
-  experimentRunID: String!	
-  
-  """
-  notifyID is required to give an ack for non cron experiment execution
-  """
-  notifyID: String
-}
-
-
 """
 Defines the details of a experiment run
 """
@@ -5398,7 +5362,7 @@ type Mutation {
   """
   Returns experiment run based on experiment run ID
   """
-  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID): ExperimentRun!
+  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID, infraID: InfraIdentity): ExperimentRun!
 
   """
   Returns the list of experiment run based on various filter parameters
@@ -5412,7 +5376,6 @@ type Mutation {
   Query to get experiment run stats
   """
   getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
-  getExperimentRunPhase(request: ExperimentRunPhaseRequest!): ExperimentRun!
 }
 
 extend type Mutation {
@@ -9313,21 +9276,6 @@ func (ec *executionContext) field_Query_getEnvironment_args(ctx context.Context,
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getExperimentRunPhase_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.ExperimentRunPhaseRequest
-	if tmp, ok := rawArgs["request"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
-		arg0, err = ec.unmarshalNExperimentRunPhaseRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRunPhaseRequest(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["request"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_getExperimentRunStats_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -9373,6 +9321,15 @@ func (ec *executionContext) field_Query_getExperimentRun_args(ctx context.Contex
 		}
 	}
 	args["notifyID"] = arg2
+	var arg3 *model.InfraIdentity
+	if tmp, ok := rawArgs["infraID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
+		arg3, err = ec.unmarshalOInfraIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfraIdentity(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["infraID"] = arg3
 	return args, nil
 }
 
@@ -28678,7 +28635,7 @@ func (ec *executionContext) _Query_getExperimentRun(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetExperimentRun(rctx, fc.Args["projectID"].(string), fc.Args["experimentRunID"].(*string), fc.Args["notifyID"].(*string))
+		return ec.resolvers.Query().GetExperimentRun(rctx, fc.Args["projectID"].(string), fc.Args["experimentRunID"].(*string), fc.Args["notifyID"].(*string), fc.Args["infraID"].(*model.InfraIdentity))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28893,111 +28850,6 @@ func (ec *executionContext) fieldContext_Query_getExperimentRunStats(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getExperimentRunStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getExperimentRunPhase(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getExperimentRunPhase(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetExperimentRunPhase(rctx, fc.Args["request"].(model.ExperimentRunPhaseRequest))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ExperimentRun)
-	fc.Result = res
-	return ec.marshalNExperimentRun2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRun(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getExperimentRunPhase(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "projectID":
-				return ec.fieldContext_ExperimentRun_projectID(ctx, field)
-			case "experimentRunID":
-				return ec.fieldContext_ExperimentRun_experimentRunID(ctx, field)
-			case "experimentType":
-				return ec.fieldContext_ExperimentRun_experimentType(ctx, field)
-			case "experimentID":
-				return ec.fieldContext_ExperimentRun_experimentID(ctx, field)
-			case "weightages":
-				return ec.fieldContext_ExperimentRun_weightages(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ExperimentRun_updatedAt(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_ExperimentRun_createdAt(ctx, field)
-			case "infra":
-				return ec.fieldContext_ExperimentRun_infra(ctx, field)
-			case "experimentName":
-				return ec.fieldContext_ExperimentRun_experimentName(ctx, field)
-			case "experimentManifest":
-				return ec.fieldContext_ExperimentRun_experimentManifest(ctx, field)
-			case "phase":
-				return ec.fieldContext_ExperimentRun_phase(ctx, field)
-			case "resiliencyScore":
-				return ec.fieldContext_ExperimentRun_resiliencyScore(ctx, field)
-			case "faultsPassed":
-				return ec.fieldContext_ExperimentRun_faultsPassed(ctx, field)
-			case "faultsFailed":
-				return ec.fieldContext_ExperimentRun_faultsFailed(ctx, field)
-			case "faultsAwaited":
-				return ec.fieldContext_ExperimentRun_faultsAwaited(ctx, field)
-			case "faultsStopped":
-				return ec.fieldContext_ExperimentRun_faultsStopped(ctx, field)
-			case "faultsNa":
-				return ec.fieldContext_ExperimentRun_faultsNa(ctx, field)
-			case "totalFaults":
-				return ec.fieldContext_ExperimentRun_totalFaults(ctx, field)
-			case "executionData":
-				return ec.fieldContext_ExperimentRun_executionData(ctx, field)
-			case "isRemoved":
-				return ec.fieldContext_ExperimentRun_isRemoved(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ExperimentRun_updatedBy(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ExperimentRun_createdBy(ctx, field)
-			case "notifyID":
-				return ec.fieldContext_ExperimentRun_notifyID(ctx, field)
-			case "runSequence":
-				return ec.fieldContext_ExperimentRun_runSequence(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ExperimentRun", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getExperimentRunPhase_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -36524,54 +36376,6 @@ func (ec *executionContext) unmarshalInputExperimentRunFilterInput(ctx context.C
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputExperimentRunPhaseRequest(ctx context.Context, obj interface{}) (model.ExperimentRunPhaseRequest, error) {
-	var it model.ExperimentRunPhaseRequest
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"projectID", "infraID", "experimentRunID", "notifyID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "projectID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ProjectID = data
-		case "infraID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
-			data, err := ec.unmarshalNInfraIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfraIdentity(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.InfraID = data
-		case "experimentRunID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("experimentRunID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ExperimentRunID = data
-		case "notifyID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notifyID"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NotifyID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputExperimentRunRequest(ctx context.Context, obj interface{}) (model.ExperimentRunRequest, error) {
 	var it model.ExperimentRunRequest
 	asMap := map[string]interface{}{}
@@ -42794,28 +42598,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getExperimentRunPhase":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getExperimentRunPhase(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getInfra":
 			field := field
 
@@ -44764,11 +44546,6 @@ func (ec *executionContext) marshalNExperimentRun2ᚖgithubᚗcomᚋlitmuschaos�
 		return graphql.Null
 	}
 	return ec._ExperimentRun(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNExperimentRunPhaseRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRunPhaseRequest(ctx context.Context, v interface{}) (model.ExperimentRunPhaseRequest, error) {
-	res, err := ec.unmarshalInputExperimentRunPhaseRequest(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNExperimentRunRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRunRequest(ctx context.Context, v interface{}) (model.ExperimentRunRequest, error) {
@@ -46741,6 +46518,14 @@ func (ec *executionContext) unmarshalOInfraFilterInput2ᚖgithubᚗcomᚋlitmusc
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputInfraFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOInfraIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfraIdentity(ctx context.Context, v interface{}) (*model.InfraIdentity, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputInfraIdentity(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
