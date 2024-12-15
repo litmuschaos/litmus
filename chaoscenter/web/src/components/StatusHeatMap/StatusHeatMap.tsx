@@ -129,7 +129,7 @@ export function StatusHeatMap(props: StatusHeatMapProps): React.ReactElement {
                   {execution.executedBy?.username !== 'pipeline' ? (
                     <>
                       {execution.executedBy?.username ?? getString('chaosController')}
-                      {execution.executedBy?.username && ' | Manually'}
+                      {execution.executedBy?.username && getString('manually')}
                     </>
                   ) : (
                     toSentenceCase(execution.executedBy?.username)
