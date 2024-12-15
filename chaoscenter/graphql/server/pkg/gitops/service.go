@@ -621,12 +621,11 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	}
 
 	revID := ""
-	updateRevision := false
 	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID)
 	if err != nil {
 		return err
 	}
-	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, updateRevision, config.ProjectID, dataStore.Store)
+	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, false, config.ProjectID, dataStore.Store)
 }
 
 // deleteExperiment helps in deleting experiment from DB during the SyncDBToGit operation
