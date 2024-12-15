@@ -7,6 +7,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/mrz1836/go-sanitize"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -45,9 +46,9 @@ func GetClonePath(c ChaosHubConfig) string {
 
 	var repoPath string
 	if c.IsDefault {
-		repoPath = "/tmp/default/" + c.HubName
+		repoPath = "/tmp/default/" + sanitize.PathName(c.HubName)
 	} else {
-		repoPath = DefaultPath + c.ProjectID + "/" + c.HubName
+		repoPath = DefaultPath + sanitize.PathName(c.ProjectID) + "/" + sanitize.PathName(c.HubName)
 	}
 	return repoPath
 }
