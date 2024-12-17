@@ -46,6 +46,18 @@ type probeService struct {
 	probeOperator *dbSchemaProbe.Operator
 }
 
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewProbeOperator returns a new instance of Operator
+func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
+// NewProbeService returns a new instance of probeService
 func NewProbeService(probeOperator *dbSchemaProbe.Operator) Service {
 	return &probeService{
 		probeOperator: probeOperator,
@@ -405,7 +417,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	pipeline = append(pipeline, matchIdentifierStage)
 
 	// Call aggregation on pipeline
-	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodb.Operator)
+	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(NewProbeOperator.operator)
 	expRunCursor, err := experimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, errors.New("DB aggregate stage error: " + err.Error())

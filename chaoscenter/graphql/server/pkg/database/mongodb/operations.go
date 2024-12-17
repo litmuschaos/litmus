@@ -33,11 +33,6 @@ type MongoOperations struct {
 	MongoClient *MongoClient
 }
 
-var (
-	// Operator contains all the CRUD operations of the mongo database
-	Operator MongoOperator = &MongoOperations{}
-)
-
 func NewMongoOperations(mongoClient *MongoClient) *MongoOperations {
 	return &MongoOperations{
 		MongoClient: mongoClient,

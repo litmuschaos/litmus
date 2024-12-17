@@ -9,9 +9,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+func NewConfigOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
+
 // CreateConfig creates a new server config with unique key
-func CreateConfig(ctx context.Context, config *ServerConfig) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ServerConfigCollection, config)
+func (o *Operator) CreateConfig(ctx context.Context, config *ServerConfig) error {
+	err := o.operator.Create(ctx, mongodb.ServerConfigCollection, config)
 	if err != nil {
 		return err
 	}
@@ -19,11 +30,11 @@ func CreateConfig(ctx context.Context, config *ServerConfig) error {
 }
 
 // GetConfig returns the requested server config
-func GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
+func (o *Operator) GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
 	query := bson.D{
 		{"key", key},
 	}
-	results, err := mongodb.Operator.Get(ctx, mongodb.ServerConfigCollection, query)
+	results, err := o.operator.Get(ctx, mongodb.ServerConfigCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +50,14 @@ func GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
 }
 
 // UpdateConfig updates the required server config
-func UpdateConfig(ctx context.Context, key string, value interface{}) error {
+func (o *Operator) UpdateConfig(ctx context.Context, key string, value interface{}) error {
 	query := bson.D{
 		{"key", key},
 	}
 	update := bson.D{{"$set", bson.D{{
 		"value", value}},
 	}}
-	_, err := mongodb.Operator.Update(ctx, mongodb.ServerConfigCollection, query, update)
+	_, err := o.operator.Update(ctx, mongodb.ServerConfigCollection, query, update)
 	if err != nil {
 		return err
 	}
