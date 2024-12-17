@@ -19,7 +19,6 @@ func NewConfigOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 	}
 }
 
-
 // CreateConfig creates a new server config with unique key
 func (o *Operator) CreateConfig(ctx context.Context, config *ServerConfig) error {
 	err := o.operator.Create(ctx, mongodb.ServerConfigCollection, config)
