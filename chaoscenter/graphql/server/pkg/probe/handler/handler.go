@@ -811,6 +811,7 @@ func (p *probeService) GenerateExperimentManifestWithProbes(manifest string, pro
 										CmdProbeInputs: &v1alpha1.CmdProbeInputs{
 											Command:    cmdProbe.CmdProbeInputs.Command,
 											Comparator: cmdProbe.CmdProbeInputs.Comparator,
+											Source:     cmdProbe.CmdProbeInputs.Source,
 										},
 										RunProperties: cmdProbe.RunProperties,
 										Mode:          cmdProbe.Mode,
@@ -963,6 +964,7 @@ func (p *probeService) GenerateCronExperimentManifestWithProbes(manifest string,
 									CmdProbeInputs: &v1alpha1.CmdProbeInputs{
 										Command:    cmdProbe.CmdProbeInputs.Command,
 										Comparator: cmdProbe.CmdProbeInputs.Comparator,
+										Source:     cmdProbe.CmdProbeInputs.Source,
 									},
 									RunProperties: cmdProbe.RunProperties,
 									Mode:          cmdProbe.Mode,
@@ -1151,6 +1153,15 @@ func (p *probeService) GenerateProbeManifest(probe *model.Probe, mode model.Mode
 
 		if probe.KubernetesCMDProperties.StopOnFailure != nil {
 			_probe.RunProperties.StopOnFailure = *probe.KubernetesCMDProperties.StopOnFailure
+		}
+
+		if probe.KubernetesCMDProperties.Source != nil {
+			var source v1alpha1.SourceDetails
+			err := json.Unmarshal([]byte(*probe.KubernetesCMDProperties.Source), &source)
+			if err != nil {
+				logrus.Warnf("error unmarshalling soruce: %s - the source part of the probe is being ignored", err.Error())
+			}
+			_probe.CmdProbeInputs.Source = &source
 		}
 
 		y, err := json.Marshal(_probe)
