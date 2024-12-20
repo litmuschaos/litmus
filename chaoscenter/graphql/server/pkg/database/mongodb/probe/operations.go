@@ -10,13 +10,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Operator is the model for probe collection
+// Operator is the model for probe operations and collection
 type Operator struct {
 	operator mongodb.MongoOperator
 }
 
-// NewChaosProbeOperator returns a new instance of Operator
-func NewChaosProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+// NewProbeOperator returns a new instance of Operator
+func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 	return &Operator{
 		operator: mongodbOperator,
 	}
