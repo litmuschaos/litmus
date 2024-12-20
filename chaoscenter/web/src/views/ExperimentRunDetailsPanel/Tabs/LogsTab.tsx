@@ -10,6 +10,7 @@ interface LogsTabViewProps {
   nodeType: string | undefined;
   chaosData: ChaosData | undefined;
   infraID: string | undefined;
+  projectID: string | undefined;
   workflowRunID: string | undefined;
   podID: string;
   requestID: string;
@@ -22,6 +23,7 @@ export default function LogsTabView({
   nodeType,
   chaosData,
   infraID,
+  projectID,
   workflowRunID,
   podID,
   requestID,
@@ -37,6 +39,7 @@ export default function LogsTabView({
         nodeType={nodeType}
         namespace={namespace}
         infraID={infraID}
+        projectID={projectID}
         requestID={requestID}
         workflowRunID={workflowRunID}
         podName={podID}
