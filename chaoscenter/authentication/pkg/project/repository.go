@@ -60,7 +60,7 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 		return nil, err
 	}
 
-	var projects []*entities.Project
+	var projects = []*entities.Project{}
 	err = results.All(context.TODO(), &projects)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 
 // GetProjectsByUserID returns a project based on the userID
 func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
-	var projects []*entities.Project
+	var projects = []*entities.Project{}
 	ctx := context.TODO()
 
 	// Construct the pipeline
@@ -192,7 +192,7 @@ func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
 		return nil, err
 	}
 
-	var data []*entities.ProjectStats
+	var data = []*entities.ProjectStats{}
 	for result.Next(context.TODO()) {
 		res := entities.ProjectStats{}
 		if err := result.Decode(&res); err != nil {
@@ -433,7 +433,7 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 		return nil, err
 	}
 
-	var projects []*entities.Project
+	var projects = []*entities.Project{}
 	err = cursor.All(context.TODO(), &projects)
 	if err != nil {
 		return nil, err
@@ -455,7 +455,7 @@ func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, erro
 	}
 
 	// Filter the members to include only the owners
-	var owners []*entities.Member
+	var owners = []*entities.Member{}
 	for _, member := range project.Members {
 		if member.Role == entities.RoleOwner && member.Invitation == entities.AcceptedInvitation {
 			owners = append(owners, member)
@@ -623,7 +623,7 @@ func (r repository) ListInvitations(userID string, invitationState entities.Invi
 		return nil, err
 	}
 
-	var projects []*entities.Project
+	var projects = []*entities.Project{}
 	err = cursor.All(context.TODO(), &projects)
 	if err != nil {
 		return nil, err

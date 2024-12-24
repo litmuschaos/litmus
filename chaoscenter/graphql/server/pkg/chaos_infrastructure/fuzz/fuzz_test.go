@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/handler"
 	chaosExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
@@ -41,9 +43,10 @@ func NewMockServices() *MockServices {
 		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
 		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		probeService               = new(dbProbeMocks.ProbeService)
 		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
 	)
-	var chaosExperimentHandler = handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+	var chaosExperimentHandler = handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeService, mongodbMockOperator)
 	return &MockServices{
 		ChaosExperimentService:     chaosExperimentService,
 		ChaosExperimentRunService:  chaosExperimentRunService,
