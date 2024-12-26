@@ -166,7 +166,7 @@ type CategorizedExperimentRunStats struct {
 }
 
 type AggregatedExperimentStats struct {
-	TotalExperiments         []TotalFilteredData             `bson:"total_experiments"`
+	TotalExperiments         int                             `bson:"total_experiments"`
 	TotalFilteredExperiments []CategorizedExperimentRunStats `bson:"categorized_by_resiliency_score"`
 }
 
