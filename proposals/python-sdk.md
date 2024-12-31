@@ -1,6 +1,6 @@
 | title                 | authors                            | creation-date | last-updated |
 |-----------------------|------------------------------------|---------------|--------------|
-| add litmus python sdk | [@inpyu](https://github.com/inpyu) | 2024-09-07    | 2024-09-07   |
+| add litmus python sdk | [@inpyu](https://github.com/inpyu) | 2024-12-31    | 2024-12-31   |
 
 # Adding Litmus python SDK
 
