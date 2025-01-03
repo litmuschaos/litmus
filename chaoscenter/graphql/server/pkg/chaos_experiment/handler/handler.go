@@ -734,8 +734,6 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		workflows []dbChaosExperiment.AggregatedExperiments
 	)
 
-	// ListExep, GetGetExperimentStats, ListExperimentRun, ListEnvironments
-
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
 		return &model.ListExperimentResponse{
 			TotalNoOfExperiments: 0,
@@ -1127,7 +1125,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 
 	pipeline = append(pipeline, groupByResiliencyScore)
 
-	ddStage := bson.D{
+	experimentAggregationStage := bson.D{
 		{"$group", bson.D{
 			{"_id", nil},
 			{"total_experiments", bson.D{
@@ -1143,7 +1141,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 		}},
 	}
 
-	pipeline = append(pipeline, ddStage)
+	pipeline = append(pipeline, experimentAggregationStage)
 
 	projectStage := bson.D{
 		{"$project", bson.D{
