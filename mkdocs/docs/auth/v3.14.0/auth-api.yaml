@@ -1,0 +1,1030 @@
+definitions:
+  response.ApiTokenResponse:
+    properties:
+      createdAt:
+        type: integer
+      expiresAt:
+        type: integer
+      name:
+        type: string
+      token:
+        type: string
+      userID:
+        type: string
+    type: object
+  response.CapabilitiesResponse:
+    properties:
+      dex:
+        properties:
+          enabled:
+            type: boolean
+        type: object
+    type: object
+  response.ErrInvalidCredentials:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Invalid Credentials
+        type: string
+    type: object
+  response.ErrInvalidEmail:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Email address is invalid
+        type: string
+    type: object
+  response.ErrInvalidRequest:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: The request is missing a required parameter, includes an invalid
+          parameter value, includes a parameter more than once, or is otherwise malformed
+        type: string
+    type: object
+  response.ErrInvalidRole:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Role is invalid
+        type: string
+    type: object
+  response.ErrOldPassword:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: The old and new passwords can't be same
+        type: string
+    type: object
+  response.ErrProjectNotFound:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: This project does not exist
+        type: string
+    type: object
+  response.ErrServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: The authorization server encountered an unexpected condition that
+          prevented it from fulfilling the request
+        type: string
+    type: object
+  response.ErrStrictPasswordPolicyViolation:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Please ensure the password is atleast 8 characters and atmost 16
+          characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase
+          alphabet and 1 special character
+        type: string
+    type: object
+  response.ErrStrictUsernamePolicyViolation:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: The username should be atleast 3 characters long and atmost 16 characters
+          long.
+        type: string
+    type: object
+  response.ErrUnauthorized:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: The user does not have requested authorization to access this resource
+        type: string
+    type: object
+  response.ErrUserDeactivated:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: your account has been deactivated
+        type: string
+    type: object
+  response.ErrUserExists:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: This username is already assigned to another user
+        type: string
+    type: object
+  response.ErrUserNotFound:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: user does not exist
+        type: string
+    type: object
+  response.LoginResponse:
+    type: object
+  response.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  response.NewApiToken:
+    type: object
+  response.Response:
+    properties:
+      response:
+        type: string
+    type: object
+  response.UserResponse:
+    properties:
+      deactivatedAt:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Litmus Portal Authentication API
+  version: 3.14.0
+  description: "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like: <li>Update Profile</li> <li>Change Password</li> <li>Reset Password</li> <li>Create new users etc.</li>"
+paths:
+  /accept_invitation:
+    post:
+      consumes:
+      - application/json
+      description: Accept invitation to a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Accept invitation.
+      tags:
+      - ProjectRouter
+  /capabilities:
+    get:
+      consumes:
+      - application/json
+      description: Returns capabilities that can be leveraged by frontend services
+        to toggle certain features.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CapabilitiesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get capabilities of Auth Server.
+      tags:
+      - CapabilitiesRouter
+  /create_project:
+    post:
+      consumes:
+      - application/json
+      description: Create a new project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Create project.
+      tags:
+      - ProjectRouter
+  /create_token:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new api token for the user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.NewApiToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /create_user:
+    post:
+      consumes:
+      - application/json
+      description: Create new user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidEmail'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUserExists'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /decline_invitation:
+    post:
+      consumes:
+      - application/json
+      description: Decline invitation to a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Decline invitation.
+      tags:
+      - ProjectRouter
+  /delete_project/:project_id:
+    post:
+      consumes:
+      - application/json
+      description: Delete a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrProjectNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - ProjectRouter
+  /dex/callback:
+    get:
+      consumes:
+      - application/json
+      description: DexRouter creates all the required routes for OAuth purposes. .
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - DexRouter
+  /dex/login:
+    get:
+      consumes:
+      - application/json
+      description: DexRouter creates all the required routes for OAuth purposes. .
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - DexRouter
+  /get_owner_projects:
+    get:
+      consumes:
+      - application/json
+      description: Return owner of projects.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get projects owner.
+      tags:
+      - ProjectRouter
+  /get_project/:project_id:
+    get:
+      consumes:
+      - application/json
+      description: Return a project.
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get user with project.
+      tags:
+      - ProjectRouter
+  /get_project_members/:project_id/:state:
+    get:
+      consumes:
+      - application/json
+      description: Return list of active project members.
+      parameters:
+      - description: State
+        in: path
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get active project members.
+      tags:
+      - ProjectRouter
+  /get_project_owners/:project_id/:state:
+    get:
+      consumes:
+      - application/json
+      description: Return list of active project owners.
+      parameters:
+      - description: State
+        in: path
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get active project Owners.
+      tags:
+      - ProjectRouter
+  /get_project_role/:project_id:
+    get:
+      consumes:
+      - application/json
+      description: Return role of a project.
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrProjectNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get project Role.
+      tags:
+      - ProjectRouter
+  /get_projects_stats:
+    get:
+      consumes:
+      - application/json
+      description: Return stats of a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /get_user/:uid:
+    get:
+      consumes:
+      - application/json
+      description: Get user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserNotFound'
+      tags:
+      - UserRouter
+  /get_user_with_project/:username:
+    get:
+      consumes:
+      - application/json
+      description: Return users who have a project.
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserNotFound'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get user with project.
+      tags:
+      - ProjectRouter
+  /invite_users/:project_id:
+    get:
+      consumes:
+      - application/json
+      description: Invite users.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /leave_project:
+    post:
+      consumes:
+      - application/json
+      description: Leave project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Leave project.
+      tags:
+      - ProjectRouter
+  /list_invitations_with_filters/:invitation_state:
+    get:
+      consumes:
+      - application/json
+      description: Return list of invitations.
+      parameters:
+      - description: Invitation State
+        in: path
+        name: invitation_state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: List invitations.
+      tags:
+      - ProjectRouter
+  /list_projects:
+    get:
+      consumes:
+      - application/json
+      description: Return stats of a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User Login.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserDeactivated'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrInvalidCredentials'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Revokes the token passed in the Authorization header.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /readiness:
+    get:
+      consumes:
+      - application/json
+      description: Return list of tags.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - MiscRouter
+  /remove_invitation:
+    post:
+      consumes:
+      - application/json
+      description: Remove invitation of a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Remove invitation.
+      tags:
+      - ProjectRouter
+  /remove_token:
+    post:
+      consumes:
+      - application/json
+      description: Delete api token for the user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /reset/password:
+    post:
+      consumes:
+      - application/json
+      description: Reset user password.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrStrictPasswordPolicyViolation'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /send_invitation:
+    post:
+      consumes:
+      - application/json
+      description: Send invitation to a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserNotFound'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Send invitation.
+      tags:
+      - ProjectRouter
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Status will request users list and return, if successful, a http
+        code 200.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - MiscRouter
+  /token/:uid:
+    post:
+      consumes:
+      - application/json
+      description: Returns all the api tokens for the user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiTokenResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /update/details:
+    post:
+      consumes:
+      - application/json
+      description: Update users details.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrStrictUsernamePolicyViolation'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+  /update/password:
+    post:
+      consumes:
+      - application/json
+      description: Update user password.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrOldPassword'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrInvalidCredentials'
+      tags:
+      - UserRouter
+  /update/state:
+    post:
+      consumes:
+      - application/json
+      description: Updates the user state.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+      tags:
+      - UserRouter
+  /update_member_role:
+    post:
+      consumes:
+      - application/json
+      description: Return updated member role.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Update member role.
+      tags:
+      - ProjectRouter
+  /update_project_name:
+    post:
+      consumes:
+      - application/json
+      description: Return updated project name.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Update project name.
+      tags:
+      - ProjectRouter
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Fetch users.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      tags:
+      - UserRouter
+swagger: "2.0"
