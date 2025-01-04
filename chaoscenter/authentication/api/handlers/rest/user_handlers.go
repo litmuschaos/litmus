@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -34,6 +35,8 @@ const BearerSchema = "Bearer "
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.UserResponse{}
 //	@Router			/create_user [post]
+//
+// CreateUser creates a new user
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -94,7 +97,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		userRequest.CreatedAt = createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)
-		if err == utils.ErrUserExists {
+		if errors.Is(err, utils.ErrUserExists) {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserExists], presenter.CreateErrorResponse(utils.ErrUserExists))
 			return
@@ -121,6 +124,8 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update/details [post]
+//
+// UpdateUser updates the user details
 func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.UserDetails
@@ -168,8 +173,8 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.Param("uid")
 
-		// Validating logged in user
-		// Must be either requesting info from the logged in user
+		// Validating logged-in user
+		// Must be either requesting info from the logged-in user
 		// or any user if it has the admin role
 		role := c.MustGet("role").(string)
 		if c.MustGet("uid").(string) != uid && role != string(entities.RoleAdmin) {
@@ -199,6 +204,8 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.UserResponse{}
 //	@Router			/users [get]
+//
+// FetchUsers fetches all the users
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -227,6 +234,8 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.UserResponse{}
 //	@Router			/invite_users/:project_id [get]
+//
+// InviteUsers invites users to the project
 func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -245,11 +254,11 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 
 		projectMembers, err := service.GetProjectMembers(projectID, "all")
 
-		var uids []string
+		var userIds []string
 		for _, k := range projectMembers {
-			uids = append(uids, k.UserID)
+			userIds = append(userIds, k.UserID)
 		}
-		users, err := service.InviteUsers(uids)
+		users, err := service.InviteUsers(userIds)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -272,6 +281,8 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.LoginResponse{}
 //	@Router			/login [post]
+//
+// LoginUser returns the token for the user if the credentials are valid
 func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User
@@ -425,6 +436,8 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		401	{object}	response.ErrInvalidCredentials
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update/password [post]
+//
+// UpdatePassword updates the user password
 func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
@@ -534,6 +547,8 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/reset/password [post]
+//
+// ResetPassword resets the user password
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -607,6 +622,8 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update/state [post]
+//
+// UpdateUserState updates the user state
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -689,8 +706,8 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// Validating logged in user
-		// Requesting info must be from the logged in user
+		// Validating logged-in user
+		// Requesting info must be from the logged-in user
 		if c.MustGet("uid").(string) != apiTokenRequest.UserID {
 			log.Error("auth error: unauthorized")
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
@@ -746,8 +763,8 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.Param("uid")
 
-		// Validating logged in user
-		// Requesting info must be from the logged in user
+		// Validating logged-in user
+		// Requesting info must be from the logged-in user
 		if c.MustGet("uid").(string) != uid {
 			log.Error("auth error: unauthorized")
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
@@ -789,8 +806,8 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// Validating logged in user
-		// Requesting info must be from the logged in user
+		// Validating logged-in user
+		// Requesting info must be from the logged-in user
 		if c.MustGet("uid").(string) != deleteApiTokenRequest.UserID {
 			log.Error("auth error: unauthorized")
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],

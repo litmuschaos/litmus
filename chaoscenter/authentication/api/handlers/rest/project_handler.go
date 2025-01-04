@@ -1,12 +1,13 @@
 package rest
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
-	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
+	projectUtils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -20,8 +21,9 @@ import (
 )
 
 // GetUserWithProject 		godoc
+//
 //	@Summary		Get user with project.
-//	@Description	Return users who has a project.
+//	@Description	Return users who have a project.
 //	@Tags			ProjectRouter
 //	@Param			username	path	string	true	"Username"
 //	@Accept			json
@@ -31,14 +33,14 @@ import (
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/get_user_with_project/:username [get]
-
+//
 // GetUserWithProject returns user and project details based on username
 func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		username := c.Param("username")
 
-		// Validating logged in user
-		// Must be either requesting info from the logged in user
+		// Validating logged-in user
+		// Must be either requesting info from the logged-in user
 		// or any user if it has the admin role
 		role := c.MustGet("role").(string)
 		if c.MustGet("username").(string) != username && role != string(entities.RoleAdmin) {
@@ -55,7 +57,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		request := project_utils.GetProjectFilters(c)
+		request := projectUtils.GetProjectFilters(c)
 		request.UserID = user.ID
 
 		response, err := service.GetProjectsByUserID(request)
@@ -78,6 +80,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // GetProject 		godoc
+//
 //	@Summary		Get user with project.
 //	@Description	Return a project.
 //	@Tags			ProjectRouter
@@ -88,7 +91,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/get_project/:project_id [get]
-
+//
 // GetProject queries the project with a given projectID from the database
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -131,7 +134,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		request := project_utils.GetProjectFilters(c)
+		request := projectUtils.GetProjectFilters(c)
 
 		response, err := service.GetProjectsByUserID(request)
 		if response == nil || (response.TotalNumberOfProjects != nil && *response.TotalNumberOfProjects == 0) {
@@ -160,7 +163,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 //	@Success		200	{object}	response.Response{}
 //	@Router			/get_projects_stats [get]
 //
-// GetProjectStats is used to retrive stats related to projects in the DB
+// GetProjectStats is used to retrieve stats related to projects in the DB
 func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role := c.MustGet("role").(string)
@@ -195,6 +198,8 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/get_project_members/:project_id/:state [get]
+//
+// GetActiveProjectMembers returns the list of active project members
 func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -231,6 +236,8 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/get_project_owners/:project_id/:state [get]
+//
+// GetActiveProjectOwners returns the list of active project owners
 func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -310,6 +317,8 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/create_project [post]
+//
+// CreateProject is used to create a new project
 func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
@@ -435,8 +444,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Success		200	{object}	response.Response{}
 //	@Router			/send_invitation [post]
 //
-// SendInvitation sends an invitation to a new user and
-// returns an error if the member is already part of the project
+// SendInvitation sends an invitation to a new user and returns an error if the member is already part of the project
 func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var member entities.MemberInput
@@ -476,7 +484,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		user, err := service.GetUser(member.UserID)
 
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
 			return
 		} else if err != nil {
@@ -486,7 +494,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		invitation, err := getInvitation(service, member)
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrProjectNotFound], presenter.CreateErrorResponse(utils.ErrProjectNotFound))
 			return
 		} else if err != nil {
@@ -540,8 +548,8 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 // AcceptInvitation 		godoc
 //
-//	@Summary		Accept invitaion.
-//	@Description	Accept inviation to a project.
+//	@Summary		Accept invitation.
+//	@Description	Accept invitation to a project.
 //	@Tags			ProjectRouter
 //	@Accept			json
 //	@Produce		json
@@ -601,7 +609,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 // DeclineInvitation 		godoc
 //
 //	@Summary		Decline invitation.
-//	@Description	Deecline invitation to a project.
+//	@Description	Decline invitation to a project.
 //	@Tags			ProjectRouter
 //	@Accept			json
 //	@Produce		json
@@ -742,7 +750,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{obejct}	response.Response{}
+//	@Success		200	{object}	response.Response{}
 //	@Router			/remove_invitation [post]
 //
 // RemoveInvitation removes member or cancels invitation
@@ -1009,7 +1017,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 		res, err := service.GetProjectRole(projectID, uid)
 		if err != nil {
 			log.Error(err)
-			if err == mongo.ErrNoDocuments {
+			if errors.Is(err, mongo.ErrNoDocuments) {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrProjectNotFound], presenter.CreateErrorResponse(utils.ErrProjectNotFound))
 				return
 			}
@@ -1036,7 +1044,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrProjectNotFound
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
-//	@Router			/delete_project/{project_id} [post]
+//	@Router			/delete_project/:project_id [post]
 //
 // DeleteProject is used to delete a project.
 func DeleteProject(service services.ApplicationService) gin.HandlerFunc {
