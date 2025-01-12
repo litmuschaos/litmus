@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
 	projectUtils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
@@ -31,7 +32,7 @@ import (
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		400	{object}	response.ErrUserNotFound
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.UserWithProject{}
 //	@Router			/get_user_with_project/:username [get]
 //
 // GetUserWithProject returns user and project details based on username
@@ -60,22 +61,22 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 		request := projectUtils.GetProjectFilters(c)
 		request.UserID = user.ID
 
-		response, err := service.GetProjectsByUserID(request)
+		res, err := service.GetProjectsByUserID(request)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
-		outputUser := &entities.UserWithProject{
+		outputUser := entities.UserWithProject{
 			Username: user.Username,
 			ID:       user.ID,
 			Email:    user.Email,
 			Name:     user.Name,
-			Projects: response.Projects,
+			Projects: res.Projects,
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": outputUser})
+		c.JSON(http.StatusOK, response.UserWithProject{Data: outputUser})
 	}
 }
 
@@ -89,7 +90,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Produce		json
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Project{}
 //	@Router			/get_project/:project_id [get]
 //
 // GetProject queries the project with a given projectID from the database
@@ -116,7 +117,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": project})
+		c.JSON(http.StatusOK, response.Project{Data: *project})
 	}
 }
 
@@ -128,7 +129,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.ListProjectResponse{}
 //	@Router			/list_projects [get]
 //
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
@@ -136,8 +137,8 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := projectUtils.GetProjectFilters(c)
 
-		response, err := service.GetProjectsByUserID(request)
-		if response == nil || (response.TotalNumberOfProjects != nil && *response.TotalNumberOfProjects == 0) {
+		res, err := service.GetProjectsByUserID(request)
+		if res == nil || (res.TotalNumberOfProjects != nil && *res.TotalNumberOfProjects == 0) {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
@@ -148,7 +149,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": response})
+		c.JSON(http.StatusOK, response.ListProjectResponse{Data: *res})
 	}
 }
 
@@ -160,7 +161,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.ProjectStats{}
 //	@Router			/get_projects_stats [get]
 //
 // GetProjectStats is used to retrieve stats related to projects in the DB
@@ -183,7 +184,7 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": project})
+		c.JSON(http.StatusOK, response.ProjectStats{Data: project})
 	}
 }
 
@@ -196,7 +197,7 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Members{}
 //	@Router			/get_project_members/:project_id/:state [get]
 //
 // GetActiveProjectMembers returns the list of active project members
@@ -221,7 +222,7 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": members})
+		c.JSON(http.StatusOK, response.Members{Data: members})
 	}
 }
 
@@ -234,7 +235,7 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Members{}
 //	@Router			/get_project_owners/:project_id/:state [get]
 //
 // GetActiveProjectOwners returns the list of active project owners
@@ -246,7 +247,7 @@ func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": owners})
+		c.JSON(http.StatusOK, response.Members{Data: owners})
 	}
 }
 
@@ -274,7 +275,7 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.ListInvitationResponse{}
 //	@Router			/list_invitations_with_filters/:invitation_state [get]
 //
 // ListInvitations returns the Invitation status
@@ -282,7 +283,7 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uID := c.MustGet("uid").(string)
 		invitationState := c.Param("invitation_state")
-		var response []entities.ListInvitationResponse
+		var res []entities.ListInvitationResponse
 		projects, err := service.ListInvitations(uID, entities.Invitation(invitationState))
 		if err != nil {
 			log.Errorf("Error while fetching invitations: %v", err)
@@ -301,9 +302,9 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 					inviteRes.InvitationRole = member.Role
 				}
 			}
-			response = append(response, inviteRes)
+			res = append(res, inviteRes)
 		}
-		c.JSON(http.StatusOK, gin.H{"data": response})
+		c.JSON(http.StatusOK, response.ListInvitationResponse{Data: res})
 	}
 }
 
@@ -315,7 +316,7 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Project{}
 //	@Router			/create_project [post]
 //
 // CreateProject is used to create a new project
@@ -423,7 +424,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": newProject.GetProjectOutput()})
+		c.JSON(http.StatusOK, response.Project{Data: *newProject.GetProjectOutput()})
 
 	}
 
@@ -441,7 +442,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRole
 //	@Failure		400	{object}	response.ErrUserNotFound
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Member{}
 //	@Router			/send_invitation [post]
 //
 // SendInvitation sends an invitation to a new user and returns an error if the member is already part of the project
@@ -534,7 +535,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": entities.Member{
+		c.JSON(http.StatusOK, response.Member{Data: entities.Member{
 			UserID:     user.ID,
 			Username:   user.Username,
 			Name:       user.Name,
@@ -556,7 +557,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/accept_invitation [post]
 //
 // AcceptInvitation is used to accept an invitation
@@ -600,9 +601,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successful",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "Successful"})
 	}
 }
 
@@ -616,7 +615,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/decline_invitation [post]
 //
 // DeclineInvitation is used to decline an invitation
@@ -660,9 +659,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successful",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successful"})
 	}
 }
 
@@ -676,7 +673,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/leave_project [post]
 //
 // LeaveProject is used to leave a project
@@ -734,9 +731,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successful",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successful"})
 	}
 }
 
@@ -750,7 +745,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/remove_invitation [post]
 //
 // RemoveInvitation removes member or cancels invitation
@@ -822,9 +817,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 			}
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successful",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successful"})
 	}
 }
 
@@ -838,7 +831,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update_project_name [post]
 //
 // UpdateProjectName is used to update a project's name
@@ -897,9 +890,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successful",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successful"})
 	}
 }
 
@@ -913,7 +904,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update_member_role [post]
 //
 // UpdateMemberRole is used to update a member role in the project
@@ -958,9 +949,7 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successfully updated Role",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successful"})
 	}
 }
 
@@ -974,7 +963,7 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.Projects{}
 //	@Router			/get_owner_projects [get]
 //
 // GetOwnerProjects returns an array of projects in which user is an owner
@@ -988,9 +977,7 @@ func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": res,
-		})
+		c.JSON(http.StatusOK, response.Projects{Data: res})
 
 	}
 }
@@ -1005,7 +992,7 @@ func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 //	@Produce		json
 //	@Failure		400	{object}	response.ErrProjectNotFound
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.ProjectRole{}
 //	@Router			/get_project_role/:project_id [get]
 //
 // GetProjectRole returns the role of a user in the project
@@ -1028,9 +1015,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 		if res != nil {
 			role = string(*res)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"role": role,
-		})
+		c.JSON(http.StatusOK, response.ProjectRole{Role: role})
 
 	}
 }
@@ -1043,7 +1028,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Produce		json
 //	@Failure		400	{object}	response.ErrProjectNotFound
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/delete_project/:project_id [post]
 //
 // DeleteProject is used to delete a project.
@@ -1070,8 +1055,6 @@ func DeleteProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Successfully deleted project.",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "Successfully deleted project."})
 	}
 }

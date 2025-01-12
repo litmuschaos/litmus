@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
@@ -154,7 +155,7 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "User details updated successfully"})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "User details updated successfully"})
 	}
 }
 
@@ -418,9 +419,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"message": "successfully logged out",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "successfully logged out"})
 	}
 }
 
@@ -434,7 +433,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
 //	@Failure		400	{object}	response.ErrOldPassword
 //	@Failure		401	{object}	response.ErrInvalidCredentials
-//	@Success		200	{object}	response.MessageResponse{}
+//	@Success		200	{object}	response.ProjectIDWithMessage{}
 //	@Router			/update/password [post]
 //
 // UpdatePassword updates the user password
@@ -528,10 +527,8 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			}
 			defaultProject = newProject.ID
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"message":   "password has been updated successfully",
-			"projectID": defaultProject,
-		})
+		c.JSON(http.StatusOK, response.ProjectIDWithMessage{Message: "password has been updated successfully", ProjectID: defaultProject})
+
 	}
 }
 
@@ -606,9 +603,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"message": "password has been reset successfully",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "password has been reset successfully"})
 	}
 }
 
@@ -677,9 +672,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "user's state updated successfully",
-		})
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "user's state updated successfully"})
 	}
 }
 
@@ -838,10 +831,8 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
-		} else {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "api token deleted successfully",
-			})
 		}
+
+		c.JSON(http.StatusOK, response.MessageResponse{Message: "api token deleted successfully"})
 	}
 }

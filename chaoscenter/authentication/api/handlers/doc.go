@@ -1,6 +1,9 @@
 package response
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+)
 
 type Response struct {
 	Response string
@@ -133,4 +136,54 @@ type ErrInvalidEmail struct {
 type ErrProjectNotFoundstruct struct {
 	Code    int    `json:"code" example:"400"`
 	Message string `json:"message" example:"project does not exist"`
+}
+
+type ReadinessAPIStatus struct {
+	DataBase    string `json:"database"`
+	Collections string `json:"collections"`
+}
+
+type APIStatus struct {
+	Status string `json:"status"`
+}
+
+type UserWithProject struct {
+	Data entities.UserWithProject `json:"data"`
+}
+
+type Project struct {
+	Data entities.Project `json:"data"`
+}
+
+type Projects struct {
+	Data []*entities.Project `json:"data"`
+}
+
+type ListProjectResponse struct {
+	Data entities.ListProjectResponse `json:"data"`
+}
+
+type ProjectStats struct {
+	Data []*entities.ProjectStats `json:"data"`
+}
+
+type Members struct {
+	Data []*entities.Member `json:"data"`
+}
+
+type Member struct {
+	Data entities.Member `json:"data"`
+}
+
+type ListInvitationResponse struct {
+	Data []entities.ListInvitationResponse `json:"data"`
+}
+
+type ProjectRole struct {
+	Role string `json:"role"`
+}
+
+type ProjectIDWithMessage struct {
+	ProjectID string `json:"projectID"`
+	Message   string `json:"message"`
 }
