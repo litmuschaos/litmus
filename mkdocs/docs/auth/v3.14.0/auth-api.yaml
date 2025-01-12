@@ -1,4 +1,164 @@
 definitions:
+  entities.Invitation:
+    enum:
+    - Pending
+    - Accepted
+    - Declined
+    - Exited
+    type: string
+    x-enum-varnames:
+    - PendingInvitation
+    - AcceptedInvitation
+    - DeclinedInvitation
+    - ExitedProject
+  entities.ListInvitationResponse:
+    properties:
+      invitationRole:
+        $ref: '#/definitions/entities.MemberRole'
+      projectID:
+        type: string
+      projectName:
+        type: string
+      projectOwner:
+        $ref: '#/definitions/entities.Member'
+    type: object
+  entities.ListProjectResponse:
+    properties:
+      projects:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+      totalNumberOfProjects:
+        type: integer
+    type: object
+  entities.Member:
+    properties:
+      deactivatedAt:
+        type: integer
+      email:
+        type: string
+      invitation:
+        $ref: '#/definitions/entities.Invitation'
+      joinedAt:
+        type: integer
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/entities.MemberRole'
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.MemberRole:
+    enum:
+    - Owner
+    - Executor
+    - Viewer
+    type: string
+    x-enum-varnames:
+    - RoleOwner
+    - RoleExecutor
+    - RoleViewer
+  entities.MemberStat:
+    properties:
+      owner:
+        items:
+          $ref: '#/definitions/entities.Owner'
+        type: array
+      total:
+        type: integer
+    type: object
+  entities.Owner:
+    properties:
+      deactivatedAt:
+        type: integer
+      invitation:
+        $ref: '#/definitions/entities.Invitation'
+      joinedAt:
+        type: integer
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.Project:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      description:
+        type: string
+      isRemoved:
+        type: boolean
+      members:
+        items:
+          $ref: '#/definitions/entities.Member'
+        type: array
+      name:
+        type: string
+      projectID:
+        type: string
+      state:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      updatedAt:
+        type: integer
+      updatedBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+    type: object
+  entities.ProjectStats:
+    properties:
+      members:
+        $ref: '#/definitions/entities.MemberStat'
+      name:
+        type: string
+      projectID:
+        type: string
+    type: object
+  entities.UserDetailResponse:
+    properties:
+      email:
+        type: string
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.UserWithProject:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      email:
+        type: string
+      id:
+        type: string
+      isRemoved:
+        type: boolean
+      name:
+        type: string
+      projects:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+      updatedAt:
+        type: integer
+      updatedBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      username:
+        type: string
+    type: object
+  response.APIStatus:
+    properties:
+      status:
+        type: string
+    type: object
   response.ApiTokenResponse:
     properties:
       createdAt:
@@ -142,7 +302,31 @@ definitions:
         example: user does not exist
         type: string
     type: object
+  response.ListInvitationResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.ListInvitationResponse'
+        type: array
+    type: object
+  response.ListProjectResponse:
+    properties:
+      data:
+        $ref: '#/definitions/entities.ListProjectResponse'
+    type: object
   response.LoginResponse:
+    type: object
+  response.Member:
+    properties:
+      data:
+        $ref: '#/definitions/entities.Member'
+    type: object
+  response.Members:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.Member'
+        type: array
     type: object
   response.MessageResponse:
     properties:
@@ -150,6 +334,44 @@ definitions:
         type: string
     type: object
   response.NewApiToken:
+    type: object
+  response.Project:
+    properties:
+      data:
+        $ref: '#/definitions/entities.Project'
+    type: object
+  response.ProjectIDWithMessage:
+    properties:
+      message:
+        type: string
+      projectID:
+        type: string
+    type: object
+  response.ProjectRole:
+    properties:
+      role:
+        type: string
+    type: object
+  response.ProjectStats:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.ProjectStats'
+        type: array
+    type: object
+  response.Projects:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+    type: object
+  response.ReadinessAPIStatus:
+    properties:
+      collections:
+        type: string
+      database:
+        type: string
     type: object
   response.Response:
     properties:
@@ -173,11 +395,17 @@ definitions:
       username:
         type: string
     type: object
+  response.UserWithProject:
+    properties:
+      data:
+        $ref: '#/definitions/entities.UserWithProject'
+    type: object
 info:
   contact: {}
   title: Litmus Portal Authentication API
   version: 3.14.0
   description: "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like: <li>Update Profile</li> <li>Change Password</li> <li>Reset Password</li> <li>Create new users etc.</li>"
+
 paths:
   /accept_invitation:
     post:
@@ -190,7 +418,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -237,7 +465,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Project'
         "500":
           description: Internal Server Error
           schema:
@@ -304,7 +532,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -331,7 +559,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -389,7 +617,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Projects'
         "400":
           description: Bad Request
           schema:
@@ -422,7 +650,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Project'
         "401":
           description: Unauthorized
           schema:
@@ -451,7 +679,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Members'
         "500":
           description: Internal Server Error
           schema:
@@ -476,7 +704,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Members'
         "500":
           description: Internal Server Error
           schema:
@@ -501,7 +729,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ProjectRole'
         "400":
           description: Bad Request
           schema:
@@ -524,7 +752,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ProjectStats'
         "500":
           description: Internal Server Error
           schema:
@@ -567,7 +795,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.UserWithProject'
         "400":
           description: Bad Request
           schema:
@@ -616,7 +844,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -649,7 +877,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ListInvitationResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -668,7 +896,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ListProjectResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -735,7 +963,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ReadinessAPIStatus'
         "500":
           description: Internal Server Error
           schema:
@@ -753,7 +981,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -828,7 +1056,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Member'
         "400":
           description: Bad Request
           schema:
@@ -856,7 +1084,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.APIStatus'
         "500":
           description: Internal Server Error
           schema:
@@ -918,7 +1146,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.MessageResponse'
+            $ref: '#/definitions/response.ProjectIDWithMessage'
         "400":
           description: Bad Request
           schema:
@@ -962,7 +1190,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -989,7 +1217,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
