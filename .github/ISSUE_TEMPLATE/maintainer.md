@@ -26,7 +26,7 @@ assignees: ""
 - @<sponsor-1>
 - @<sponsor-2>
 
-### List of contributions to the Argoproj project
+### List of contributions to the LitmusChaos project
 
 - PRs reviewed / authored
 - Issues responded to
