@@ -1,3 +1,8 @@
+# LitmusChaos Maintainers
+
+- [GOVERNANCE.md](./GOVERNANCE.md) describes the LitmusChaos governance.
+- [community-roles.md](./community-roles.md) describes the responsibilities and requirements on the project roles.
+
 ### Component-Wise Code Owners & Primary Reviewers
 
 Area             |Components                       |Source                                           |Maintainers                                 |Reviewers|
@@ -14,7 +19,8 @@ integrations     |CI/CD plugins, wrappers          |chaos-ci-lib, gitlab-templat
 helm-charts      |control-plane, agent, experiments|litmus-helm                                      |@Jasstkn, @ispeakc0de, @imrajdas, @Jonsy13             |@ksatchit, @uditgaurav         |
 documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
 websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@SahilKr24, @hrishavjha, @ajeshbaby    |@umamukkara, @S-ayanide        |
-### Consolidated Maintainers List 
+
+### Consolidated Maintainers List
 
 ```
 "Amit Kumar Das",@amityt,amit.das@harness.io
