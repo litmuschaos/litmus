@@ -35,7 +35,7 @@ type CapabilitiesResponse struct {
 }
 
 type MessageResponse struct {
-	Message string
+	Message string `json:"message"`
 }
 
 type NewApiToken struct {
@@ -184,6 +184,6 @@ type ProjectRole struct {
 }
 
 type ProjectIDWithMessage struct {
-	ProjectID string `json:"projectID"`
 	Message   string `json:"message"`
+	ProjectID string `json:"projectID"`
 }
