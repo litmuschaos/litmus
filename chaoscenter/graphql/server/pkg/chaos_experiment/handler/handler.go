@@ -1516,7 +1516,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
 			return false, fmt.Errorf("no running or timeout experiments found")
 		}
-	} else if experimentRunID != nil && *experimentRunID != "" {
+	} else if *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
 	}
 

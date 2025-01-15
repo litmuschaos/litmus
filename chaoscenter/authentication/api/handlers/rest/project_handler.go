@@ -142,6 +142,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
+			return
 		}
 		if err != nil {
 			log.Error(err)
