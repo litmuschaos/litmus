@@ -151,7 +151,7 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 }
 
 // UpdateProbe - Update a new Probe
-func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string, authOperator *authorization.Operator) (string, error) {
+func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := p.authConfigOperator.GetUsername(tkn)
 	if err != nil {

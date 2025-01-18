@@ -200,7 +200,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 }
 
 // SaveChaosHub is used for Adding a new ChaosHub
-func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest, projectID string, authConfigOperator *authorization.Operator) (*model.ChaosHub, error) {
+func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest, projectID string) (*model.ChaosHub, error) {
 
 	IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID)
 	if err != nil {
@@ -312,7 +312,7 @@ func (c *chaosHubService) SyncChaosHub(ctx context.Context, hubID string, projec
 	return "Successfully synced ChaosHub", nil
 }
 
-func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest, projectID string, authConfigOperator *authorization.Operator) (*model.ChaosHub, error) {
+func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest, projectID string) (*model.ChaosHub, error) {
 
 	cloneHub := model.CloningInput{
 		RepoBranch:    chaosHub.RepoBranch,
