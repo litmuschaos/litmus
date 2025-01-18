@@ -132,71 +132,71 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 }
 
 func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.CreateRemoteChaosHub, projectID string) (*model.ChaosHub, error) {
-    IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID)
-    if err != nil {
-        return nil, err
-    }
-    if IsExist == true {
-        return nil, errors.New("name already exists")
-    }
-    description := ""
-    if chaosHub.Description != nil {
-        description = *chaosHub.Description
-    }
-    currentTime := time.Now()
+	IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID)
+	if err != nil {
+		return nil, err
+	}
+	if IsExist == true {
+		return nil, errors.New("name already exists")
+	}
+	description := ""
+	if chaosHub.Description != nil {
+		description = *chaosHub.Description
+	}
+	currentTime := time.Now()
 
-    tkn := ctx.Value(authorization.AuthKey).(string)
-    username, err := c.authConfigOperator.GetUsername(tkn)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
-    if err != nil {
-        log.Error("error getting userID: ", err)
-        return nil, err
-    }
+	if err != nil {
+		log.Error("error getting userID: ", err)
+		return nil, err
+	}
 
-    newHub := &dbSchemaChaosHub.ChaosHub{
-        ID:         uuid.New().String(),
-        ProjectID:  projectID,
-        RepoURL:    chaosHub.RepoURL,
-        RepoBranch: "",
-        RemoteHub:  chaosHub.RemoteHub,
-        ResourceDetails: mongodb.ResourceDetails{
-            Name:        chaosHub.Name,
-            Description: description,
-            Tags:        chaosHub.Tags,
-        },
-        IsPrivate: false,
-        HubType:   string(model.HubTypeRemote),
-        AuthType:  string(model.AuthTypeNone),
-        Audit: mongodb.Audit{
-            CreatedAt: currentTime.UnixMilli(),
-            UpdatedAt: currentTime.UnixMilli(),
-            IsRemoved: false,
-            CreatedBy: mongodb.UserDetailResponse{
-                Username: username,
-            },
-            UpdatedBy: mongodb.UserDetailResponse{
-                Username: username,
-            },
-        },
-        LastSyncedAt: time.Now().UnixMilli(),
-        IsDefault:    false,
-    }
+	newHub := &dbSchemaChaosHub.ChaosHub{
+		ID:         uuid.New().String(),
+		ProjectID:  projectID,
+		RepoURL:    chaosHub.RepoURL,
+		RepoBranch: "",
+		RemoteHub:  chaosHub.RemoteHub,
+		ResourceDetails: mongodb.ResourceDetails{
+			Name:        chaosHub.Name,
+			Description: description,
+			Tags:        chaosHub.Tags,
+		},
+		IsPrivate: false,
+		HubType:   string(model.HubTypeRemote),
+		AuthType:  string(model.AuthTypeNone),
+		Audit: mongodb.Audit{
+			CreatedAt: currentTime.UnixMilli(),
+			UpdatedAt: currentTime.UnixMilli(),
+			IsRemoved: false,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+		},
+		LastSyncedAt: time.Now().UnixMilli(),
+		IsDefault:    false,
+	}
 
-    // Adding the new hub into database with the given name.
-    err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
-    if err != nil {
-        log.Error(err)
-        return nil, err
-    }
+	// Adding the new hub into database with the given name.
+	err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
 
-    err = handler.DownloadRemoteHub(chaosHub, projectID)
-    if err != nil {
-        err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
-        log.Error(err)
-        return nil, err
-    }
+	err = handler.DownloadRemoteHub(chaosHub, projectID)
+	if err != nil {
+		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
+		log.Error(err)
+		return nil, err
+	}
 
-    return newHub.GetOutputChaosHub(), nil
+	return newHub.GetOutputChaosHub(), nil
 }
 
 // SaveChaosHub is used for Adding a new ChaosHub
