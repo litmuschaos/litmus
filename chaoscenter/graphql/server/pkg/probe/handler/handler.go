@@ -500,7 +500,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 }
 
 // DeleteProbe - Deletes a single Probe
-func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID string, authOperator *authorization.Operator) (bool, error) {
+func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error) {
 
 	_, err := p.probeOperator.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {

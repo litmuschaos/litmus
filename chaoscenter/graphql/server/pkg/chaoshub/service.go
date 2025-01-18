@@ -410,7 +410,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	return &newChaosHub, nil
 }
 
-func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string, authConfigOperator *authorization.Operator) (bool, error) {
+func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
