@@ -19,7 +19,7 @@ import (
 func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
-		chaosInfraOperator := chaos_infrastructure.NewChaosInfrastructureOperator(mongodbOperator) 
+		chaosInfraOperator := chaos_infrastructure.NewChaosInfrastructureOperator(mongodbOperator)
 		infraId, err := chaosInfraOperator.InfraValidateJWT(token)
 		if err != nil {
 			logrus.Error("Error validating JWT: ", err)

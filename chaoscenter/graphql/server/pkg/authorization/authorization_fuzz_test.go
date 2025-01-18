@@ -58,7 +58,7 @@ func generateJWTTokenFromClaims(claims jwt.MapClaims) (string, error) {
 }
 
 func FuzzUserValidateJWT(f *testing.F) {
-	operator := &Operator{}  
+	operator := &Operator{}
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		inputClaims := &jwt.MapClaims{}

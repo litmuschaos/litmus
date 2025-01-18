@@ -49,18 +49,17 @@ type Service interface {
 	GetChaosHubStats(ctx context.Context, projectID string) (*model.GetChaosHubStatsResponse, error)
 }
 
-
 type chaosHubService struct {
-    chaosHubOperator *dbSchemaChaosHub.Operator
-    authConfigOperator *authorization.Operator
+	chaosHubOperator   *dbSchemaChaosHub.Operator
+	authConfigOperator *authorization.Operator
 }
 
 // NewService returns a new instance of Service
 func NewService(chaosHubOperator *dbSchemaChaosHub.Operator, authConfigOperator *authorization.Operator) Service {
-    return &chaosHubService{
-        chaosHubOperator: chaosHubOperator,
-        authConfigOperator: authConfigOperator,
-    }
+	return &chaosHubService{
+		chaosHubOperator:   chaosHubOperator,
+		authConfigOperator: authConfigOperator,
+	}
 }
 
 // AddChaosHub is used for Adding a new ChaosHub

@@ -30,20 +30,20 @@ import (
 )
 
 type Service interface {
-    AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
-    UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
-    ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
-    DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
-    GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
-    GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
-    GetProbeYAMLData(ctx context.Context, probe model.GetProbeYAMLRequest, projectID string) (string, error)
-    ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error)
-    GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error)
-    GenerateCronExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.CronWorkflow, error)
+	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
+	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
+	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
+	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
+	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
+	GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
+	GetProbeYAMLData(ctx context.Context, probe model.GetProbeYAMLRequest, projectID string) (string, error)
+	ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error)
+	GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error)
+	GenerateCronExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.CronWorkflow, error)
 }
 
 type probeService struct {
-	probeOperator *dbSchemaProbe.Operator
+	probeOperator      *dbSchemaProbe.Operator
 	authConfigOperator *authorization.Operator
 }
 
@@ -60,10 +60,10 @@ func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 
 // NewProbeService returns a new instance of probeService
 func NewProbeService(probeOperator *dbSchemaProbe.Operator, authConfigOperator *authorization.Operator) Service {
-    return &probeService{
-        probeOperator: probeOperator,
-        authConfigOperator: authConfigOperator,
-    }
+	return &probeService{
+		probeOperator:      probeOperator,
+		authConfigOperator: authConfigOperator,
+	}
 }
 
 func Error(logFields logrus.Fields, message string) error {
@@ -401,7 +401,7 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 
 func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string) ([]*model.ProbeRecentExecutions, error) {
 	var mongodbOperator mongodb.MongoOperator
-	
+
 	var (
 		pipeline         mongo.Pipeline
 		expRuns          []dbChaosExperimentRun.ChaosExperimentRun
