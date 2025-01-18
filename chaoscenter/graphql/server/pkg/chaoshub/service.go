@@ -49,15 +49,18 @@ type Service interface {
 	GetChaosHubStats(ctx context.Context, projectID string) (*model.GetChaosHubStatsResponse, error)
 }
 
+
 type chaosHubService struct {
-	chaosHubOperator *dbSchemaChaosHub.Operator
+    chaosHubOperator *dbSchemaChaosHub.Operator
+    authConfigOperator *authorization.Operator
 }
 
 // NewService returns a new instance of Service
-func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
-	return &chaosHubService{
-		chaosHubOperator: chaosHubOperator,
-	}
+func NewService(chaosHubOperator *dbSchemaChaosHub.Operator, authConfigOperator *authorization.Operator) Service {
+    return &chaosHubService{
+        chaosHubOperator: chaosHubOperator,
+        authConfigOperator: authConfigOperator,
+    }
 }
 
 // AddChaosHub is used for Adding a new ChaosHub
@@ -75,7 +78,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		log.Error("error getting username: ", err)
 		return nil, err
@@ -129,7 +132,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 	return newHub.GetOutputChaosHub(), nil
 }
 
-func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.CreateRemoteChaosHub, projectID string) (*model.ChaosHub, error) {
+func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.CreateRemoteChaosHub, projectID string, authConfigOperator *authorization.Operator) (*model.ChaosHub, error) {
 	IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID)
 	if err != nil {
 		return nil, err
@@ -144,7 +147,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	currentTime := time.Now()
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	if err != nil {
 		log.Error("error getting userID: ", err)
@@ -198,7 +201,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 }
 
 // SaveChaosHub is used for Adding a new ChaosHub
-func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest, projectID string) (*model.ChaosHub, error) {
+func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest, projectID string, authConfigOperator *authorization.Operator) (*model.ChaosHub, error) {
 
 	IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID)
 	if err != nil {
@@ -211,7 +214,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	if err != nil {
 		log.Error("error getting userID: ", err)
@@ -310,7 +313,7 @@ func (c *chaosHubService) SyncChaosHub(ctx context.Context, hubID string, projec
 	return "Successfully synced ChaosHub", nil
 }
 
-func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest, projectID string) (*model.ChaosHub, error) {
+func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest, projectID string, authConfigOperator *authorization.Operator) (*model.ChaosHub, error) {
 
 	cloneHub := model.CloningInput{
 		RepoBranch:    chaosHub.RepoBranch,
@@ -367,7 +370,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 
 	time := time.Now().UnixMilli()
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	query := bson.D{{"hub_id", chaosHub.ID}, {"is_removed", false}}
 	update := bson.D{
@@ -408,9 +411,9 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	return &newChaosHub, nil
 }
 
-func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
+func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string, authConfigOperator *authorization.Operator) (bool, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return false, err
 	}

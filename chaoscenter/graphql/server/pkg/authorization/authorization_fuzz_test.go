@@ -58,6 +58,7 @@ func generateJWTTokenFromClaims(claims jwt.MapClaims) (string, error) {
 }
 
 func FuzzUserValidateJWT(f *testing.F) {
+	operator := &Operator{}  
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		inputClaims := &jwt.MapClaims{}
@@ -72,7 +73,7 @@ func FuzzUserValidateJWT(f *testing.F) {
 		}
 
 		// Run the test with the generated JWT token
-		claims, err := UserValidateJWT(tokenString, "")
+		claims, err := operator.UserValidateJWT(tokenString, "")
 		if err != nil {
 			t.Errorf("Error encountered: %v", err)
 		}
