@@ -107,7 +107,11 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
-	token, err := InfraCreateJWT(infraID)
+	var mongodbOperator mongodb.MongoOperator
+
+    operator := NewChaosInfrastructureOperator(mongodbOperator)
+
+	token, err := operator.InfraCreateJWT(infraID)
 	if err != nil {
 		return &model.RegisterInfraResponse{}, err
 	}
@@ -952,14 +956,18 @@ func updateVersionFormat(str string) (int, error) {
 
 // QueryServerVersion is used to fetch the version of the server
 func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
-	if err != nil {
-		return nil, err
-	}
-	return &model.ServerVersionResponse{
-		Key:   dbVersion.Key,
-		Value: dbVersion.Value.(string),
-	}, nil
+	var mongodbOperator mongodb.MongoOperator
+	
+    configOperator := config.NewConfigOperator(mongodbOperator)
+
+    dbVersion, err := configOperator.GetConfig(ctx, "version")
+    if err != nil {
+        return nil, err
+    }
+    return &model.ServerVersionResponse{
+        Key:   dbVersion.Key,
+        Value: dbVersion.Value.(string),
+    }, nil
 }
 
 // PodLog receives logs from the workflow-agent and publishes to frontend clients
