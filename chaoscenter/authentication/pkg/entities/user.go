@@ -49,11 +49,6 @@ type UpdateUserState struct {
 	IsDeactivate *bool  `json:"isDeactivate"`
 }
 
-// APIStatus defines structure for APIroute status
-type APIStatus struct {
-	Status string `json:"status"`
-}
-
 type UserWithProject struct {
 	Audit    `bson:",inline"`
 	ID       string     `bson:"_id" json:"id"`
