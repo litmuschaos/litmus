@@ -9,6 +9,19 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 )
 
+// Operator encapsulates the MongoDB operations
+type Operator struct {
+	mongoOperator mongodb.MongoOperator
+}
+
+// NewOperator returns a new instance of Operator
+func NewOperator(mongoOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		mongoOperator: mongoOperator,
+	}
+}
+
+// ReadinessAPIStatus represents the readiness status of the API
 type ReadinessAPIStatus struct {
 	DataBase    string `json:"database"`
 	Collections string `json:"collections"`
@@ -24,10 +37,11 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler() gin.HandlerFunc {
+// ReadinessHandler returns a handler function for readiness checks
+func (r *Operator) ReadinessHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dbFlag = "up"
-		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mongodb.MgoClient)
+		dbs, err := r.mongoOperator.ListDataBase(context.Background(), mongodb.MgoClient)
 		if err != nil {
 			dbFlag = "down"
 		}
