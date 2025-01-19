@@ -56,6 +56,7 @@ type ChaosExperimentRunHandler struct {
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
 	probeService               probe.Service
 	mongodbOperator            mongodb.MongoOperator
+	authConfigOperator         *authorization.Operator
 }
 
 // NewChaosExperimentRunHandler returns a new instance of ChaosWorkflowHandler
@@ -67,6 +68,7 @@ func NewChaosExperimentRunHandler(
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
 	probeService probe.Service,
 	mongodbOperator mongodb.MongoOperator,
+	authConfigOperator *authorization.Operator,
 ) *ChaosExperimentRunHandler {
 	return &ChaosExperimentRunHandler{
 		chaosExperimentRunService:  chaosExperimentRunService,
@@ -76,6 +78,7 @@ func NewChaosExperimentRunHandler(
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
 		probeService:               probeService,
 		mongodbOperator:            mongodbOperator,
+		authConfigOperator:         authConfigOperator,
 	}
 }
 
@@ -799,7 +802,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	)
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return nil, err
 	}
@@ -1003,7 +1006,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return err
 	}
