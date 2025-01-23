@@ -43,6 +43,7 @@ type Service interface {
 	DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error)
 	ListInfras(projectID string, request *model.ListInfraRequest) (*model.ListInfraResponse, error)
 	GetInfraDetails(ctx context.Context, infraID string, projectID string) (*model.Infra, error)
+	ListAll() ([]*dbChaosInfra.ChaosInfra, error)
 	SendInfraEvent(eventType, eventName, description string, infra model.Infra, r store.StateData)
 	GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error)
 	GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error)
@@ -59,6 +60,11 @@ type Service interface {
 type infraService struct {
 	infraOperator *dbChaosInfra.Operator
 	envOperator   *dbEnvironments.Operator
+}
+
+// List all infrastructures
+func (in *infraService) ListAll() ([]*dbChaosInfra.ChaosInfra, error) {
+	return in.infraOperator.GetAll();
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
