@@ -31,6 +31,7 @@ interface DetailsTabProps {
   probeData: ProbeInRuns[] | undefined;
   experimentRunID: string | undefined;
   infraID: string | undefined;
+  projectID: string | undefined;
   namespace: string | undefined;
   phase: ExperimentRunStatus | undefined;
   podID: string;
@@ -44,6 +45,7 @@ const DetailsTabs = ({
   phase,
   experimentRunID,
   infraID,
+  projectID,
   podID,
   manifest,
   probeData,
@@ -88,6 +90,7 @@ const DetailsTabs = ({
                 phase={phase}
                 workflowRunID={experimentRunID}
                 infraID={infraID}
+                projectID={projectID}
                 podID={podID}
               />
             )
@@ -110,6 +113,7 @@ const ExperimentRunDetailsPanel = ({
   phase,
   namespace,
   infraID,
+  projectID,
   probeData,
   podID,
   manifest,
@@ -261,6 +265,7 @@ const ExperimentRunDetailsPanel = ({
           probeData={probeData}
           experimentRunID={experimentRunID}
           infraID={infraID}
+          projectID={projectID}
           loading={loading}
           phase={phase}
           namespace={namespace}

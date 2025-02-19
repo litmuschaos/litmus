@@ -2,6 +2,7 @@ package types
 
 type PodLogRequest struct {
 	RequestID       string  `json:"requestID"`
+	ProjectID       string  `json:"projectID"`
 	InfraID         string  `json:"infraID"`
 	ExperimentRunID string  `json:"experimentRunID"`
 	PodName         string  `json:"podName"`
