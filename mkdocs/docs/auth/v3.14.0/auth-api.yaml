@@ -1,4 +1,164 @@
 definitions:
+  entities.Invitation:
+    enum:
+    - Pending
+    - Accepted
+    - Declined
+    - Exited
+    type: string
+    x-enum-varnames:
+    - PendingInvitation
+    - AcceptedInvitation
+    - DeclinedInvitation
+    - ExitedProject
+  entities.ListInvitationResponse:
+    properties:
+      invitationRole:
+        $ref: '#/definitions/entities.MemberRole'
+      projectID:
+        type: string
+      projectName:
+        type: string
+      projectOwner:
+        $ref: '#/definitions/entities.Member'
+    type: object
+  entities.ListProjectResponse:
+    properties:
+      projects:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+      totalNumberOfProjects:
+        type: integer
+    type: object
+  entities.Member:
+    properties:
+      deactivatedAt:
+        type: integer
+      email:
+        type: string
+      invitation:
+        $ref: '#/definitions/entities.Invitation'
+      joinedAt:
+        type: integer
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/entities.MemberRole'
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.MemberRole:
+    enum:
+    - Owner
+    - Executor
+    - Viewer
+    type: string
+    x-enum-varnames:
+    - RoleOwner
+    - RoleExecutor
+    - RoleViewer
+  entities.MemberStat:
+    properties:
+      owner:
+        items:
+          $ref: '#/definitions/entities.Owner'
+        type: array
+      total:
+        type: integer
+    type: object
+  entities.Owner:
+    properties:
+      deactivatedAt:
+        type: integer
+      invitation:
+        $ref: '#/definitions/entities.Invitation'
+      joinedAt:
+        type: integer
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.Project:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      description:
+        type: string
+      isRemoved:
+        type: boolean
+      members:
+        items:
+          $ref: '#/definitions/entities.Member'
+        type: array
+      name:
+        type: string
+      projectID:
+        type: string
+      state:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      updatedAt:
+        type: integer
+      updatedBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+    type: object
+  entities.ProjectStats:
+    properties:
+      members:
+        $ref: '#/definitions/entities.MemberStat'
+      name:
+        type: string
+      projectID:
+        type: string
+    type: object
+  entities.UserDetailResponse:
+    properties:
+      email:
+        type: string
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
+  entities.UserWithProject:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      email:
+        type: string
+      id:
+        type: string
+      isRemoved:
+        type: boolean
+      name:
+        type: string
+      projects:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+      updatedAt:
+        type: integer
+      updatedBy:
+        $ref: '#/definitions/entities.UserDetailResponse'
+      username:
+        type: string
+    type: object
+  response.APIStatus:
+    properties:
+      status:
+        type: string
+    type: object
   response.ApiTokenResponse:
     properties:
       createdAt:
@@ -142,7 +302,31 @@ definitions:
         example: user does not exist
         type: string
     type: object
+  response.ListInvitationResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.ListInvitationResponse'
+        type: array
+    type: object
+  response.ListProjectResponse:
+    properties:
+      data:
+        $ref: '#/definitions/entities.ListProjectResponse'
+    type: object
   response.LoginResponse:
+    type: object
+  response.Member:
+    properties:
+      data:
+        $ref: '#/definitions/entities.Member'
+    type: object
+  response.Members:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.Member'
+        type: array
     type: object
   response.MessageResponse:
     properties:
@@ -150,6 +334,44 @@ definitions:
         type: string
     type: object
   response.NewApiToken:
+    type: object
+  response.Project:
+    properties:
+      data:
+        $ref: '#/definitions/entities.Project'
+    type: object
+  response.ProjectIDWithMessage:
+    properties:
+      message:
+        type: string
+      projectID:
+        type: string
+    type: object
+  response.ProjectRole:
+    properties:
+      role:
+        type: string
+    type: object
+  response.ProjectStats:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.ProjectStats'
+        type: array
+    type: object
+  response.Projects:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entities.Project'
+        type: array
+    type: object
+  response.ReadinessAPIStatus:
+    properties:
+      collections:
+        type: string
+      database:
+        type: string
     type: object
   response.Response:
     properties:
@@ -173,22 +395,30 @@ definitions:
       username:
         type: string
     type: object
+  response.UserWithProject:
+    properties:
+      data:
+        $ref: '#/definitions/entities.UserWithProject'
+    type: object
 info:
   contact: {}
-  title: Chaoscenter API documentation
+  title: Litmus Portal Authentication API
+  version: 3.14.0
+  description: "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like: <li>Update Profile</li> <li>Change Password</li> <li>Reset Password</li> <li>Create new users etc.</li>"
+
 paths:
   /accept_invitation:
     post:
       consumes:
       - application/json
-      description: Accept inviation to a project.
+      description: Accept invitation to a project.
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -201,7 +431,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrServerError'
-      summary: Accept invitaion.
+      summary: Accept invitation.
       tags:
       - ProjectRouter
   /capabilities:
@@ -235,7 +465,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Project'
         "500":
           description: Internal Server Error
           schema:
@@ -295,14 +525,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Deecline invitation to a project.
+      description: Decline invitation to a project.
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -316,6 +546,28 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrServerError'
       summary: Decline invitation.
+      tags:
+      - ProjectRouter
+  /delete_project/:project_id:
+    post:
+      consumes:
+      - application/json
+      description: Delete a project.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrProjectNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
       tags:
       - ProjectRouter
   /dex/callback:
@@ -365,7 +617,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Projects'
         "400":
           description: Bad Request
           schema:
@@ -379,6 +631,35 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrServerError'
       summary: Get projects owner.
+      tags:
+      - ProjectRouter
+  /get_project/:project_id:
+    get:
+      consumes:
+      - application/json
+      description: Return a project.
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Project'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get user with project.
       tags:
       - ProjectRouter
   /get_project_members/:project_id/:state:
@@ -398,12 +679,37 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Members'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrServerError'
       summary: Get active project members.
+      tags:
+      - ProjectRouter
+  /get_project_owners/:project_id/:state:
+    get:
+      consumes:
+      - application/json
+      description: Return list of active project owners.
+      parameters:
+      - description: State
+        in: path
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Members'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get active project Owners.
       tags:
       - ProjectRouter
   /get_project_role/:project_id:
@@ -423,7 +729,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ProjectRole'
         "400":
           description: Bad Request
           schema:
@@ -446,7 +752,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ProjectStats'
         "500":
           description: Internal Server Error
           schema:
@@ -472,6 +778,39 @@ paths:
             $ref: '#/definitions/response.ErrUserNotFound'
       tags:
       - UserRouter
+  /get_user_with_project/:username:
+    get:
+      consumes:
+      - application/json
+      description: Return users who have a project.
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserWithProject'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserNotFound'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get user with project.
+      tags:
+      - ProjectRouter
   /invite_users/:project_id:
     get:
       consumes:
@@ -505,7 +844,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -538,7 +877,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ListInvitationResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -557,7 +896,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ListProjectResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -579,6 +918,10 @@ paths:
             $ref: '#/definitions/response.LoginResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrUserDeactivated'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrInvalidCredentials'
         "500":
@@ -620,7 +963,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.ReadinessAPIStatus'
         "500":
           description: Internal Server Error
           schema:
@@ -638,7 +981,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: obejct
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -713,7 +1056,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Member'
         "400":
           description: Bad Request
           schema:
@@ -733,7 +1076,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Status will request users list and return, if successful, an http
+      description: Status will request users list and return, if successful, a http
         code 200.
       produces:
       - application/json
@@ -741,7 +1084,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.APIStatus'
         "500":
           description: Internal Server Error
           schema:
@@ -803,7 +1146,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.MessageResponse'
+            $ref: '#/definitions/response.ProjectIDWithMessage'
         "400":
           description: Bad Request
           schema:
@@ -836,6 +1179,33 @@ paths:
             $ref: '#/definitions/response.ErrUnauthorized'
       tags:
       - UserRouter
+  /update_member_role:
+    post:
+      consumes:
+      - application/json
+      description: Return updated member role.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrUnauthorized'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Update member role.
+      tags:
+      - ProjectRouter
   /update_project_name:
     post:
       consumes:
@@ -847,7 +1217,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.MessageResponse'
         "400":
           description: Bad Request
           schema:
