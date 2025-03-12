@@ -962,17 +962,17 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 
 func (c *chaosHubService) listDefaultHubs() *model.ChaosHub {
 	defaultHubs := &model.ChaosHub{
-		ID:         DefaultHubID,
-		Name:       utils.Config.DefaultHubName,
-		RepoURL:    utils.Config.DefaultHubGitURL,
-		RepoBranch: utils.Config.DefaultHubBranchName,
-		IsPrivate:  utils.Config.DefaultHubIsPrivate,
-		AuthType:   model.AuthType(utils.Config.DefaultHubAuthType),
-		Token:      &utils.Config.DefaultHubToken,
-		UserName:   &utils.Config.DefaultHubUserName,
-		Password:   &utils.Config.DefaultHubPassword,
+		ID:            DefaultHubID,
+		Name:          utils.Config.DefaultHubName,
+		RepoURL:       utils.Config.DefaultHubGitURL,
+		RepoBranch:    utils.Config.DefaultHubBranchName,
+		IsPrivate:     utils.Config.DefaultHubIsPrivate,
+		AuthType:      model.AuthType(utils.Config.DefaultHubAuthType),
+		Token:         &utils.Config.DefaultHubToken,
+		UserName:      &utils.Config.DefaultHubUserName,
+		Password:      &utils.Config.DefaultHubPassword,
 		SSHPrivateKey: &utils.Config.DefaultHubSshPrivateKey,
-		IsDefault:  true,
+		IsDefault:     true,
 	}
 	return defaultHubs
 }
@@ -983,16 +983,16 @@ func (c *chaosHubService) SyncDefaultChaosHubs() {
 		defaultHub := c.listDefaultHubs()
 
 		chartsInput := model.CloningInput{
-			Name:       defaultHub.Name,
-			RepoURL:    defaultHub.RepoURL,
-			RepoBranch: defaultHub.RepoBranch,
-			IsPrivate:  defaultHub.IsPrivate,
-			AuthType:   defaultHub.AuthType,
-			Token:      defaultHub.Token,
-			UserName:   defaultHub.UserName,
-			Password:   defaultHub.Password,
+			Name:          defaultHub.Name,
+			RepoURL:       defaultHub.RepoURL,
+			RepoBranch:    defaultHub.RepoBranch,
+			IsPrivate:     defaultHub.IsPrivate,
+			AuthType:      defaultHub.AuthType,
+			Token:         defaultHub.Token,
+			UserName:      defaultHub.UserName,
+			Password:      defaultHub.Password,
 			SSHPrivateKey: defaultHub.SSHPrivateKey,
-			IsDefault:  true,
+			IsDefault:     true,
 		}
 		err := chaosHubOps.GitSyncDefaultHub(chartsInput)
 		if err != nil {
