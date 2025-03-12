@@ -963,7 +963,7 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 func (c *chaosHubService) listDefaultHubs() *model.ChaosHub {
 	defaultHubs := &model.ChaosHub{
 		ID:         DefaultHubID,
-		Name:       "Litmus ChaosHub",
+		Name:       utils.Config.DefaultHubName,
 		RepoURL:    utils.Config.DefaultHubGitURL,
 		RepoBranch: utils.Config.DefaultHubBranchName,
 		IsPrivate:  utils.Config.DefaultHubIsPrivate,
