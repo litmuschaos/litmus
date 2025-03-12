@@ -966,6 +966,12 @@ func (c *chaosHubService) listDefaultHubs() *model.ChaosHub {
 		Name:       "Litmus ChaosHub",
 		RepoURL:    utils.Config.DefaultHubGitURL,
 		RepoBranch: utils.Config.DefaultHubBranchName,
+		IsPrivate:  utils.Config.DefaultHubIsPrivate,
+		AuthType:   model.AuthType(utils.Config.DefaultHubAuthType),
+		Token:      &utils.Config.DefaultHubToken,
+		UserName:   &utils.Config.DefaultHubUserName,
+		Password:   &utils.Config.DefaultHubPassword,
+		SSHPrivateKey: &utils.Config.DefaultHubSshPrivateKey,
 		IsDefault:  true,
 	}
 	return defaultHubs
@@ -980,6 +986,12 @@ func (c *chaosHubService) SyncDefaultChaosHubs() {
 			Name:       defaultHub.Name,
 			RepoURL:    defaultHub.RepoURL,
 			RepoBranch: defaultHub.RepoBranch,
+			IsPrivate:  defaultHub.IsPrivate,
+			AuthType:   defaultHub.AuthType,
+			Token:      defaultHub.Token,
+			UserName:   defaultHub.UserName,
+			Password:   defaultHub.Password,
+			SSHPrivateKey: defaultHub.SSHPrivateKey,
 			IsDefault:  true,
 		}
 		err := chaosHubOps.GitSyncDefaultHub(chartsInput)
@@ -988,6 +1000,8 @@ func (c *chaosHubService) SyncDefaultChaosHubs() {
 				"repoUrl":    defaultHub.RepoURL,
 				"repoBranch": defaultHub.RepoBranch,
 				"hubName":    defaultHub.Name,
+				"isPrivate":  defaultHub.IsPrivate,
+				"AuthType":   defaultHub.AuthType,
 			}).WithError(err).Error("failed to sync default chaos hubs")
 		}
 		// Syncing Completed
