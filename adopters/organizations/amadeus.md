@@ -13,6 +13,6 @@ We are using Litmus for the following 3 topics:
 
 We are finding the following benefits in Litmus
 - **Open Source**: Allows us to contribute new features and fix bugs based on feedback from our Chaos users.
-- **QA User-Friendly**: Through the UI and YAML-based configuration, it allows QA profiles with limited SRE knowledge to easily create their own experiments.
+- **QA-Friendly**: Through the UI and YAML-based configuration, it allows QA profiles with limited SRE knowledge to easily create their own experiments.
 - **Extensibility**: As Chaos Scenarios are based on ArgoWorkflow, it allows for the inclusion of custom steps, such as updating a configuration before/after the experiments.
 - **Variety of Disruption Types**: Which satisfies our current Chaos users.
