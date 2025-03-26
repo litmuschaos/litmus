@@ -12,8 +12,18 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type Operator struct {
+	authConfigOperator *authConfig.Operator
+}
+
+func NewAuthorizationOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		authConfigOperator: authConfig.NewAuthConfigOperator(mongodbOperator),
+	}
+}
+
 // UserValidateJWT validates the cluster jwt
-func UserValidateJWT(token string, salt string) (jwt.MapClaims, error) {
+func (o *Operator) UserValidateJWT(token string, salt string) (jwt.MapClaims, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
 			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
@@ -39,8 +49,8 @@ func UserValidateJWT(token string, salt string) (jwt.MapClaims, error) {
 }
 
 // GetUsername returns the username from the jwt token
-func GetUsername(token string) (string, error) {
-	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+func (o *Operator) GetUsername(token string) (string, error) {
+	salt, err := o.authConfigOperator.GetAuthConfig(context.Background())
 	if err != nil {
 		return "", err
 	}
