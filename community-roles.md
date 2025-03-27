@@ -1,166 +1,164 @@
-# Community Roles
+# LitmusChaos Community Membership
 
-This document outlines the different roles within the project, along with the responsibilities and privileges that come with them.
-Roles are progressive, so each include responsibilities, requirements and definitions from the previous roles.
+## Membership Levels
 
-- [Roles](#roles)
-  - [Community Member](#community-member)
-  - [Project Member](#project-member)
-  - [Maintainer](#maintainer)
-  - [Core maintainers](#core-maintainers)
-  - [Reviewer](#reviewer)
-  - [Security team member](#security-team-member)
-  - [Org Admins](#org-admins)
+| **Role**   | **Responsibilities**                                                  | **Requirements**                                                                                                                    | **Defined By**                                                 |
+| ---------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Member     | Active contributor in the community                                   | Sponsored by 1 reviewer or maintainers. Multiple contributions to the project.                                                      | LitmusChaos GitHub Org Member                                  |
+| Reviewers  | Review contribution from other members in the community               | Sponsored by a maintainer. Demonstrated history of reviews and contributions in a specific subprojects                              | Reviewers column in [MAINTAINERS](./MAINTAINERS.md) file entry |
+| Maintainer | Define the technical direction of the project and oversee subprojects | Sponsored by another maintainer. Demonstrated history of reviews and contributions in specific subprojects and in the main project. | [MAINTAINERS](./MAINTAINERS.md) file entry                     |
 
-## Roles
+## Membership Responsibilities and Requirements
 
-Most of the roles defined herein are defined by membership in a certain GitHub organization or team:
+### Member
 
-- [litmuschaos org](https://github.com/litmuschaos): The organization under which all of litmuschaos's activity on GitHub is captured.
-- [@litmuschaos/core-maintainers](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md): The team comprised of all maintainers of the litmus repo.
-- [@litmuschaos/maintainers](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md): The team comprised of all maintainers of the various projects in the litmuschaos organization: litmusctl, litmus-go,litmus-docs, website and community repos, etc.
+Members are active contributors who can be assigned issues and are expected to remain engaged in the project. Members are given the [Triage GitHub role](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization#repository-access-for-each-permission-level) to requested LitmusChaos repositories, in order to facilitate issue management and moderate discussions.
 
-### Community Member
+#### Requirements:
 
-Community Members are all users who interact with the project.
+- Two-factor authentication enabled on GitHub.
+- Multiple contributions, including code, documentation, or participation in discussions.
+- Sponsored by an existing reviewers or maintainers.
 
-This could be through Slack, GitHub discussions, joining public project meetings, etc.
+#### Responsibilities:
 
-**Responsibilities:**
+- Moderate GitHub discussions and triage issues.
+- Respond to issues and PRs assigned to them.
+- Review and contribute to discussions actively.
 
-- Must follow the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
+#### Nomination Process:
 
-### Project Member
+To become a member:
 
-Project Members are [Community Members][Community Member] who contribute directly to the project and add value to it.
-This can be through code, documentation, taking part in bug scrubs, etc.
+1. Open an issue in the `litmuschaos/litmus` repository.
+2. Ensure your sponsors are `@mentioned` in the issue.
+3. [Open an issue](https://github.com/litmuschaos/litmus/issues/new?template=member.md&title=REQUEST%3A%20New%20membership%20for%20%3Cyour-GH-handle%3E) and complete all items on the checklist ([Use this template](https://github.com/litmuschaos/litmus/blob/master/.github/ISSUE_TEMPLATE/member.md)).
+4. Include a list of your contributions that represent your work in the project.
+5. Your sponsors must confirm their support by commenting with +1 on the issue.
+6. Once the sponsors have responded, the request will be reviewed by project leads. Any missing information will be requested.
 
-**Defined by:**
+---
 
-- [Triage role](https://docs.github.com/en/organizations/managing-access-to-your-organizations-repositories/repository-permission-levels-for-an-organization#repository-access-for-each-permission-level) on all `litmuschaos` GitHub org repos
-- [Membership](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-user-account/managing-your-membership-in-organizations/about-organization-membership) in the [litmuschaos org](https://github.com/litmuschaos)
-- Current litmuschaos Project Members [are listed here](PROJECT-MEMBERS.md)
+### Reviewer
 
-**Responsibilities and privileges:**
+Reviewers evaluate code quality and correctness for specific areas of the project.
 
-To become a Project Member you need to demonstrate the following:
+#### Requirements:
 
-- ability to write quality code and/or documentation,
-- ability to collaborate with the team,
-- understanding of how the team works (policies, processes for testing and code review, etc),
-- understanding of the project's code base and coding and documentation style.
-- be responsive to issues and PRs assigned to them
-- be active owner of code they have contributed (unless ownership is explicitly transferred)
-  - Code is well tested
-  - Tests consistently pass
-  - Addresses bugs or issues discovered after code is accepted
-- Note: members who frequently contribute code are expected to proactively perform code reviews and work towards becoming a maintainer
+- Member for at least 3 months.
+- Active participation in discussions and issue reviews for 1 month.
+- Reviewed or authored at least 5 significant PRs.
+- Sponsored by a maintainer.
 
-Process: refer to [PROCESS.md](PROCESS.md#applying-for-litmuschaos-membership).
+#### Responsibilities:
+
+- Provide feedback on new PRs and issues.
+- Focus on code quality and correctness during reviews.
+
+#### Nomination Process:
+
+To become a reviewer:
+
+1. Open an issue in the `litmuschaos/litmus` repository.
+2. Ensure your sponsor is `@mentioned` in the issue.
+3. [Open an issue](https://github.com/litmuschaos/litmus/issues/new?template=reviewer.md&title=REQUEST%3A%20Promote%20your-GH-handle%20to%20%3Creviewer%3E) and complete all items on the checklist ([Use this template](https://github.com/litmuschaos/litmus/blob/master/.github/ISSUE_TEMPLATE/reviewer.md)).
+4. Include examples of PRs you have authored or reviewed.
+5. Your sponsor must confirm their support by commenting with +1 on the issue.
+6. Once the sponsor has responded, the request will be reviewed by project leads. Any missing information will be requested.
+
+---
 
 ### Maintainer
 
-Maintainers are elected [Project Members][Project Member] who have shown significant and sustained contributions in a Git repository.
+Maintainers are experienced contributors who drive the technical direction of the project and ensure its health and sustainability.
 
-**Defined by:** entry in MAINTAINERS file in a repo owned by the litmuschaos project, and membership in the `@litmuschaos/maintainers` GitHub team. See an automatically generated list of litmuschaos maintainers [here](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md).
+#### Requirements:
 
-**Responsibilities and Privileges:**
+- Sustained contributions to the project over time (code, design, or community leadership).
+- Demonstrated technical expertise and sound judgment in project discussions.
+- Nominated and approved by existing maintainers.
 
-To become a Maintainer you need to demonstrate the following:
+#### Responsibilities:
 
-- Enable and promote litmuschaos community values
-- Engage with end Users through appropriate communication channels
-- Serve as a point of conflict resolution between Contributors to their Git repository
-- Maintain open collaboration with Contributors and other Maintainers
-- Ask for help when unsure and step down considerately
-- A good understanding of the code-base (or equivalent that is governed by the repository, e.g. `litmuschaos/community` or `litmuschaos/website`)
-- Willing to take on long-term responsibility for the project (or a specific part of it)
-- Commitment to the project. Specifically:
+- Review and merge PRs to maintain project quality.
+- Set the technical direction and roadmap for the project.
+- Mentor and guide members.
+- Participate in governance decisions and resolve conflicts.
+- Ensure transparency by documenting decisions publicly.
 
-  This can be evidenced differently and we want to maintain some general flexibility assessing this. Significant and sustained contributions can be both by showing a long-term level of care with a bigger number of smaller contributions or by a smaller set of sizable contributions. To make it somewhat more comparable, here is an example of commitment we would be happy to accept for a maintainer:
+#### Nomination Process:
 
-  - Participate in discussions, contributions, code and documentation reviews for 3 months or more,
-  - Perform reviews for 10 non-trivial pull requests (total),
-  - Contribute 15 non-trivial pull requests (total) and have them merged.
+To become a maintainer:
 
-  Ask one of the current maintainers, if you are unsure. They will be happy to give you feedback.
+1. Open an issue in the `litmuschaos/litmus` repository.
+2. Ensure your sponsors are `@mentioned` in the issue.
+3. [Open an issue](https://github.com/litmuschaos/litmus/issues/new?template=maintainer.md&title=REQUEST%3A%20Promote%20your-GH-handle%20to%20%3Cmaintainer%3E) and complete all items on the checklist ([Use this template](https://github.com/litmuschaos/litmus/blob/master/.github/ISSUE_TEMPLATE/maintainer.md)).
+4. Include a summary of your contributions and their impact on the project.
+5. Your sponsors must confirm their support by commenting with +1 on the issue.
+6. Once the sponsors have responded, the request will be reviewed by project leads. Any missing information will be requested.
 
-Process: refer to [PROCESS.md](PROCESS.md#applying-for-litmuschaos-maintainership).
+## Adding maintainers
 
-### Core maintainers
+Maintainers are first and foremost contributors that have shown they are
+committed to the long term success of a project. Contributors wanting to become
+maintainers are expected to be deeply involved in contributing code, pull
+request review, and triage of issues in the project for more than three months.
 
-Maintainership in the [CORE-MAINTAINERS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md) trickles down to all other litmuschaos-related repositories which means that maintainers mentioned there are also maintainers in all other repositories.
+Just contributing does not make you a maintainer, it is about building trust
+with the current maintainers of the project and being a person that they can
+depend on and trust to make decisions in the best interest of the project.
 
-In addition to maintaining `litmuschaos` and litmuschaos-related repositories, this team serves as escalation point for the overall project, and anything not easily managed by the Maintainers of each Git repository.
+Periodically, the existing maintainers curate a list of contributors that have
+shown regular activity on the project over the prior months. From this list,
+candidates are selected and proposed as maintainers.
 
-This team drives the direction, values and governance of the overall project.
+After a candidate has been proposed as maintainer via a Pull Request by any of the existing maintainers, the other maintainers are given five business days to discuss the candidate, raise objections and cast their vote. The Votes take place via the pull request comment. Candidates must be approved by at least 66% of the current maintainers by adding their vote on the PR. The reviewer role has the same process but only requires 33% of current maintainers. Only maintainers of the repository that the candidate is proposed for are allowed to vote. The candidate becomes a maintainer once the pull request is merged.
 
-It is important to us that its members come from a diverse background of companies and organizations.
-Ensuring that oversight of the project is not controlled by one company or organization.
+## Membership Management
 
-**Defined by:** entry in [CORE-MAINTAINERS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md), and in the `@litmuschaos/core-maintainers` GitHub team.
+- ### Inactive Members
 
-**Responsibilities and Privileges:**
+  Members with no significant contributions for 12 months may be removed from the GitHub organization. Reinstatement requires going through the membership process again.
 
-The following apply to all assets across the litmuschaos org:
+  - ## Removal of inactive maintainers
 
-- Overseeing the project health and growth
-- Maintaining the brand, mission, vision, values, and scope of the overall project
-- Changes to licensing and intellectual property
-- Administering access to all project assets
-- Administering Git repositories as needed
-- Handling Code of Conduct violations
-- Managing financial decisions
-- Defining the scope of each Git repository
-- Resolving escalated decisions when Maintainers responsible are blocked
+  Similar to the procedure for adding new maintainers, existing maintainers can
+  be removed from the list if they do not show significant activity on the
+  project. Periodically, the maintainers review the list of maintainers and their
+  activity over the last three months.
 
-### Reviewers
+  If a maintainer has shown insufficient activity over this period, a neutral
+  person will contact the maintainer to ask if they want to continue being
+  a maintainer. If the maintainer decides to step down as a maintainer, they
+  open a pull request to be removed from the MAINTAINERS file.
 
-A reviewer is a core maintainer within the project. They share in reviewing issues and pull requests and their LGTM counts towards the required LGTM count to merge a code change into the project.
+  - ## Emeritus maintainers
 
-Reviewers are part of the organization but do not have write access. Becoming a reviewer is a core aspect in the journey to becoming a maintainer.
+  For committers who are stepping down or being removed due to inactivity,
+  the project would like to memorialize their contributions to the project by
+  recognizing them as Emeritus maintainers in the EMERITUS.md file. The EMERITUS.md
+  file will include a brief paragraph summarizing their contribution to the
+  containerd project and recognize them as permanent Emeritus members of the
+  community. While Emeritus maintainers are not active in the project, their
+  expertise is always valued and their LGTM may count towards the required LGTM
+  count to merge a code change into the project.
 
+  If in the future an Emeritus maintainer has the desire or ability to return to
+  contributing to the project, Emeritus maintainers can submit a pull request
+  reversing their removal from the MAINTAINERS file and approval only requires
+  2 LGTMs from current committers to return to full committer status in the
+  project.
 
+  - ## Stepping down policy
 
-### Security Team member
+  Life priorities, interests, and passions can change. If you're a maintainer but
+  feel you must remove yourself from the list, inform other maintainers that you
+  intend to step down, and if possible, help find someone to pick up your work.
+  At the very least, ensure your work can be continued where you left off.
 
-Security Team members are listed in the [SECURITY.md file]().
+  After you've informed other maintainers, create a pull request to remove
+  yourself from the MAINTAINERS file.
 
-Members of this team handle security issues for the litmuschaos projects. It is essential for us to deal with security-related concerns responsibly and follow the high standards of the security community as a whole.
+- ### Changes in Membership Roles
 
-**Defined by:** entry in [SECURITY.md file](https://github.com/litmuschaos/.github/blob/main/SECURITY.md#security-team).
-
-**Responsibilities and Privileges:**
-
-The following apply to all assets across the litmuschaos org:
-
-- All reports are thoroughly investigated by the Security Team.
-- Any vulnerability information shared with the Security Team will not be shared with others unless it is necessary to fix the issue. Information is shared only on a need to know basis.
-- As the security issue moves through the identification and resolution process, the reporter will be notified.
-- Security Team members must use their access to the [oss-fuzz issues catalog](https://bugs.chromium.org/p/oss-fuzz/) to investigate issues raised from fuzz tests.
-- Additional questions about the vulnerability may also be asked of the reporter.
-- Security Team members have a duty of care to the uphold of the Security embargo policy.
-
-### Org Admins
-
-In order to restrict access to [`admin` level functionality in GitHub](https://docs.github.com/en/organizations/managing-access-to-your-organizations-repositories/repository-roles-for-an-organization#permissions-for-each-role) functionality, we define this team, who can e.g.
-
-- Delete a repository
-- Remove permissions from a user
-- Approve applications and/or bots
-- and more.
-
-This team has no decision making power on its own, but is instead there to serve the needs of the litmuschaos maintainers and contributors.
-
-**Defined by:** entry in [ORG-ADMINS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md), and in the `@litmuschaos/org-admins` GitHub team.
-
-**Responsibilities and Privileges:**
-
-`admin` level access to the `litmuschaos` organization in GitHub.
-
-<!-- md links -->
-[Community Member]: #community-member
-[Project Member]: #project-member
-[Maintainer]: #maintainer
-[core maintainers]: #core-maintainers
-[Org Admins]: #org-admins
+  Role changes are discussed by project leads and approvers and finalized through consensus.
