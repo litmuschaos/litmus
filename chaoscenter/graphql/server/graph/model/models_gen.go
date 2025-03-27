@@ -1663,7 +1663,8 @@ type PodLog struct {
 // Defines the details for fetching the pod logs
 type PodLogRequest struct {
 	// ID of the cluster
-	InfraID string `json:"infraID"`
+	InfraID   string `json:"infraID"`
+	ProjectID string `json:"projectID"`
 	// ID of a experiment run
 	ExperimentRunID string `json:"experimentRunID"`
 	// Name of the pod for which logs are required
