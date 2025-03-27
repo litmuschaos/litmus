@@ -138,6 +138,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
+			return
 		}
 		if err != nil {
 			log.Error(err)
@@ -325,8 +326,12 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, userRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// checking if project name is empty
@@ -456,8 +461,12 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// Validating member role
@@ -558,8 +567,12 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -614,8 +627,12 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -684,8 +701,12 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -744,8 +765,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -824,8 +849,12 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string),

@@ -33,7 +33,9 @@ export const MenuCell = ({
     onError: error => showError(error.message)
   });
 
-  const lastExperimentRunStatus = data.recentExecutions[0]?.experimentRunStatus;
+  const isDeleteButtonEnabled = !data.recentExecutions.some(
+    execution => execution?.experimentRunStatus === ExperimentRunStatus.RUNNING
+  );
 
   // <!-- confirmation dialog boxes -->
   const confirmationDialogProps = {
@@ -108,10 +110,7 @@ export const MenuCell = ({
             icon="main-trash"
             text={getString('deleteExperiment')}
             onClick={openDeleteDialog}
-            disabled={
-              lastExperimentRunStatus === ExperimentRunStatus.RUNNING ||
-              lastExperimentRunStatus === ExperimentRunStatus.QUEUED
-            }
+            disabled={isDeleteButtonEnabled == false}
             permission={PermissionGroup.OWNER}
           />
         </Menu>
