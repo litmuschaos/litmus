@@ -98,6 +98,16 @@ func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string,
 		logrus.WithError(err).Fatal("could not get Chaos ClientSet")
 	}
 
+	// Update engineStatus from initialized to running
+	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusInitialized {
+		workflowObj.Status.EngineStatus = chaosTypes.EngineStatusRunning
+		_, err := chaosClient.ChaosEngines(workflowObj.Namespace).UpdateStatus(context.TODO(), workflowObj, v1.UpdateOptions{})
+		if err != nil {
+			logrus.WithError(err).Fatal("could not update ChaosEngine status to running")
+		}
+		logrus.Infof("Updated ChaosEngine status to running: %s/%s", workflowObj.Namespace, workflowObj.Name)
+	}
+
 	nodes := make(map[string]types.Node)
 	logrus.Print("STANDALONE CHAOSENGINE EVENT ", workflowObj.UID, " ", eventType)
 	var cd *types.ChaosData = nil
