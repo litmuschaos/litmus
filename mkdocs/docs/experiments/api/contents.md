@@ -9,7 +9,7 @@
 <tr>
 <td>AUTH Server</td>
 <td>Contains AUTH Server API documentation</td>
-<td><a target="_" href="/litmus/auth/v2.0.0/api.html">AUTH Server</a></td>
+<td><a target="_" href="/litmus/auth/v3.14.0/api.html">AUTH Server</a></td>
 </tr>
 <tr>
 <td>GraphQL Server</td>
