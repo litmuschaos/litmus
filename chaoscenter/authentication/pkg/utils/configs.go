@@ -29,7 +29,7 @@ var (
 	CaCertPath                   = os.Getenv("CA_CERT_TLS_PATH")
 	RestPort                     = os.Getenv("REST_PORT")
 	GrpcPort                     = os.Getenv("GRPC_PORT")
-	DBName                       = "auth"
+	DBName                       = getEnvAsString("DB_NAME", "auth")
 	UserCollection               = "users"
 	ProjectCollection            = "project"
 	AuthConfigCollection         = "auth-config"
