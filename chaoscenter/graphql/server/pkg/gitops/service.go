@@ -21,6 +21,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	"github.com/mrz1836/go-sanitize"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -145,6 +146,10 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID strin
 
 // DisableGitOpsHandler disables GitOps for a specific project
 func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
+	if projectID != sanitize.PathName(projectID) {
+		return false, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", projectID)
+	}
+
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
@@ -183,6 +188,11 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectI
 
 	gitConfig := GetGitOpsConfig(gitDB)
 	originalPath := gitConfig.LocalPath
+
+	if gitConfig.ProjectID != sanitize.PathName(gitConfig.ProjectID) {
+		return false, fmt.Errorf("err: invalid projectID '%s', potential path injection detected", gitConfig.ProjectID)
+	}
+
 	gitConfig.LocalPath = tempPath + gitConfig.ProjectID
 	commit, err := SetupGitOps(GitUserFromContext(ctx), gitConfig)
 	if err != nil {
@@ -317,6 +327,14 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 	err = g.SyncDBToGit(ctx, gitConfig)
 	if err != nil {
 		return errors.New("Sync Error | " + err.Error())
+	}
+
+	if gitConfig.ProjectID != sanitize.PathName(gitConfig.ProjectID) {
+		return fmt.Errorf("err: invalid projectID '%s', potential path injection detected", gitConfig.ProjectID)
+	}
+
+	if experiment.ExperimentName != sanitize.PathName(experiment.ExperimentName) {
+		return fmt.Errorf("err: invalid experiment name '%s', potential path injection detected", experiment.ExperimentName)
 	}
 
 	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
@@ -456,6 +474,12 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		if !strings.HasSuffix(file, ".yaml") {
 			continue
 		}
+
+		if file != sanitize.PathName(file) {
+			log.Errorf("Invalid file name '%s', potential path injection detected", file)
+			continue
+		}
+
 		// check if file was deleted or not
 		exists, err := PathExists(config.LocalPath + "/" + file)
 		if err != nil {
