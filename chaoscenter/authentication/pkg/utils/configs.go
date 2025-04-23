@@ -29,7 +29,7 @@ var (
 	CaCertPath                   = os.Getenv("CA_CERT_TLS_PATH")
 	RestPort                     = os.Getenv("REST_PORT")
 	GrpcPort                     = os.Getenv("GRPC_PORT")
-	DBName                       = "auth"
+	DBName                       = getEnvAsString("DB_NAME", "auth")
 	UserCollection               = "users"
 	ProjectCollection            = "project"
 	AuthConfigCollection         = "auth-config"
@@ -42,6 +42,13 @@ var (
 	DefaultLitmusGqlGrpcPort     = ":8000"
 	//DefaultLitmusGqlGrpcPortHttps = ":8001" // enable when in use
 )
+
+func getEnvAsString(name string, defaultVal string) string {
+	if value := os.Getenv(name); value != "" {
+		return value
+	}
+	return defaultVal
+}
 
 func getEnvAsInt(name string, defaultVal int) int {
 	valueStr := os.Getenv(name)
