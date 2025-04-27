@@ -14,6 +14,7 @@ interface GetPodLogsRequest {
   request: {
     // requestID: string;
     infraID: string;
+    projectID: string;
     experimentRunID?: string;
     podName: string;
     podNamespace: string;
@@ -43,6 +44,7 @@ export function getPodLogsSubscription({
       variables: {
         request: {
           infraID: request.infraID,
+          projectID: request.projectID,
           experimentRunID: request.experimentRunID,
           podName: request.podName,
           podNamespace: request.podNamespace,
