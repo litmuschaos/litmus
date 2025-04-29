@@ -18,10 +18,13 @@ type SubscriberK8s interface {
 	CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error)
 	SendPodLogs(infraData map[string]string, podLog types.PodLogRequest)
 	GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error)
-	GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error)
+	GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error)
+	GetKubernetesObjects(request types.KubeObjRequest) (*types.KubeObject, error)
 	GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error)
 	GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error)
+	GenerateKubeNamespace(cid string, accessKey, version string, kubenamespacerequest types.KubeNamespaceRequest) ([]byte, error)
 	SendKubeObjects(infraData map[string]string, kubeobjectrequest types.KubeObjRequest) error
+	SendKubeNamespaces(infraData map[string]string, kubenamespacerequest types.KubeNamespaceRequest) error
 	CheckComponentStatus(componentEnv string) error
 	IsAgentConfirmed() (bool, string, error)
 	AgentRegister(accessKey string) (bool, error)
