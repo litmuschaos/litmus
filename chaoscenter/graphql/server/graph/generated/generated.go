@@ -91,6 +91,7 @@ type ComplexityRoot struct {
 		Name          func(childComplexity int) int
 		Password      func(childComplexity int) int
 		ProjectID     func(childComplexity int) int
+		RemoteHub     func(childComplexity int) int
 		RepoBranch    func(childComplexity int) int
 		RepoURL       func(childComplexity int) int
 		SSHPrivateKey func(childComplexity int) int
@@ -115,6 +116,7 @@ type ComplexityRoot struct {
 		LastSyncedAt     func(childComplexity int) int
 		Name             func(childComplexity int) int
 		Password         func(childComplexity int) int
+		RemoteHub        func(childComplexity int) int
 		RepoBranch       func(childComplexity int) int
 		RepoURL          func(childComplexity int) int
 		SSHPrivateKey    func(childComplexity int) int
@@ -398,6 +400,15 @@ type ComplexityRoot struct {
 		Version              func(childComplexity int) int
 	}
 
+	KubeNamespace struct {
+		Name func(childComplexity int) int
+	}
+
+	KubeNamespaceResponse struct {
+		InfraID       func(childComplexity int) int
+		KubeNamespace func(childComplexity int) int
+	}
+
 	KubeObject struct {
 		Data      func(childComplexity int) int
 		Namespace func(childComplexity int) int
@@ -497,6 +508,7 @@ type ComplexityRoot struct {
 		GenerateSSHKey            func(childComplexity int) int
 		GetManifestWithInfraID    func(childComplexity int, projectID string, infraID string, accessKey string) int
 		GitopsNotifier            func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
+		KubeNamespace             func(childComplexity int, request model.KubeNamespaceData) int
 		KubeObj                   func(childComplexity int, request model.KubeObjectData) int
 		PodLog                    func(childComplexity int, request model.PodLog) int
 		RegisterInfra             func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
@@ -694,10 +706,11 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		GetInfraEvents func(childComplexity int, projectID string) int
-		GetKubeObject  func(childComplexity int, request model.KubeObjectRequest) int
-		GetPodLog      func(childComplexity int, request model.PodLogRequest) int
-		InfraConnect   func(childComplexity int, request model.InfraIdentity) int
+		GetInfraEvents   func(childComplexity int, projectID string) int
+		GetKubeNamespace func(childComplexity int, request model.KubeNamespaceRequest) int
+		GetKubeObject    func(childComplexity int, request model.KubeObjectRequest) int
+		GetPodLog        func(childComplexity int, request model.PodLogRequest) int
+		InfraConnect     func(childComplexity int, request model.InfraIdentity) int
 	}
 
 	UserDetails struct {
@@ -727,6 +740,7 @@ type MutationResolver interface {
 	GetManifestWithInfraID(ctx context.Context, projectID string, infraID string, accessKey string) (string, error)
 	PodLog(ctx context.Context, request model.PodLog) (string, error)
 	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
+	KubeNamespace(ctx context.Context, request model.KubeNamespaceData) (string, error)
 	AddChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
 	AddRemoteChaosHub(ctx context.Context, projectID string, request model.CreateRemoteChaosHub) (*model.ChaosHub, error)
 	SaveChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
@@ -786,6 +800,7 @@ type SubscriptionResolver interface {
 	InfraConnect(ctx context.Context, request model.InfraIdentity) (<-chan *model.InfraActionResponse, error)
 	GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error)
 	GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
+	GetKubeNamespace(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error)
 }
 
 type executableSchema struct {
@@ -1031,6 +1046,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ChaosHub.ProjectID(childComplexity), true
 
+	case "ChaosHub.remoteHub":
+		if e.complexity.ChaosHub.RemoteHub == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.RemoteHub(childComplexity), true
+
 	case "ChaosHub.repoBranch":
 		if e.complexity.ChaosHub.RepoBranch == nil {
 			break
@@ -1177,6 +1199,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ChaosHubStatus.Password(childComplexity), true
+
+	case "ChaosHubStatus.remoteHub":
+		if e.complexity.ChaosHubStatus.RemoteHub == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.RemoteHub(childComplexity), true
 
 	case "ChaosHubStatus.repoBranch":
 		if e.complexity.ChaosHubStatus.RepoBranch == nil {
@@ -2557,6 +2586,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.K8SProbe.Version(childComplexity), true
 
+	case "KubeNamespace.name":
+		if e.complexity.KubeNamespace.Name == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespace.Name(childComplexity), true
+
+	case "KubeNamespaceResponse.infraID":
+		if e.complexity.KubeNamespaceResponse.InfraID == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespaceResponse.InfraID(childComplexity), true
+
+	case "KubeNamespaceResponse.kubeNamespace":
+		if e.complexity.KubeNamespaceResponse.KubeNamespace == nil {
+			break
+		}
+
+		return e.complexity.KubeNamespaceResponse.KubeNamespace(childComplexity), true
+
 	case "KubeObject.data":
 		if e.complexity.KubeObject.Data == nil {
 			break
@@ -3080,6 +3130,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string)), true
+
+	case "Mutation.kubeNamespace":
+		if e.complexity.Mutation.KubeNamespace == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_kubeNamespace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.KubeNamespace(childComplexity, args["request"].(model.KubeNamespaceData)), true
 
 	case "Mutation.kubeObj":
 		if e.complexity.Mutation.KubeObj == nil {
@@ -4256,6 +4318,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.GetInfraEvents(childComplexity, args["projectID"].(string)), true
 
+	case "Subscription.getKubeNamespace":
+		if e.complexity.Subscription.GetKubeNamespace == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_getKubeNamespace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.GetKubeNamespace(childComplexity, args["request"].(model.KubeNamespaceRequest)), true
+
 	case "Subscription.getKubeObject":
 		if e.complexity.Subscription.GetKubeObject == nil {
 			break
@@ -4361,6 +4435,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputInfraIdentity,
 		ec.unmarshalInputK8SProbeRequest,
 		ec.unmarshalInputKubeGVRRequest,
+		ec.unmarshalInputKubeNamespaceData,
+		ec.unmarshalInputKubeNamespaceRequest,
 		ec.unmarshalInputKubeObjectData,
 		ec.unmarshalInputKubeObjectRequest,
 		ec.unmarshalInputKubernetesCMDProbeRequest,
@@ -5217,7 +5293,7 @@ type GetExperimentStatsResponse {
   totalExpCategorizedByResiliencyScore: [ResilienceScoreCategory]!
 }
 
-extend type Query {
+type Query {
 
 
   """
@@ -5239,7 +5315,7 @@ extend type Query {
   getExperimentStats(projectID: ID!): GetExperimentStatsResponse!
 }
 
-extend type Mutation {
+type Mutation {
   """
   Creates a new experiment and applies its manifest
   """
@@ -5682,11 +5758,11 @@ type KubeObjectResponse {
   """
   Type of the Kubernetes object
   """
-  kubeObj: [KubeObject]!
+  kubeObj: KubeObject!
 }
 
 """
-KubeObject consists of the namespace and the available resources in the same
+KubeObject consists of the available resources in a namespace
 """
 type KubeObject {
   """
@@ -5728,15 +5804,74 @@ input KubeObjectRequest {
   GVR Request
   """
   kubeObjRequest: KubeGVRRequest
+  """
+  Namespace in which the Kubernetes object is present
+  """
+  namespace: String!
   objectType: String!
   workloads: [Workload]
 }
+
+"""
+Defines details for fetching Kubernetes namespace data
+"""
+input KubeNamespaceRequest {
+  """
+  ID of the infra
+  """
+  infraID: ID!
+}
+
+"""
+Define name in the infra (not really useful at the moment but maybe we will need other field later)
+"""
+type KubeNamespace{
+  """
+  Name of the namespace
+  """
+  name: String!
+}
+
+
 
 input KubeGVRRequest {
   group: String!
   version: String!
   resource: String!
 }
+
+"""
+Response received for querying Kubernetes Namespaces
+"""
+type KubeNamespaceResponse {
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: ID!
+  """
+  List of the Kubernetes namespace
+  """
+  kubeNamespace: [KubeNamespace]!
+}
+
+"""
+Defines the details of Kubernetes namespace
+"""
+input KubeNamespaceData {
+  """
+  Unique request ID for fetching Kubernetes namespace details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
+}
+
 
 """
 Defines the details of Kubernetes object
@@ -5962,9 +6097,15 @@ extend type Mutation {
   """
   # authorized directive not required
   kubeObj(request: KubeObjectData!): String!
+
+  """
+  Receives kubernetes namespace data from subscriber
+  """
+  # authorized directive not required
+  kubeNamespace(request: KubeNamespaceData!): String!
 }
 
-extend type Subscription {
+type Subscription {
   # INFRA OPERATIONS
   """
   Listens infra events from the graphql server
@@ -5987,6 +6128,11 @@ extend type Subscription {
   Returns a kubernetes object given an input
   """
   getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+
+  """
+  Returns a kubernetes namespaces given an input
+  """
+  getKubeNamespace(request: KubeNamespaceRequest!): KubeNamespaceResponse!
 }
 `, BuiltIn: false},
 	{Name: "../../../definitions/shared/chaoshub.graphqls", Input: `enum AuthType {
@@ -6021,6 +6167,10 @@ type ChaosHub implements ResourceDetails & Audit {
   Branch of the git repository
   """
   repoBranch: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
   """
   ID of the project in which the chaos hub is present
   """
@@ -6197,6 +6347,10 @@ type ChaosHubStatus implements ResourceDetails & Audit {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is available or not.
   """
   isAvailable: Boolean!
@@ -6311,6 +6465,10 @@ input CreateChaosHubRequest {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -6373,6 +6531,10 @@ input CloningInput {
   """
   repoURL: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -6417,6 +6579,10 @@ input CreateRemoteChaosHub {
   URL of the git repository
   """
   repoURL: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
 }
 
 
@@ -6445,6 +6611,10 @@ input UpdateChaosHubRequest {
   Branch of the git repository
   """
   repoBranch: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -8607,6 +8777,21 @@ func (ec *executionContext) field_Mutation_gitopsNotifier_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_kubeNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeNamespaceData
+	if tmp, ok := rawArgs["request"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
+		arg0, err = ec.unmarshalNKubeNamespaceData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceData(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -9717,6 +9902,21 @@ func (ec *executionContext) field_Subscription_getInfraEvents_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Subscription_getKubeNamespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.KubeNamespaceRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
+		arg0, err = ec.unmarshalNKubeNamespaceRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Subscription_getKubeObject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -9831,7 +10031,7 @@ func (ec *executionContext) _ActionPayload_requestID(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_requestID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_requestID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -9875,7 +10075,7 @@ func (ec *executionContext) _ActionPayload_requestType(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_requestType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_requestType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -9919,7 +10119,7 @@ func (ec *executionContext) _ActionPayload_k8sManifest(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_k8sManifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_k8sManifest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -9963,7 +10163,7 @@ func (ec *executionContext) _ActionPayload_namespace(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_namespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_namespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -10004,7 +10204,7 @@ func (ec *executionContext) _ActionPayload_externalData(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_externalData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_externalData(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -10045,7 +10245,7 @@ func (ec *executionContext) _ActionPayload_username(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ActionPayload_username(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ActionPayload_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActionPayload",
 		Field:      field,
@@ -10089,7 +10289,7 @@ func (ec *executionContext) _Annotation_categories(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_categories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_categories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10133,7 +10333,7 @@ func (ec *executionContext) _Annotation_vendor(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_vendor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_vendor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10177,7 +10377,7 @@ func (ec *executionContext) _Annotation_createdAt(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10221,7 +10421,7 @@ func (ec *executionContext) _Annotation_repository(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_repository(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_repository(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10265,7 +10465,7 @@ func (ec *executionContext) _Annotation_support(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_support(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_support(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10309,7 +10509,7 @@ func (ec *executionContext) _Annotation_chartDescription(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Annotation_chartDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Annotation_chartDescription(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Annotation",
 		Field:      field,
@@ -10353,7 +10553,7 @@ func (ec *executionContext) _ChaosExperimentResponse_experimentID(ctx context.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10397,7 +10597,7 @@ func (ec *executionContext) _ChaosExperimentResponse_projectID(ctx context.Conte
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10441,7 +10641,7 @@ func (ec *executionContext) _ChaosExperimentResponse_cronSyntax(ctx context.Cont
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_cronSyntax(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_cronSyntax(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10485,7 +10685,7 @@ func (ec *executionContext) _ChaosExperimentResponse_experimentName(ctx context.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10529,7 +10729,7 @@ func (ec *executionContext) _ChaosExperimentResponse_experimentDescription(ctx c
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_experimentDescription(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10573,7 +10773,7 @@ func (ec *executionContext) _ChaosExperimentResponse_isCustomExperiment(ctx cont
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_isCustomExperiment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_isCustomExperiment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10614,7 +10814,7 @@ func (ec *executionContext) _ChaosExperimentResponse_tags(ctx context.Context, f
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosExperimentResponse_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosExperimentResponse_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosExperimentResponse",
 		Field:      field,
@@ -10658,7 +10858,7 @@ func (ec *executionContext) _ChaosHub_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10702,7 +10902,7 @@ func (ec *executionContext) _ChaosHub_repoURL(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_repoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_repoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10746,7 +10946,51 @@ func (ec *executionContext) _ChaosHub_repoBranch(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_repoBranch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_repoBranch(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChaosHub",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChaosHub_remoteHub(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChaosHub_remoteHub(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemoteHub, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChaosHub_remoteHub(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10790,7 +11034,7 @@ func (ec *executionContext) _ChaosHub_projectID(ctx context.Context, field graph
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10834,7 +11078,7 @@ func (ec *executionContext) _ChaosHub_isDefault(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_isDefault(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_isDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10878,7 +11122,7 @@ func (ec *executionContext) _ChaosHub_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10919,7 +11163,7 @@ func (ec *executionContext) _ChaosHub_tags(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -10960,7 +11204,7 @@ func (ec *executionContext) _ChaosHub_createdBy(ctx context.Context, field graph
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11009,7 +11253,7 @@ func (ec *executionContext) _ChaosHub_updatedBy(ctx context.Context, field graph
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11058,7 +11302,7 @@ func (ec *executionContext) _ChaosHub_description(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11102,7 +11346,7 @@ func (ec *executionContext) _ChaosHub_hubType(ctx context.Context, field graphql
 	return ec.marshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐHubType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_hubType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_hubType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11146,7 +11390,7 @@ func (ec *executionContext) _ChaosHub_isPrivate(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_isPrivate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_isPrivate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11190,7 +11434,7 @@ func (ec *executionContext) _ChaosHub_authType(ctx context.Context, field graphq
 	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_authType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_authType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11231,7 +11475,7 @@ func (ec *executionContext) _ChaosHub_token(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11272,7 +11516,7 @@ func (ec *executionContext) _ChaosHub_userName(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_userName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_userName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11313,7 +11557,7 @@ func (ec *executionContext) _ChaosHub_password(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_password(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11354,7 +11598,7 @@ func (ec *executionContext) _ChaosHub_sshPrivateKey(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_sshPrivateKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_sshPrivateKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11398,7 +11642,7 @@ func (ec *executionContext) _ChaosHub_isRemoved(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11442,7 +11686,7 @@ func (ec *executionContext) _ChaosHub_createdAt(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11486,7 +11730,7 @@ func (ec *executionContext) _ChaosHub_updatedAt(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11530,7 +11774,7 @@ func (ec *executionContext) _ChaosHub_lastSyncedAt(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHub_lastSyncedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHub_lastSyncedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHub",
 		Field:      field,
@@ -11574,7 +11818,7 @@ func (ec *executionContext) _ChaosHubStatus_id(ctx context.Context, field graphq
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11618,7 +11862,7 @@ func (ec *executionContext) _ChaosHubStatus_repoURL(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_repoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_repoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11662,7 +11906,51 @@ func (ec *executionContext) _ChaosHubStatus_repoBranch(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_repoBranch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_repoBranch(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChaosHubStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChaosHubStatus_remoteHub(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemoteHub, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChaosHubStatus_remoteHub(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11706,7 +11994,7 @@ func (ec *executionContext) _ChaosHubStatus_isAvailable(ctx context.Context, fie
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_isAvailable(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_isAvailable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11750,7 +12038,7 @@ func (ec *executionContext) _ChaosHubStatus_totalFaults(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_totalFaults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_totalFaults(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11794,7 +12082,7 @@ func (ec *executionContext) _ChaosHubStatus_totalExperiments(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_totalExperiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_totalExperiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11838,7 +12126,7 @@ func (ec *executionContext) _ChaosHubStatus_name(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11882,7 +12170,7 @@ func (ec *executionContext) _ChaosHubStatus_hubType(ctx context.Context, field g
 	return ec.marshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐHubType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_hubType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_hubType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11926,7 +12214,7 @@ func (ec *executionContext) _ChaosHubStatus_isPrivate(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_isPrivate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_isPrivate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -11970,7 +12258,7 @@ func (ec *executionContext) _ChaosHubStatus_authType(ctx context.Context, field 
 	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_authType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_authType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12011,7 +12299,7 @@ func (ec *executionContext) _ChaosHubStatus_token(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12052,7 +12340,7 @@ func (ec *executionContext) _ChaosHubStatus_userName(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_userName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_userName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12093,7 +12381,7 @@ func (ec *executionContext) _ChaosHubStatus_password(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_password(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12137,7 +12425,7 @@ func (ec *executionContext) _ChaosHubStatus_isRemoved(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12178,7 +12466,7 @@ func (ec *executionContext) _ChaosHubStatus_sshPrivateKey(ctx context.Context, f
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_sshPrivateKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_sshPrivateKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12219,7 +12507,7 @@ func (ec *executionContext) _ChaosHubStatus_sshPublicKey(ctx context.Context, fi
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_sshPublicKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_sshPublicKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12263,7 +12551,7 @@ func (ec *executionContext) _ChaosHubStatus_lastSyncedAt(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_lastSyncedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12304,7 +12592,7 @@ func (ec *executionContext) _ChaosHubStatus_tags(ctx context.Context, field grap
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12345,7 +12633,7 @@ func (ec *executionContext) _ChaosHubStatus_createdBy(ctx context.Context, field
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12394,7 +12682,7 @@ func (ec *executionContext) _ChaosHubStatus_updatedBy(ctx context.Context, field
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12446,7 +12734,7 @@ func (ec *executionContext) _ChaosHubStatus_createdAt(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12490,7 +12778,7 @@ func (ec *executionContext) _ChaosHubStatus_updatedAt(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12531,7 +12819,7 @@ func (ec *executionContext) _ChaosHubStatus_description(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12575,7 +12863,7 @@ func (ec *executionContext) _ChaosHubStatus_isDefault(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChaosHubStatus_isDefault(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChaosHubStatus_isDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChaosHubStatus",
 		Field:      field,
@@ -12619,7 +12907,7 @@ func (ec *executionContext) _Chart_apiVersion(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Chart_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Chart_apiVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Chart",
 		Field:      field,
@@ -12663,7 +12951,7 @@ func (ec *executionContext) _Chart_kind(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Chart_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Chart_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Chart",
 		Field:      field,
@@ -12707,7 +12995,7 @@ func (ec *executionContext) _Chart_metadata(ctx context.Context, field graphql.C
 	return ec.marshalNMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMetadata(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Chart_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Chart_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Chart",
 		Field:      field,
@@ -12759,7 +13047,7 @@ func (ec *executionContext) _Chart_spec(ctx context.Context, field graphql.Colle
 	return ec.marshalNSpec2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐSpec(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Chart_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Chart_spec(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Chart",
 		Field:      field,
@@ -12831,7 +13119,7 @@ func (ec *executionContext) _Chart_packageInfo(ctx context.Context, field graphq
 	return ec.marshalNPackageInformation2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPackageInformation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Chart_packageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Chart_packageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Chart",
 		Field:      field,
@@ -12881,7 +13169,7 @@ func (ec *executionContext) _Comparator_type(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comparator_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comparator_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comparator",
 		Field:      field,
@@ -12925,7 +13213,7 @@ func (ec *executionContext) _Comparator_value(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comparator_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comparator_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comparator",
 		Field:      field,
@@ -12969,7 +13257,7 @@ func (ec *executionContext) _Comparator_criteria(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comparator_criteria(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comparator_criteria(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comparator",
 		Field:      field,
@@ -13013,7 +13301,7 @@ func (ec *executionContext) _ConfirmInfraRegistrationResponse_isInfraConfirmed(c
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_isInfraConfirmed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_isInfraConfirmed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ConfirmInfraRegistrationResponse",
 		Field:      field,
@@ -13054,7 +13342,7 @@ func (ec *executionContext) _ConfirmInfraRegistrationResponse_newAccessKey(ctx c
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_newAccessKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_newAccessKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ConfirmInfraRegistrationResponse",
 		Field:      field,
@@ -13095,7 +13383,7 @@ func (ec *executionContext) _ConfirmInfraRegistrationResponse_infraID(ctx contex
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_infraID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ConfirmInfraRegistrationResponse_infraID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ConfirmInfraRegistrationResponse",
 		Field:      field,
@@ -13139,7 +13427,7 @@ func (ec *executionContext) _Environment_projectID(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13183,7 +13471,7 @@ func (ec *executionContext) _Environment_environmentID(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_environmentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_environmentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13227,7 +13515,7 @@ func (ec *executionContext) _Environment_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13268,7 +13556,7 @@ func (ec *executionContext) _Environment_description(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13309,7 +13597,7 @@ func (ec *executionContext) _Environment_tags(ctx context.Context, field graphql
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13353,7 +13641,7 @@ func (ec *executionContext) _Environment_type(ctx context.Context, field graphql
 	return ec.marshalNEnvironmentType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13397,7 +13685,7 @@ func (ec *executionContext) _Environment_createdAt(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13438,7 +13726,7 @@ func (ec *executionContext) _Environment_createdBy(ctx context.Context, field gr
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13487,7 +13775,7 @@ func (ec *executionContext) _Environment_updatedBy(ctx context.Context, field gr
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13539,7 +13827,7 @@ func (ec *executionContext) _Environment_updatedAt(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13580,7 +13868,7 @@ func (ec *executionContext) _Environment_isRemoved(ctx context.Context, field gr
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13621,7 +13909,7 @@ func (ec *executionContext) _Environment_infraIDs(ctx context.Context, field gra
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Environment_infraIDs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Environment_infraIDs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Environment",
 		Field:      field,
@@ -13665,7 +13953,7 @@ func (ec *executionContext) _ExecutedByExperiment_experimentID(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutedByExperiment_experimentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutedByExperiment_experimentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutedByExperiment",
 		Field:      field,
@@ -13709,7 +13997,7 @@ func (ec *executionContext) _ExecutedByExperiment_experimentName(ctx context.Con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutedByExperiment_experimentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutedByExperiment_experimentName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutedByExperiment",
 		Field:      field,
@@ -13753,7 +14041,7 @@ func (ec *executionContext) _ExecutedByExperiment_updatedAt(ctx context.Context,
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutedByExperiment_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutedByExperiment_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutedByExperiment",
 		Field:      field,
@@ -13794,7 +14082,7 @@ func (ec *executionContext) _ExecutedByExperiment_updatedBy(ctx context.Context,
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutedByExperiment_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutedByExperiment_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutedByExperiment",
 		Field:      field,
@@ -13846,7 +14134,7 @@ func (ec *executionContext) _ExecutionHistory_mode(ctx context.Context, field gr
 	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutionHistory_mode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutionHistory_mode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutionHistory",
 		Field:      field,
@@ -13890,7 +14178,7 @@ func (ec *executionContext) _ExecutionHistory_faultName(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutionHistory_faultName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutionHistory_faultName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutionHistory",
 		Field:      field,
@@ -13934,7 +14222,7 @@ func (ec *executionContext) _ExecutionHistory_status(ctx context.Context, field 
 	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutionHistory_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutionHistory_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutionHistory",
 		Field:      field,
@@ -13984,7 +14272,7 @@ func (ec *executionContext) _ExecutionHistory_executedByExperiment(ctx context.C
 	return ec.marshalNExecutedByExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExecutionHistory_executedByExperiment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExecutionHistory_executedByExperiment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExecutionHistory",
 		Field:      field,
@@ -14038,7 +14326,7 @@ func (ec *executionContext) _Experiment_projectID(ctx context.Context, field gra
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14082,7 +14370,7 @@ func (ec *executionContext) _Experiment_experimentID(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_experimentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_experimentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14123,7 +14411,7 @@ func (ec *executionContext) _Experiment_experimentType(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_experimentType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_experimentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14167,7 +14455,7 @@ func (ec *executionContext) _Experiment_experimentManifest(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_experimentManifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_experimentManifest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14211,7 +14499,7 @@ func (ec *executionContext) _Experiment_cronSyntax(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_cronSyntax(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_cronSyntax(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14255,7 +14543,7 @@ func (ec *executionContext) _Experiment_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14299,7 +14587,7 @@ func (ec *executionContext) _Experiment_description(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14343,7 +14631,7 @@ func (ec *executionContext) _Experiment_weightages(ctx context.Context, field gr
 	return ec.marshalNWeightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_weightages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_weightages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14393,7 +14681,7 @@ func (ec *executionContext) _Experiment_isCustomExperiment(ctx context.Context, 
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_isCustomExperiment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_isCustomExperiment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14437,7 +14725,7 @@ func (ec *executionContext) _Experiment_updatedAt(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14481,7 +14769,7 @@ func (ec *executionContext) _Experiment_createdAt(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14522,7 +14810,7 @@ func (ec *executionContext) _Experiment_infra(ctx context.Context, field graphql
 	return ec.marshalOInfra2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfra(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_infra(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_infra(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14622,7 +14910,7 @@ func (ec *executionContext) _Experiment_isRemoved(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14663,7 +14951,7 @@ func (ec *executionContext) _Experiment_tags(ctx context.Context, field graphql.
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14704,7 +14992,7 @@ func (ec *executionContext) _Experiment_createdBy(ctx context.Context, field gra
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14753,7 +15041,7 @@ func (ec *executionContext) _Experiment_recentExperimentRunDetails(ctx context.C
 	return ec.marshalORecentExperimentRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExperimentRun(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_recentExperimentRunDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_recentExperimentRunDetails(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14812,7 +15100,7 @@ func (ec *executionContext) _Experiment_updatedBy(ctx context.Context, field gra
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiment_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiment_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiment",
 		Field:      field,
@@ -14864,7 +15152,7 @@ func (ec *executionContext) _ExperimentDetails_engineDetails(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentDetails_engineDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentDetails_engineDetails(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentDetails",
 		Field:      field,
@@ -14908,7 +15196,7 @@ func (ec *executionContext) _ExperimentDetails_experimentDetails(ctx context.Con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentDetails_experimentDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentDetails_experimentDetails(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentDetails",
 		Field:      field,
@@ -14952,7 +15240,7 @@ func (ec *executionContext) _ExperimentRun_projectID(ctx context.Context, field 
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -14996,7 +15284,7 @@ func (ec *executionContext) _ExperimentRun_experimentRunID(ctx context.Context, 
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_experimentRunID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_experimentRunID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15037,7 +15325,7 @@ func (ec *executionContext) _ExperimentRun_experimentType(ctx context.Context, f
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_experimentType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_experimentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15081,7 +15369,7 @@ func (ec *executionContext) _ExperimentRun_experimentID(ctx context.Context, fie
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_experimentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_experimentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15125,7 +15413,7 @@ func (ec *executionContext) _ExperimentRun_weightages(ctx context.Context, field
 	return ec.marshalNWeightages2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐWeightagesᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_weightages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_weightages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15175,7 +15463,7 @@ func (ec *executionContext) _ExperimentRun_updatedAt(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15219,7 +15507,7 @@ func (ec *executionContext) _ExperimentRun_createdAt(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15263,7 +15551,7 @@ func (ec *executionContext) _ExperimentRun_infra(ctx context.Context, field grap
 	return ec.marshalNInfra2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfra(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_infra(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_infra(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15363,7 +15651,7 @@ func (ec *executionContext) _ExperimentRun_experimentName(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_experimentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_experimentName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15407,7 +15695,7 @@ func (ec *executionContext) _ExperimentRun_experimentManifest(ctx context.Contex
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_experimentManifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_experimentManifest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15451,7 +15739,7 @@ func (ec *executionContext) _ExperimentRun_phase(ctx context.Context, field grap
 	return ec.marshalNExperimentRunStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRunStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_phase(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_phase(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15492,7 +15780,7 @@ func (ec *executionContext) _ExperimentRun_resiliencyScore(ctx context.Context, 
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_resiliencyScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_resiliencyScore(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15533,7 +15821,7 @@ func (ec *executionContext) _ExperimentRun_faultsPassed(ctx context.Context, fie
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_faultsPassed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_faultsPassed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15574,7 +15862,7 @@ func (ec *executionContext) _ExperimentRun_faultsFailed(ctx context.Context, fie
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_faultsFailed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_faultsFailed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15615,7 +15903,7 @@ func (ec *executionContext) _ExperimentRun_faultsAwaited(ctx context.Context, fi
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_faultsAwaited(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_faultsAwaited(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15656,7 +15944,7 @@ func (ec *executionContext) _ExperimentRun_faultsStopped(ctx context.Context, fi
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_faultsStopped(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_faultsStopped(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15697,7 +15985,7 @@ func (ec *executionContext) _ExperimentRun_faultsNa(ctx context.Context, field g
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_faultsNa(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_faultsNa(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15738,7 +16026,7 @@ func (ec *executionContext) _ExperimentRun_totalFaults(ctx context.Context, fiel
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_totalFaults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_totalFaults(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15782,7 +16070,7 @@ func (ec *executionContext) _ExperimentRun_executionData(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_executionData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_executionData(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15823,7 +16111,7 @@ func (ec *executionContext) _ExperimentRun_isRemoved(ctx context.Context, field 
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15864,7 +16152,7 @@ func (ec *executionContext) _ExperimentRun_updatedBy(ctx context.Context, field 
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15913,7 +16201,7 @@ func (ec *executionContext) _ExperimentRun_createdBy(ctx context.Context, field 
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -15962,7 +16250,7 @@ func (ec *executionContext) _ExperimentRun_notifyID(ctx context.Context, field g
 	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_notifyID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_notifyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -16006,7 +16294,7 @@ func (ec *executionContext) _ExperimentRun_runSequence(ctx context.Context, fiel
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExperimentRun_runSequence(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExperimentRun_runSequence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExperimentRun",
 		Field:      field,
@@ -16050,7 +16338,7 @@ func (ec *executionContext) _Experiments_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiments_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiments_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiments",
 		Field:      field,
@@ -16094,7 +16382,7 @@ func (ec *executionContext) _Experiments_CSV(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiments_CSV(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiments_CSV(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiments",
 		Field:      field,
@@ -16138,7 +16426,7 @@ func (ec *executionContext) _Experiments_desc(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Experiments_desc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Experiments_desc(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Experiments",
 		Field:      field,
@@ -16182,7 +16470,7 @@ func (ec *executionContext) _FaultDetails_fault(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultDetails_fault(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultDetails_fault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultDetails",
 		Field:      field,
@@ -16226,7 +16514,7 @@ func (ec *executionContext) _FaultDetails_engine(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultDetails_engine(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultDetails_engine(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultDetails",
 		Field:      field,
@@ -16270,7 +16558,7 @@ func (ec *executionContext) _FaultDetails_csv(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultDetails_csv(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultDetails_csv(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultDetails",
 		Field:      field,
@@ -16314,7 +16602,7 @@ func (ec *executionContext) _FaultList_name(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultList_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultList_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultList",
 		Field:      field,
@@ -16358,7 +16646,7 @@ func (ec *executionContext) _FaultList_displayName(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultList_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultList_displayName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultList",
 		Field:      field,
@@ -16402,7 +16690,7 @@ func (ec *executionContext) _FaultList_description(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultList_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultList_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultList",
 		Field:      field,
@@ -16443,7 +16731,7 @@ func (ec *executionContext) _FaultList_plan(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_FaultList_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FaultList_plan(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FaultList",
 		Field:      field,
@@ -16487,7 +16775,7 @@ func (ec *executionContext) _GET_criteria(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GET_criteria(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GET_criteria(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GET",
 		Field:      field,
@@ -16531,7 +16819,7 @@ func (ec *executionContext) _GET_responseCode(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GET_responseCode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GET_responseCode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GET",
 		Field:      field,
@@ -16575,7 +16863,7 @@ func (ec *executionContext) _GetChaosHubStatsResponse_totalChaosHubs(ctx context
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetChaosHubStatsResponse_totalChaosHubs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetChaosHubStatsResponse_totalChaosHubs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetChaosHubStatsResponse",
 		Field:      field,
@@ -16619,7 +16907,7 @@ func (ec *executionContext) _GetExperimentResponse_experimentDetails(ctx context
 	return ec.marshalNExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperiment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentResponse_experimentDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentResponse_experimentDetails(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentResponse",
 		Field:      field,
@@ -16696,7 +16984,7 @@ func (ec *executionContext) _GetExperimentResponse_averageResiliencyScore(ctx co
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentResponse_averageResiliencyScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentResponse_averageResiliencyScore(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentResponse",
 		Field:      field,
@@ -16740,7 +17028,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalExperimentRuns(c
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -16784,7 +17072,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalCompletedExperim
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalCompletedExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalCompletedExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -16828,7 +17116,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalTerminatedExperi
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalTerminatedExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalTerminatedExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -16872,7 +17160,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalRunningExperimen
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalRunningExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalRunningExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -16916,7 +17204,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalStoppedExperimen
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalStoppedExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalStoppedExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -16960,7 +17248,7 @@ func (ec *executionContext) _GetExperimentRunStatsResponse_totalErroredExperimen
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalErroredExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentRunStatsResponse_totalErroredExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentRunStatsResponse",
 		Field:      field,
@@ -17004,7 +17292,7 @@ func (ec *executionContext) _GetExperimentStatsResponse_totalExperiments(ctx con
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentStatsResponse_totalExperiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentStatsResponse_totalExperiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentStatsResponse",
 		Field:      field,
@@ -17048,7 +17336,7 @@ func (ec *executionContext) _GetExperimentStatsResponse_totalExpCategorizedByRes
 	return ec.marshalNResilienceScoreCategory2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐResilienceScoreCategory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetExperimentStatsResponse_totalExpCategorizedByResiliencyScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetExperimentStatsResponse_totalExpCategorizedByResiliencyScore(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetExperimentStatsResponse",
 		Field:      field,
@@ -17098,7 +17386,7 @@ func (ec *executionContext) _GetInfraStatsResponse_totalInfrastructures(ctx cont
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalInfrastructures(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalInfrastructures(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetInfraStatsResponse",
 		Field:      field,
@@ -17142,7 +17430,7 @@ func (ec *executionContext) _GetInfraStatsResponse_totalActiveInfrastructure(ctx
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalActiveInfrastructure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalActiveInfrastructure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetInfraStatsResponse",
 		Field:      field,
@@ -17186,7 +17474,7 @@ func (ec *executionContext) _GetInfraStatsResponse_totalInactiveInfrastructures(
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalInactiveInfrastructures(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalInactiveInfrastructures(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetInfraStatsResponse",
 		Field:      field,
@@ -17230,7 +17518,7 @@ func (ec *executionContext) _GetInfraStatsResponse_totalConfirmedInfrastructure(
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalConfirmedInfrastructure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalConfirmedInfrastructure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetInfraStatsResponse",
 		Field:      field,
@@ -17274,7 +17562,7 @@ func (ec *executionContext) _GetInfraStatsResponse_totalNonConfirmedInfrastructu
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalNonConfirmedInfrastructures(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetInfraStatsResponse_totalNonConfirmedInfrastructures(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetInfraStatsResponse",
 		Field:      field,
@@ -17318,7 +17606,7 @@ func (ec *executionContext) _GetProbeReferenceResponse_projectID(ctx context.Con
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbeReferenceResponse_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbeReferenceResponse_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbeReferenceResponse",
 		Field:      field,
@@ -17362,7 +17650,7 @@ func (ec *executionContext) _GetProbeReferenceResponse_name(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbeReferenceResponse_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbeReferenceResponse_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbeReferenceResponse",
 		Field:      field,
@@ -17406,7 +17694,7 @@ func (ec *executionContext) _GetProbeReferenceResponse_totalRuns(ctx context.Con
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbeReferenceResponse_totalRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbeReferenceResponse_totalRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbeReferenceResponse",
 		Field:      field,
@@ -17450,7 +17738,7 @@ func (ec *executionContext) _GetProbeReferenceResponse_recentExecutions(ctx cont
 	return ec.marshalNRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbeReferenceResponse_recentExecutions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbeReferenceResponse_recentExecutions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbeReferenceResponse",
 		Field:      field,
@@ -17502,7 +17790,7 @@ func (ec *executionContext) _GetProbesInExperimentRunResponse_probe(ctx context.
 	return ec.marshalNProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_probe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_probe(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbesInExperimentRunResponse",
 		Field:      field,
@@ -17580,7 +17868,7 @@ func (ec *executionContext) _GetProbesInExperimentRunResponse_mode(ctx context.C
 	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_mode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_mode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbesInExperimentRunResponse",
 		Field:      field,
@@ -17624,7 +17912,7 @@ func (ec *executionContext) _GetProbesInExperimentRunResponse_status(ctx context
 	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GetProbesInExperimentRunResponse_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GetProbesInExperimentRunResponse",
 		Field:      field,
@@ -17674,7 +17962,7 @@ func (ec *executionContext) _GitConfigResponse_enabled(ctx context.Context, fiel
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17718,7 +18006,7 @@ func (ec *executionContext) _GitConfigResponse_projectID(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17759,7 +18047,7 @@ func (ec *executionContext) _GitConfigResponse_branch(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_branch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_branch(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17800,7 +18088,7 @@ func (ec *executionContext) _GitConfigResponse_repoURL(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_repoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_repoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17841,7 +18129,7 @@ func (ec *executionContext) _GitConfigResponse_authType(ctx context.Context, fie
 	return ec.marshalOAuthType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_authType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_authType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17882,7 +18170,7 @@ func (ec *executionContext) _GitConfigResponse_token(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17923,7 +18211,7 @@ func (ec *executionContext) _GitConfigResponse_userName(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_userName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_userName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -17964,7 +18252,7 @@ func (ec *executionContext) _GitConfigResponse_password(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_password(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -18005,7 +18293,7 @@ func (ec *executionContext) _GitConfigResponse_sshPrivateKey(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GitConfigResponse_sshPrivateKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GitConfigResponse_sshPrivateKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GitConfigResponse",
 		Field:      field,
@@ -18046,7 +18334,7 @@ func (ec *executionContext) _ImageRegistry_isDefault(ctx context.Context, field 
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_isDefault(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_isDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18090,7 +18378,7 @@ func (ec *executionContext) _ImageRegistry_imageRegistryName(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_imageRegistryName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_imageRegistryName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18134,7 +18422,7 @@ func (ec *executionContext) _ImageRegistry_imageRepoName(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_imageRepoName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_imageRepoName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18178,7 +18466,7 @@ func (ec *executionContext) _ImageRegistry_imageRegistryType(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_imageRegistryType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_imageRegistryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18219,7 +18507,7 @@ func (ec *executionContext) _ImageRegistry_secretName(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_secretName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_secretName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18260,7 +18548,7 @@ func (ec *executionContext) _ImageRegistry_secretNamespace(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_secretNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_secretNamespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18301,7 +18589,7 @@ func (ec *executionContext) _ImageRegistry_enableRegistry(ctx context.Context, f
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistry_enableRegistry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistry_enableRegistry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistry",
 		Field:      field,
@@ -18345,7 +18633,7 @@ func (ec *executionContext) _ImageRegistryResponse_isDefault(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_isDefault(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_isDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18386,7 +18674,7 @@ func (ec *executionContext) _ImageRegistryResponse_imageRegistryInfo(ctx context
 	return ec.marshalOImageRegistry2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐImageRegistry(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_imageRegistryInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_imageRegistryInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18446,7 +18734,7 @@ func (ec *executionContext) _ImageRegistryResponse_imageRegistryID(ctx context.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_imageRegistryID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_imageRegistryID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18490,7 +18778,7 @@ func (ec *executionContext) _ImageRegistryResponse_projectID(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18531,7 +18819,7 @@ func (ec *executionContext) _ImageRegistryResponse_updatedAt(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18572,7 +18860,7 @@ func (ec *executionContext) _ImageRegistryResponse_createdAt(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18613,7 +18901,7 @@ func (ec *executionContext) _ImageRegistryResponse_createdBy(ctx context.Context
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18662,7 +18950,7 @@ func (ec *executionContext) _ImageRegistryResponse_updatedBy(ctx context.Context
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18711,7 +18999,7 @@ func (ec *executionContext) _ImageRegistryResponse_isRemoved(ctx context.Context
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ImageRegistryResponse_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ImageRegistryResponse_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ImageRegistryResponse",
 		Field:      field,
@@ -18755,7 +19043,7 @@ func (ec *executionContext) _Infra_projectID(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -18799,7 +19087,7 @@ func (ec *executionContext) _Infra_infraID(ctx context.Context, field graphql.Co
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -18843,7 +19131,7 @@ func (ec *executionContext) _Infra_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -18884,7 +19172,7 @@ func (ec *executionContext) _Infra_description(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -18925,7 +19213,7 @@ func (ec *executionContext) _Infra_tags(ctx context.Context, field graphql.Colle
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -18969,7 +19257,7 @@ func (ec *executionContext) _Infra_environmentID(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_environmentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_environmentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19013,7 +19301,7 @@ func (ec *executionContext) _Infra_platformName(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_platformName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_platformName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19057,7 +19345,7 @@ func (ec *executionContext) _Infra_isActive(ctx context.Context, field graphql.C
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_isActive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_isActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19101,7 +19389,7 @@ func (ec *executionContext) _Infra_isInfraConfirmed(ctx context.Context, field g
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_isInfraConfirmed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_isInfraConfirmed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19145,7 +19433,7 @@ func (ec *executionContext) _Infra_isRemoved(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_isRemoved(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_isRemoved(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19189,7 +19477,7 @@ func (ec *executionContext) _Infra_updatedAt(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19233,7 +19521,7 @@ func (ec *executionContext) _Infra_createdAt(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19274,7 +19562,7 @@ func (ec *executionContext) _Infra_noOfExperiments(ctx context.Context, field gr
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_noOfExperiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_noOfExperiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19315,7 +19603,7 @@ func (ec *executionContext) _Infra_noOfExperimentRuns(ctx context.Context, field
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_noOfExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_noOfExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19359,7 +19647,7 @@ func (ec *executionContext) _Infra_token(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19400,7 +19688,7 @@ func (ec *executionContext) _Infra_infraNamespace(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraNamespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19441,7 +19729,7 @@ func (ec *executionContext) _Infra_serviceAccount(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_serviceAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_serviceAccount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19485,7 +19773,7 @@ func (ec *executionContext) _Infra_infraScope(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraScope(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraScope(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19526,7 +19814,7 @@ func (ec *executionContext) _Infra_infraNsExists(ctx context.Context, field grap
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraNsExists(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraNsExists(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19567,7 +19855,7 @@ func (ec *executionContext) _Infra_infraSaExists(ctx context.Context, field grap
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraSaExists(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraSaExists(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19608,7 +19896,7 @@ func (ec *executionContext) _Infra_lastExperimentTimestamp(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_lastExperimentTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_lastExperimentTimestamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19652,7 +19940,7 @@ func (ec *executionContext) _Infra_startTime(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_startTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_startTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19696,7 +19984,7 @@ func (ec *executionContext) _Infra_version(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_version(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19737,7 +20025,7 @@ func (ec *executionContext) _Infra_createdBy(ctx context.Context, field graphql.
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19786,7 +20074,7 @@ func (ec *executionContext) _Infra_updatedBy(ctx context.Context, field graphql.
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19835,7 +20123,7 @@ func (ec *executionContext) _Infra_infraType(ctx context.Context, field graphql.
 	return ec.marshalOInfrastructureType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_infraType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_infraType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19879,7 +20167,7 @@ func (ec *executionContext) _Infra_updateStatus(ctx context.Context, field graph
 	return ec.marshalNUpdateStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUpdateStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Infra_updateStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Infra_updateStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Infra",
 		Field:      field,
@@ -19923,7 +20211,7 @@ func (ec *executionContext) _InfraActionResponse_projectID(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraActionResponse_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraActionResponse_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraActionResponse",
 		Field:      field,
@@ -19967,7 +20255,7 @@ func (ec *executionContext) _InfraActionResponse_action(ctx context.Context, fie
 	return ec.marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐActionPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraActionResponse_action(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraActionResponse_action(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraActionResponse",
 		Field:      field,
@@ -20025,7 +20313,7 @@ func (ec *executionContext) _InfraEventResponse_eventID(ctx context.Context, fie
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraEventResponse_eventID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraEventResponse_eventID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraEventResponse",
 		Field:      field,
@@ -20069,7 +20357,7 @@ func (ec *executionContext) _InfraEventResponse_eventType(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraEventResponse_eventType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraEventResponse_eventType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraEventResponse",
 		Field:      field,
@@ -20113,7 +20401,7 @@ func (ec *executionContext) _InfraEventResponse_eventName(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraEventResponse_eventName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraEventResponse_eventName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraEventResponse",
 		Field:      field,
@@ -20157,7 +20445,7 @@ func (ec *executionContext) _InfraEventResponse_description(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraEventResponse_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraEventResponse_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraEventResponse",
 		Field:      field,
@@ -20201,7 +20489,7 @@ func (ec *executionContext) _InfraEventResponse_infra(ctx context.Context, field
 	return ec.marshalNInfra2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfra(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraEventResponse_infra(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraEventResponse_infra(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraEventResponse",
 		Field:      field,
@@ -20301,7 +20589,7 @@ func (ec *executionContext) _InfraVersionDetails_latestVersion(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraVersionDetails_latestVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraVersionDetails_latestVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraVersionDetails",
 		Field:      field,
@@ -20345,7 +20633,7 @@ func (ec *executionContext) _InfraVersionDetails_compatibleVersions(ctx context.
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_InfraVersionDetails_compatibleVersions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_InfraVersionDetails_compatibleVersions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "InfraVersionDetails",
 		Field:      field,
@@ -20389,7 +20677,7 @@ func (ec *executionContext) _K8SProbe_probeTimeout(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_probeTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_probeTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20433,7 +20721,7 @@ func (ec *executionContext) _K8SProbe_interval(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_interval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20474,7 +20762,7 @@ func (ec *executionContext) _K8SProbe_retry(ctx context.Context, field graphql.C
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_retry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_retry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20515,7 +20803,7 @@ func (ec *executionContext) _K8SProbe_attempt(ctx context.Context, field graphql
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_attempt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_attempt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20556,7 +20844,7 @@ func (ec *executionContext) _K8SProbe_probePollingInterval(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_probePollingInterval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20597,7 +20885,7 @@ func (ec *executionContext) _K8SProbe_initialDelay(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_initialDelay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_initialDelay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20638,7 +20926,7 @@ func (ec *executionContext) _K8SProbe_evaluationTimeout(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_evaluationTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20679,7 +20967,7 @@ func (ec *executionContext) _K8SProbe_stopOnFailure(ctx context.Context, field g
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_stopOnFailure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20720,7 +21008,7 @@ func (ec *executionContext) _K8SProbe_group(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_group(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_group(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20764,7 +21052,7 @@ func (ec *executionContext) _K8SProbe_version(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_version(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20808,7 +21096,7 @@ func (ec *executionContext) _K8SProbe_resource(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_resource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_resource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20849,7 +21137,7 @@ func (ec *executionContext) _K8SProbe_namespace(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_namespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_namespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20890,7 +21178,7 @@ func (ec *executionContext) _K8SProbe_resourceNames(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_resourceNames(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_resourceNames(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20931,7 +21219,7 @@ func (ec *executionContext) _K8SProbe_fieldSelector(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_fieldSelector(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_fieldSelector(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -20972,7 +21260,7 @@ func (ec *executionContext) _K8SProbe_labelSelector(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_labelSelector(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_labelSelector(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -21016,7 +21304,7 @@ func (ec *executionContext) _K8SProbe_operation(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_K8SProbe_operation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8SProbe_operation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8SProbe",
 		Field:      field,
@@ -21024,6 +21312,142 @@ func (ec *executionContext) fieldContext_K8SProbe_operation(ctx context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _KubeNamespace_name(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespace_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespace_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _KubeNamespaceResponse_infraID(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespaceResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespaceResponse_infraID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InfraID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespaceResponse_infraID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespaceResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _KubeNamespaceResponse_kubeNamespace(ctx context.Context, field graphql.CollectedField, obj *model.KubeNamespaceResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_KubeNamespaceResponse_kubeNamespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubeNamespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.KubeNamespace)
+	fc.Result = res
+	return ec.marshalNKubeNamespace2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_KubeNamespaceResponse_kubeNamespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "KubeNamespaceResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_KubeNamespace_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type KubeNamespace", field.Name)
 		},
 	}
 	return fc, nil
@@ -21060,7 +21484,7 @@ func (ec *executionContext) _KubeObject_namespace(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubeObject_namespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubeObject_namespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubeObject",
 		Field:      field,
@@ -21104,7 +21528,7 @@ func (ec *executionContext) _KubeObject_data(ctx context.Context, field graphql.
 	return ec.marshalNObjectData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐObjectData(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubeObject_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubeObject_data(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubeObject",
 		Field:      field,
@@ -21154,7 +21578,7 @@ func (ec *executionContext) _KubeObjectResponse_infraID(ctx context.Context, fie
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubeObjectResponse_infraID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubeObjectResponse_infraID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubeObjectResponse",
 		Field:      field,
@@ -21193,12 +21617,12 @@ func (ec *executionContext) _KubeObjectResponse_kubeObj(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.KubeObject)
+	res := resTmp.(*model.KubeObject)
 	fc.Result = res
-	return ec.marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, field.Selections, res)
+	return ec.marshalNKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubeObjectResponse_kubeObj(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubeObjectResponse_kubeObj(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubeObjectResponse",
 		Field:      field,
@@ -21248,7 +21672,7 @@ func (ec *executionContext) _KubernetesCMDProbe_probeTimeout(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_probeTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_probeTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21292,7 +21716,7 @@ func (ec *executionContext) _KubernetesCMDProbe_interval(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_interval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21333,7 +21757,7 @@ func (ec *executionContext) _KubernetesCMDProbe_retry(ctx context.Context, field
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_retry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_retry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21374,7 +21798,7 @@ func (ec *executionContext) _KubernetesCMDProbe_attempt(ctx context.Context, fie
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_attempt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_attempt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21415,7 +21839,7 @@ func (ec *executionContext) _KubernetesCMDProbe_probePollingInterval(ctx context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_probePollingInterval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21456,7 +21880,7 @@ func (ec *executionContext) _KubernetesCMDProbe_initialDelay(ctx context.Context
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_initialDelay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_initialDelay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21497,7 +21921,7 @@ func (ec *executionContext) _KubernetesCMDProbe_evaluationTimeout(ctx context.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_evaluationTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21538,7 +21962,7 @@ func (ec *executionContext) _KubernetesCMDProbe_stopOnFailure(ctx context.Contex
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_stopOnFailure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21582,7 +22006,7 @@ func (ec *executionContext) _KubernetesCMDProbe_command(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_command(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_command(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21626,7 +22050,7 @@ func (ec *executionContext) _KubernetesCMDProbe_comparator(ctx context.Context, 
 	return ec.marshalNComparator2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_comparator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_comparator(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21675,7 +22099,7 @@ func (ec *executionContext) _KubernetesCMDProbe_source(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesCMDProbe_source(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesCMDProbe_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesCMDProbe",
 		Field:      field,
@@ -21719,7 +22143,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_probeTimeout(ctx context.Contex
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_probeTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_probeTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21763,7 +22187,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_interval(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_interval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21804,7 +22228,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_retry(ctx context.Context, fiel
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_retry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_retry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21845,7 +22269,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_attempt(ctx context.Context, fi
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_attempt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_attempt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21886,7 +22310,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_probePollingInterval(ctx contex
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_probePollingInterval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21927,7 +22351,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_initialDelay(ctx context.Contex
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_initialDelay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_initialDelay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -21968,7 +22392,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_evaluationTimeout(ctx context.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_evaluationTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -22009,7 +22433,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_stopOnFailure(ctx context.Conte
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_stopOnFailure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -22053,7 +22477,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_url(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -22097,7 +22521,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_method(ctx context.Context, fie
 	return ec.marshalNMethod2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethod(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_method(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_method(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -22144,7 +22568,7 @@ func (ec *executionContext) _KubernetesHTTPProbe_insecureSkipVerify(ctx context.
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_KubernetesHTTPProbe_insecureSkipVerify(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_KubernetesHTTPProbe_insecureSkipVerify(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KubernetesHTTPProbe",
 		Field:      field,
@@ -22188,7 +22612,7 @@ func (ec *executionContext) _Link_name(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Link_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Link_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Link",
 		Field:      field,
@@ -22232,7 +22656,7 @@ func (ec *executionContext) _Link_url(ctx context.Context, field graphql.Collect
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Link_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Link_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Link",
 		Field:      field,
@@ -22276,7 +22700,7 @@ func (ec *executionContext) _ListEnvironmentResponse_totalNoOfEnvironments(ctx c
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListEnvironmentResponse_totalNoOfEnvironments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListEnvironmentResponse_totalNoOfEnvironments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListEnvironmentResponse",
 		Field:      field,
@@ -22317,7 +22741,7 @@ func (ec *executionContext) _ListEnvironmentResponse_environments(ctx context.Co
 	return ec.marshalOEnvironment2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListEnvironmentResponse_environments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListEnvironmentResponse_environments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListEnvironmentResponse",
 		Field:      field,
@@ -22387,7 +22811,7 @@ func (ec *executionContext) _ListExperimentResponse_totalNoOfExperiments(ctx con
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListExperimentResponse_totalNoOfExperiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListExperimentResponse_totalNoOfExperiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListExperimentResponse",
 		Field:      field,
@@ -22431,7 +22855,7 @@ func (ec *executionContext) _ListExperimentResponse_experiments(ctx context.Cont
 	return ec.marshalNExperiment2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperiment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListExperimentResponse_experiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListExperimentResponse_experiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListExperimentResponse",
 		Field:      field,
@@ -22511,7 +22935,7 @@ func (ec *executionContext) _ListExperimentRunResponse_totalNoOfExperimentRuns(c
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListExperimentRunResponse_totalNoOfExperimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListExperimentRunResponse_totalNoOfExperimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListExperimentRunResponse",
 		Field:      field,
@@ -22555,7 +22979,7 @@ func (ec *executionContext) _ListExperimentRunResponse_experimentRuns(ctx contex
 	return ec.marshalNExperimentRun2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentRun(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListExperimentRunResponse_experimentRuns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListExperimentRunResponse_experimentRuns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListExperimentRunResponse",
 		Field:      field,
@@ -22649,7 +23073,7 @@ func (ec *executionContext) _ListInfraResponse_totalNoOfInfras(ctx context.Conte
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListInfraResponse_totalNoOfInfras(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListInfraResponse_totalNoOfInfras(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListInfraResponse",
 		Field:      field,
@@ -22693,7 +23117,7 @@ func (ec *executionContext) _ListInfraResponse_infras(ctx context.Context, field
 	return ec.marshalNInfra2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfra(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ListInfraResponse_infras(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ListInfraResponse_infras(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListInfraResponse",
 		Field:      field,
@@ -22793,7 +23217,7 @@ func (ec *executionContext) _Maintainer_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Maintainer_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Maintainer_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Maintainer",
 		Field:      field,
@@ -22837,7 +23261,7 @@ func (ec *executionContext) _Maintainer_email(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Maintainer_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Maintainer_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Maintainer",
 		Field:      field,
@@ -22881,7 +23305,7 @@ func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Metadata_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Metadata_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Metadata",
 		Field:      field,
@@ -22925,7 +23349,7 @@ func (ec *executionContext) _Metadata_version(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Metadata_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Metadata_version(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Metadata",
 		Field:      field,
@@ -22969,7 +23393,7 @@ func (ec *executionContext) _Metadata_annotations(ctx context.Context, field gra
 	return ec.marshalNAnnotation2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐAnnotation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Metadata_annotations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Metadata_annotations(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Metadata",
 		Field:      field,
@@ -23024,7 +23448,7 @@ func (ec *executionContext) _Method_get(ctx context.Context, field graphql.Colle
 	return ec.marshalOGET2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGet(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Method_get(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Method_get(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Method",
 		Field:      field,
@@ -23071,7 +23495,7 @@ func (ec *executionContext) _Method_post(ctx context.Context, field graphql.Coll
 	return ec.marshalOPOST2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Method_post(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Method_post(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Method",
 		Field:      field,
@@ -23980,6 +24404,61 @@ func (ec *executionContext) fieldContext_Mutation_kubeObj(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_kubeNamespace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_kubeNamespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().KubeNamespace(rctx, fc.Args["request"].(model.KubeNamespaceData))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_kubeNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_kubeNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_addChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_addChaosHub(ctx, field)
 	if err != nil {
@@ -24045,6 +24524,8 @@ func (ec *executionContext) fieldContext_Mutation_addChaosHub(ctx context.Contex
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24164,6 +24645,8 @@ func (ec *executionContext) fieldContext_Mutation_addRemoteChaosHub(ctx context.
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24283,6 +24766,8 @@ func (ec *executionContext) fieldContext_Mutation_saveChaosHub(ctx context.Conte
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -24463,7 +24948,7 @@ func (ec *executionContext) _Mutation_generateSSHKey(ctx context.Context, field 
 	return ec.marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐSSHKey(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_generateSSHKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_generateSSHKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -24547,6 +25032,8 @@ func (ec *executionContext) fieldContext_Mutation_updateChaosHub(ctx context.Con
 				return ec.fieldContext_ChaosHub_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHub_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHub_remoteHub(ctx, field)
 			case "projectID":
 				return ec.fieldContext_ChaosHub_projectID(ctx, field)
 			case "isDefault":
@@ -25756,7 +26243,7 @@ func (ec *executionContext) _ObjectData_labels(ctx context.Context, field graphq
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ObjectData_labels(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ObjectData_labels(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ObjectData",
 		Field:      field,
@@ -25800,7 +26287,7 @@ func (ec *executionContext) _ObjectData_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ObjectData_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ObjectData_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ObjectData",
 		Field:      field,
@@ -25841,7 +26328,7 @@ func (ec *executionContext) _POST_contentType(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_POST_contentType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_POST_contentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "POST",
 		Field:      field,
@@ -25882,7 +26369,7 @@ func (ec *executionContext) _POST_body(ctx context.Context, field graphql.Collec
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_POST_body(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_POST_body(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "POST",
 		Field:      field,
@@ -25923,7 +26410,7 @@ func (ec *executionContext) _POST_bodyPath(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_POST_bodyPath(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_POST_bodyPath(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "POST",
 		Field:      field,
@@ -25967,7 +26454,7 @@ func (ec *executionContext) _POST_criteria(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_POST_criteria(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_POST_criteria(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "POST",
 		Field:      field,
@@ -26011,7 +26498,7 @@ func (ec *executionContext) _POST_responseCode(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_POST_responseCode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_POST_responseCode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "POST",
 		Field:      field,
@@ -26055,7 +26542,7 @@ func (ec *executionContext) _PROMProbe_probeTimeout(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_probeTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_probeTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26099,7 +26586,7 @@ func (ec *executionContext) _PROMProbe_interval(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_interval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26140,7 +26627,7 @@ func (ec *executionContext) _PROMProbe_retry(ctx context.Context, field graphql.
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_retry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_retry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26181,7 +26668,7 @@ func (ec *executionContext) _PROMProbe_attempt(ctx context.Context, field graphq
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_attempt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_attempt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26222,7 +26709,7 @@ func (ec *executionContext) _PROMProbe_probePollingInterval(ctx context.Context,
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_probePollingInterval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26263,7 +26750,7 @@ func (ec *executionContext) _PROMProbe_initialDelay(ctx context.Context, field g
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_initialDelay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_initialDelay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26304,7 +26791,7 @@ func (ec *executionContext) _PROMProbe_evaluationTimeout(ctx context.Context, fi
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_evaluationTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26345,7 +26832,7 @@ func (ec *executionContext) _PROMProbe_stopOnFailure(ctx context.Context, field 
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_stopOnFailure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26389,7 +26876,7 @@ func (ec *executionContext) _PROMProbe_endpoint(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_endpoint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_endpoint(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26430,7 +26917,7 @@ func (ec *executionContext) _PROMProbe_query(ctx context.Context, field graphql.
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_query(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_query(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26471,7 +26958,7 @@ func (ec *executionContext) _PROMProbe_queryPath(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_queryPath(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_queryPath(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26515,7 +27002,7 @@ func (ec *executionContext) _PROMProbe_comparator(ctx context.Context, field gra
 	return ec.marshalNComparator2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PROMProbe_comparator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PROMProbe_comparator(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PROMProbe",
 		Field:      field,
@@ -26567,7 +27054,7 @@ func (ec *executionContext) _PackageInformation_packageName(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PackageInformation_packageName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PackageInformation_packageName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PackageInformation",
 		Field:      field,
@@ -26611,7 +27098,7 @@ func (ec *executionContext) _PackageInformation_experiments(ctx context.Context,
 	return ec.marshalNExperiments2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperimentsᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PackageInformation_experiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PackageInformation_experiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PackageInformation",
 		Field:      field,
@@ -26663,7 +27150,7 @@ func (ec *executionContext) _PodLogResponse_experimentRunID(ctx context.Context,
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PodLogResponse_experimentRunID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PodLogResponse_experimentRunID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PodLogResponse",
 		Field:      field,
@@ -26707,7 +27194,7 @@ func (ec *executionContext) _PodLogResponse_podName(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PodLogResponse_podName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PodLogResponse_podName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PodLogResponse",
 		Field:      field,
@@ -26751,7 +27238,7 @@ func (ec *executionContext) _PodLogResponse_podType(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PodLogResponse_podType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PodLogResponse_podType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PodLogResponse",
 		Field:      field,
@@ -26795,7 +27282,7 @@ func (ec *executionContext) _PodLogResponse_log(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PodLogResponse_log(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PodLogResponse_log(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PodLogResponse",
 		Field:      field,
@@ -26839,7 +27326,7 @@ func (ec *executionContext) _PredefinedExperimentList_experimentName(ctx context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PredefinedExperimentList",
 		Field:      field,
@@ -26883,7 +27370,7 @@ func (ec *executionContext) _PredefinedExperimentList_experimentCSV(ctx context.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentCSV(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentCSV(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PredefinedExperimentList",
 		Field:      field,
@@ -26927,7 +27414,7 @@ func (ec *executionContext) _PredefinedExperimentList_experimentManifest(ctx con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentManifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PredefinedExperimentList_experimentManifest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PredefinedExperimentList",
 		Field:      field,
@@ -26971,7 +27458,7 @@ func (ec *executionContext) _Probe_projectID(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27015,7 +27502,7 @@ func (ec *executionContext) _Probe_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27056,7 +27543,7 @@ func (ec *executionContext) _Probe_description(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27097,7 +27584,7 @@ func (ec *executionContext) _Probe_tags(ctx context.Context, field graphql.Colle
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27141,7 +27628,7 @@ func (ec *executionContext) _Probe_type(ctx context.Context, field graphql.Colle
 	return ec.marshalNProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27185,7 +27672,7 @@ func (ec *executionContext) _Probe_infrastructureType(ctx context.Context, field
 	return ec.marshalNInfrastructureType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_infrastructureType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_infrastructureType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27226,7 +27713,7 @@ func (ec *executionContext) _Probe_kubernetesHTTPProperties(ctx context.Context,
 	return ec.marshalOKubernetesHTTPProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbe(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_kubernetesHTTPProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_kubernetesHTTPProperties(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27291,7 +27778,7 @@ func (ec *executionContext) _Probe_kubernetesCMDProperties(ctx context.Context, 
 	return ec.marshalOKubernetesCMDProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_kubernetesCMDProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_kubernetesCMDProperties(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27356,7 +27843,7 @@ func (ec *executionContext) _Probe_k8sProperties(ctx context.Context, field grap
 	return ec.marshalOK8SProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbe(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_k8sProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_k8sProperties(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27431,7 +27918,7 @@ func (ec *executionContext) _Probe_promProperties(ctx context.Context, field gra
 	return ec.marshalOPROMProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbe(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_promProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_promProperties(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27498,7 +27985,7 @@ func (ec *executionContext) _Probe_recentExecutions(ctx context.Context, field g
 	return ec.marshalOProbeRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutionsᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_recentExecutions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_recentExecutions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27547,7 +28034,7 @@ func (ec *executionContext) _Probe_referencedBy(ctx context.Context, field graph
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_referencedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_referencedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27591,7 +28078,7 @@ func (ec *executionContext) _Probe_updatedAt(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27635,7 +28122,7 @@ func (ec *executionContext) _Probe_createdAt(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27676,7 +28163,7 @@ func (ec *executionContext) _Probe_updatedBy(ctx context.Context, field graphql.
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27725,7 +28212,7 @@ func (ec *executionContext) _Probe_createdBy(ctx context.Context, field graphql.
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Probe_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Probe_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Probe",
 		Field:      field,
@@ -27777,7 +28264,7 @@ func (ec *executionContext) _ProbeRecentExecutions_faultName(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProbeRecentExecutions_faultName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProbeRecentExecutions_faultName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProbeRecentExecutions",
 		Field:      field,
@@ -27821,7 +28308,7 @@ func (ec *executionContext) _ProbeRecentExecutions_status(ctx context.Context, f
 	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProbeRecentExecutions_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProbeRecentExecutions_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProbeRecentExecutions",
 		Field:      field,
@@ -27871,7 +28358,7 @@ func (ec *executionContext) _ProbeRecentExecutions_executedByExperiment(ctx cont
 	return ec.marshalNExecutedByExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProbeRecentExecutions_executedByExperiment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProbeRecentExecutions_executedByExperiment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProbeRecentExecutions",
 		Field:      field,
@@ -27925,7 +28412,7 @@ func (ec *executionContext) _Provider_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Provider_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Provider_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Provider",
 		Field:      field,
@@ -28973,7 +29460,7 @@ func (ec *executionContext) _Query_getServerVersion(ctx context.Context, field g
 	return ec.marshalNServerVersionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐServerVersionResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getServerVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getServerVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -29227,6 +29714,8 @@ func (ec *executionContext) fieldContext_Query_listChaosHub(ctx context.Context,
 				return ec.fieldContext_ChaosHubStatus_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHubStatus_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
 			case "isAvailable":
 				return ec.fieldContext_ChaosHubStatus_isAvailable(ctx, field)
 			case "totalFaults":
@@ -29352,6 +29841,8 @@ func (ec *executionContext) fieldContext_Query_getChaosHub(ctx context.Context, 
 				return ec.fieldContext_ChaosHubStatus_repoURL(ctx, field)
 			case "repoBranch":
 				return ec.fieldContext_ChaosHubStatus_repoBranch(ctx, field)
+			case "remoteHub":
+				return ec.fieldContext_ChaosHubStatus_remoteHub(ctx, field)
 			case "isAvailable":
 				return ec.fieldContext_ChaosHubStatus_isAvailable(ctx, field)
 			case "totalFaults":
@@ -30753,7 +31244,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -30811,7 +31302,7 @@ func (ec *executionContext) _RecentExecutions_faultName(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExecutions_faultName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExecutions_faultName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExecutions",
 		Field:      field,
@@ -30855,7 +31346,7 @@ func (ec *executionContext) _RecentExecutions_mode(ctx context.Context, field gr
 	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExecutions_mode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExecutions_mode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExecutions",
 		Field:      field,
@@ -30899,7 +31390,7 @@ func (ec *executionContext) _RecentExecutions_executionHistory(ctx context.Conte
 	return ec.marshalNExecutionHistory2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistoryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExecutions_executionHistory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExecutions_executionHistory(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExecutions",
 		Field:      field,
@@ -30953,7 +31444,7 @@ func (ec *executionContext) _RecentExperimentRun_experimentRunID(ctx context.Con
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_experimentRunID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_experimentRunID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -30997,7 +31488,7 @@ func (ec *executionContext) _RecentExperimentRun_phase(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_phase(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_phase(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31038,7 +31529,7 @@ func (ec *executionContext) _RecentExperimentRun_resiliencyScore(ctx context.Con
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_resiliencyScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_resiliencyScore(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31082,7 +31573,7 @@ func (ec *executionContext) _RecentExperimentRun_updatedAt(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31126,7 +31617,7 @@ func (ec *executionContext) _RecentExperimentRun_createdAt(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31167,7 +31658,7 @@ func (ec *executionContext) _RecentExperimentRun_createdBy(ctx context.Context, 
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31216,7 +31707,7 @@ func (ec *executionContext) _RecentExperimentRun_updatedBy(ctx context.Context, 
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31268,7 +31759,7 @@ func (ec *executionContext) _RecentExperimentRun_runSequence(ctx context.Context
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RecentExperimentRun_runSequence(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RecentExperimentRun_runSequence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentExperimentRun",
 		Field:      field,
@@ -31312,7 +31803,7 @@ func (ec *executionContext) _RegisterInfraResponse_token(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RegisterInfraResponse_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterInfraResponse_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterInfraResponse",
 		Field:      field,
@@ -31356,7 +31847,7 @@ func (ec *executionContext) _RegisterInfraResponse_infraID(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RegisterInfraResponse_infraID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterInfraResponse_infraID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterInfraResponse",
 		Field:      field,
@@ -31400,7 +31891,7 @@ func (ec *executionContext) _RegisterInfraResponse_name(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RegisterInfraResponse_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterInfraResponse_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterInfraResponse",
 		Field:      field,
@@ -31444,7 +31935,7 @@ func (ec *executionContext) _RegisterInfraResponse_manifest(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RegisterInfraResponse_manifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterInfraResponse_manifest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterInfraResponse",
 		Field:      field,
@@ -31488,7 +31979,7 @@ func (ec *executionContext) _ResilienceScoreCategory_id(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ResilienceScoreCategory_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ResilienceScoreCategory_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ResilienceScoreCategory",
 		Field:      field,
@@ -31532,7 +32023,7 @@ func (ec *executionContext) _ResilienceScoreCategory_count(ctx context.Context, 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ResilienceScoreCategory_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ResilienceScoreCategory_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ResilienceScoreCategory",
 		Field:      field,
@@ -31576,7 +32067,7 @@ func (ec *executionContext) _RunChaosExperimentResponse_notifyID(ctx context.Con
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RunChaosExperimentResponse_notifyID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RunChaosExperimentResponse_notifyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RunChaosExperimentResponse",
 		Field:      field,
@@ -31620,7 +32111,7 @@ func (ec *executionContext) _SSHKey_publicKey(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SSHKey_publicKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SSHKey_publicKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SSHKey",
 		Field:      field,
@@ -31664,7 +32155,7 @@ func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SSHKey_privateKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SSHKey_privateKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SSHKey",
 		Field:      field,
@@ -31708,7 +32199,7 @@ func (ec *executionContext) _ServerVersionResponse_key(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ServerVersionResponse_key(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ServerVersionResponse_key(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ServerVersionResponse",
 		Field:      field,
@@ -31752,7 +32243,7 @@ func (ec *executionContext) _ServerVersionResponse_value(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ServerVersionResponse_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ServerVersionResponse_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ServerVersionResponse",
 		Field:      field,
@@ -31796,7 +32287,7 @@ func (ec *executionContext) _Spec_displayName(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_displayName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -31840,7 +32331,7 @@ func (ec *executionContext) _Spec_categoryDescription(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_categoryDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_categoryDescription(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -31884,7 +32375,7 @@ func (ec *executionContext) _Spec_keywords(ctx context.Context, field graphql.Co
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_keywords(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_keywords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -31928,7 +32419,7 @@ func (ec *executionContext) _Spec_maturity(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_maturity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_maturity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -31972,7 +32463,7 @@ func (ec *executionContext) _Spec_maintainers(ctx context.Context, field graphql
 	return ec.marshalNMaintainer2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMaintainerᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_maintainers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_maintainers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32022,7 +32513,7 @@ func (ec *executionContext) _Spec_minKubeVersion(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_minKubeVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_minKubeVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32066,7 +32557,7 @@ func (ec *executionContext) _Spec_provider(ctx context.Context, field graphql.Co
 	return ec.marshalNProvider2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProvider(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_provider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_provider(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32114,7 +32605,7 @@ func (ec *executionContext) _Spec_links(ctx context.Context, field graphql.Colle
 	return ec.marshalNLink2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐLinkᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_links(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_links(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32164,7 +32655,7 @@ func (ec *executionContext) _Spec_faults(ctx context.Context, field graphql.Coll
 	return ec.marshalNFaultList2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐFaultListᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_faults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_faults(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32215,7 +32706,7 @@ func (ec *executionContext) _Spec_experiments(ctx context.Context, field graphql
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_experiments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_experiments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32259,7 +32750,7 @@ func (ec *executionContext) _Spec_chaosExpCRDLink(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_chaosExpCRDLink(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_chaosExpCRDLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32303,7 +32794,7 @@ func (ec *executionContext) _Spec_platforms(ctx context.Context, field graphql.C
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_platforms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_platforms(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32344,7 +32835,7 @@ func (ec *executionContext) _Spec_chaosType(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Spec_chaosType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Spec_chaosType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Spec",
 		Field:      field,
@@ -32388,7 +32879,7 @@ func (ec *executionContext) _Status_verdict(ctx context.Context, field graphql.C
 	return ec.marshalNProbeVerdict2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeVerdict(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Status_verdict(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Status_verdict(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Status",
 		Field:      field,
@@ -32429,7 +32920,7 @@ func (ec *executionContext) _Status_description(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Status_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Status_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Status",
 		Field:      field,
@@ -32473,7 +32964,7 @@ func (ec *executionContext) _StopExperimentRunsRequest_projectID(ctx context.Con
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_StopExperimentRunsRequest_projectID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StopExperimentRunsRequest_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StopExperimentRunsRequest",
 		Field:      field,
@@ -32517,7 +33008,7 @@ func (ec *executionContext) _StopExperimentRunsRequest_experimentID(ctx context.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_StopExperimentRunsRequest_experimentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StopExperimentRunsRequest_experimentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StopExperimentRunsRequest",
 		Field:      field,
@@ -32558,7 +33049,7 @@ func (ec *executionContext) _StopExperimentRunsRequest_experimentRunID(ctx conte
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_StopExperimentRunsRequest_experimentRunID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StopExperimentRunsRequest_experimentRunID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StopExperimentRunsRequest",
 		Field:      field,
@@ -32901,6 +33392,81 @@ func (ec *executionContext) fieldContext_Subscription_getKubeObject(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Subscription_getKubeNamespace(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_getKubeNamespace(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().GetKubeNamespace(rctx, fc.Args["request"].(model.KubeNamespaceRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.KubeNamespaceResponse):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNKubeNamespaceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_getKubeNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "infraID":
+				return ec.fieldContext_KubeNamespaceResponse_infraID(ctx, field)
+			case "kubeNamespace":
+				return ec.fieldContext_KubeNamespaceResponse_kubeNamespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type KubeNamespaceResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_getKubeNamespace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserDetails_userID(ctx context.Context, field graphql.CollectedField, obj *model.UserDetails) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserDetails_userID(ctx, field)
 	if err != nil {
@@ -32932,7 +33498,7 @@ func (ec *executionContext) _UserDetails_userID(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserDetails_userID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserDetails_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserDetails",
 		Field:      field,
@@ -32976,7 +33542,7 @@ func (ec *executionContext) _UserDetails_username(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserDetails_username(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserDetails_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserDetails",
 		Field:      field,
@@ -33020,7 +33586,7 @@ func (ec *executionContext) _UserDetails_email(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserDetails_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserDetails_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserDetails",
 		Field:      field,
@@ -33064,7 +33630,7 @@ func (ec *executionContext) _Weightages_faultName(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Weightages_faultName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Weightages_faultName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Weightages",
 		Field:      field,
@@ -33108,7 +33674,7 @@ func (ec *executionContext) _Weightages_weightage(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Weightages_weightage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Weightages_weightage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Weightages",
 		Field:      field,
@@ -33152,7 +33718,7 @@ func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -33193,7 +33759,7 @@ func (ec *executionContext) ___Directive_description(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -33237,7 +33803,7 @@ func (ec *executionContext) ___Directive_locations(ctx context.Context, field gr
 	return ec.marshalN__DirectiveLocation2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_locations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_locations(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -33281,7 +33847,7 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -33335,7 +33901,7 @@ func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -33379,7 +33945,7 @@ func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -33420,7 +33986,7 @@ func (ec *executionContext) ___EnumValue_description(ctx context.Context, field 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -33464,7 +34030,7 @@ func (ec *executionContext) ___EnumValue_isDeprecated(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_isDeprecated(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -33505,7 +34071,7 @@ func (ec *executionContext) ___EnumValue_deprecationReason(ctx context.Context, 
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___EnumValue_deprecationReason(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___EnumValue_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__EnumValue",
 		Field:      field,
@@ -33549,7 +34115,7 @@ func (ec *executionContext) ___Field_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33590,7 +34156,7 @@ func (ec *executionContext) ___Field_description(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33634,7 +34200,7 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33688,7 +34254,7 @@ func (ec *executionContext) ___Field_type(ctx context.Context, field graphql.Col
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33754,7 +34320,7 @@ func (ec *executionContext) ___Field_isDeprecated(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_isDeprecated(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33795,7 +34361,7 @@ func (ec *executionContext) ___Field_deprecationReason(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Field_deprecationReason(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -33839,7 +34405,7 @@ func (ec *executionContext) ___InputValue_name(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -33880,7 +34446,7 @@ func (ec *executionContext) ___InputValue_description(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -33924,7 +34490,7 @@ func (ec *executionContext) ___InputValue_type(ctx context.Context, field graphq
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -33987,7 +34553,7 @@ func (ec *executionContext) ___InputValue_defaultValue(ctx context.Context, fiel
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___InputValue_defaultValue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___InputValue_defaultValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__InputValue",
 		Field:      field,
@@ -34028,7 +34594,7 @@ func (ec *executionContext) ___Schema_description(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34072,7 +34638,7 @@ func (ec *executionContext) ___Schema_types(ctx context.Context, field graphql.C
 	return ec.marshalN__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_types(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34138,7 +34704,7 @@ func (ec *executionContext) ___Schema_queryType(ctx context.Context, field graph
 	return ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_queryType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34201,7 +34767,7 @@ func (ec *executionContext) ___Schema_mutationType(ctx context.Context, field gr
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_mutationType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34264,7 +34830,7 @@ func (ec *executionContext) ___Schema_subscriptionType(ctx context.Context, fiel
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_subscriptionType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34330,7 +34896,7 @@ func (ec *executionContext) ___Schema_directives(ctx context.Context, field grap
 	return ec.marshalN__Directive2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirectiveᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Schema_directives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Schema",
 		Field:      field,
@@ -34386,7 +34952,7 @@ func (ec *executionContext) ___Type_kind(ctx context.Context, field graphql.Coll
 	return ec.marshalN__TypeKind2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34427,7 +34993,7 @@ func (ec *executionContext) ___Type_name(ctx context.Context, field graphql.Coll
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34468,7 +35034,7 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34575,7 +35141,7 @@ func (ec *executionContext) ___Type_interfaces(ctx context.Context, field graphq
 	return ec.marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_interfaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34638,7 +35204,7 @@ func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field gra
 	return ec.marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_possibleTypes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34763,7 +35329,7 @@ func (ec *executionContext) ___Type_inputFields(ctx context.Context, field graph
 	return ec.marshalO__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_inputFields(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_inputFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34814,7 +35380,7 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_ofType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -34877,7 +35443,7 @@ func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -35136,7 +35702,7 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "repoBranch", "repoURL", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "isDefault"}
+	fieldsInOrder := [...]string{"name", "repoBranch", "repoURL", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "isDefault"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35164,6 +35730,13 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 				return it, err
 			}
 			it.RepoURL = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -35267,7 +35840,7 @@ func (ec *executionContext) unmarshalInputCreateChaosHubRequest(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "repoBranch", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
+	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "repoBranch", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35309,6 +35882,13 @@ func (ec *executionContext) unmarshalInputCreateChaosHubRequest(ctx context.Cont
 				return it, err
 			}
 			it.RepoBranch = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -35426,7 +36006,7 @@ func (ec *executionContext) unmarshalInputCreateRemoteChaosHub(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL"}
+	fieldsInOrder := [...]string{"name", "tags", "description", "repoURL", "remoteHub"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35461,6 +36041,13 @@ func (ec *executionContext) unmarshalInputCreateRemoteChaosHub(ctx context.Conte
 				return it, err
 			}
 			it.RepoURL = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		}
 	}
 
@@ -36520,6 +37107,74 @@ func (ec *executionContext) unmarshalInputKubeGVRRequest(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputKubeNamespaceData(ctx context.Context, obj interface{}) (model.KubeNamespaceData, error) {
+	var it model.KubeNamespaceData
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"requestID", "infraID", "kubeNamespace"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "requestID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RequestID = data
+		case "infraID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
+			data, err := ec.unmarshalNInfraIdentity2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfraIdentity(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InfraID = data
+		case "kubeNamespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kubeNamespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KubeNamespace = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubeNamespaceRequest(ctx context.Context, obj interface{}) (model.KubeNamespaceRequest, error) {
+	var it model.KubeNamespaceRequest
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"infraID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "infraID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infraID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InfraID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputKubeObjectData(ctx context.Context, obj interface{}) (model.KubeObjectData, error) {
 	var it model.KubeObjectData
 	asMap := map[string]interface{}{}
@@ -36568,7 +37223,7 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"infraID", "kubeObjRequest", "objectType", "workloads"}
+	fieldsInOrder := [...]string{"infraID", "kubeObjRequest", "namespace", "objectType", "workloads"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36589,6 +37244,13 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 				return it, err
 			}
 			it.KubeObjRequest = data
+		case "namespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Namespace = data
 		case "objectType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectType"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -37822,7 +38484,7 @@ func (ec *executionContext) unmarshalInputUpdateChaosHubRequest(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "tags", "repoURL", "repoBranch", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
+	fieldsInOrder := [...]string{"id", "name", "description", "tags", "repoURL", "repoBranch", "remoteHub", "isPrivate", "authType", "token", "userName", "password", "sshPrivateKey", "sshPublicKey"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37871,6 +38533,13 @@ func (ec *executionContext) unmarshalInputUpdateChaosHubRequest(ctx context.Cont
 				return it, err
 			}
 			it.RepoBranch = data
+		case "remoteHub":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("remoteHub"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoteHub = data
 		case "isPrivate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPrivate"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -38438,6 +39107,11 @@ func (ec *executionContext) _ChaosHub(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "remoteHub":
+			out.Values[i] = ec._ChaosHub_remoteHub(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "projectID":
 			out.Values[i] = ec._ChaosHub_projectID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -38550,6 +39224,11 @@ func (ec *executionContext) _ChaosHubStatus(ctx context.Context, sel ast.Selecti
 			}
 		case "repoBranch":
 			out.Values[i] = ec._ChaosHubStatus_repoBranch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "remoteHub":
+			out.Values[i] = ec._ChaosHubStatus_remoteHub(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -40329,6 +41008,89 @@ func (ec *executionContext) _K8SProbe(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var kubeNamespaceImplementors = []string{"KubeNamespace"}
+
+func (ec *executionContext) _KubeNamespace(ctx context.Context, sel ast.SelectionSet, obj *model.KubeNamespace) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubeNamespaceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubeNamespace")
+		case "name":
+			out.Values[i] = ec._KubeNamespace_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var kubeNamespaceResponseImplementors = []string{"KubeNamespaceResponse"}
+
+func (ec *executionContext) _KubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, obj *model.KubeNamespaceResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubeNamespaceResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubeNamespaceResponse")
+		case "infraID":
+			out.Values[i] = ec._KubeNamespaceResponse_infraID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kubeNamespace":
+			out.Values[i] = ec._KubeNamespaceResponse_kubeNamespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var kubeObjectImplementors = []string{"KubeObject"}
 
 func (ec *executionContext) _KubeObject(ctx context.Context, sel ast.SelectionSet, obj *model.KubeObject) graphql.Marshaler {
@@ -41014,6 +41776,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "kubeObj":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_kubeObj(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kubeNamespace":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_kubeNamespace(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -42120,7 +42889,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "getEnvironment":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -42139,7 +42908,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "listEnvironments":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -42180,7 +42949,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "listImageRegistry":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -42921,6 +43690,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_getPodLog(ctx, fields[0])
 	case "getKubeObject":
 		return ec._Subscription_getKubeObject(ctx, fields[0])
+	case "getKubeNamespace":
+		return ec._Subscription_getKubeNamespace(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -44223,7 +44994,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v []*model.KubeObject) graphql.Marshaler {
+func (ec *executionContext) marshalNKubeNamespace2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx context.Context, sel ast.SelectionSet, v []*model.KubeNamespace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -44247,7 +45018,7 @@ func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaos�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, sel, v[i])
+			ret[i] = ec.marshalOKubeNamespace2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -44259,6 +45030,40 @@ func (ec *executionContext) marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaos�
 	wg.Wait()
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNKubeNamespaceData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceData(ctx context.Context, v interface{}) (model.KubeNamespaceData, error) {
+	res, err := ec.unmarshalInputKubeNamespaceData(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNKubeNamespaceRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceRequest(ctx context.Context, v interface{}) (model.KubeNamespaceRequest, error) {
+	res, err := ec.unmarshalInputKubeNamespaceRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKubeNamespaceResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, v model.KubeNamespaceResponse) graphql.Marshaler {
+	return ec._KubeNamespaceResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKubeNamespaceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespaceResponse(ctx context.Context, sel ast.SelectionSet, v *model.KubeNamespaceResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._KubeNamespaceResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v *model.KubeObject) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._KubeObject(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObjectData(ctx context.Context, v interface{}) (model.KubeObjectData, error) {
@@ -45812,11 +46617,11 @@ func (ec *executionContext) unmarshalOKubeGVRRequest2ᚖgithubᚗcomᚋlitmuscha
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx context.Context, sel ast.SelectionSet, v *model.KubeObject) graphql.Marshaler {
+func (ec *executionContext) marshalOKubeNamespace2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeNamespace(ctx context.Context, sel ast.SelectionSet, v *model.KubeNamespace) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._KubeObject(ctx, sel, v)
+	return ec._KubeNamespace(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOKubernetesCMDProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx context.Context, sel ast.SelectionSet, v *model.KubernetesCMDProbe) graphql.Marshaler {

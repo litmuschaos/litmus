@@ -48,6 +48,7 @@ interface EditHubFormData {
   description?: string;
   tags: string[];
   repoBranch: string;
+  remoteHub: string;
   isPrivate: boolean;
   authType: AuthType;
   sshPublicKey?: string;
@@ -150,6 +151,7 @@ const GitConnectionStep: React.FC<
           setFormData({
             ...formData,
             repoBranch: values.repoBranch,
+            remoteHub: values.remoteHub,
             isPrivate: values.isPrivate,
             repoURL: values.repoURL,
             authType: values.authType,
@@ -164,6 +166,7 @@ const GitConnectionStep: React.FC<
                 id: formData.hubId,
                 name: formData.name,
                 repoBranch: values.repoBranch,
+                remoteHub: values.remoteHub,
                 description: formData.description,
                 tags: formData.tags,
                 repoURL: values.repoURL,
@@ -227,6 +230,22 @@ const GitConnectionStep: React.FC<
                   name="repoBranch"
                   label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('hubRepositoryBranch')}</Text>}
                   placeholder={getString('enterHubRepositoryBranch')}
+                />
+
+                <FormInput.DropDown
+                  name="remoteHub"
+                  label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Remote Hub</Text>}
+                  placeholder={'Select Remote hub'}
+                  items={[
+                    { label: 'GitHub', value: 'GitHub' },
+                    { label: 'Bitbucket', value: 'Bitbucket' },
+                    { label: 'Azure Repo', value: 'Azure Repo' },
+                    { label: 'GitLab', value: 'GitLab' },
+                    { label: 'Others', value: 'Others' }
+                  ]}
+                  onChange={item => {
+                    formikProps.setFieldValue('remoteHub', item.value);
+                  }}
                 />
 
                 {formikProps.values.isPrivate && (
@@ -343,6 +362,7 @@ export default function EditHubModalWizardView({
     description: hubDetails?.description,
     tags: hubDetails?.tags ?? [],
     repoBranch: hubDetails?.repoBranch ?? '',
+    remoteHub: hubDetails?.remoteHub ?? '',
     isPrivate: hubDetails?.isPrivate ?? false,
     authType: hubDetails?.authType ?? AuthType.NONE,
     repoURL: hubDetails?.repoURL ?? '',

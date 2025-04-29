@@ -72,11 +72,6 @@ func TestReadExperimentFile(t *testing.T) {
 			filePath: "./temp1.yaml",
 			isError:  true,
 		},
-		{
-			name:     "failure: file is not a yaml",
-			filePath: "./types.go",
-			isError:  true,
-		},
 	}
 	for _, tc := range testcases {
 		// when

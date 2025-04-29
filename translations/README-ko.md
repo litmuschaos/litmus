@@ -97,9 +97,18 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 
 ### 비디오
 
+- [What if Your System Experiences an Outage? Let's Build a Resilient Systems with Chaos Engineering](https://www.youtube.com/watch?v=3mjGEh905u4&t=1s) @ [CNCF](https://www.youtube.com/@cncf)
+- [Enhancing Cyber Resilience Through Zero Trust Chaos Experiments in Cloud Native Environments](https://youtu.be/BelNIk4Bkng) @ [CNCF](https://www.youtube.com/@cncf)
+- [LitmusChaos, with Karthik Satchitanand](https://www.youtube.com/watch?v=ks2R57hhFZk&t=503s) @ [The Kubernetes Podcast from Google](https://www.youtube.com/@TheKubernetesPodcast)
+- [Cultural Shifts: Fostering a Chaos First Mindset in Platform Engineering](https://www.youtube.com/watch?v=WUXFKxgZRsk) @ [CNCF](https://www.youtube.com/@cncf)
+- [Fire in the Cloud: Bringing Managed Services Under the Ambit of Cloud-Native Chaos Engineering](https://www.youtube.com/watch?v=xCDQp5E3VUs) @ [CNCF](https://www.youtube.com/@cncf)
+- [Security Controls for Safe Chaos Experimentation](https://www.youtube.com/watch?v=whCkvLKAw74) @ [CNCF](https://www.youtube.com/@cncf)
+- [Chaos Engineering For Hybrid Targets With LitmusChaos](https://www.youtube.com/watch?v=BZL-ngvbpbU&t=751s) @ [CNCF](https://www.youtube.com/@cncf)
 - [Cloud Native Live: Litmus Chaos Engine and a microservices demo app](https://youtu.be/hOghvd9qCzI)
-- [Chaos Engineering hands-on - An SRE ideating Chaos Experiments and using LitmusChaos | July 2022](https://youtu.be/_x_7SiesjF0) 
+- [Chaos Engineering hands-on - An SRE ideating Chaos Experiments and using LitmusChaos | July 2022](https://youtu.be/_x_7SiesjF0)
 - [Achieve Digital Product Resiliency with Chaos Engineering](https://youtu.be/PQrmBHgk0ps)
+- [Case Study: Bringing Chaos Engineering to the Cloud Native Developers](https://youtu.be/KSl-oKk6TPA) @ [CNCF](https://www.youtube.com/@cncf)
+- [Cloud Native Chaos Engineering with LitmusChaos](https://www.youtube.com/watch?v=ItUUqejdXr0) @ [CNCF](https://www.youtube.com/@cncf)
 - [How to create Chaos Experiments with Litmus | Litmus Chaos tutorial](https://youtu.be/mwu5eLgUKq4) @ [Is it Observable](https://www.youtube.com/c/IsitObservable)
 - [Cloud Native Chaos Engineering Preview With LitmusChaos](https://youtu.be/pMWqhS-F3tQ)
 - [Get started with Chaos Engineering with Litmus](https://youtu.be/5CI8d-SKBfc) @ [Containers from the Couch](https://www.youtube.com/c/ContainersfromtheCouch)
@@ -141,7 +150,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 
 (카오스 엔지니어링 사례로 Litmus를 사용하고 있는 조직은 위 페이지로 PR을 보내주세요)
 
-## 라이센스
+## 라이선스
 
 Litmus는 아파치(Apache) 라이선스 버전 2.0을 적용합니다. 전체 라이선스 텍스트는 [LICENSE](./LICENSE)를 참고하세요. Litmus 프로젝트에서 사용하는 일부 프로젝트는 다른 라이선스에 적용받을 수 있으며, 별도의 라이선스를 참고하세요.
 

@@ -23,7 +23,7 @@ func (r repository) CreateApiToken(apiToken *entities.ApiToken) error {
 
 // GetApiTokensByUserID returns all the API tokens for a given user
 func (r repository) GetApiTokensByUserID(userID string) ([]entities.ApiToken, error) {
-	var apiTokens []entities.ApiToken
+	var apiTokens = []entities.ApiToken{}
 	query := bson.D{
 		{Key: "user_id", Value: userID},
 	}

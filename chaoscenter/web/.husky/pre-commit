@@ -2,11 +2,31 @@
 "$(dirname "$0")/_/husky.sh"
 
 MATCH_PATH='chaoscenter/web/'
+STRINGS_FILE="chaoscenter/web/strings/strings.en.yaml"
+
+check_and_delete_unused_strings() {
+TEMP_FILE=$(mktemp)
+grep -rEo '\b[a-zA-Z0-9_]+\b' chaoscenter/web/**/*.js > "$TEMP_FILE"
+UNUSED_STRINGS=$(grep -v '^#' "$STRINGS_FILE" | grep -vFf "$TEMP_FILE" | grep -oE '^[a-zA-Z0-9_]+')
+rm "$TEMP_FILE"
+
+    if [ -n "$UNUSED_STRINGS" ]; then
+        echo "Unused strings found: $UNUSED_STRINGS"
+        for UNUSED_STRING in $UNUSED_STRINGS; do
+            sed -i "/$UNUSED_STRING:/d" "$STRINGS_FILE"
+        done
+        echo "Unused strings deleted from $STRINGS_FILE"
+    else
+        echo "No unused strings found in $STRINGS_FILE"
+    fi
+}
+
+check_and_delete_unused_strings
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if [ "$BRANCH" = "main" ]; then
-  echo "\033[0;31;1mYou can't commit directly to main branch\033[0m"
+if [ "$BRANCH" = "master" ]; then
+  echo "\033[0;31;1mYou can't commit directly to master branch\033[0m"
   exit 1
 fi
 

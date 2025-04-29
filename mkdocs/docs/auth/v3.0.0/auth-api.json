@@ -4,7 +4,7 @@
   "schemes": ["https", "http"],
   "info": {
     "title": "Litmus Portal Authentication API",
-    "version": "2.7.0",
+    "version": "3.0.0",
     "description": "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:\n <li>Update Profile</li>\n <li>Change Password</li>\n <li>Reset Password</li>\n <li>Create new users etc.</li>\n"
   },
   "paths": {

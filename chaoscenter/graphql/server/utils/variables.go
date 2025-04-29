@@ -30,6 +30,7 @@ type Configuration struct {
 	GrpcPort                    string   `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string   `required:"true" split_words:"true"`
 	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
+	GitUsername                 string   `required:"true" split_words:"true" default:"litmus"`
 	DefaultHubBranchName        string   `required:"true" split_words:"true"`
 	CustomChaosHubPath          string   `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`

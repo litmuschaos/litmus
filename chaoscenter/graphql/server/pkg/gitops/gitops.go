@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -184,7 +186,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 
 	case model.AuthTypeToken:
 		return &http.BasicAuth{
-			Username: "litmus", // this can be anything except an empty string
+			Username: utils.Config.GitUsername, // must be a non-empty string or 'x-token-auth' for Bitbucket
 			Password: *c.Token,
 		}, nil
 

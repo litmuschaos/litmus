@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"os"
 	"errors"
 	"time"
 
@@ -69,10 +70,17 @@ var (
 		EnvironmentCollection:         "environment",
 	}
 
-	DbName            = "litmus"
+	DbName            = getEnv("DB_NAME_MAIN", "litmus")
 	ConnectionTimeout = 20 * time.Second
 	backgroundContext = context.Background()
 )
+
+func getEnv(key, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
+}
 
 func MongoConnection() (*mongo.Client, error) {
 	var (

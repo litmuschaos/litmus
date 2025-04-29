@@ -78,7 +78,7 @@ func (r repository) GetUser(uid string) (*entities.User, error) {
 
 // GetUsers fetches all the users from the database
 func (r repository) GetUsers() (*[]entities.User, error) {
-	var Users []entities.User
+	var Users = []entities.User{}
 	cursor, err := r.Collection.Find(context.Background(), bson.M{})
 	if err != nil {
 		return nil, err

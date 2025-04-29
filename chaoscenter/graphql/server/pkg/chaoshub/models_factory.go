@@ -6,6 +6,7 @@ func NewCloningInputFrom(chaosHub model.CreateChaosHubRequest) model.CloningInpu
 	return model.CloningInput{
 		RepoBranch:    chaosHub.RepoBranch,
 		RepoURL:       chaosHub.RepoURL,
+		RemoteHub:     chaosHub.RemoteHub,
 		Name:          chaosHub.Name,
 		IsPrivate:     chaosHub.IsPrivate,
 		UserName:      chaosHub.UserName,

@@ -38,6 +38,7 @@ describe('ChaosHubMenuView Tests', () => {
       name: 'Test Hub',
       isDefault: false,
       repoURL: '',
+      remoteHub: '',
       repoBranch: '',
       projectID: '',
       authType: AuthType.SSH,

@@ -23,6 +23,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	image_registry2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	envHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/image_registry"
@@ -55,9 +56,10 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
 	imageRegistryOperator := image_registry2.NewImageRegistryOperator(mongodbOperator)
 	EnvironmentOperator := environments.NewEnvironmentOperator(mongodbOperator)
+	probeOperator := dbSchemaProbe.NewChaosProbeOperator(mongodbOperator)
 
 	//service
-	probeService := probe.NewProbeService()
+	probeService := probe.NewProbeService(probeOperator)
 	chaosHubService := chaoshub.NewService(chaosHubOperator)
 	chaosInfrastructureService := chaos_infrastructure.NewChaosInfrastructureService(chaosInfraOperator, EnvironmentOperator)
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
@@ -67,8 +69,8 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	environmentService := envHandler.NewEnvironmentService(EnvironmentOperator)
 
 	//handler
-	chaosExperimentHandler := handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbOperator)
-	choasExperimentRunHandler := runHandler.NewChaosExperimentRunHandler(chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbOperator)
+	chaosExperimentHandler := handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeService, mongodbOperator)
+	choasExperimentRunHandler := runHandler.NewChaosExperimentRunHandler(chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, probeService, mongodbOperator)
 
 	config := generated.Config{
 		Resolvers: &Resolver{

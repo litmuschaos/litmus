@@ -31,6 +31,7 @@ export function getChaosInfrastructureStatus(
 export interface ChaosInfrastructureReferenceFieldProps {
   setFieldValue: FormikHelpers<ExperimentMetadata>['setFieldValue'];
   initialInfrastructureID: string | undefined;
+  initialEnvironmentID: string | undefined;
 }
 
 export enum DeploymentScopeOptions {
@@ -62,6 +63,10 @@ export interface InitialValueProps {
   nodeSelectorValues?: Array<NodeSelector>;
   tolerations: boolean;
   tolerationValues?: Array<Toleration>;
+}
+
+export enum AllEnv {
+  AllEnv = 'All'
 }
 
 export interface DeploymentScopeItem extends CollapsableSelectOptions {

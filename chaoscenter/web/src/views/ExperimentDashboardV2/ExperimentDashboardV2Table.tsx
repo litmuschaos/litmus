@@ -215,10 +215,10 @@ const ExperimentDashboardV2Table = ({
                 );
               case ExperimentRunStatus.QUEUED:
                 return (
-                  <RunExperimentButton
-                    buttonProps={{ disabled: true }}
+                  <StopExperimentButton
                     experimentID={data.experimentID}
                     refetchExperiments={refetchExperiments}
+                    infrastructureType={InfrastructureType.KUBERNETES}
                   />
                 );
               default:
