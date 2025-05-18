@@ -6,9 +6,11 @@ import (
 	"strings"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/protocol/packp/capability"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
@@ -276,10 +278,14 @@ func (c ChaosHubConfig) gitPullPrivateRepo() error {
 
 // generateAuthMethod creates AuthMethod for private repos
 func (c ChaosHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
+	transport.UnsupportedCapabilities = []capability.Capability{
+		capability.ThinPack,
+	}
+
 	var auth transport.AuthMethod
 	if c.AuthType == model.AuthTypeToken {
 		auth = &http.BasicAuth{
-			Username: "litmus", // this can be anything except an empty string
+			Username: utils.Config.GitUsername, // must be a non-empty string or 'x-token-auth' for Bitbucket
 			Password: *c.Token,
 		}
 	} else if c.AuthType == model.AuthTypeBasic {

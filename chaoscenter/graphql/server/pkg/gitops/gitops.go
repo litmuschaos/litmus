@@ -11,9 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/protocol/packp/capability"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
@@ -172,11 +175,18 @@ func (c GitConfig) GitClone() (*git.Repository, error) {
 // getAuthMethod returns the AuthMethod instance required for the current repo access [read/writes]
 func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 
+	// Azure DevOps requires the 'multi_ack' and 'multi_ack_detailed' capabilities,
+	// which are not fully implemented in the go-git package. By default, these
+	// capabilities are included in 'transport.UnsupportedCapabilities'.
+	transport.UnsupportedCapabilities = []capability.Capability{
+		capability.ThinPack,
+	}
+
 	switch c.AuthType {
 
 	case model.AuthTypeToken:
 		return &http.BasicAuth{
-			Username: "litmus", // this can be anything except an empty string
+			Username: utils.Config.GitUsername, // must be a non-empty string or 'x-token-auth' for Bitbucket
 			Password: *c.Token,
 		}, nil
 

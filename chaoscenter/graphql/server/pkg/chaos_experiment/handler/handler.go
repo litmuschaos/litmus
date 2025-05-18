@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -48,6 +48,7 @@ type ChaosExperimentHandler struct {
 	gitOpsService              gitops.Service
 	chaosExperimentOperator    *dbChaosExperiment.Operator
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	probeService               probe.Service
 	mongodbOperator            mongodb.MongoOperator
 }
 
@@ -59,6 +60,7 @@ func NewChaosExperimentHandler(
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
+	probeService probe.Service,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentHandler {
 	return &ChaosExperimentHandler{
@@ -68,6 +70,7 @@ func NewChaosExperimentHandler(
 		gitOpsService:              gitOpsService,
 		chaosExperimentOperator:    chaosExperimentOperator,
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		probeService:               probeService,
 		mongodbOperator:            mongodbOperator,
 	}
 }
@@ -306,8 +309,8 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	pipeline = mongo.Pipeline{
 		bson.D{
 			{"$match", bson.D{
-				{"experiment_id", experimentID},
-				{"project_id", projectID},
+				{"experiment_id", bson.D{{"$eq", experimentID}}},
+				{"project_id", bson.D{{"$eq", projectID}}},
 				{"is_removed", false},
 			}},
 		},
@@ -512,7 +515,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 	// Match with identifiers
 	matchIdStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 		}},
 	}
 
@@ -1051,7 +1054,7 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -1234,7 +1237,33 @@ func (c *ChaosExperimentHandler) GetKubeObjData(reqID string, kubeObject model.K
 	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
 		resp := model.KubeObjectResponse{
 			InfraID: kubeObject.InfraID,
-			KubeObj: []*model.KubeObject{},
+			KubeObj: &model.KubeObject{},
+		}
+		reqChan <- &resp
+		close(reqChan)
+	}
+}
+
+func (c *ChaosExperimentHandler) GetKubeNamespaceData(reqID string, kubeNamespace model.KubeNamespaceRequest, r store.StateData) {
+	reqType := "namespace"
+	data, err := json.Marshal(kubeNamespace)
+	if err != nil {
+		logrus.Print("ERROR WHILE MARSHALLING POD DETAILS")
+	}
+	externalData := string(data)
+	payload := model.InfraActionResponse{
+		Action: &model.ActionPayload{
+			RequestID:    reqID,
+			RequestType:  reqType,
+			ExternalData: &externalData,
+		},
+	}
+	if clusterChan, ok := r.ConnectedInfra[kubeNamespace.InfraID]; ok {
+		clusterChan <- &payload
+	} else if reqChan, ok := r.KubeNamespaceData[reqID]; ok {
+		resp := model.KubeNamespaceResponse{
+			InfraID:       kubeNamespace.InfraID,
+			KubeNamespace: []*model.KubeNamespace{},
 		}
 		reqChan <- &resp
 		close(reqChan)
@@ -1321,7 +1350,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 			}
 
 			for _, probeName := range _probe.ProbeNames {
-				singleProbe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+				singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, probeName, projectID)
 				if err != nil {
 					return nil, err
 				}
@@ -1345,7 +1374,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 // validateDuplicateExperimentName validates if the name of experiment is duplicate
 func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Context, projectID, name string) error {
 	filterQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"name", name},
 		{"is_removed", false},
 	}
@@ -1430,7 +1459,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 		return false, errors.New("failed to marshal workflow manifest")
 	}
 
-	cronWorkflowManifest, err = probeUtils.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
+	cronWorkflowManifest, err = c.probeService.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
 	if err != nil {
 		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
 	}

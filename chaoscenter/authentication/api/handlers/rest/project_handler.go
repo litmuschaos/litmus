@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
+	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -53,16 +55,23 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		outputUser := user.GetUserWithProject()
+		request := project_utils.GetProjectFilters(c)
+		request.UserID = user.ID
 
-		projects, err := service.GetProjectsByUserID(outputUser.ID, false)
+		response, err := service.GetProjectsByUserID(request)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
-		outputUser.Projects = projects
+		outputUser := &entities.UserWithProject{
+			Username: user.Username,
+			ID:       user.ID,
+			Email:    user.Email,
+			Name:     user.Name,
+			Projects: response.Projects,
+		}
 
 		c.JSON(http.StatusOK, gin.H{"data": outputUser})
 	}
@@ -122,9 +131,10 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uID := c.MustGet("uid").(string)
-		projects, err := service.GetProjectsByUserID(uID, false)
-		if projects == nil {
+		request := project_utils.GetProjectFilters(c)
+
+		response, err := service.GetProjectsByUserID(request)
+		if response == nil || (response.TotalNumberOfProjects != nil && *response.TotalNumberOfProjects == 0) {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
@@ -135,7 +145,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": projects})
+		c.JSON(http.StatusOK, gin.H{"data": response})
 	}
 }
 
@@ -207,6 +217,29 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"data": members})
+	}
+}
+
+// GetActiveProjectOwners 		godoc
+//
+//	@Summary		Get active project Owners.
+//	@Description	Return list of active project owners.
+//	@Tags			ProjectRouter
+//	@Param			state	path	string	true	"State"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project_owners/:project_id/:state [get]
+func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		owners, err := service.GetProjectOwners(projectID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": owners})
 	}
 }
 
@@ -286,13 +319,18 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		userRequest.UserID = c.MustGet("uid").(string)
 
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
 		initialLogin, err := CheckInitialLogin(service, userRequest.UserID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// checking if project name is empty
@@ -301,7 +339,17 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		userRequest.UserID = c.MustGet("uid").(string)
+		if userRequest.Description == nil {
+			// If description is not provided, set it to an empty string
+			emptyDescription := ""
+			userRequest.Description = &emptyDescription
+		}
+
+		if userRequest.Tags == nil {
+			// If tags are not provided, set it to an empty slice
+			emptyTags := make([]*string, 0)
+			userRequest.Tags = emptyTags
+		}
 
 		user, err := service.GetUser(userRequest.UserID)
 		if err != nil {
@@ -326,18 +374,22 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		// Adding user as project owner in project's member list
 		newMember := &entities.Member{
 			UserID:     user.ID,
+			Username:   user.Name,
+			Email:      user.Email,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
 			JoinedAt:   time.Now().UnixMilli(),
 		}
 		var members []*entities.Member
 		members = append(members, newMember)
-		state := "active"
+		state := string(types.MemberStateActive)
 		newProject := &entities.Project{
-			ID:      pID,
-			Name:    userRequest.ProjectName,
-			Members: members,
-			State:   &state,
+			ID:          pID,
+			Name:        userRequest.ProjectName,
+			Members:     members,
+			State:       &state,
+			Description: userRequest.Description,
+			Tags:        userRequest.Tags,
 			Audit: entities.Audit{
 				IsRemoved: false,
 				CreatedAt: time.Now().UnixMilli(),
@@ -408,12 +460,16 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		// Validating member role
-		if member.Role == nil || (*member.Role != entities.RoleExecutor && *member.Role != entities.RoleViewer) {
+		if member.Role == nil || (*member.Role != entities.RoleExecutor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
@@ -510,8 +566,12 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -566,8 +626,12 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -618,12 +682,30 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		if member.Role != nil && *member.Role == entities.RoleOwner {
+			owners, err := service.GetProjectOwners(member.ProjectID)
+			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+				return
+			}
+
+			if len(owners) == 1 {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "Cannot leave project. There must be at least one owner."})
+				return
+			}
+		}
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -682,8 +764,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
@@ -694,6 +780,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		uid := c.MustGet("uid").(string)
+		if uid == member.UserID {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot remove invitation of themselves use Leave Project."})
 			return
 		}
 
@@ -756,8 +848,12 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-		} else if initialLogin {
+			return
+		}
+
+		if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+			return
 		}
 
 		err = validations.RbacValidator(c.MustGet("uid").(string),
@@ -795,6 +891,67 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
+		})
+	}
+}
+
+// UpdateMemberRole 		godoc
+//
+//	@Summary		Update member role.
+//	@Description	Return updated member role.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/update_member_role [post]
+//
+// UpdateMemberRole is used to update a member role in the project
+func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var member entities.MemberInput
+		err := c.BindJSON(&member)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		// Validating member role
+		if member.Role == nil || (*member.Role != entities.RoleExecutor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
+			return
+		}
+
+		err = validations.RbacValidator(c.MustGet("uid").(string),
+			member.ProjectID,
+			validations.MutationRbacRules["updateMemberRole"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		uid := c.MustGet("uid").(string)
+		if uid == member.UserID {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change their own role."})
+			return
+		}
+
+		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Successfully updated Role",
 		})
 	}
 }
@@ -867,5 +1024,46 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 			"role": role,
 		})
 
+	}
+}
+
+// DeleteProject  		godoc
+//
+//	@Description	Delete a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrProjectNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/delete_project/{project_id} [post]
+//
+// DeleteProject is used to delete a project.
+func DeleteProject(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+
+		err := validations.RbacValidator(c.MustGet("uid").(string),
+			projectID,
+			validations.MutationRbacRules["deleteProject"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		err = service.DeleteProject(projectID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Successfully deleted project.",
+		})
 	}
 }

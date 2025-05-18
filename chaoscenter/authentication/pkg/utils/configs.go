@@ -37,7 +37,7 @@ var (
 	ApiTokenCollection           = "api-token"
 	UsernameField                = "username"
 	ExpiresAtField               = "expires_at"
-	PasswordEncryptionCost       = 15
+	PasswordEncryptionCost       = 8
 	DefaultLitmusGqlGrpcEndpoint = "localhost"
 	DefaultLitmusGqlGrpcPort     = ":8000"
 	//DefaultLitmusGqlGrpcPortHttps = ":8001" // enable when in use
