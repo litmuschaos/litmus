@@ -16,6 +16,8 @@ import (
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.CapabilitiesResponse{}
 //	@Router			/capabilities [get]
+//
+// GetCapabilities returns the capabilities of the Auth Server.
 func GetCapabilities() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		capabilities := new(response.CapabilitiesResponse)

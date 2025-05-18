@@ -592,9 +592,20 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 
 		// Filtering based on date range (workflow's last updated time)
 		if request.Filter.DateRange != nil {
-			endDate := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			endDate := time.Now().UnixMilli()
 			if request.Filter.DateRange.EndDate != nil {
-				endDate = *request.Filter.DateRange.EndDate
+				parsedEndDate, err := strconv.ParseInt(*request.Filter.DateRange.EndDate, 10, 64)
+				if err != nil {
+					return nil, errors.New("unable to parse end date")
+				}
+
+				endDate = parsedEndDate
+			}
+
+			// Note: StartDate cannot be passed in blank, must be "0"
+			startDate, err := strconv.ParseInt(request.Filter.DateRange.StartDate, 10, 64)
+			if err != nil {
+				return nil, errors.New("unable to parse start date")
 			}
 
 			filterWfDateStage := bson.D{
@@ -602,7 +613,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					"$match",
 					bson.D{{"updated_at", bson.D{
 						{"$lte", endDate},
-						{"$gte", request.Filter.DateRange.StartDate},
+						{"$gte", startDate},
 					}}},
 				},
 			}
@@ -1516,7 +1527,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
 			return false, fmt.Errorf("no running or timeout experiments found")
 		}
-	} else if experimentRunID != nil && *experimentRunID != "" {
+	} else if *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
 	}
 
