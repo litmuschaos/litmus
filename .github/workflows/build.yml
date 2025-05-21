@@ -275,7 +275,7 @@ jobs:
         shell: bash
         run: |
           cd chaoscenter/dex-server
-          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker images && docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-dex-server:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
