@@ -18,8 +18,7 @@ jobs:
       authentication: ${{ steps.filter.outputs.authentication }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
-      # upgrade-agent-cp: ${{ steps.filter.outputs.upgrade-agent-cp }}
-      # dex-server: ${{ steps.filter.outputs.dex-server }}
+      dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v3
@@ -36,10 +35,8 @@ jobs:
               - 'chaoscenter/subscriber/**'
             event-tracker:
               - 'chaoscenter/event-tracker/**'
-            # upgrade-agent-cp:
-            #   - 'chaoscenter/upgrade-agents/control-plane/**'
-            # dex-server:
-            #   - 'chaoscenter/dex-server/**'
+            dex-server:
+              - 'chaoscenter/dex-server/**'
 
   gitleaks-scan:
     runs-on: ubuntu-latest
@@ -264,43 +261,28 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-  # docker-build-upgrade-agent-cp:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - backend-checks
-  #     - changes
-  #     - backend-unit-tests
-  #   if: ${{ needs.changes.outputs.upgrade-agent-cp == 'true' }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Build control plane upgrade agent docker image
-  #       shell: bash
-  #       run: |
-  #         cd chaoscenter/upgrade-agents/control-plane
-  #         docker build . -f Dockerfile -t docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }} --build-arg TARGETARCH=amd64
-  #     - name: Run Trivy vulnerability scanner
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         image-ref: 'docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }}'
-  #         format: 'table'
-  #         exit-code: '1'
-  #         ignore-unfixed: true
-  #         vuln-type: 'os,library'
-  #         severity: 'CRITICAL,HIGH'             
+  docker-build-dex-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: needs.changes.outputs.dex-server == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  # docker-build-dex-server:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - backend-checks
-  #     - changes
-  #     - backend-unit-tests
-  #   if: needs.changes.outputs.dex-server == 'true'
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Build dex-server docker image
-  #       shell: bash
-  #       run: |
-  #         cd chaoscenter/dex-server
-  #         docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+      - name: Build dex-server docker image
+        shell: bash
+        run: |
+          cd chaoscenter/dex-server
+          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-dex-server:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
