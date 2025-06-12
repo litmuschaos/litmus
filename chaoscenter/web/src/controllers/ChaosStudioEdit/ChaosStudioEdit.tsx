@@ -68,7 +68,8 @@ export default function ChaosStudioEditController(): React.ReactElement {
         ?.updateExperimentManifest(experimentID, parse(experimentData.experimentManifest))
         .then(() => setShowStudio(oldState => oldState + 1));
       setLastExperimentRun(experimentData.recentExperimentRunDetails?.[0]);
-
+    }
+    if (experimentData && showStudio < 2) {
       const parsedManifest = JSON.parse(experimentData.experimentManifest);
       const validateCron = experimentData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
       setIsCronEnabled(validateCron);
@@ -89,6 +90,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
     <RightSideBarV2
       experimentID={experimentID}
       isCronEnabled={isCronEnabled}
+      setIsCronEnabled={setIsCronEnabled}
       isEditMode
       phase={lastExperimentRun?.phase}
       experimentType={experimentType as ExperimentType}
