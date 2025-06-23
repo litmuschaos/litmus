@@ -50,13 +50,15 @@ type Service interface {
 }
 
 type chaosHubService struct {
-	chaosHubOperator *dbSchemaChaosHub.Operator
+	chaosHubOperator   *dbSchemaChaosHub.Operator
+	authConfigOperator *authorization.Operator
 }
 
 // NewService returns a new instance of Service
-func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
+func NewService(chaosHubOperator *dbSchemaChaosHub.Operator, authConfigOperator *authorization.Operator) Service {
 	return &chaosHubService{
-		chaosHubOperator: chaosHubOperator,
+		chaosHubOperator:   chaosHubOperator,
+		authConfigOperator: authConfigOperator,
 	}
 }
 
@@ -75,7 +77,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		log.Error("error getting username: ", err)
 		return nil, err
@@ -144,7 +146,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	currentTime := time.Now()
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	if err != nil {
 		log.Error("error getting userID: ", err)
@@ -211,7 +213,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	if err != nil {
 		log.Error("error getting userID: ", err)
@@ -367,7 +369,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 
 	time := time.Now().UnixMilli()
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 
 	query := bson.D{{"hub_id", chaosHub.ID}, {"is_removed", false}}
 	update := bson.D{
@@ -410,7 +412,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 
 func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := c.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return false, err
 	}
