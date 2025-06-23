@@ -19,7 +19,7 @@ type SubscriberEvents interface {
 	ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error)
 	GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error)
 	WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string)
-	WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error)
+	WorkflowEventHandler(oldObj, workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error)
 	SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error)
 	WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent)
 	StopWorkflow(wfName string, namespace string) error
