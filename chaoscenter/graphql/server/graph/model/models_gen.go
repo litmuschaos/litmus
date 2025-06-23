@@ -1867,6 +1867,8 @@ type RegisterInfraRequest struct {
 	SkipSsl *bool `json:"skipSsl,omitempty"`
 	// Node selectors used by infra
 	NodeSelector *string `json:"nodeSelector,omitempty"`
+	// TelemetryEndpoint value indicating telemetry endpoint for infra
+	TelemetryEndpoint *string `json:"TelemetryEndpoint,omitempty"`
 	// Node tolerations used by infra
 	Tolerations []*Toleration `json:"tolerations,omitempty"`
 	// Tags of the infra
