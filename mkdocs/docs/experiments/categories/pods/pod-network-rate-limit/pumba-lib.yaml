@@ -1,0 +1,28 @@
+# use pumba chaoslib for the network chaos
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-loss-sa
+  experiments:
+  - name: pod-network-loss
+    spec:
+      components:
+        env:
+        # name of the chaoslib
+        # supports litmus and pumba lib
+        - name: LIB
+          value: 'pumba'
+        # image used for the traffic control in linux
+        # applicable for pumba lib only
+        - name: TC_IMAGE
+          value: 'gaiadocker/iproute2'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
