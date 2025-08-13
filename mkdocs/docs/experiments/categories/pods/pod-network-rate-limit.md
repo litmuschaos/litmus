@@ -133,7 +133,7 @@
         <td> TARGET_CONTAINER  </td>
         <td> Name of container which is subjected to network rate limit </td>
         <td> Optional </td>
-        <td> Applicable for containerd & CRI-O runtime only. Even with these runtimes, if the value is not provided, it injects chaos on the first container of the pod</td>
+        <td> If the value is not provided, it injects chaos on the first container of the pod</td>
       </tr>
       <tr>
         <td> NETWORK_BANDWIDTH </td>
@@ -163,7 +163,7 @@
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+        <td> Defaults to containerd, supported values: docker, containerd and crio </td>
       </tr>
       <tr>
         <td> SOCKET_PATH </td>
@@ -204,16 +204,6 @@
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr>
-      <tr>
-        <td> LIB </td>
-        <td> The chaos lib used to inject the chaos </td>
-        <td> Default value: litmus, supported values: pumba and litmus </td>
-      </tr>
-      <tr>
-        <td> TC_IMAGE </td>
-        <td> Image used for traffic control in linux </td>
-        <td> default value is `gaiadocker/iproute2` </td>
       </tr>
       <tr>
         <td> LIB_IMAGE  </td>
@@ -467,45 +457,6 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
-```
-
-### Pumba Chaos Library
-
-It specifies the Pumba chaos library for the chaos injection. It can be tuned via `LIB` ENV. The defaults chaos library is `litmus`.
-Provide the traffic control image via `TC_IMAGE` ENV for the pumba library.
-
-Use the following example to tune this:
-
-[embedmd]:# (pod-network-rate-limit/pumba-lib.yaml yaml)
-```yaml
-# use pumba chaoslib for the network chaos
-apiVersion: litmuschaos.io/v1alpha1
-kind: ChaosEngine
-metadata:
-  name: engine-nginx
-spec:
-  engineState: "active"
-  annotationCheck: "false"
-  appinfo:
-    appns: "default"
-    applabel: "app=nginx"
-    appkind: "deployment"
-  chaosServiceAccount: pod-network-rate-limit-sa
-  experiments:
-  - name: pod-network-rate-limit
-    spec:
-      components:
-        env:
-        # name of the chaoslib
-        # supports litmus and pumba lib
-        - name: LIB
-          value: 'pumba'
-        # image used for the traffic control in linux
-        # applicable for pumba lib only
-        - name: TC_IMAGE
-          value: 'gaiadocker/iproute2'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```

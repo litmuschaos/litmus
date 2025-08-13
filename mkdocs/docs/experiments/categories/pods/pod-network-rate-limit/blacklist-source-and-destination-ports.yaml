@@ -10,9 +10,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-network-loss-sa
+  chaosServiceAccount: pod-network-rate-limit-sa
   experiments:
-    - name: pod-network-loss
+    - name: pod-network-rate-limit
       spec:
         components:
           env:
