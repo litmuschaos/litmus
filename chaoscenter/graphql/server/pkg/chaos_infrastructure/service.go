@@ -57,15 +57,17 @@ type Service interface {
 }
 
 type infraService struct {
-	infraOperator *dbChaosInfra.Operator
-	envOperator   *dbEnvironments.Operator
+	infraOperator      *dbChaosInfra.Operator
+	envOperator        *dbEnvironments.Operator
+	authConfigOperator *authorization.Operator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator, authConfigOperator *authorization.Operator) Service {
 	return &infraService{
-		infraOperator: infraOperator,
-		envOperator:   envOperator,
+		infraOperator:      infraOperator,
+		envOperator:        envOperator,
+		authConfigOperator: authConfigOperator,
 	}
 }
 
@@ -100,12 +102,16 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	)
 
 	tkn := c.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := in.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := InfraCreateJWT(infraID)
+	var mongodbOperator mongodb.MongoOperator
+
+	operator := NewChaosInfrastructureOperator(mongodbOperator)
+
+	token, err := operator.InfraCreateJWT(infraID)
 	if err != nil {
 		return &model.RegisterInfraResponse{}, err
 	}
@@ -221,7 +227,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 // DeleteInfra takes infraIDs and r parameters, deletes the infras from the database and sends a request to the subscriber for clean-up
 func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := in.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return "", err
 	}
@@ -306,7 +312,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error) {
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := in.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return nil, err
 	}
@@ -950,7 +956,11 @@ func updateVersionFormat(str string) (int, error) {
 
 // QueryServerVersion is used to fetch the version of the server
 func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
+	var mongodbOperator mongodb.MongoOperator
+
+	configOperator := config.NewConfigOperator(mongodbOperator)
+
+	dbVersion, err := configOperator.GetConfig(ctx, "version")
 	if err != nil {
 		return nil, err
 	}
