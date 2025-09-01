@@ -32,6 +32,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 | [Wingie Enuygun Company](https://www.wingie.com/)                                | Chaos Engineering for an Online Travel and Finance Platform                                              | [Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-2331265698) |
 | [EmiratesNBD](https://www.emiratesnbd.com)                                       | Chaos Engineering for Government Owned Bank                                                              | [Our Story](adopters/organizations/emirates-nbd.md)                                    |
 | [PokerBaazi](https://www.pokerbaazi.com/)                                        | Chaos Engineering for Online Gaming                                                                      | [Our Story](adopters/organizations/pokerbaazi.md)                                      |
+| [Amadeus](https://amadeus.com/)                                                  | Enhance the resilience and reliability in Amadeus through Chaos Engineering                              | [Our Story](adopters/organizations/amadeus.md)                                      |
 
 ### Cloud-Native Vendors
 
