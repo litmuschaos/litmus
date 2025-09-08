@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"	
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // Enum for Database collections
