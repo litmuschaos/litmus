@@ -3,15 +3,15 @@ package mongodb
 import (
 	"context"
 	"errors"
-	"time"
 	"strings"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"time"	
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // Enum for Database collections
