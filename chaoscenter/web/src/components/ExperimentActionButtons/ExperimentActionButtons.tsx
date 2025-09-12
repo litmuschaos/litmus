@@ -360,12 +360,14 @@ export const DownloadExperimentButton = ({
 
 interface EnableDisableCronButtonProps extends ActionButtonProps, Partial<RefetchExperiments> {
   isCronEnabled: boolean;
+  setIsCronEnabled?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 export const EnableDisableCronButton = ({
   experimentID,
   tooltipProps,
   isCronEnabled,
+  setIsCronEnabled,
   refetchExperiments
 }: EnableDisableCronButtonProps): React.ReactElement => {
   const scope = getScope();
@@ -394,11 +396,13 @@ export const EnableDisableCronButton = ({
     intent: Intent.WARNING,
     onClose: (isConfirmed: boolean) => {
       if (isConfirmed) {
+        const diable = isCronEnabled ? true : false;
+        setIsCronEnabled?.(!diable);
         updateCronExperimentStateMutation({
           variables: {
             projectID: scope.projectID,
             experimentID: experimentID,
-            disable: isCronEnabled ? true : false
+            disable: diable
           }
         });
       }
