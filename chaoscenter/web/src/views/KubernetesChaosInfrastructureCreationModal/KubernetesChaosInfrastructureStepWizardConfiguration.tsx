@@ -71,6 +71,8 @@ interface AdvancedChaosInfrastructureConfigProps {
   setNodeSelectorToggle: React.Dispatch<React.SetStateAction<boolean>>;
   tolerationToggle: boolean;
   setTolerationToggle: React.Dispatch<React.SetStateAction<boolean>>;
+  telemetryToggle: boolean;
+  setTelemetryToggle: React.Dispatch<React.SetStateAction<boolean>>;
   formikProps: FormikProps<InitialValueProps>;
 }
 
@@ -93,6 +95,8 @@ function AdvancedChaosInfrastructureConfig({
   setNodeSelectorToggle,
   tolerationToggle,
   setTolerationToggle,
+  telemetryToggle,
+  setTelemetryToggle,
   formikProps
 }: AdvancedChaosInfrastructureConfigProps): React.ReactElement {
   const { getString } = useStrings();
@@ -253,6 +257,29 @@ function AdvancedChaosInfrastructureConfig({
             }}
           />
         </Container>
+      )}
+      <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_800}>
+        {getString('telemetry')}
+      </Text>
+      <FormInput.Toggle
+        name="enableTelemetry"
+        label={getString('enableOpenTelemetry')}
+        onToggle={() => {
+          setTelemetryToggle(!telemetryToggle);
+        }}
+        tooltipProps={{ dataTooltipId: 'chaos_infra_telemetry' }}
+      />
+      {telemetryToggle && (
+        <FormInput.Text
+          className={css.formSubSection}
+          name="telemetryEndpoint"
+          placeholder={initialValues.telemetryEndpoint}
+          label={
+            <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_800}>
+              {getString('otelExporterOtlpEndpoint')}
+            </Text>
+          }
+        />
       )}
     </Layout.Vertical>
   );
@@ -430,6 +457,7 @@ const ConfigureStep: React.FC<
   const [isInfraPresent, setIsInfraPresent] = React.useState<boolean>(false);
   const [nodeSelectorToggle, setNodeSelectorToggle] = React.useState(false);
   const [tolerationToggle, setTolerationToggle] = React.useState(false);
+  const [telemetryToggle, setTelemetryToggle] = React.useState(false);
   const prevStepData = props.prevStepData?.value;
   return (
     <Layout.Vertical height={'100%'}>
@@ -457,6 +485,7 @@ const ConfigureStep: React.FC<
           // If toggle is switched off, discard the values
           data.nodeSelectorValues = nodeSelectorToggle ? data.nodeSelectorValues : undefined;
           data.tolerationValues = tolerationToggle ? data.tolerationValues : undefined;
+          data.telemetryEndpoint = telemetryToggle ? data.telemetryEndpoint : undefined;
           props.nextStep?.({ value: data });
         }}
       >
@@ -502,6 +531,8 @@ const ConfigureStep: React.FC<
                         setNodeSelectorToggle={setNodeSelectorToggle}
                         tolerationToggle={tolerationToggle}
                         setTolerationToggle={setTolerationToggle}
+                        telemetryToggle={telemetryToggle}
+                        setTelemetryToggle={setTelemetryToggle}
                         formikProps={formikProps}
                       />
                     }

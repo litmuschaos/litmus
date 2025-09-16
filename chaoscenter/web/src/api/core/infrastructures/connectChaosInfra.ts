@@ -18,6 +18,7 @@ export interface connectChaosInfraRequest {
     skipSsl?: boolean;
     nodeSelector?: string;
     tolerations?: Array<Toleration>;
+    telemetryEndpoint?: string;
     infrastructureType?: InfrastructureType;
     tags?: Array<string>;
   };
