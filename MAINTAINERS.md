@@ -1,3 +1,8 @@
+# LitmusChaos Maintainers
+
+- [GOVERNANCE.md](./GOVERNANCE.md) describes the LitmusChaos governance.
+- [community-roles.md](./community-roles.md) describes the responsibilities and requirements on the project roles.
+
 ### Component-Wise Code Owners & Primary Reviewers
 
 Area             |Components                       |Source                                           |Maintainers                                 |Reviewers|
@@ -12,10 +17,10 @@ chaos-sdk        |go/python/ansible sdk           |litmus-go,litmus-python,litmu
 e2e              |e2e-suite, e2e-dashboard         |litmus-e2e                                       |@uditgaurav, @Jonsy13                       |@neelanjan00, @S-ayanide, @avaakash         |
 integrations     |CI/CD plugins, wrappers          |chaos-ci-lib, gitlab-templates, github-actions   |@uditgaurav, @ksatchit                    |@ispeakc0de, @Adarshkumar14         | 
 helm-charts      |control-plane, agent, experiments|litmus-helm                                      |@Jasstkn, @ispeakc0de, @imrajdas, @Jonsy13             |@ksatchit, @uditgaurav         |
-documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |
-websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
+documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
+websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@SahilKr24, @hrishavjha, @ajeshbaby    |@umamukkara, @S-ayanide        |
 
-### Consolidated Maintainers List 
+### Consolidated Maintainers List
 
 ```
 "Amit Kumar Das",@amityt,amit.das@harness.io
@@ -24,7 +29,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Karthik Satchitanand",@ksatchit,karthik.s@harness.io
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
 "Namkyu Park",namkyu1999,lak9348@gmail.com
-"Neelanjan Manna",@neelanjan00,neelanjan.manna@harness.io
+"Neelanjan Manna",@neelanjan00,neelanjanmanna@gmail.com
 "Oum Nivrati Kale",@oumkale,oumk@jfrog.com
 "Raj Das",@imrajdas,rajbabu.das@harness.io
 "Rémi Ziolkowski",@Vr00mm,remi.ziolkowski-ext@pole-emploi.fr
@@ -36,6 +41,9 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Udit Gaurav",@uditgaurav,udit.gaurav@harness.io
 "Vedant Shrotria",@Jonsy13,vedant.shrotria@harness.io
 "Uma Mukkara",@umamukkara,umasankar.mukkara@harness.io
+"Sahil KR",@SahilKr24,sahil.kumar@harness.io
+"Ajesh Baby",@ajeshbaby,ajesh.baby@harness.io
+"Hrishav Kumar",@hrishavjha,hrishav.kumar@harness.io
 ```
 
 ### Consolidated Reviewers List
@@ -43,9 +51,6 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 ```
 "Adarsh Kumar",@Adarshkumar14,adarsh.kumar@harness.io
 "Akash Srivastava",@avaakash,akash.srivastava@harness.io
-"Ajesh Baby",@ajeshbaby,ajesh.baby@harness.io
-"Sahil Kumar",@SahilKr24,sahil.kumar@harness.io
-"Hrishav Kumar Jha",@hrishavjha,hrishav.kumar@harness.io
 ```
 
 ### Emeritus Maintainers
