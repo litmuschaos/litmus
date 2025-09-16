@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v3.20.0
+    app.kubernetes.io/version: v3.21.0
     app.kubernetes.io/component: operator-serviceaccount
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v3.20.0
+    app.kubernetes.io/version: v3.21.0
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -114,7 +114,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v3.20.0
+    app.kubernetes.io/version: v3.21.0
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -135,7 +135,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v3.20.0
+    app.kubernetes.io/version: v3.21.0
     app.kubernetes.io/component: operator
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -153,7 +153,7 @@ spec:
         app.kubernetes.io/name: litmus
         # provide unique instance-id if applicable
         # app.kubernetes.io/instance: litmus-abcxzy
-        app.kubernetes.io/version: v3.20.0
+        app.kubernetes.io/version: v3.21.0
         app.kubernetes.io/component: operator
         app.kubernetes.io/part-of: litmus
         app.kubernetes.io/managed-by: kubectl
@@ -162,7 +162,7 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.20.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.21.0
           command:
           - chaos-operator
           args:
@@ -170,7 +170,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.20.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.21.0"
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
