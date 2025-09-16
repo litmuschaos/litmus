@@ -124,7 +124,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](../pods/common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.  
 
 ### Custom k6 configuration
 You can add k6 options(ex hosts, thresholds) in the script `options` object. More details can be found [here](https://grafana.com/docs/k6/latest/using-k6/k6-options/)

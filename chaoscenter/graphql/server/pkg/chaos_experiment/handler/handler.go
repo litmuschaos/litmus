@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -48,6 +48,7 @@ type ChaosExperimentHandler struct {
 	gitOpsService              gitops.Service
 	chaosExperimentOperator    *dbChaosExperiment.Operator
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	probeService               probe.Service
 	mongodbOperator            mongodb.MongoOperator
 }
 
@@ -59,6 +60,7 @@ func NewChaosExperimentHandler(
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
+	probeService probe.Service,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentHandler {
 	return &ChaosExperimentHandler{
@@ -68,6 +70,7 @@ func NewChaosExperimentHandler(
 		gitOpsService:              gitOpsService,
 		chaosExperimentOperator:    chaosExperimentOperator,
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		probeService:               probeService,
 		mongodbOperator:            mongodbOperator,
 	}
 }
@@ -589,9 +592,20 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 
 		// Filtering based on date range (workflow's last updated time)
 		if request.Filter.DateRange != nil {
-			endDate := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			endDate := time.Now().UnixMilli()
 			if request.Filter.DateRange.EndDate != nil {
-				endDate = *request.Filter.DateRange.EndDate
+				parsedEndDate, err := strconv.ParseInt(*request.Filter.DateRange.EndDate, 10, 64)
+				if err != nil {
+					return nil, errors.New("unable to parse end date")
+				}
+
+				endDate = parsedEndDate
+			}
+
+			// Note: StartDate cannot be passed in blank, must be "0"
+			startDate, err := strconv.ParseInt(request.Filter.DateRange.StartDate, 10, 64)
+			if err != nil {
+				return nil, errors.New("unable to parse start date")
 			}
 
 			filterWfDateStage := bson.D{
@@ -599,7 +613,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					"$match",
 					bson.D{{"updated_at", bson.D{
 						{"$lte", endDate},
-						{"$gte", request.Filter.DateRange.StartDate},
+						{"$gte", startDate},
 					}}},
 				},
 			}
@@ -1347,7 +1361,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 			}
 
 			for _, probeName := range _probe.ProbeNames {
-				singleProbe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+				singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, probeName, projectID)
 				if err != nil {
 					return nil, err
 				}
@@ -1456,7 +1470,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 		return false, errors.New("failed to marshal workflow manifest")
 	}
 
-	cronWorkflowManifest, err = probeUtils.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
+	cronWorkflowManifest, err = c.probeService.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
 	if err != nil {
 		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
 	}
@@ -1513,7 +1527,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
 			return false, fmt.Errorf("no running or timeout experiments found")
 		}
-	} else if experimentRunID != nil && *experimentRunID != "" {
+	} else if *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
 	}
 
