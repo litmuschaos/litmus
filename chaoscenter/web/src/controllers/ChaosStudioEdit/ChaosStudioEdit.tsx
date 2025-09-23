@@ -8,7 +8,7 @@ import { listExperiment, runChaosExperiment, saveChaosExperiment } from '@api/co
 import experimentYamlService from '@services/experiment';
 import { ExperimentType, InfrastructureType, RecentExperimentRun } from '@api/entities';
 import Loader from '@components/Loader';
-import { useSearchParams, useUpdateSearchParams } from '@hooks';
+import { useSearchParams, useUpdateSearchParams, useImageRegistry } from '@hooks';
 import RightSideBarV2 from '@components/RightSideBarV2';
 import { StudioMode } from '@models';
 import { cronEnabled } from 'utils';
@@ -20,6 +20,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
   const updateSearchParams = useUpdateSearchParams();
   const hasUnsavedChangesInURL = searchParams.get('unsavedChanges') === 'true';
   const experimentType = searchParams.get('experimentType');
+  const { imageRegistry } = useImageRegistry();
 
   // <!-- counting state since we have 2 async functions and need to flip state when both of said functions have resolved their promises -->
   const [showStudio, setShowStudio] = React.useState<number>(0);
@@ -61,7 +62,8 @@ export default function ChaosStudioEditController(): React.ReactElement {
             id: experimentData?.infra?.infraID,
             namespace: experimentData.infra?.infraNamespace,
             environmentID: experimentData?.infra?.environmentID
-          }
+          },
+          imageRegistry: imageRegistry
         })
         .then(() => setShowStudio(oldState => oldState + 1));
       experimentHandler
@@ -75,7 +77,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
       setIsCronEnabled(validateCron);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [experimentData, experimentID, hasUnsavedChangesInURL]);
+  }, [experimentData, experimentID, hasUnsavedChangesInURL, imageRegistry]);
 
   const [saveChaosExperimentMutation, { loading: saveChaosExperimentLoading }] = saveChaosExperiment({
     onError: error => showError(error.message),
