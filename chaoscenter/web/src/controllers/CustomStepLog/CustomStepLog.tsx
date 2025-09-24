@@ -40,7 +40,7 @@ export default function CustomStepLogController({
       podName: podName,
       podNamespace: namespace ?? '',
       podType: nodeType ?? '',
-      expPod: chaosData?.faultPod,
+      expPod: chaosData?.experimentPod,
       runnerPod: chaosData?.runnerPod,
       chaosNamespace: chaosData?.namespace
     }
