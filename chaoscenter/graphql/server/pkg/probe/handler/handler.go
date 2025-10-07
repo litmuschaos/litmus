@@ -43,12 +43,26 @@ type Service interface {
 }
 
 type probeService struct {
-	probeOperator *dbSchemaProbe.Operator
+	probeOperator      *dbSchemaProbe.Operator
+	authConfigOperator *authorization.Operator
 }
 
-func NewProbeService(probeOperator *dbSchemaProbe.Operator) Service {
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewProbeOperator returns a new instance of Operator
+func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
+// NewProbeService returns a new instance of probeService
+func NewProbeService(probeOperator *dbSchemaProbe.Operator, authConfigOperator *authorization.Operator) Service {
 	return &probeService{
-		probeOperator: probeOperator,
+		probeOperator:      probeOperator,
+		authConfigOperator: authConfigOperator,
 	}
 }
 
@@ -69,7 +83,7 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 		return nil, errors.New("JWT token not found")
 	}
 
-	username, err := authorization.GetUsername(tkn)
+	username, err := p.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +153,7 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 // UpdateProbe - Update a new Probe
 func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := p.authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return "", err
 	}
@@ -386,6 +400,8 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 }
 
 func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string) ([]*model.ProbeRecentExecutions, error) {
+	var mongodbOperator mongodb.MongoOperator
+
 	var (
 		pipeline         mongo.Pipeline
 		expRuns          []dbChaosExperimentRun.ChaosExperimentRun
@@ -405,7 +421,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	pipeline = append(pipeline, matchIdentifierStage)
 
 	// Call aggregation on pipeline
-	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodb.Operator)
+	experimentRunOperator := dbChaosExperimentRun.NewChaosExperimentRunOperator(NewProbeOperator(mongodbOperator).operator)
 	expRunCursor, err := experimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, errors.New("DB aggregate stage error: " + err.Error())
@@ -491,7 +507,7 @@ func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID str
 		return false, err
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := p.authConfigOperator.GetUsername(tkn)
 
 	Time := time.Now().UnixMilli()
 

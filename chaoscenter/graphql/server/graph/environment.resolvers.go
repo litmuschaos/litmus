@@ -13,7 +13,7 @@ import (
 )
 
 // CreateEnvironment is the resolver for the createEnvironment field.
-func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID string, request *model.CreateEnvironmentRequest) (*model.Environment, error) {
+func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID string, request *model.CreateEnvironmentRequest, authConfigOperator *authorization.Operator) (*model.Environment, error) {
 	logFields := logrus.Fields{
 		"projectId": projectID,
 	}
@@ -26,7 +26,7 @@ func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID stri
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID stri
 }
 
 // UpdateEnvironment is the resolver for the updateEnvironment field.
-func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error) {
+func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest, authConfigOperator *authorization.Operator) (string, error) {
 	logFields := logrus.Fields{
 		"projectId":     projectID,
 		"environmentId": request.EnvironmentID,
@@ -49,7 +49,7 @@ func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID stri
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +58,7 @@ func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID stri
 }
 
 // DeleteEnvironment is the resolver for the deleteEnvironment field.
-func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error) {
+func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID string, environmentID string, authConfigOperator *authorization.Operator) (string, error) {
 	logFields := logrus.Fields{
 		"projectId":     projectID,
 		"environmentId": environmentID,
@@ -72,7 +72,7 @@ func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID stri
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := authConfigOperator.GetUsername(tkn)
 	if err != nil {
 		return "", err
 	}

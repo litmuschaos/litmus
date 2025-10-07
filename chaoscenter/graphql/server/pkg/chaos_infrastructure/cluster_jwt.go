@@ -11,12 +11,22 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type Operator struct {
+	authConfigOperator *authConfig.Operator
+}
+
+func NewChaosInfrastructureOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		authConfigOperator: authConfig.NewAuthConfigOperator(mongodbOperator),
+	}
+}
+
 // InfraCreateJWT generates jwt used in chaos_infra registration
-func InfraCreateJWT(id string) (string, error) {
+func (o *Operator) InfraCreateJWT(id string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["chaos_infra_id"] = id
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	config, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+	config, err := o.authConfigOperator.GetAuthConfig(context.Background())
 	if err != nil {
 		return "", err
 	}
@@ -29,12 +39,12 @@ func InfraCreateJWT(id string) (string, error) {
 }
 
 // InfraValidateJWT validates the chaos_infra jwt
-func InfraValidateJWT(token string) (string, error) {
+func (o *Operator) InfraValidateJWT(token string) (string, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		config, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+		config, err := o.authConfigOperator.GetAuthConfig(context.Background())
 		if err != nil {
 			return "", err
 		}
