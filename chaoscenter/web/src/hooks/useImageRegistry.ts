@@ -1,5 +1,5 @@
 import { getImageRegistry } from '@api/core/ImageRegistry';
-import { getScope } from '@utils';
+import { useAppStore } from './useAppStore';
 import type { ImageRegistry } from '@db';
 
 // Default image registry configuration
@@ -10,11 +10,11 @@ const DEFAULT_IMAGE_REGISTRY = {
 } as const;
 
 export function useImageRegistry(): { imageRegistry: ImageRegistry | undefined; loading: boolean } {
-  const scope = getScope();
+  const { projectID } = useAppStore();
   
   // Fetch imageRegistry data
   const { data: getImageRegistryData, loading } = getImageRegistry({
-    projectID: scope.projectID
+    projectID: projectID ?? ''
   });
 
   // Create imageRegistry object with fallback values
