@@ -1,6 +1,6 @@
 import { getImageRegistry } from '@api/core/ImageRegistry';
-import { useAppStore } from './useAppStore';
 import type { ImageRegistry } from '@db';
+import { useAppStore } from './useAppStore';
 
 // Default image registry configuration
 const DEFAULT_IMAGE_REGISTRY = {
