@@ -1,6 +1,6 @@
+# [LitmusChaos](https://litmuschaos.io/)
 <img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
-# [LitmusChaos](https://litmuschaos.io/)
 ### Open Source Chaos Engineering Platform
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
@@ -97,7 +97,7 @@ Feel free to reach out if you have any queries,concerns, or feature requests
 - These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
 - These meetings focus on both technical and non-technical contributions to LitmusChaos. Maintainers, current contributors, and aspiring contributors are encouraged to join to discuss issues, fixes, enhancements, and future contributions.
 
-Fill out the [LitmusChaos Meetings invite form](https://forms.gle/xYZyZ2gTWMqz7xSs7) to get your Calendar invite!  
+Fill out the [LitmusChaos Meetings invite form](https://forms.gle/qawjtFUeL431jmpv7) to get your Calendar invite!  
 
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
