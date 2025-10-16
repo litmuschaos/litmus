@@ -161,10 +161,10 @@
         <td> Comma separated list of application pod name subjected to pod memory hog chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
       </tr>
-      <tr>
+      <tr> 
         <td> TARGET_CONTAINER </td>
-        <td> Name of the target container under chaos.</td>
-        <td> If not provided, it will select the first container of the target pod</td>
+        <td> Comma separated names of the container(s) under chaos for target pod(s). </td>
+        <td> If not provided, it will select the first container of the target pod. To target all the containers, provide <code>all<code> value. </td>
       </tr>   
       <tr>
         <td> CONTAINER_RUNTIME  </td>
