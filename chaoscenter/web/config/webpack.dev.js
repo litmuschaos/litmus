@@ -38,29 +38,29 @@ const devConfig = {
       }
     },
     proxy: {
-      '/api': {
-        pathRewrite: { '^/api': '' },
-        target: process.env.CHAOS_MANAGER
-          ? process.env.CHAOS_MANAGER
-          : targetLocalHost
-          ? 'http://localhost:8080'
-          : `${baseUrl}/api`,
-        secure: false,
-        changeOrigin: true,
-        logLevel: 'info'
-      },
-      '/auth': {
-        pathRewrite: { '^/auth': '' },
-        target: process.env.CHAOS_MANAGER
-          ? process.env.CHAOS_MANAGER
-          : targetLocalHost
-          ? 'http://localhost:3000'
-          : `${baseUrl}/auth`,
-        secure: false,
-        changeOrigin: true,
-        logLevel: 'info'
-      }
-    }
+  '/api': {
+    pathRewrite: { '^/api': '' },
+    target: process.env.CHAOS_MANAGER
+      ? process.env.CHAOS_MANAGER
+      : targetLocalHost
+      ? 'http://localhost:8080'
+      : `${baseUrl}/api`,
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'info'
+  },
+  '/auth': {
+    pathRewrite: { '^/auth': '' },
+    target: process.env.CHAOS_MANAGER
+      ? process.env.CHAOS_MANAGER
+      : targetLocalHost
+      ? 'http://localhost:3000'
+      : `${baseUrl}/auth`,
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'info'
+  }
+}
   },
   plugins: [
     new MiniCssExtractPlugin({
@@ -69,7 +69,7 @@ const devConfig = {
       ignoreOrder: true
     }),
     new DefinePlugin({
-      'process.env': '{}', // required for @blueprintjs/core
+      'process.env': '{}', 
       __DEV__: true
     })
   ]
