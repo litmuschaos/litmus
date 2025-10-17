@@ -89,6 +89,7 @@ export default function ExperimentCreationListHubsView({
                           chart =>
                             chart.spec.faults.length > 0 && (
                               <Text
+                                key={chart.metadata.name}
                                 className={css.category}
                                 font={{ size: 'normal', weight: 'light' }}
                                 color={Color.GREY_200}

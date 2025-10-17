@@ -18,9 +18,7 @@ export default function LitmusBreadCrumbs({ baseUrl, ...rest }: LitmusBreadCrumb
     ...(rest.links || [])
   ];
 
-  const validLinks = combinedLinks.filter(
-    link => link && typeof link.label === 'string' && link.label.trim() !== ''
-  );
+  const validLinks = combinedLinks.filter(link => link && typeof link.label === 'string' && link.label.trim() !== '');
 
   return <Breadcrumbs {...rest} links={validLinks} />;
 }
