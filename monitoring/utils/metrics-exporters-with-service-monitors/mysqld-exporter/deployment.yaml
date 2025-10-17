@@ -31,6 +31,17 @@ spec:
             - '--collect.engine_innodb_status'
             - '--collect.slave_hosts'
           name: mysql-exporter
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 9104
               name: mysql-metrics

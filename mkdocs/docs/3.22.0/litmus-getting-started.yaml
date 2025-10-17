@@ -13,7 +13,7 @@ metadata:
   name: litmus-portal-admin-config
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
-  VERSION: "3.21.0"
+  VERSION: "3.22.0"
   SKIP_SSL_VERIFY:
     "false"
     # Configurations if you are using dex for OAuth
@@ -64,15 +64,7 @@ data:
         error_log /var/log/nginx/error.log;
 
         server {
-            listen 8185 ssl;
-            ssl_certificate /etc/tls/tls.crt;
-            ssl_certificate_key /etc/tls/tls.key;
-            ssl_protocols TLSv1.2 TLSv1.3;
-            ssl_client_certificate /etc/tls/ca.crt;
-            ssl_ciphers HIGH:!aNULL:!MD5;
-            ssl_prefer_server_ciphers on;
-            ssl_session_cache shared:SSL:10m;
-
+            listen 8185 default_server;
             root   /opt/chaos;
 
             location /health {
@@ -94,21 +86,15 @@ data:
             }
 
             location /auth/ {
-                proxy_ssl_verify        off;
-                proxy_ssl_session_reuse on;
                 proxy_http_version 1.1;
                 proxy_set_header   Host                 $host;
                 proxy_set_header   X-Real-IP            $remote_addr;
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "https://litmusportal-auth-server-service:9005/";
-                proxy_ssl_certificate /etc/tls/tls.crt;
-                proxy_ssl_certificate_key /etc/tls/tls.key;
+                proxy_pass "http://litmusportal-auth-server-service:9003/";
             }
 
             location /api/ {
-                proxy_ssl_verify        off;
-                proxy_ssl_session_reuse on;
                 proxy_http_version 1.1;
                 proxy_set_header   Upgrade              $http_upgrade;
                 proxy_set_header   Connection           $connection_upgrade;
@@ -116,9 +102,7 @@ data:
                 proxy_set_header   X-Real-IP            $remote_addr;
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "https://litmusportal-server-service:9004/";
-                proxy_ssl_certificate /etc/tls/tls.crt;
-                proxy_ssl_certificate_key /etc/tls/tls.key;
+                proxy_pass "http://litmusportal-server-service:9002/";
             }
         }
     }
@@ -142,7 +126,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:3.21.0
+          image: litmuschaos/litmusportal-frontend:3.22.0
           # securityContext:
           #   runAsUser: 2000
           #   allowPrivilegeEscalation: false
@@ -163,15 +147,10 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
-            - mountPath: /etc/tls
-              name: tls-secret
       volumes:
         - name: nginx-config
           configMap:
             name: litmusportal-frontend-nginx-configuration
-        - name: tls-secret
-          secret:
-            secretName: tls-secret
 ---
 apiVersion: v1
 kind: Service
@@ -208,19 +187,14 @@ spec:
           emptyDir: {}
         - name: hub-storage
           emptyDir: {}
-        - name: tls-secret
-          secret:
-            secretName: tls-secret
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:3.21.0
+          image: litmuschaos/litmusportal-server:3.22.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
-            - mountPath: /etc/tls
-              name: tls-secret
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -242,50 +216,50 @@ spec:
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:3.21.0"
+              value: "litmuschaos/litmusportal-subscriber:3.22.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:3.21.0"
+              value: "litmuschaos/litmusportal-event-tracker:3.22.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.21.0"
+              value: "litmuschaos/chaos-operator:3.22.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.21.0"
+              value: "litmuschaos/chaos-runner:3.22.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.21.0"
+              value: "litmuschaos/chaos-exporter:3.22.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "v3.21.x"
+              value: "v3.22.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.21.0"
+              value: "3.22.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["3.21.0"]'
+              value: '["3.22.0"]'
             - name: ALLOWED_ORIGINS
-              value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?"
+              value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
             - name: ENABLE_INTERNAL_TLS
-              value: "true"
+              value: "false"
             - name: TLS_CERT_PATH
-              value: "/etc/tls/tls.crt"
+              value: ""
             - name: TLS_KEY_PATH
-              value: "/etc/tls/tls.key"
+              value: ""
             - name: CA_CERT_TLS_PATH
-              value: "/etc/tls/ca.crt"
+              value: ""
             - name: REST_PORT
-              value: "8081"
+              value: "8080"
             - name: GRPC_PORT
-              value: "8001"
+              value: "8000"
           ports:
-            - containerPort: 8081
-            - containerPort: 8001
+            - containerPort: 8080
+            - containerPort: 8000
           imagePullPolicy: Always
           resources:
             requests:
@@ -322,12 +296,12 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - name: graphql-server-https
-      port: 9004
-      targetPort: 8081
-    - name: graphql-rpc-server-https
-      port: 8001
-      targetPort: 8001
+    - name: graphql-server
+      port: 9002
+      targetPort: 8080
+    - name: graphql-rpc-server
+      port: 8000
+      targetPort: 8000
   selector:
     component: litmusportal-server
 ---
@@ -347,17 +321,10 @@ spec:
       labels:
         component: litmusportal-auth-server
     spec:
-      volumes:
-        - name: tls-secret
-          secret:
-            secretName: tls-secret
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          volumeMounts:
-            - mountPath: /etc/tls
-              name: tls-secret
-          image: litmuschaos/litmusportal-auth-server:3.21.0
+          image: litmuschaos/litmusportal-auth-server:3.22.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -380,22 +347,22 @@ spec:
             - name: LITMUS_GQL_GRPC_PORT
               value: "8000"
             - name: ALLOWED_ORIGINS
-              value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?" #ip needs to added here
+              value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
             - name: ENABLE_INTERNAL_TLS
-              value: "true"
+              value: "false"
             - name: TLS_CERT_PATH
-              value: "/etc/tls/tls.crt"
+              value: ""
             - name: TLS_KEY_PATH
-              value: "/etc/tls/ctls.key"
+              value: ""
             - name: CA_CERT_TLS_PATH
-              value: "/etc/tls/ca.crt"
+              value: ""
             - name: REST_PORT
-              value: "3001"
+              value: "3000"
             - name: GRPC_PORT
-              value: "3031"
+              value: "3030"
           ports:
-            - containerPort: 3001
-            - containerPort: 3031
+            - containerPort: 3000
+            - containerPort: 3030
           imagePullPolicy: Always
           resources:
             requests:
@@ -436,11 +403,11 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - name: auth-server-https
-      port: 9005
-      targetPort: 3001
-    - name: auth-rpc-server-https
-      port: 3031
-      targetPort: 3031
+    - name: auth-server
+      port: 9003
+      targetPort: 3000
+    - name: auth-rpc-server
+      port: 3030
+      targetPort: 3030
   selector:
     component: litmusportal-auth-server
