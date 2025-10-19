@@ -47,6 +47,8 @@ spec:
           env:
             - name: CHAOS_RUNNER_IMAGE
               value: #{LITMUS_CHAOS_RUNNER}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: #{TELEMETRY_ENDPOINT}
             - name: WATCH_NAMESPACE
               value: ''
             - name: POD_NAME

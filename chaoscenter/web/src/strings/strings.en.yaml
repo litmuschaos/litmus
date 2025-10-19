@@ -323,6 +323,7 @@ enableChaosInfrastructureDesc: >-
 enableCron: Enable Cron
 enableCronDesc: This will enable the cron schedule for this experiment.
 enableImageRegistryChanges: Enable Image Registry Changes
+enableOpenTelemetry: Enable OpenTelemetry
 enableSSLCheck: Enable SSL/TLS check
 enableUser: Enable User
 enableUserDescription: Are you sure you want to enable this user?
@@ -739,6 +740,7 @@ optional: (Optional)
 or: or
 orderBy: Order By
 organization: Organization
+otelExporterOtlpEndpoint: OTEL_EXPORTER_OTLP_ENDPOINT
 outOf: OUT OF
 outOfSmall: out of
 overallNodeResult: Overall Node Result
@@ -1096,6 +1098,7 @@ targetInfrastructure: Target Infrastructure
 taskIDSuccess: >-
   Your Chaos Infrastructure deployment request has been successful with the
   TaskID:
+telemetry: Telemetry
 templateFromChaosHubsDescription: Use experiments available in ChaosHubs
 templateFromChaosHubsTitle: Templates from ChaosHubs
 templateFromProjectDescription: Use experiments available in your Project

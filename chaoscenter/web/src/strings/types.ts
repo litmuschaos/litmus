@@ -274,6 +274,7 @@ export interface StringsMap {
   'enableCron': unknown
   'enableCronDesc': unknown
   'enableImageRegistryChanges': unknown
+  'enableOpenTelemetry': unknown
   'enableSSLCheck': unknown
   'enableUser': unknown
   'enableUserDescription': unknown
@@ -612,6 +613,7 @@ export interface StringsMap {
   'or': unknown
   'orderBy': unknown
   'organization': unknown
+  'otelExporterOtlpEndpoint': unknown
   'outOf': unknown
   'outOfSmall': unknown
   'overallNodeResult': unknown
@@ -924,6 +926,7 @@ export interface StringsMap {
   'targetApplication': unknown
   'targetInfrastructure': unknown
   'taskIDSuccess': unknown
+  'telemetry': unknown
   'templateFromChaosHubsDescription': unknown
   'templateFromChaosHubsTitle': unknown
   'templateFromProjectDescription': unknown

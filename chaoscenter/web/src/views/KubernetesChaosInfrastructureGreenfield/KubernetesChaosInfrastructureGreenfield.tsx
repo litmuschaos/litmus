@@ -63,6 +63,7 @@ export default function KubernetesChaosInfrastructureGreenfieldView({
                 nodeSelector: data.value.nodeSelectorValues
                   ? `${data.value.nodeSelectorValues[0].key.trim()}=${data.value.nodeSelectorValues[0].value.trim()}`
                   : undefined,
+                telemetryEndpoint: data.value.telemetryEndpoint ?? undefined,
                 tags: data.value.tags ?? undefined,
                 infrastructureType: InfrastructureType.KUBERNETES
               }

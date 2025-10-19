@@ -5577,6 +5577,10 @@ input RegisterInfraRequest {
   """
   nodeSelector: String
   """
+  TelemetryEndpoint value indicating telemetry endpoint for infra
+  """
+  TelemetryEndpoint: String
+  """
   Node tolerations used by infra
   """
   tolerations: [Toleration]
@@ -38242,7 +38246,7 @@ func (ec *executionContext) unmarshalInputRegisterInfraRequest(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "environmentID", "infrastructureType", "description", "platformName", "infraNamespace", "serviceAccount", "infraScope", "infraNsExists", "infraSaExists", "skipSsl", "nodeSelector", "tolerations", "tags"}
+	fieldsInOrder := [...]string{"name", "environmentID", "infrastructureType", "description", "platformName", "infraNamespace", "serviceAccount", "infraScope", "infraNsExists", "infraSaExists", "skipSsl", "nodeSelector", "TelemetryEndpoint", "tolerations", "tags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38333,6 +38337,13 @@ func (ec *executionContext) unmarshalInputRegisterInfraRequest(ctx context.Conte
 				return it, err
 			}
 			it.NodeSelector = data
+		case "TelemetryEndpoint":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TelemetryEndpoint"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TelemetryEndpoint = data
 		case "tolerations":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tolerations"))
 			data, err := ec.unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐToleration(ctx, v)

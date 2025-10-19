@@ -26,6 +26,7 @@ type ChaosInfra struct {
 	SkipSSL                 *bool         `bson:"skip_ssl"`
 	NodeSelector            *string       `bson:"node_selector"`
 	Tolerations             []*Toleration `bson:"tolerations,omitempty"`
+	TelemetryEndpoint       string        `bson:"telemetry_endpoint"`
 	StartTime               string        `bson:"start_time"`
 	Version                 string        `bson:"version"`
 }
