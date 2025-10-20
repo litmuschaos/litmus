@@ -97,7 +97,7 @@ type ErrServerError struct {
 After annotating your API and defining your responses, run the following command in your project root to generate the `swagger.yaml` file:
 
 ```bash
-swag init
+swag init --parseDependency true
 ```
 
 This command scans your project and creates a Swagger specification from your annotations.

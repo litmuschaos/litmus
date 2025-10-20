@@ -587,9 +587,20 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 
 		// Filtering based on date range (workflow's last updated time)
 		if request.Filter.DateRange != nil {
-			endDate := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			endDate := time.Now().UnixMilli()
 			if request.Filter.DateRange.EndDate != nil {
-				endDate = *request.Filter.DateRange.EndDate
+				parsedEndDate, err := strconv.ParseInt(*request.Filter.DateRange.EndDate, 10, 64)
+				if err != nil {
+					return nil, errors.New("unable to parse end date")
+				}
+
+				endDate = parsedEndDate
+			}
+
+			// Note: StartDate cannot be passed in blank, must be "0"
+			startDate, err := strconv.ParseInt(request.Filter.DateRange.StartDate, 10, 64)
+			if err != nil {
+				return nil, errors.New("unable to parse start date")
 			}
 
 			filterWfDateStage := bson.D{
@@ -597,7 +608,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					"$match",
 					bson.D{{"updated_at", bson.D{
 						{"$lte", endDate},
-						{"$gte", request.Filter.DateRange.StartDate},
+						{"$gte", startDate},
 					}}},
 				},
 			}
@@ -1283,10 +1294,7 @@ func (c *ChaosExperimentHandler) GetDBExperiment(query bson.D) (dbChaosExperimen
 
 func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
 	var (
-		probeDetails        []*model.GetProbesInExperimentRunResponse
-		probeStatusMap      = make(map[string]model.ProbeVerdict)
-		probeDescriptionMap = make(map[string]*string)
-		probeModeMap        = make(map[string]model.Mode)
+		probeDetails []*model.GetProbesInExperimentRunResponse
 	)
 
 	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
@@ -1302,10 +1310,16 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		if _probe.FaultName == faultName {
 			for _, probeName := range _probe.ProbeNames {
 				var executionData types.ExecutionData
-				probeStatusMap[probeName] = model.ProbeVerdictNa
-				probeModeMap[probeName] = model.ModeSot
 				description := "Either probe is not executed or not evaluated"
-				probeDescriptionMap[probeName] = &description
+
+				probeVal := model.GetProbesInExperimentRunResponse{
+					Probe: &model.Probe{
+						Name: probeName,
+					},
+					Status: &model.Status{
+						Description: &description,
+					},
+				}
 
 				if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
 					return nil, errors.New("failed to unmarshal workflow manifest")
@@ -1315,34 +1329,20 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 					for _, nodeData := range executionData.Nodes {
 						if nodeData.Name == faultName {
 							if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
+								probeVal.Status.Verdict = model.ProbeVerdictNa
 							} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
+								probeVal.Status.Verdict = model.ProbeVerdictNa
 								if nodeData.ChaosExp.ChaosResult != nil {
-									probeStatusMap[probeName] = model.ProbeVerdictAwaited
+									probeVal.Status.Verdict = model.ProbeVerdictAwaited
 									probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
 
 									for _, probeStatus := range probeStatuses {
 										if probeStatus.Name == probeName {
-											probeModeMap[probeName] = model.Mode(probeStatus.Mode)
+											probeVal.Mode = model.Mode(probeStatus.Mode)
 
-											description := probeStatus.Status.Description
-											probeDescriptionMap[probeStatus.Name] = &description
-
-											switch probeStatus.Status.Verdict {
-											case chaosTypes.ProbeVerdictPassed:
-												probeStatusMap[probeName] = model.ProbeVerdictPassed
-												break
-											case chaosTypes.ProbeVerdictFailed:
-												probeStatusMap[probeName] = model.ProbeVerdictFailed
-												break
-											case chaosTypes.ProbeVerdictAwaited:
-												probeStatusMap[probeName] = model.ProbeVerdictAwaited
-												break
-											default:
-												probeStatusMap[probeName] = model.ProbeVerdictNa
-												break
-											}
+											description = probeStatus.Status.Description
+											probeVal.Status.Description = &description
+											probeVal.Status.Verdict = convertProbeVerdict(probeStatus.Status.Verdict)
 										}
 									}
 								}
@@ -1350,28 +1350,36 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 						}
 					}
 				}
+				probeDetails = append(probeDetails, &probeVal)
 			}
-
-			for _, probeName := range _probe.ProbeNames {
-				singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, probeName, projectID)
-				if err != nil {
-					return nil, err
-				}
-
-				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
-					Probe: singleProbe.GetOutputProbe(),
-					Mode:  probeModeMap[probeName],
-					Status: &model.Status{
-						Verdict:     probeStatusMap[probeName],
-						Description: probeDescriptionMap[probeName],
-					},
-				})
-			}
-
 		}
 	}
 
+	for i, probeData := range probeDetails {
+		value := probeData
+		singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, value.Probe.Name, projectID)
+		if err != nil {
+			return nil, err
+		}
+
+		probeDetails[i].Probe = singleProbe.GetOutputProbe()
+	}
+
 	return probeDetails, nil
+}
+
+// convertProbeVerdict maps chaosTypes verdicts to GraphQL model verdicts
+func convertProbeVerdict(verdict chaosTypes.ProbeVerdict) model.ProbeVerdict {
+	switch verdict {
+	case chaosTypes.ProbeVerdictPassed:
+		return model.ProbeVerdictPassed
+	case chaosTypes.ProbeVerdictFailed:
+		return model.ProbeVerdictFailed
+	case chaosTypes.ProbeVerdictAwaited:
+		return model.ProbeVerdictAwaited
+	default:
+		return model.ProbeVerdictNa
+	}
 }
 
 // validateDuplicateExperimentName validates if the name of experiment is duplicate
@@ -1519,7 +1527,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
 			return false, fmt.Errorf("no running or timeout experiments found")
 		}
-	} else if experimentRunID != nil && *experimentRunID != "" {
+	} else if *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
 	}
 

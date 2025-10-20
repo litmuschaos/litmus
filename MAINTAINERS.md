@@ -1,3 +1,8 @@
+# LitmusChaos Maintainers
+
+- [GOVERNANCE.md](./GOVERNANCE.md) describes the LitmusChaos governance.
+- [community-roles.md](./community-roles.md) describes the responsibilities and requirements on the project roles.
+
 ### Component-Wise Code Owners & Primary Reviewers
 
 Area             |Components                       |Source                                           |Maintainers                                 |Reviewers|
@@ -14,7 +19,8 @@ integrations     |CI/CD plugins, wrappers          |chaos-ci-lib, gitlab-templat
 helm-charts      |control-plane, agent, experiments|litmus-helm                                      |@Jasstkn, @ispeakc0de, @imrajdas, @Jonsy13             |@ksatchit, @uditgaurav         |
 documentation    |platform-docs, experiment-docs   |litmus-docs, mkdocs                              |@neelanjan00, @umamukkara, @ispeakc0de     |@ksatchit, @ajeshbaby, @amityt, @uditgaurav         |websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@umamukkara, @arkajyotiMukherjee, @S-ayanide    |@SahilKr24, @hrishavjha, @ajeshbaby        |
 websites         |project website, chaoshub, documentation  |litmus-website, charthub, litmus-docs   |@SahilKr24, @hrishavjha, @ajeshbaby    |@umamukkara, @S-ayanide        |
-### Consolidated Maintainers List 
+
+### Consolidated Maintainers List
 
 ```
 "Amit Kumar Das",@amityt,amit.das@harness.io
@@ -23,7 +29,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Karthik Satchitanand",@ksatchit,karthik.s@harness.io
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
 "Namkyu Park",namkyu1999,lak9348@gmail.com
-"Neelanjan Manna",@neelanjan00,neelanjan.manna@harness.io
+"Neelanjan Manna",@neelanjan00,neelanjanmanna@gmail.com
 "Oum Nivrati Kale",@oumkale,oumk@jfrog.com
 "Raj Das",@imrajdas,rajbabu.das@harness.io
 "Rémi Ziolkowski",@Vr00mm,remi.ziolkowski-ext@pole-emploi.fr

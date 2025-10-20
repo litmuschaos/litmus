@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 
 	"github.com/gin-gonic/gin"
@@ -20,32 +20,26 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-type ReadinessAPIStatus struct {
-	DataBase    string `json:"database"`
-	Collections string `json:"collections"`
-}
-
 // Status 		godoc
 //
-//	@Description	Status will request users list and return, if successful, an http code 200.
+//	@Description	Status will request users list and return, if successful, a http code 200.
 //	@Tags			MiscRouter
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.APIStatus{}
 //	@Router			/status [get]
 //
-// Status will request users list and return, if successful,
-// an http code 200
+// Status will request users list and return, if successful, a http code 200
 func Status(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
-			c.JSON(http.StatusInternalServerError, entities.APIStatus{Status: "down"})
+			c.JSON(http.StatusInternalServerError, response.APIStatus{Status: "down"})
 			return
 		}
-		c.JSON(http.StatusOK, entities.APIStatus{Status: "up"})
+		c.JSON(http.StatusOK, response.APIStatus{Status: "up"})
 	}
 }
 
@@ -56,37 +50,39 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.ReadinessAPIStatus{}
 //	@Router			/readiness [get]
+//
+// Readiness will return the status of the database and collections
 func Readiness(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			db_flag  = "up"
-			col_flag = "up"
+			dbFlag  = "up"
+			colFlag = "up"
 		)
 
 		dbs, err := service.ListDataBase()
 		if !contains(dbs, "auth") {
-			db_flag = "down"
+			dbFlag = "down"
 		}
 
 		if err != nil {
 			log.Error(err)
-			c.JSON(http.StatusInternalServerError, ReadinessAPIStatus{"down", "unknown"})
+			c.JSON(http.StatusInternalServerError, response.ReadinessAPIStatus{DataBase: "down", Collections: "unknown"})
 			return
 		}
 
 		cols, err := service.ListCollection()
 		if !contains(cols, "project") || !contains(cols, "users") {
-			col_flag = "down"
+			colFlag = "down"
 		}
 
 		if err != nil {
 			log.Error(err)
-			c.JSON(http.StatusInternalServerError, ReadinessAPIStatus{db_flag, "down"})
+			c.JSON(http.StatusInternalServerError, response.ReadinessAPIStatus{DataBase: dbFlag, Collections: "down"})
 			return
 		}
 
-		c.JSON(http.StatusOK, ReadinessAPIStatus{db_flag, col_flag})
+		c.JSON(http.StatusOK, response.ReadinessAPIStatus{DataBase: dbFlag, Collections: colFlag})
 	}
 }

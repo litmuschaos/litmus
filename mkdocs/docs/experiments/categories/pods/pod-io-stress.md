@@ -165,7 +165,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod io stress chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr>  
+      </tr>
+      <tr> 
+        <td> TARGET_CONTAINER </td>
+        <td> Comma separated names of the container(s) under chaos for target pod(s). </td>
+        <td> If not provided, it will select the first container of the target pod. To target all the containers, provide <code>all<code> value. </td>
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>

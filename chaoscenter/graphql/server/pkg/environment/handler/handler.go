@@ -229,7 +229,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	}
 
 	// Filtering based on given parameters
-	if request.Filter != nil {
+	if request != nil && request.Filter != nil {
 		// Filtering based on chaos_infra name
 		if request.Filter.Name != nil && *request.Filter.Name != "" {
 			matchInfraNameStage := bson.D{
@@ -281,7 +281,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	var sortStage bson.D
 
 	switch {
-	case request.Sort != nil && request.Sort.Field == model.EnvironmentSortingFieldTime:
+	case request != nil && request.Sort != nil && request.Sort.Field == model.EnvironmentSortingFieldTime:
 		// Sorting based on created time
 		if request.Sort.Ascending != nil && *request.Sort.Ascending {
 			sortStage = bson.D{
@@ -296,7 +296,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 				}},
 			}
 		}
-	case request.Sort != nil && request.Sort.Field == model.EnvironmentSortingFieldName:
+	case request != nil && request.Sort != nil && request.Sort.Field == model.EnvironmentSortingFieldName:
 		// Sorting based on ExperimentName time
 		if request.Sort.Ascending != nil && *request.Sort.Ascending {
 			sortStage = bson.D{
@@ -320,7 +320,18 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 		}
 	}
 
-	pipeline = append(pipeline, sortStage)
+	// Pagination or adding a default limit of 15 if pagination not provided
+	paginatedExperiments := bson.A{
+		sortStage,
+	}
+
+	if request != nil && request.Pagination != nil {
+		paginationSkipStage := bson.D{
+			{"$skip", request.Pagination.Page * request.Pagination.Limit},
+		}
+		paginationLimitStage := bson.D{
+			{"$limit", request.Pagination.Limit},
+		}
 
 	// Pagination or adding a default limit of 15 if pagination not provided
 	_, skip, limit := common.CreatePaginationStage(request.Pagination)
@@ -348,6 +359,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	pipeline = append(pipeline, countStage, pagingStage)
 
 	cursor, err := e.EnvironmentOperator.GetAggregateEnvironments(pipeline)
+
 	if err != nil {
 		return nil, err
 	}
