@@ -320,18 +320,8 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 		}
 	}
 
-	// Pagination or adding a default limit of 15 if pagination not provided
-	paginatedExperiments := bson.A{
-		sortStage,
-	}
-
-	if request != nil && request.Pagination != nil {
-		paginationSkipStage := bson.D{
-			{"$skip", request.Pagination.Page * request.Pagination.Limit},
-		}
-		paginationLimitStage := bson.D{
-			{"$limit", request.Pagination.Limit},
-		}
+	// Append sort stage to pipeline
+	pipeline = append(pipeline, sortStage)
 
 	// Pagination or adding a default limit of 15 if pagination not provided
 	_, skip, limit := common.CreatePaginationStage(request.Pagination)
