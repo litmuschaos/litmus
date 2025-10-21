@@ -1,0 +1,181 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: infra-cluster-role
+rules:
+  # ***********************************************************************************************
+  # Permissions needed for orchestration and monitoring chaos by chaos-operator and chaos-exporter
+  # ***********************************************************************************************
+
+  # for deriving the owner references of the operator pod
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments", "replicasets"]
+    verbs: [ "get", "list" ]
+
+  # for the cleanup of jobs in abort scenarios
+  - apiGroups: [ "batch" ]
+    resources: [ "jobs" ]
+    verbs: [ "get", "list", "deletecollection" ]
+
+  # for creation and management of the chaos-runner pod
+  - apiGroups: [ "" ]
+    resources: [ "pods" ]
+    verbs: ["get", "create", "update", "patch", "delete", "list", "watch", "deletecollection" ]
+
+  # for creating of events and monitoring
+  - apiGroups: [ "" ]
+    resources: [ "events", "services" ]
+    verbs: ["get", "create", "update", "patch", "list", "watch" ]
+
+  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: [ "litmuschaos.io" ]
+    resources: [ "chaosengines", "chaosexperiments", "chaosresults" ]
+    verbs: ["get", "create", "update", "patch", "delete", "list", "watch", "deletecollection" ]
+
+  # for validation of existance of chaosresult crd
+  - apiGroups: [ "apiextensions.k8s.io" ]
+    resources: [ "customresourcedefinitions" ]
+    verbs: [ "list", "get" ]
+
+  # for managing the finalizers to the primary resource
+  - apiGroups: [ "litmuschaos.io" ]
+    resources: [ "chaosengines/finalizers" ]
+    verbs: [ "update" ]
+
+  # for managing the leader elections in multi-replicas scenario
+  - apiGroups: [ "coordination.k8s.io" ]
+    resources: [ "leases" ]
+    verbs: [ "get","create","list","update","delete" ]
+
+  # ******************************************************************************************************
+  # Permissions needed to manage and communicate between control plane and execution plane by subscriber
+  # *******************************************************************************************************
+
+  - apiGroups: [ "batch" ]
+    resources: [ "jobs" ]
+    verbs: [ "get", "create", "patch", "update" ]
+
+  - apiGroups: [ "" ]
+    resources: [ "pods/log" ]
+    verbs: [ "get", "list", "watch" ]
+
+  - apiGroups: [ "" ]
+    resources: [ "pods", "namespaces", "nodes", "services" ]
+    verbs: [ "get", "list", "watch" ]
+
+  - apiGroups: [ "litmuschaos.io" ]
+    resources: [ "chaosengines", "chaosschedules", "chaosresults", "chaosschedules" ]
+    verbs: [ "get", "list", "create", "delete", "update", "watch", "patch" ]
+
+  - apiGroups: [ "apps.openshift.io" ]
+    resources: [ "deploymentconfigs" ]
+    verbs: [ "get", "list" ]
+
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments" ]
+    verbs: [ "delete" ]
+
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments", "daemonsets", "replicasets", "statefulsets" ]
+    verbs: [ "get","list" ]
+
+  - apiGroups: [ "argoproj.io" ]
+    resources:
+      [
+        "workflows",
+        "workflows/finalizers",
+        "workflowtemplates",
+        "workflowtemplates/finalizers",
+        "cronworkflows",
+        "cronworkflows/finalizers",
+        "clusterworkflowtemplates",
+        "clusterworkflowtemplates/finalizers",
+        "rollouts",
+      ]
+    verbs: [ "get", "list", "create", "delete", "update", "watch", "patch" ]
+
+  # ************************************************************************
+  # Permissions needed to orchestrate the workflows by workflow controller
+  # ************************************************************************
+
+  - apiGroups: [ "" ]
+    resources: [ "pods", "pods/exec" ]
+    verbs: [ "create", "get", "list", "watch", "update", "patch", "delete" ]
+  - apiGroups: [ "" ]
+    resources: [ "persistentvolumeclaims" ]
+    verbs: [ "create", "delete" ]
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "workflows", "workflows/finalizers" ]
+    verbs: [ "get", "list", "watch", "update", "patch", "delete", "create" ]
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "workflowtemplates","workflowtemplates/finalizers","clusterworkflowtemplates","clusterworkflowtemplates/finalizers","workflowtasksets","workflowartifactgctasks" ]
+    verbs: [ "get", "list", "watch" ]
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "workflowtaskresults" ]
+    verbs: [ "list", "watch", "deletecollection" ]
+  - apiGroups: [ "" ]
+    resources: [ "serviceaccounts" ]
+    verbs: [ "get", "list" ]
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "cronworkflows", "cronworkflows/finalizers" ]
+    verbs: [ "get", "list", "watch", "update", "patch", "delete" ]
+  - apiGroups: [ "" ]
+    resources: [ "events" ]
+    verbs: [ "create", "patch" ]
+  - apiGroups: [ "policy" ]
+    resources: [ "poddisruptionbudgets" ]
+    verbs: [ "create", "get", "delete" ]
+
+  # ************************************************************************
+  # Permissions needed to for the event-tracker
+  # ************************************************************************
+
+  - apiGroups: [ "eventtracker.litmuschaos.io" ]
+    resources: [ "eventtrackerpolicies" ]
+    verbs: [ "create", "get", "list", "delete", "update", "patch", "watch" ]
+
+  - apiGroups: [ "eventtracker.litmuschaos.io" ]
+    resources: [ "eventtrackerpolicies/status" ]
+    verbs: [ "get","patch", "update" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: infra-cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: infra-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: #{INFRA_SERVICE_ACCOUNT}
+    namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: infra-ops-role
+  namespace: #{INFRA_NAMESPACE}
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get", "create", "update", "patch" ]
+
+  - apiGroups: [ "" ]
+    resources: [ "configmaps"]
+    verbs: ["get", "create", "update", "patch", "list", "watch" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: infra-ops-role-binding
+  namespace: #{INFRA_NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: infra-ops-role
+subjects:
+  - kind: ServiceAccount
+    name: #{INFRA_SERVICE_ACCOUNT}
+    namespace: #{INFRA_NAMESPACE}

@@ -133,7 +133,8 @@ func StringPtrToString(val *string) string {
 func ParseGRPCError(err error) error {
 	if strings.HasPrefix(err.Error(), GRPCErrorPrefix) {
 		grpcErr := strings.TrimPrefix(err.Error(), GRPCErrorPrefix)
-		return fmt.Errorf(grpcErr)
+		return fmt.Errorf("%s", grpcErr)
+
 	}
 	return err
 }

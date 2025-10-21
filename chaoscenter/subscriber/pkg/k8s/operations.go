@@ -226,7 +226,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 
-			logrus.Info("%v not found ", obj.GetName())
+			logrus.Infof("%v not found ", obj.GetName())
 			return nil, nil
 		}
 		if err != nil {
@@ -249,7 +249,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			if k8s_errors.IsNotFound(err) {
 				fmt.Println(obj)
 				// This doesnt ever happen even if it is already deleted or not found
-				logrus.Info("%v not found ", obj.GetName())
+				logrus.Infof("%v not found ", obj.GetName())
 				return nil, nil
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
@@ -260,7 +260,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			if k8s_errors.IsNotFound(err) {
 
 				// This doesnt ever happen even if it is already deleted or not found
-				logrus.Info("%v not found ", obj.GetName())
+				logrus.Infof("%v not found ", obj.GetName())
 				return nil, nil
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource labels: ", objLabels, ", and namespace: ", obj.GetNamespace())
@@ -276,7 +276,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
-			logrus.Info("%v not found", obj.GetName())
+			logrus.Infof("%v not found", obj.GetName())
 			return nil, nil
 		}
 		if err != nil {
@@ -287,7 +287,8 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		return response, nil
 	}
 
-	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
+	return nil, fmt.Errorf("err: %v", "Invalid Request")
+
 }
 
 func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]string) {

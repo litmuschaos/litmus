@@ -1,0 +1,1 @@
+go test ./... | Tee-Object -FilePath test-results.txt; if ($LASTEXITCODE -ne 0) { Write-Host "Some tests failed. Check test-results.txt for details." } else { Write-Host "All tests passed!" }
