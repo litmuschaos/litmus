@@ -99,7 +99,7 @@ jobs:
          uses: actions/checkout@v4
        - uses: actions/setup-go@v5
          with:
-           go-version: "1.25" # By default, the go version is v1.15 in runner.
+           go-version: "1.24.0" # By default, the go version is v1.15 in runner.
        - name: Backend unit tests
          shell: bash
          run: |
@@ -141,7 +141,7 @@ jobs:
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-server:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-server:${{ github.sha }}'
           format: 'table'
@@ -149,8 +149,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'  
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+                    
 
   docker-build-authentication-server:
     runs-on: ubuntu-latest
@@ -170,7 +169,7 @@ jobs:
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}  --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}'
           format: 'table'
@@ -178,8 +177,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+                
 
   docker-build-subscriber:
     runs-on: ubuntu-latest
@@ -199,7 +197,7 @@ jobs:
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }}'
           format: 'table'
@@ -207,8 +205,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+         
 
   docker-build-frontend:
     runs-on: ubuntu-latest
@@ -231,7 +228,7 @@ jobs:
           docker build . -f Dockerfile --build-arg TARGETARCH=amd64 -t docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}'
           format: 'table'
@@ -239,8 +236,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+           
 
   docker-build-event-tracker:
     runs-on: ubuntu-latest
@@ -260,7 +256,7 @@ jobs:
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
           format: 'table'
@@ -268,8 +264,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+                   
 
   docker-build-dex-server:
     runs-on: ubuntu-latest
@@ -288,7 +283,7 @@ jobs:
           docker images && docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-dex-server:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v2
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-dex-server:${{ github.sha }}'
           format: 'table'
@@ -296,5 +291,4 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          version: '0.67.2'        # Update Trivy version
-          args: --skip-version-check           
+          

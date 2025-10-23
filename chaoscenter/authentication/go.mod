@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/chaoscenter/authentication
 
-go 1.24
+go 1.24.0
 
 require (
 	github.com/coreos/go-oidc/v3 v3.1.0
