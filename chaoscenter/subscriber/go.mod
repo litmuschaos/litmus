@@ -1,6 +1,6 @@
 module subscriber
 
-go 1.22
+go 1.24
 
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
