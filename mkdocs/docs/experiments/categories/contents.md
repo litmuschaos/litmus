@@ -271,12 +271,12 @@ Following Platform Chaos experiments are available:
   <tr>
     <td>AWS SSM Chaos By ID</td>
     <td>Disrupt the state of infrastructure resources by ID</td>
-    <td><a href="/litmus/experiments/categories/aws/aws-ssm-chaos-by-id">aws-ssm-chaos-by-id</a></td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-id">aws-ssm-chaos-by-id</a></td>
   </tr>
   <tr>
     <td>AWS SSM Chaos By Tag</td>
     <td>Disrupt the state of infrastructure resources by tags</td>
-    <td><a href="/litmus/experiments/categories/aws/aws-ssm-chaos-by-tag">aws-ssm-chaos-by-tag</a></td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag">aws-ssm-chaos-by-tag</a></td>
   </tr>
 </table>
 
