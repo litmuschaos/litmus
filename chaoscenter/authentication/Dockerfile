@@ -14,13 +14,16 @@ RUN go env
 
 RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
 
-# Packaging stage
+# PACKAGING STAGE
 # Use RedHat UBI minimal image as base
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5
 
 LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
+
+# Ensure sqlite-libs is patched
+RUN microdnf update -y sqlite-libs || microdnf update -y && microdnf clean all
 
 COPY --from=builder /output/server $APP_DIR/
 RUN chown 65534:0 $APP_DIR/server && chmod 755 $APP_DIR/server
