@@ -22,8 +22,8 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
-# Ensure sqlite-libs is patched
-RUN microdnf update -y sqlite-libs || microdnf update -y && microdnf clean all
+# Ensure base packages (including libxslt) are patched
+RUN microdnf -y update && microdnf clean all
 
 COPY --from=builder /output/server $APP_DIR/
 RUN chown 65534:0 $APP_DIR/server && chmod 755 $APP_DIR/server
