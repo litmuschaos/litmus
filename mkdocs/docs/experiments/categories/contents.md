@@ -288,6 +288,16 @@ Following Platform Chaos experiments are available:
     <td>Detach the gcp disk</td>
     <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss">gcp-vm-disk-loss</a></td>
   </tr>
+  <tr>
+    <td>GCP VM Instance Stop By Label</td>
+    <td>Stop the GCP VM instance by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-instance-stop-by-label">gcp-vm-instance-stop-by-label</a></td>
+  </tr>
+  <tr>
+    <td>GCP VM Disk Loss By Label</td>
+    <td>Detach the GCP disk by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss-by-label">gcp-vm-disk-loss-by-label</a></td>
+  </tr>
 </table>
 
 ### Azure
