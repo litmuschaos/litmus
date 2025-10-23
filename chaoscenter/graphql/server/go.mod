@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/chaoscenter/graphql/server
 
-go 1.25
+go 1.24.0
 
 require (
 	github.com/99designs/gqlgen v0.17.49

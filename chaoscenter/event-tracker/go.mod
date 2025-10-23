@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/chaoscenter/event-tracker
 
-go 1.25
+go 1.24.0
 
 require (
 	github.com/jmespath/go-jmespath v0.4.0
