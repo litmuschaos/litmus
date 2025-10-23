@@ -56,6 +56,11 @@ func (k8s *k8sSubscriber) GetLogs(podName, namespace, container string) (string,
 func (k8s *k8sSubscriber) CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
 	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
+	if err != nil {
+		logrus.Warnf("main container log not found, retrying helper container for pod %v", podLog.PodName)
+		mainLog, err = k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "")
+	}
+
 	// try getting argo pod logs
 	if err != nil {
 		logrus.Errorf("Failed to get argo pod %v logs, err: %v", podLog.PodName, err)
