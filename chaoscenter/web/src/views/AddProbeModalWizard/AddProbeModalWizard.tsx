@@ -372,7 +372,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
                 />
                 <FormInput.Text
                   name={`${getType()}.attempt`}
-                  inputGroup={{ type: 'number' }}
+                  inputGroup={{ type: 'string' }}
                   label={getString(`attempt`)}
                 />
                 <FormInput.Text
