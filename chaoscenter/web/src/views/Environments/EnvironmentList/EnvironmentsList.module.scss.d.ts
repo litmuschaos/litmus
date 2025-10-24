@@ -1,5 +1,6 @@
 declare namespace EnvironmentsListModuleScssNamespace {
   export interface IEnvironmentsListModuleScss {
+    button: string;
     card: string;
     cardContainer: string;
     content: string;
@@ -12,9 +13,12 @@ declare namespace EnvironmentsListModuleScssNamespace {
     loading: string;
     maxInputNameId: string;
     maxWidthFormInput: string;
+    noEnvExecution: string;
     noEnvHeading: string;
     noEnvText: string;
+    subtitle: string;
     thumbnailSelect: string;
+    title: string;
     toolbar: string;
     yamlToggleEnv: string;
   }
