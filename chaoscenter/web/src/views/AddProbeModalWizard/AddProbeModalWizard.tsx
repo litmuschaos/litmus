@@ -521,8 +521,8 @@ const TuneDetailsStep: React.FC<
             ...props.formData,
             kubernetesCMDProperties: {
               ...props.formData.kubernetesCMDProperties,
-              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined,
-              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs)
+              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs),
+              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined
             } as Probe['kubernetesCMDProperties']
           };
 
