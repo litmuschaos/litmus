@@ -63,28 +63,28 @@ export const ProbePropertiesStep: React.FC<StepProps<StepData>> = props => {
                 {
                   <Container padding={{ top: 'large', left: 'xsmall', right: 'large', bottom: 'xsmall' }}>
                     <FormInput.Text
-                      inputGroup={{ type: 'number' }}
+                      inputGroup={{ type: 'string' }}
                       name="probeTimeout"
                       label={formData.type == 'httpProbe' ? 'Probe Timeout (ms)' : 'Probe Timeout (sec)'}
                       placeholder={String(formData.runProperties?.probeTimeout)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_timeout' }}
                     />
                     <FormInput.Text
-                      inputGroup={{ type: 'number' }}
+                      inputGroup={{ type: 'string' }}
                       name="interval"
                       label="Interval (sec)"
                       placeholder={String(formData.runProperties?.interval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_interval' }}
                     />
                     <FormInput.Text
-                      inputGroup={{ type: 'number' }}
+                      inputGroup={{ type: 'string' }}
                       name="probePollingInterval"
                       label="Polling Interval (sec)"
                       placeholder={String(formData.runProperties?.probePollingInterval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_polling_interval' }}
                     />
                     <FormInput.Text
-                      inputGroup={{ type: 'number' }}
+                      inputGroup={{ type: 'string' }}
                       name="initialDelay"
                       label="Initial Delay (sec)"
                       placeholder={String(formData.runProperties?.initialDelay)}

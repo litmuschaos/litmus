@@ -205,7 +205,7 @@ function AdvancedChaosInfrastructureConfig({
                   {tolerationEntities.map((toleration, index) => (
                     <Layout.Horizontal key={index} className={css.keyValueContainer}>
                       <FormInput.Text
-                        inputGroup={{ type: 'number' }}
+                        inputGroup={{ type: 'string' }}
                         className={css.textCss}
                         disabled={toleration.effect === 'NoSchedule' || toleration.effect === ''}
                         name={`${'tolerationValues'}[${index}].tolerationSeconds`}
