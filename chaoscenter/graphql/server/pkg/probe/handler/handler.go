@@ -709,6 +709,7 @@ func (p *probeService) ValidateUniqueProbe(ctx context.Context, probeName, proje
 	query := bson.D{
 		{"name", probeName},
 		{"project_id", bson.D{{"$eq", projectID}}},
+		{"is_removed", false},
 	}
 
 	isUnique, err := p.probeOperator.IsProbeUnique(ctx, query)
