@@ -20,11 +20,11 @@ import type {
   EnvironmentDetailsTableProps,
   RefetchEnvironments
 } from '@controllers/Environments/types';
+import Envirnoment from '@images/Environment.svg';
 import CreateEnvironment from './CreateEnvironment';
 import { MenuCell } from './EnvironmentsTableMenu';
 import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
 import css from './EnvironmentsList.module.scss';
-import Envirnoment from '@images/Environment.svg';
 
 interface EnvironmentListViewProps {
   environmentTableData: EnvironmentDetailsTableProps | undefined;
