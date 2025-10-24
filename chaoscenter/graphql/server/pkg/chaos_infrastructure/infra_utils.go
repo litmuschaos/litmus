@@ -96,11 +96,11 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
 	if !*infra.InfraNsExists && infra.InfraScope != "namespace" {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(namespaceConfig))
+		generatedYAML = append(generatedYAML, fmt.Sprintf("%v", namespaceConfig))
 	}
 
 	if !*infra.InfraSaExists {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
+		generatedYAML = append(generatedYAML, fmt.Sprintf("%v", serviceAccountStr))
 	}
 
 	// File operations

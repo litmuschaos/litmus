@@ -84,7 +84,7 @@ jobs:
   tests:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
     needs: [docker-build-image]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout litmus-E2E Repository
         uses: actions/checkout@v4
