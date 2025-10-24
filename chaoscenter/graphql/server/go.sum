@@ -878,8 +878,8 @@ github.com/morikuni/aec v0.0.0-20170113033406-39771216ff4c/go.mod h1:BbKIizmSmc5
 github.com/mozilla/tls-observatory v0.0.0-20180409132520-8791a200eb40/go.mod h1:SrKMQvPiws7F7iqYp8/TX+IhxCYhzr6N/1yb8cwHsGk=
 github.com/mrunalp/fileutils v0.0.0-20160930181131-4ee1cc9a8058/go.mod h1:x8F1gnqOkIEiO4rqoeEEEqQbo7HjGMTvyoq3gej4iT0=
 github.com/mrunalp/fileutils v0.0.0-20171103030105-7d4729fb3618/go.mod h1:x8F1gnqOkIEiO4rqoeEEEqQbo7HjGMTvyoq3gej4iT0=
-github.com/mrz1836/go-sanitize v1.3.2 h1:sGhusPxP4L+7NAUVAUl/WrrBazNSNECsvYh3yumuJXQ=
-github.com/mrz1836/go-sanitize v1.3.2/go.mod h1:wvRS2ALFDxOCK3ORQPwKUxl7HTIBUV8S3U34Hwn96r4=
+github.com/mrz1836/go-sanitize v1.3.3 h1:MfWVBN25tuXSoXa6FgC+OiLFn0D37K9qkF3kslLhVQQ=
+github.com/mrz1836/go-sanitize v1.3.3/go.mod h1:wvRS2ALFDxOCK3ORQPwKUxl7HTIBUV8S3U34Hwn96r4=
 github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/munnerz/goautoneg v0.0.0-20190414153302-2ae31c8b6b30/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
