@@ -112,7 +112,10 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties != nil {
 		utils.AddKubernetesHTTPProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties != nil {
-		utils.AddKubernetesCMDProbeProperties(newProbe, probe)
+		_, err := utils.AddKubernetesCMDProbeProperties(newProbe, probe)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %s", "error adding cmd probe properties", err.Error())
+		}
 	} else if probe.Type == model.ProbeTypePromProbe && probe.PromProperties != nil {
 		utils.AddPROMProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeK8sProbe && probe.K8sProperties != nil {
@@ -178,7 +181,10 @@ func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeReque
 		case model.ProbeTypeHTTPProbe:
 			utils.AddKubernetesHTTPProbeProperties(newProbe, request)
 		case model.ProbeTypeCmdProbe:
-			utils.AddKubernetesCMDProbeProperties(newProbe, request)
+			_, err := utils.AddKubernetesCMDProbeProperties(newProbe, request)
+			if err != nil {
+				return "", err
+			}
 		case model.ProbeTypePromProbe:
 			utils.AddPROMProbeProperties(newProbe, request)
 		case model.ProbeTypeK8sProbe:
@@ -251,10 +257,10 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 		matchProbeName := bson.D{
 			{
 				Key: "$match", Value: bson.D{
-					{"name", bson.D{
-						{"$in", probeNames},
-					}},
-				},
+				{"name", bson.D{
+					{"$in", probeNames},
+				}},
+			},
 			},
 		}
 
@@ -266,8 +272,8 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 		matchProbeInfra := bson.D{
 			{
 				Key: "$match", Value: bson.D{
-					{"infrastructure_type", *infrastructureType},
-				},
+				{"infrastructure_type", *infrastructureType},
+			},
 			},
 		}
 
@@ -280,10 +286,10 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 			matchProbeType := bson.D{
 				{
 					Key: "$match", Value: bson.D{
-						{"type", bson.D{
-							{"$in", filter.Type},
-						}},
-					},
+					{"type", bson.D{
+						{"$in", filter.Type},
+					}},
+				},
 				},
 			}
 			pipeline = append(pipeline, matchProbeType)
@@ -337,9 +343,9 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 	matchIdentifierStage := bson.D{
 		{
 			Key: "$match", Value: bson.D{
-				{"project_id", bson.D{{"$eq", projectID}}},
-				{"is_removed", false},
-			},
+			{"project_id", bson.D{{"$eq", projectID}}},
+			{"is_removed", false},
+		},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifierStage)
@@ -396,9 +402,9 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	matchIdentifierStage := bson.D{
 		{
 			"$match", bson.D{
-				{"project_id", bson.D{{"$eq", projectID}}},
-				{"probes.probe_names", probeName},
-			},
+			{"project_id", bson.D{{"$eq", projectID}}},
+			{"probes.probe_names", probeName},
+		},
 		},
 	}
 
@@ -527,16 +533,16 @@ func (p *probeService) GetProbeReference(ctx context.Context, probeName, project
 	matchIdentifiersStage := bson.D{
 		{
 			"$match", bson.D{
-				{
-					"$and", bson.A{
-						bson.D{
-							{"project_id", bson.D{{"$eq", projectID}}},
-							{"name", probeName},
-							{"is_removed", false},
-						},
-					},
+			{
+				"$and", bson.A{
+				bson.D{
+					{"project_id", bson.D{{"$eq", projectID}}},
+					{"name", probeName},
+					{"is_removed", false},
 				},
 			},
+			},
+		},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
@@ -548,24 +554,24 @@ func (p *probeService) GetProbeReference(ctx context.Context, probeName, project
 				{"from", "chaosExperimentRuns"},
 				{
 					"pipeline", bson.A{
-						bson.D{{"$match", bson.D{
-							{"probes.probe_names", bson.D{
-								{"$eq", probeName},
-							}},
-						}}},
-						bson.D{
-							{"$project", bson.D{
-								{"experiment_name", 1},
-								{"probes.fault_name", 1},
-								{"probes.probe_names", 1},
-								{"phase", 1},
-								{"updated_at", 1},
-								{"updated_by", 1},
-								{"execution_data", 1},
-								{"experiment_id", 1},
-							}},
-						},
+					bson.D{{"$match", bson.D{
+						{"probes.probe_names", bson.D{
+							{"$eq", probeName},
+						}},
+					}}},
+					bson.D{
+						{"$project", bson.D{
+							{"experiment_name", 1},
+							{"probes.fault_name", 1},
+							{"probes.probe_names", 1},
+							{"phase", 1},
+							{"updated_at", 1},
+							{"updated_by", 1},
+							{"execution_data", 1},
+							{"experiment_id", 1},
+						}},
 					},
+				},
 				},
 				{"as", "execution_history"},
 			},
