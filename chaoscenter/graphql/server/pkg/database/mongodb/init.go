@@ -299,15 +299,13 @@ func (m *MongoClient) initAllCollection() {
 	m.ChaosProbeCollection = m.Database.Collection(Collections[ChaosProbeCollection])
 	_, err = m.ChaosProbeCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
 		{
-			Keys: bson.M{
-				"name": 1,
-			},
-			Options: options.Index().SetUnique(true),
-		},
-		{
 			Keys: bson.D{
-				{"project_id", 1},
+				{Key: "name", Value: 1},
+				{Key: "project_id", Value: 1},
 			},
+			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{{
+				Key: "is_removed", Value: false,
+			}}),
 		},
 	})
 	if err != nil {
