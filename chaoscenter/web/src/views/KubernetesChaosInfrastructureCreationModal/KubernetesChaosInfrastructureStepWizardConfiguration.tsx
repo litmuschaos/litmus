@@ -1,4 +1,5 @@
-import { Dialog } from '@blueprintjs/core';
+import React, { useState } from 'react';
+import { Dialog, RadioGroup, Radio } from '@blueprintjs/core';
 import { Color, FontVariation } from '@harnessio/design-system';
 import {
   Button,
@@ -15,7 +16,6 @@ import {
 import { Icon } from '@harnessio/icons';
 import { FieldArray, Formik, Form, FormikProps } from 'formik';
 import { get } from 'lodash-es';
-import React from 'react';
 import * as Yup from 'yup';
 import type { ApolloQueryResult } from '@apollo/client';
 import { useStrings } from '@strings';
@@ -324,9 +324,28 @@ export function DeploySetupStep({
 }: StepProps<StepData> & DeploySetupStepProps): React.ReactElement {
   const { getString } = useStrings();
   const [infraRegistered, setInfraRegistered] = React.useState<boolean>(false);
+  const [installMethod, setInstallMethod] = useState<'manifest' | 'helm'>('manifest');
   const data = prevStepData;
+
+  // Dummy values — these should come dynamically from backend (PR #4903)
+  const infraID = 'INFRA-XYZ123';
+  const accessKey = 'ABCD1234';
+  const serverURL = window.location.origin;
+
+  // Sample helm command
+  const helmCommand = `
+helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+helm repo update
+helm install litmus-${infraID.toLowerCase()} litmuschaos/litmus \
+  --namespace ${data?.value.chaosInfrastructureNamespace || 'litmus'} \
+  --set accessKey=${accessKey} \
+  --set infraID=${infraID} \
+  --set server=${serverURL}
+`.trim();
+
   return (
     <Layout.Vertical height="100%" spacing="large">
+      {/* Title bar */}
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4, weight: 'semi-bold' }} color={Color.GREY_1000}>
           {getString('deployChaosInfrastructure')}
@@ -341,81 +360,94 @@ export function DeploySetupStep({
           }}
         />
       </Layout.Horizontal>
-      <>
-        <div className={css.deploymentContainer}>
-          <Text font={{ variation: FontVariation.H6, weight: 'semi-bold' }} color={Color.GREY_1000}>
-            {getString('kubernetesSetupInstructions')}
-          </Text>
-          <hr className={css.horizontalRule} />
-          {data?.value.infraScope === DeploymentScopeOptions.NAMESPACE && (
-            <>
-              <Text
-                className={css.namespaceScopeText}
-                font={{ variation: FontVariation.BODY2, weight: 'light' }}
-                color={Color.GREY_1000}
-              >
-                {getString('createNamespace')}
-              </Text>
-              <CodeBlock
-                text={`kubectl create namespace ${data.value.chaosInfrastructureNamespace}`}
-                isCopyButtonEnabled
+
+      <div className={css.deploymentContainer}>
+        {/* ---- New Section: Choose installation method ---- */}
+        <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_1000} style={{ marginBottom: '8px' }}>
+          Select Installation Method
+        </Text>
+
+        <RadioGroup
+          selectedValue={installMethod}
+          onChange={e => setInstallMethod((e.target as HTMLInputElement).value as 'manifest' | 'helm')}
+        >
+          <Radio label="Manifest (kubectl apply)" value="manifest" />
+          <Radio label="Helm (helm install)" value="helm" />
+        </RadioGroup>
+
+        <hr className={css.horizontalRule} />
+
+        {/* ---- Show commands based on selection ---- */}
+        {installMethod === 'manifest' ? (
+          <>
+            <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_1000}>
+              {getString('kubernetesSetupInstructions')}
+            </Text>
+
+            {data?.value.infraScope === DeploymentScopeOptions.NAMESPACE && (
+              <>
+                <Text
+                  className={css.namespaceScopeText}
+                  font={{ variation: FontVariation.BODY2 }}
+                  color={Color.GREY_1000}
+                >
+                  {getString('createNamespace')}
+                </Text>
+                <CodeBlock
+                  text={`kubectl create namespace ${data.value.chaosInfrastructureNamespace}`}
+                  isCopyButtonEnabled
+                />
+                <Text
+                  font={{ variation: FontVariation.BODY2 }}
+                  className={css.namespaceScopeText}
+                  color={Color.GREY_1000}
+                >
+                  {getString('copyPrompt1')}
+                </Text>
+                <CodeBlock text={`kubectl apply -f ${kubernetesChaosInfrastructureCRDsEndpoint}`} isCopyButtonEnabled />
+              </>
+            )}
+
+            <Text className={css.runCommandText} font={{ variation: FontVariation.BODY2 }} color={Color.GREY_1000}>
+              {getString('infrastructureCommand')}
+            </Text>
+
+            {data && (
+              <KubernetesChaosInfrastructureGreenfieldController
+                data={data}
+                infraRegistered={infraRegistered}
+                setInfraRegistered={setInfraRegistered}
               />
-              <Text
-                font={{ variation: FontVariation.BODY2, weight: 'light' }}
-                className={css.namespaceScopeText}
-                color={Color.GREY_1000}
-              >
-                {getString('copyPrompt1')}
-              </Text>
-              <CodeBlock text={`kubectl apply -f ${kubernetesChaosInfrastructureCRDsEndpoint}`} isCopyButtonEnabled />
-            </>
-          )}
-          <Text
-            className={css.kubectlApplyText}
-            font={{ variation: FontVariation.BODY2, weight: 'light' }}
-            color={Color.GREY_1000}
-          >
-            {data?.value.infraScope === DeploymentScopeOptions.NAMESPACE
-              ? getString('copyPrompt2')
-              : getString('copyPrompt')}
-          </Text>
-          <Text
-            className={css.runCommandText}
-            font={{ variation: FontVariation.BODY2, weight: 'light' }}
-            color={Color.GREY_1000}
-          >
-            {getString('infrastructureCommand')}
-          </Text>
-          {data && (
-            <KubernetesChaosInfrastructureGreenfieldController
-              data={data}
-              infraRegistered={infraRegistered}
-              setInfraRegistered={setInfraRegistered}
-            />
-          )}
-          <Text
-            className={css.checkStatusText}
-            font={{ variation: FontVariation.BODY2, weight: 'light' }}
-            color={Color.GREY_1000}
-          >
-            {getString('statusCheck')}
-          </Text>
-        </div>
-        <FlexExpander />
-        <Layout.Horizontal spacing="small">
-          <Button
-            disabled={!infraRegistered}
-            className={css.stepButton}
-            onClick={() => {
-              prevStepData && (prevStepData.value = initialValues);
-              refetch.listChaosInfra();
-              kubernetesChaosInfrastructureCreationModalClose();
-            }}
-            variation={ButtonVariation.PRIMARY}
-            text={getString('done')}
-          />
-        </Layout.Horizontal>
-      </>
+            )}
+          </>
+        ) : (
+          <>
+            {/* ---- Helm Command Section ---- */}
+            <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_1000}>
+              Helm Installation Command
+            </Text>
+            <CodeBlock text={helmCommand} isCopyButtonEnabled />
+            <Text font={{ variation: FontVariation.BODY2 }} color={Color.GREY_700} style={{ marginTop: '8px' }}>
+              Run this on your Kubernetes master node with <code>helm</code> configured.
+            </Text>
+          </>
+        )}
+      </div>
+
+      <FlexExpander />
+      <Layout.Horizontal spacing="small">
+        <Button
+          disabled={!infraRegistered}
+          className={css.stepButton}
+          onClick={() => {
+            prevStepData && (prevStepData.value = initialValues);
+            refetch.listChaosInfra();
+            kubernetesChaosInfrastructureCreationModalClose();
+          }}
+          variation={ButtonVariation.PRIMARY}
+          text={getString('done')}
+        />
+      </Layout.Horizontal>
     </Layout.Vertical>
   );
 }
