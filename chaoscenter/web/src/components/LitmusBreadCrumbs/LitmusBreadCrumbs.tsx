@@ -9,13 +9,18 @@ interface LitmusBreadCrumbsProps extends BreadcrumbsProps {
 export default function LitmusBreadCrumbs({ baseUrl, ...rest }: LitmusBreadCrumbsProps): React.ReactElement {
   const { projectName } = useAppStore();
 
-  return (
-    <Breadcrumbs
-      {...rest}
-      links={[
-        { label: projectName || 'My Project', url: '/', iconProps: { name: 'chaos-litmuschaos' } },
-        ...(rest.links || [])
-      ]}
-    />
+  const combinedLinks = [
+    {
+      label: projectName || 'My Project',
+      url: '/',
+      iconProps: { name: 'chaos-litmuschaos' as any } // cast to 'any' to avoid TS type issue
+    },
+    ...(rest.links || [])
+  ];
+
+  const validLinks = combinedLinks.filter(
+    link => link && typeof link.label === 'string' && link.label.trim() !== ''
   );
+
+  return <Breadcrumbs {...rest} links={validLinks} />;
 }
