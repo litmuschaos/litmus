@@ -89,6 +89,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isAzureFault = fault.tag.toLowerCase() === 'azure';
     return (
       <Link
         to={{
@@ -99,7 +100,17 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              <Icon size={23} name="chaos-litmuschaos" />
+              {isAzureFault ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/azure/azure-instance-stop.png"
+                  alt="Azure"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : (
+                <Icon size={23} name="chaos-litmuschaos" />
+              )}
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
