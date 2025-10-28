@@ -370,26 +370,68 @@ export class KubernetesYamlService extends ExperimentYamlService {
       if (!experiment) return;
 
       experiment.unsavedChanges = true;
-      const [, , spec] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+      const [templates, , spec] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      toleration = {
+        effect: toleration.effect ? toleration.effect : 'NoExecute',
+        key: toleration.key ?? '',
+        operator: toleration.operator ? toleration.operator : 'Equal',
+        value: toleration.value ?? ''
+      };
 
       if (spec && !remove) {
-        spec.tolerations = [
-          {
-            effect: toleration.effect ? toleration.effect : 'NoExecute',
-            key: toleration.key ?? '',
-            operator: toleration.operator ? toleration.operator : 'Equal',
-            value: toleration.value ?? ''
-          }
-        ];
+        spec.tolerations = [toleration];
       } else {
         delete spec?.tolerations;
       }
+
+      templates?.map(template => {
+        if (template.inputs?.artifacts?.[0]?.raw?.data) {
+          const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+          if (chaosEngineCR.kind === 'ChaosEngine') {
+            const updatedEngineCR = this.updateTolerationInChaosEngine(chaosEngineCR, toleration, remove);
+            template.inputs.artifacts[0].raw.data = yamlStringify(updatedEngineCR);
+          }
+        }
+      });
 
       await store.put({ ...experiment }, key);
       await tx.done;
     } catch (_) {
       this.handleIDBFailure();
     }
+  }
+
+  private updateTolerationInChaosEngine(
+    manifest: ChaosEngine | undefined,
+    tolerations: WorkflowToleration,
+    remove: boolean
+  ): ChaosEngine | undefined {
+    if (!manifest?.spec) return;
+
+    if (remove) {
+      if (manifest.spec?.components?.runner?.tolerations) {
+        delete manifest.spec?.components?.runner?.tolerations;
+      }
+      if (manifest.spec?.experiments[0].spec.components?.tolerations) {
+        delete manifest.spec?.experiments[0].spec.components?.tolerations;
+      }
+      return manifest;
+    }
+
+    manifest.spec.components = {
+      ...manifest.spec.components,
+      runner: {
+        ...manifest.spec.components?.runner,
+        tolerations: tolerations
+      }
+    };
+    manifest.spec.experiments[0].spec.components = {
+      ...manifest.spec.experiments[0].spec.components,
+      tolerations: tolerations
+    };
+
+    return manifest;
   }
 
   async convertToNonCronExperiment(key: ChaosObjectStoresPrimaryKeys['experiments']): Promise<void> {

@@ -75,9 +75,11 @@ export function RenderChaosInfrastructureOptions({
         </Text>
         <Container>
           <CodeBlock
-            text={`kubectl delete chaosexperiment chaosengine chaosresult --all -n ${chaosInfrastructureNamespace}`}
+            text={`kubectl delete chaosexperiment,chaosengine,chaosresult --all -n ${chaosInfrastructureNamespace}`}
             isCopyButtonEnabled
           />
+
+
         </Container>
         {chaosInfrastructureScope === InfraScope.NAMESPACE && (
           <Layout.Vertical spacing="small">

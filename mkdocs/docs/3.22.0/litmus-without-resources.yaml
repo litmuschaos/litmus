@@ -13,7 +13,7 @@ metadata:
   name: litmus-portal-admin-config
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
-  VERSION: "3.21.0"
+  VERSION: "3.22.0"
   SKIP_SSL_VERIFY:
     "false"
     # Configurations if you are using dex for OAuth
@@ -142,7 +142,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:3.21.0
+          image: litmuschaos/litmusportal-frontend:3.22.0
           # securityContext:
           #   runAsUser: 2000
           #   allowPrivilegeEscalation: false
@@ -150,15 +150,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8185
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
@@ -213,7 +204,7 @@ spec:
             secretName: tls-secret
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:3.21.0
+          image: litmuschaos/litmusportal-server:3.22.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -242,35 +233,35 @@ spec:
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:3.21.0"
+              value: "litmuschaos/litmusportal-subscriber:3.22.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:3.21.0"
+              value: "litmuschaos/litmusportal-event-tracker:3.22.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.21.0"
+              value: "litmuschaos/chaos-operator:3.22.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.21.0"
+              value: "litmuschaos/chaos-runner:3.22.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.21.0"
+              value: "litmuschaos/chaos-exporter:3.22.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "v3.21.x"
+              value: "v3.22.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: "3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.21.0"
+              value: "3.22.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["3.21.0"]'
+              value: '["3.22.0"]'
             - name: ALLOWED_ORIGINS
-              value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?"
+              value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
             - name: ENABLE_INTERNAL_TLS
               value: "true"
             - name: TLS_CERT_PATH
@@ -287,15 +278,6 @@ spec:
             - containerPort: 8081
             - containerPort: 8001
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
 ---
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
@@ -357,7 +339,7 @@ spec:
           volumeMounts:
             - mountPath: /etc/tls
               name: tls-secret
-          image: litmuschaos/litmusportal-auth-server:3.21.0
+          image: litmuschaos/litmusportal-auth-server:3.22.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -397,15 +379,6 @@ spec:
             - containerPort: 3001
             - containerPort: 3031
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
 ---
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
