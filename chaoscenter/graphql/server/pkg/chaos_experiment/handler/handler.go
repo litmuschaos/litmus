@@ -83,10 +83,10 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		"experimentId": request.ID,
 	}
 
-	// Check if the workflow_name exists under same project
+	// Check if the experiment exists under same project
 	wfDetails, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
 		{"experiment_id", request.ID},
-		{"tags", request.Tags},
+		{"project_id", projectID},
 		{"is_removed", false},
 	})
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -160,10 +160,23 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Check if the experiment_name exists under same project
-	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	// Fetch the existing experiment to check if name has changed
+	existingExperiment, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
+		{"experiment_id", *request.ExperimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	})
+
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if the experiment_name exists under same project only if name has changed
+	if existingExperiment.Name != request.ExperimentName {
+		err = c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
