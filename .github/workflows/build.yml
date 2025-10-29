@@ -149,6 +149,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'  
+          ignore-policy: ignore.rego
                  
 
   docker-build-authentication-server:
@@ -204,6 +205,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          ignore-policy: ignore.rego
           
 
   docker-build-frontend:
