@@ -5,7 +5,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
