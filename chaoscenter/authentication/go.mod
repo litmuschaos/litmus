@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/coreos/go-oidc/v3 v3.1.0
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.17.1
 	golang.org/x/crypto v0.43.0
-	golang.org/x/oauth2 v0.21.0
+	golang.org/x/oauth2 v0.27.0
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
 )

@@ -14,7 +14,7 @@
     justify-content: center;
 
     &[data-state='completed'] {
-      background-color: var(--green-500);
+      background-color: var(--green-50);
       &:hover,
       &:focus {
         box-shadow: var(--white) 0px 0px 0px 1px, var(--green-100) 0px 0px 0px 2px;
