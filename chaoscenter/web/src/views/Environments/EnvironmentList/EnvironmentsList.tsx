@@ -129,7 +129,7 @@ export default function EnvironmentListView({
             {getString('noEnvironmentFound')}
           </Text>
           <Text className={css.subtitle}>
-            {getString('noEnvironmentFoundMessage')}
+            {getString('noEnvironmentFoundNewMessage')}
           </Text>
         </Container>
       ) : (
