@@ -91,6 +91,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
         to={{
