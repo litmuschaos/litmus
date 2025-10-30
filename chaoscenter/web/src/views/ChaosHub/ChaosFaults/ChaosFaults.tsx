@@ -91,7 +91,6 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
-    const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
         to={{
@@ -102,7 +101,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'gcp' ? (
                 <img
                   src={
                     isDefault === 'true'
@@ -110,7 +109,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                       : `${config.restEndpoints?.chaosManagerUri}/icon/${scope.projectID}/${hubName}/${fault.chartName}/${fault.name}.png`
                   }
                   alt={`${fault.name} icon`}
-                  style={{ width: 23, height: 23 }}
+                  style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
