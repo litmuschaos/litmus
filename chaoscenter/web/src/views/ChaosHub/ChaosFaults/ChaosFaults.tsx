@@ -90,6 +90,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
 
   const FaultCard = (fault: Fault): React.ReactElement => {
     const isK6Fault = fault.name.toLowerCase().includes('k6-loadgen');
+    const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
         to={{
@@ -105,6 +106,14 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/load/k6-loadgen.png"
                   alt="k6-logo"
                   className={css.k6Logo}
+                 />
+                ) : isGcpFault ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
+                  alt="GCP"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
                 />
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
