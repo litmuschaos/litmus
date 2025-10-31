@@ -90,6 +90,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
 
   const FaultCard = (fault: Fault): React.ReactElement => {
     const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
+    const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
         to={{
@@ -104,6 +105,11 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
                   alt="AWS"
+                  /> ) :
+              isGcpFault ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
+                  alt="GCP"
                   width={23}
                   height={23}
                   style={{ objectFit: 'contain' }}
