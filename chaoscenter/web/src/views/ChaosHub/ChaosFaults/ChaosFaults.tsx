@@ -102,11 +102,8 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
               {isChartNameAws ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
-                  alt="AWS"
-                  /> ) :
-              isGcpFault ? (
+                <img src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png" alt="AWS" />
+              ) : isGcpFault ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
                   alt="GCP"
