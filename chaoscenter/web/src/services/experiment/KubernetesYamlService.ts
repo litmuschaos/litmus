@@ -38,6 +38,9 @@ export class KubernetesYamlService extends ExperimentYamlService {
       experiment.unsavedChanges = true;
       const [templates, steps] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
 
+      // Get image registry details
+      const imageRegistry = experiment.imageRegistry ?? { repo: 'litmuschaos', secret: '' };
+
       // Add to steps in entry template
       if (parallelNodeIdentifier !== '') {
         steps?.map(step => {
@@ -96,7 +99,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: `${imageRegistry.repo}/litmus-checker:2.11.0`,
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -186,6 +189,10 @@ export class KubernetesYamlService extends ExperimentYamlService {
 
       experiment.unsavedChanges = true;
       const [templates] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      // Get image registry details
+      const imageRegistry = experiment.imageRegistry ?? { repo: 'litmuschaos', secret: '' };
+
       // Remove engine from the templates
       let index = 0;
       let expWeight = '10';
@@ -230,7 +237,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: `${imageRegistry.repo}/litmus-checker:2.11.0`,
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
