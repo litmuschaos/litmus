@@ -11,10 +11,10 @@ export default function blankCanvasTemplate(
   switch (infrastructureType) {
     case InfrastructureType.KUBERNETES:
       return kubernetesBlankCanvasTemplate(
-        experimentName, 
+        experimentName,
         experiment?.chaosInfrastructure?.namespace,
-        undefined, 
-        experiment?.imageRegistry,
+        undefined,
+        experiment?.imageRegistry
       );
   }
 }

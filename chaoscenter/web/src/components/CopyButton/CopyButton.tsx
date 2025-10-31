@@ -11,7 +11,6 @@ export default function CopyButton({ stringToCopy }: CopyButtonProps): React.Rea
   const { showSuccess, showError } = useToaster();
 
   function fallbackCopyTextToClipboard(text: string): void {
-    // eslint-disable-next-line no-alert
     window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
   }
 
@@ -21,7 +20,7 @@ export default function CopyButton({ stringToCopy }: CopyButtonProps): React.Rea
       return;
     }
     setCopying(true);
-    // eslint-disable-next-line no-console
+
     navigator.clipboard
       .writeText(text)
       .then(() => showSuccess('Copied to clipboard'))
@@ -30,14 +29,28 @@ export default function CopyButton({ stringToCopy }: CopyButtonProps): React.Rea
   }
 
   return copying ? (
-    <Icon size={12} data-testid="success-tick" name="success-tick" />
+    <span style={{ width: 12, height: 12, display: 'inline-flex', alignItems: 'center' }} data-testid="success-tick">
+      <Icon name="success-tick" />
+    </span>
   ) : (
-    <Icon
-      style={{ cursor: 'pointer', color: 'var(--primary-7)' }}
+    <span
+      role="button"
+      tabIndex={0}
+      style={{
+        cursor: 'pointer',
+        color: 'var(--primary-7)',
+        width: 12,
+        height: 12,
+        display: 'inline-flex',
+        alignItems: 'center'
+      }}
       onClick={() => copyTextToClipboard(stringToCopy)}
-      name="duplicate"
-      size={12}
+      onKeyPress={e => {
+        if (e.key === 'Enter' || e.key === ' ') copyTextToClipboard(stringToCopy);
+      }}
       data-testid="copy-button"
-    />
+    >
+      <Icon name="duplicate" />
+    </span>
   );
 }
