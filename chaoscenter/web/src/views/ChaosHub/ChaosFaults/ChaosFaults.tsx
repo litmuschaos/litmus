@@ -11,6 +11,7 @@ import { Fallback } from '@errors';
 import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
+
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
@@ -89,6 +90,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isVmwareFault = fault.tag.toLowerCase() === 'vmware';
     const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
@@ -101,6 +103,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
               {isGcpFault ? (
+                // Show GCP Logo (Existing logic)
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
                   alt="GCP"
@@ -108,9 +111,21 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   height={23}
                   style={{ objectFit: 'contain' }}
                 />
+              ) : isVmwareFault ? (
+                // Show VMware Logo using the external URL pattern
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/vmware/vmware-vm-poweroff.png"
+                  alt="VMware"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
               ) : (
+                // Show default Litmus Logo
                 <Icon size={23} name="chaos-litmuschaos" />
               )}
+              <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}></Text>
+
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
