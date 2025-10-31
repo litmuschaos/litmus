@@ -49,7 +49,8 @@ export function getPropsBasedOnExperimentRunFaultStatus(status: Status): StatusP
     case ExperimentRunFaultStatus.COMPLETED_WITH_ERROR: // <!-- needed for backwards compatibility -->
       return {
         iconName: 'error',
-        color: Color.ORANGE_500
+        color: Color.ORANGE_500,
+        useSquareBox: true // Add square box for partially completed
       };
     case ExperimentRunFaultStatus.ERROR:
     case ExperimentRunFaultStatus.FAILED: // <!-- needed for backwards compatibility -->
@@ -95,7 +96,8 @@ export function getPropsBasedOnExperimentRunStatus(status: Status): StatusProps 
       return {
         iconName: 'error',
         color: Color.ORANGE_500,
-        bgColor: `var(--orange-100)`
+        bgColor: `var(--orange-100)`,
+        useSquareBox: true // Add square box for partially completed experiments
       };
     case ExperimentRunStatus.ERROR:
       return {
