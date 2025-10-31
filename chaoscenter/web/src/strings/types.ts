@@ -549,6 +549,7 @@ export interface StringsMap {
   'noDescriptionProvided': unknown
   'noEnvironmentFound': unknown
   'noEnvironmentFoundMessage': unknown
+  'noEnvironmentFoundNewMessage': unknown
   'noExpFound': unknown
   'noExperimentFoundMatchingSearch': unknown
   'noExperimentSelected': unknown
