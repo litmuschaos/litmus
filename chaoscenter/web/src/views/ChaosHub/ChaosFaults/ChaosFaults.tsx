@@ -89,6 +89,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
     const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
@@ -100,7 +101,9 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {isGcpFault ? (
+              {isChartNameAws ? (
+                <img src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png" alt="AWS" />
+              ) : isGcpFault ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
                   alt="GCP"
