@@ -1,6 +1,5 @@
 import React from 'react';
 import { Formik, Button, Text, Container, Layout } from '@harnessio/uicore';
-import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
 import { Form } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +9,7 @@ import { useStrings } from '@strings';
 import type { ErrorModel, LoginMutationProps, LoginResponse, GetCapabilitiesOkResponse } from '@api/auth';
 import PasswordInput from '@components/PasswordInput';
 import UserNameInput from '@components/UserNameInput';
+import litmusLogo from '@images/litmus-icon-color.svg';
 
 interface LoginForm {
   username: string;
@@ -27,7 +27,7 @@ export const LoginPageView = ({ handleLogin, loading, capabilities }: LoginPageV
 
   return (
     <AuthLayout>
-      <Icon name="chaos-litmuschaos" size={60} margin={{ bottom: 'medium' }} />
+      <img src={litmusLogo} alt="Litmus Logo" style={{ width: '60px', height: '60px', marginBottom: '1rem' }} />
       <Text font={{ size: 'large', weight: 'bold' }} color={Color.BLACK}>
         {getString('welcomeToLitmus')}
       </Text>
