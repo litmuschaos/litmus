@@ -90,6 +90,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
 
   const FaultCard = (fault: Fault): React.ReactElement => {
     const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
+    const isK6Fault = fault.name.toLowerCase().includes('k6-loadgen');
     const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
       <Link
@@ -101,19 +102,35 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {isChartNameAws ? (
-                <img src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png" alt="AWS" />
-              ) : isGcpFault ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
-                  alt="GCP"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
-                />
-              ) : (
-                <Icon size={23} name="chaos-litmuschaos" />
-              )}
+             {isChartNameAws ? (
+                      <img
+                        src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
+                        alt="AWS"
+                        width={23}
+                        height={23}
+                        style={{ objectFit: 'contain' }}
+                      />
+                    ) : isK6Fault ? (
+                      <img
+                        src="https://hub.litmuschaos.io/api/icon/3.22.0/load/k6-loadgen.png"
+                        alt="k6-logo"
+                        className={css.k6Logo}
+                        width={23}
+                        height={23}
+                        style={{ objectFit: 'contain' }}
+                      />
+                    ) : isGcpFault ? (
+                      <img
+                        src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
+                        alt="GCP"
+                        width={23}
+                        height={23}
+                        style={{ objectFit: 'contain' }}
+                      />
+                    ) : (
+            <Icon size={23} name="chaos-litmuschaos" />
+          )}
+
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
