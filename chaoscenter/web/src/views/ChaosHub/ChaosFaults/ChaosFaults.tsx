@@ -89,6 +89,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
     const isK6Fault = fault.name.toLowerCase().includes('k6-loadgen');
     const isGcpFault = fault.tag.toLowerCase() === 'gcp';
     return (
@@ -101,7 +102,15 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {isK6Fault ? (
+              {isChartNameAws ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
+                  alt="AWS"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : isK6Fault ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/load/k6-loadgen.png"
                   alt="k6-logo"
@@ -118,6 +127,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
               )}
+
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
