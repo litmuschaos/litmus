@@ -115,9 +115,6 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/load/k6-loadgen.png"
                   alt="k6-logo"
                   className={css.k6Logo}
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
                 />
               ) : isGcpFault ? (
                 <img
