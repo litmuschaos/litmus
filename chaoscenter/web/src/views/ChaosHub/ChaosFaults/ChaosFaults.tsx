@@ -107,7 +107,11 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/azure/azure-instance-stop.png"
                   alt="Azure"
-              {isChartNameAws ? (
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : isChartNameAws ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
                   alt="AWS"
