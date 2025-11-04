@@ -125,12 +125,8 @@ export default function EnvironmentListView({
       {environmentTableData === null && !loading.listEnvironments ? (
         <Container className={css.noEnvExecution} height="calc(100vh - 100px)">
           <img src={Envirnoment} alt={getString('environment')} />
-          <Text className={css.title}>
-            {getString('noEnvironmentFound')}
-          </Text>
-          <Text className={css.subtitle}>
-            {getString('noEnvironmentFoundNewMessage')}
-          </Text>
+          <Text className={css.title}>{getString('noEnvironmentFound')}</Text>
+          <Text className={css.subtitle}>{getString('noEnvironmentFoundNewMessage')}</Text>
         </Container>
       ) : (
         <Loader
