@@ -355,7 +355,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
         {formikProps => {
           return (
             <Form style={{ height: '100%' }}>
-              <Layout.Vertical height={516} style={{ overflow: 'auto' }} padding={{ left: "xsmall", right: "xsmall" }}>
+              <Layout.Vertical height={516} style={{ overflow: 'auto' }} padding={{ left: 'xsmall', right: 'xsmall' }}>
                 <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
                   {getString(`properties`)}
                 </Text>
