@@ -101,7 +101,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'gcp' ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
                 <img
                   src={
                     isDefault === 'true'
@@ -114,6 +114,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
               )}
+
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
