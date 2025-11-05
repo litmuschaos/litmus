@@ -89,9 +89,12 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isAzureFault = fault.tag.toLowerCase() === 'azure';
     const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
     const isK6Fault = fault.name.toLowerCase().includes('k6-loadgen');
     const isGcpFault = fault.tag.toLowerCase() === 'gcp';
+    const isSpringbootFault = fault.chartName.toLowerCase() === 'spring-boot';
+
     return (
       <Link
         to={{
@@ -102,7 +105,15 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {isChartNameAws ? (
+              {isAzureFault ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/azure/azure-instance-stop.png"
+                  alt="Azure"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : isChartNameAws ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
                   alt="AWS"
@@ -120,6 +131,14 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
                   alt="GCP"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : isSpringbootFault ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/spring-boot/spring-boot.png"
+                  alt="spring-boot"
                   width={23}
                   height={23}
                   style={{ objectFit: 'contain' }}
