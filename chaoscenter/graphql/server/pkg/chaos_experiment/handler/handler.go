@@ -283,10 +283,28 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		revID = uuid.New().String()
 	)
 
-	// Check if the experiment_name exists under same project
-	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	// Fetch the existing experiment
+	wfDetails, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
+		{"experiment_id", *request.ExperimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	})
 	if err != nil {
+		logFields := logrus.Fields{
+			"projectId":         projectID,
+			"chaosExperimentId": request.ExperimentID,
+		}
+
+		logrus.WithFields(logFields).Error("failed to get existing experiment")
 		return nil, err
+	}
+
+	// If the name is changing, then check for duplicate names
+	if wfDetails.Name != request.ExperimentName {
+		err = c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &request, projectID, revID)
