@@ -11,6 +11,7 @@ import ProjectSelectorController from '@controllers/ProjectSelector';
 import NavExpandable from '@components/NavExpandable';
 import { getUserDetails } from '@utils';
 import { PermissionGroup } from '@models';
+import litmusLogo from '@images/litmus-icon-color.svg';
 import css from './SideNav.module.scss';
 
 interface SidebarLinkProps extends NavLinkProps {
@@ -126,7 +127,7 @@ export default function SideNav(): ReactElement {
       <Container className={css.bottomContainer} data-isroutepresent={isPathPresent('settings')}>
         {!isPathPresent('settings') && (
           <div className={css.iconContainer}>
-            <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />
+            <img src={litmusLogo} alt="Litmus" style={{ width: '200px', height: 'auto', maxHeight: '200px' }} />
           </div>
         )}
         <div className={css.titleContainer}>
