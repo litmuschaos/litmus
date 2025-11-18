@@ -355,6 +355,8 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 	infraId := uuid.New().String()
 	experimentId := uuid.New().String()
 	experimentType := dbChaosExperiment.NonCronExperiment
+	existingExperimentName := "existing-experiment"
+	newExperimentName := "new-experiment"
 
 	store := store.NewStore()
 	tests := []struct {
@@ -364,54 +366,126 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Update Chaos Experiment",
-
+			name: "success: provided experiment name is the same as the existing experiment name",
 			args: args{
 				projectID: projectId,
 				request: &model.ChaosExperimentRequest{
 					ExperimentID:   &experimentId,
 					InfraID:        infraId,
 					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: existingExperimentName,
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				mockServices.MongodbOperator.On("CountDocuments", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				// Mock GetExperiments to return an experiment with the same name and ID
+				findResult := []interface{}{bson.D{
+					{Key: "experiment_id", Value: experimentId},
+					{Key: "name", Value: existingExperimentName},
+				}}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
+
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
-
 			},
 			wantErr: false,
 		},
 		{
-			name: "Failed to process experiment",
+			name: "success: provided experiment name is different from the existing experiment name",
 			args: args{
 				projectID: projectId,
 				request: &model.ChaosExperimentRequest{
 					ExperimentID:   &experimentId,
 					InfraID:        infraId,
 					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				// Mock GetExperiments to return no experiments for the new name
+				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
+			},
+			wantErr: false,
+		},
+		{
+			name: "failure: provided experiment name is a duplicate name",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					ExperimentID:   &experimentId,
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
+				},
+			},
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
+				// Mock GetExperiments to return an experiment with a different ID
+				otherFind := []interface{}{bson.D{
+					{Key: "experiment_id", Value: uuid.New().String()},
+					{Key: "name", Value: newExperimentName},
+				}}
+				cursor, _ := mongo.NewCursorFromDocuments(otherFind, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
+			},
+			wantErr: true,
+		},
+		{
+			name: "failure: failed to get existing experiment",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					ExperimentID:   &experimentId,
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
+				},
+			},
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
+				// Simulate GetExperiments failing while checking for duplicate names
+				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, errors.New("experiment not found")).Once()
+			},
+			wantErr: true,
+		},
+		{
+			name: "failure: failed to process experiment",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					ExperimentID:   &experimentId,
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
+				},
+			},
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
+				// List returns empty (no duplicates) but ProcessExperiment fails
+				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
 		},
 		{
-			name: "Update failed",
+			name: "failure: failed to update experiment",
 			args: args{
 				projectID: projectId,
 				request: &model.ChaosExperimentRequest{
 					ExperimentID:   &experimentId,
 					InfraID:        infraId,
 					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
-
+				// List returns no duplicates and ProcessExperiment succeeds but ProcessExperimentUpdate fails
+				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
