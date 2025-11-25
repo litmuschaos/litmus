@@ -5,7 +5,7 @@
 export type PrimitiveObject<T extends string> = Record<T, string | number | boolean>
 
 export interface StringsMap {
-  '404Error': unknown
+    '404Error': unknown
   'Editor': unknown
   'Executor': unknown
   'FRI': unknown
