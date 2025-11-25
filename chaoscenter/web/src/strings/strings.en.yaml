@@ -1,4 +1,5 @@
 404Error: Oops, we could not find this page.
+Editor: Editor
 Executor: Executor
 FRI: FRI
 MON: MON
@@ -652,12 +653,12 @@ noDataCV: No Data
 noDataToDisplay: No data to display
 noDescriptionProvided: No description provided
 noEnvironmentFound: No Environments found
-noEnvironmentFoundNewMessage: >-
-  An environment represents where you are installing your chaos infrastructure 
-  and acts as an additional level of abstraction for the same.
 noEnvironmentFoundMessage: >-
   No Environments found in this project, click on 'New Environment' to add
   environments.
+noEnvironmentFoundNewMessage: >-
+  An environment represents where you are installing your chaos infrastructure 
+  and acts as an additional level of abstraction for the same.
 noExpFound: No Predefined Chaos Experiments found using this Fault.
 noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
