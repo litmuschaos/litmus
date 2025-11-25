@@ -186,6 +186,11 @@ export function getPropsBasedOnPermissionGroup(status: Status): StatusProps {
         color: Color.GREY_700,
         bgColor: `var(--grey-200)`
       };
+    case PermissionGroup.EDITOR:
+      return {
+        color: Color.YELLOW_700,
+        bgColor: `var(--yellow-100)`
+      };
     default:
       return {
         color: Color.GREY_700,
