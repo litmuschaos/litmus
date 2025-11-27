@@ -63,8 +63,7 @@ export default function StudioOverviewView({
 
   const imageRegistry = getImageRegistryData?.getImageRegistry
     ? {
-        name: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName,
-        repo: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName,
+        repo: `${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName}/${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName}`,
         secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName
       }
     : undefined;
