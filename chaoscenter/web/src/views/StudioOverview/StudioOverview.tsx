@@ -23,8 +23,8 @@ import { ChaosInfrastructureReferenceFieldProps, StudioErrorState, StudioTabs } 
 import experimentYamlService from 'services/experiment';
 import KubernetesChaosInfrastructureReferenceFieldController from '@controllers/KubernetesChaosInfrastructureReferenceField';
 import { InfrastructureType } from '@api/entities';
-import { getImageRegistry } from '@api/core/ImageRegistry'; 
-import { getScope } from '@utils'; 
+import { getImageRegistry } from '@api/core/ImageRegistry';
+import { getScope } from '@utils';
 import css from './StudioOverview.module.scss';
 
 interface StudioOverviewViewProps {
@@ -56,17 +56,17 @@ export default function StudioOverviewView({
 
   const scope = getScope();
 
-   // Fetch the image registry data using Apollo's useQuery hook
-   const { data: getImageRegistryData, loading: imageRegistryLoading } = getImageRegistry({
-    projectID: scope.projectID,
+  // Fetch the image registry data using Apollo's useQuery hook
+  const { data: getImageRegistryData, loading: imageRegistryLoading } = getImageRegistry({
+    projectID: scope.projectID
   });
 
-  const imageRegistry = getImageRegistryData?.getImageRegistry?{
-      name: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName,
-      repo: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName,
-      secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName,
-  }
-  : undefined;
+  const imageRegistry = getImageRegistryData?.getImageRegistry
+    ? {
+        repo: `${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName}/${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName}`,
+        secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName
+      }
+    : undefined;
 
   React.useEffect(() => {
     experimentHandler?.getExperiment(experimentKey).then(experiment => {
@@ -101,8 +101,7 @@ export default function StudioOverviewView({
           })
         })}
         onSubmit={values => {
-
-          values.imageRegistry = imageRegistry
+          values.imageRegistry = imageRegistry;
 
           if (values.chaosInfrastructure.namespace === undefined) {
             delete values.chaosInfrastructure.namespace;
@@ -164,10 +163,10 @@ export default function StudioOverviewView({
                       onClick={openDiscardDialog}
                     />
                     <Button
-                      type="submit" 
-                      intent="primary" 
-                      text={getString('next')} 
-                      rightIcon="chevron-right" 
+                      type="submit"
+                      intent="primary"
+                      text={getString('next')}
+                      rightIcon="chevron-right"
                       disabled={imageRegistryLoading}
                     />
                   </Layout.Horizontal>

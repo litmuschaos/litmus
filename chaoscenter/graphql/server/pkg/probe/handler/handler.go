@@ -12,21 +12,20 @@ import (
 
 	argoTypes "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/ghodss/yaml"
-	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
-	globalUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
+	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+	globalUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 type Service interface {
@@ -112,7 +111,10 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties != nil {
 		utils.AddKubernetesHTTPProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties != nil {
-		utils.AddKubernetesCMDProbeProperties(newProbe, probe)
+		_, err := utils.AddKubernetesCMDProbeProperties(newProbe, probe)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %s", "error adding cmd probe properties", err.Error())
+		}
 	} else if probe.Type == model.ProbeTypePromProbe && probe.PromProperties != nil {
 		utils.AddPROMProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeK8sProbe && probe.K8sProperties != nil {
@@ -178,7 +180,10 @@ func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeReque
 		case model.ProbeTypeHTTPProbe:
 			utils.AddKubernetesHTTPProbeProperties(newProbe, request)
 		case model.ProbeTypeCmdProbe:
-			utils.AddKubernetesCMDProbeProperties(newProbe, request)
+			_, err := utils.AddKubernetesCMDProbeProperties(newProbe, request)
+			if err != nil {
+				return "", err
+			}
 		case model.ProbeTypePromProbe:
 			utils.AddPROMProbeProperties(newProbe, request)
 		case model.ProbeTypeK8sProbe:
@@ -709,6 +714,7 @@ func (p *probeService) ValidateUniqueProbe(ctx context.Context, probeName, proje
 	query := bson.D{
 		{"name", probeName},
 		{"project_id", bson.D{{"$eq", projectID}}},
+		{"is_removed", false},
 	}
 
 	isUnique, err := p.probeOperator.IsProbeUnique(ctx, query)
