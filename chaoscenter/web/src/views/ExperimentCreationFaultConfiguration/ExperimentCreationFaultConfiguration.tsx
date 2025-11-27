@@ -19,6 +19,7 @@ import type { FormikProps } from 'formik';
 import { cloneDeep, isEmpty, isEqual } from 'lodash-es';
 import { DrawerTypes } from '@components/Drawer/Drawer';
 import Drawer from '@components/Drawer';
+import EditableStepName from '@components/EditableStepName';
 import { useStrings } from '@strings';
 import TargetApplicationTabController from '@controllers/TargetApplicationTab';
 import type { FaultData } from '@models';
@@ -43,6 +44,7 @@ interface ExperimentCreationTuneFaultProps {
   environmentID: string | undefined;
   faultTuneOperation: GetFaultTunablesOperation;
   initialServiceIdentifiers: ServiceIdentifiers | undefined;
+  onStepNameUpdate?: () => void;
 }
 
 enum TuneFaultTab {
@@ -58,9 +60,10 @@ export default function ExperimentCreationTuneFaultView({
   initialFaultData,
   infraID,
   // environmentID,
-  faultTuneOperation
-}: // initialServiceIdentifiers
-ExperimentCreationTuneFaultProps): React.ReactElement {
+  faultTuneOperation,
+  // initialServiceIdentifiers
+  onStepNameUpdate
+}: ExperimentCreationTuneFaultProps): React.ReactElement {
   const { getString } = useStrings();
   const searchParams = useSearchParams();
   const { showError } = useToaster();
@@ -142,11 +145,37 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
     onClose();
   };
 
+  const handleStepNameSave = async (newStepName: string): Promise<void> => {
+    if (faultData) {
+      await experimentHandler?.updateFaultStepName(experimentKey, faultData.faultName, newStepName);
+      setFaultData(prev => (prev ? { ...prev, stepName: newStepName } : prev));
+      // Refresh visual builder with new step name
+      onStepNameUpdate?.();
+    }
+  };
+
+  const hasUnsavedChanges = (): boolean => {
+    // Don't compare stepName since it's saved automatically
+    const initialDataWithoutStepName = initialFaultData ? { ...initialFaultData, stepName: undefined } : undefined;
+    const currentDataWithoutStepName = faultData ? { ...faultData, stepName: undefined } : undefined;
+
+    return (
+      !isEqual(initialDataWithoutStepName, currentDataWithoutStepName) ||
+      faultWeight !== faultData?.weight ||
+      (tuneExperimentRef.current?.dirty ?? false)
+    );
+  };
+
   const header = (
     <Layout.Horizontal spacing={'small'} flex={{ distribution: 'space-between' }}>
       <Layout.Horizontal spacing={'small'} flex={{ alignItems: 'center' }}>
         <Icon name="chaos-scenario-builder" size={28} />
-        <Text font={{ variation: FontVariation.H5 }}>{faultData?.faultName}</Text>
+        <EditableStepName
+          stepName={faultData?.stepName}
+          faultName={faultData?.faultName ?? ''}
+          onSave={handleStepNameSave}
+          fontSize={FontVariation.H5}
+        />
       </Layout.Horizontal>
       <Layout.Horizontal spacing={'small'} flex={{ alignItems: 'center' }}>
         <Button
@@ -225,11 +254,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
           </div>
         }
         handleClose={() => {
-          if (
-            !isEqual(initialFaultData, faultData) ||
-            faultWeight !== faultData?.weight ||
-            tuneExperimentRef.current?.dirty
-          ) {
+          if (hasUnsavedChanges()) {
             openTuneConfirmDialog();
             return;
           }
