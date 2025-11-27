@@ -1,5 +1,5 @@
 import { parse } from 'yaml';
-import { ChaosObjectStoreNameMap, ChaosObjectStoresPrimaryKeys, Experiment } from '@db';
+import { ChaosObjectStoreNameMap, ChaosObjectStoresPrimaryKeys, Experiment, ImageRegistry } from '@db';
 import {
   ChaosEngine,
   ChaosExperiment,
@@ -37,7 +37,6 @@ export class KubernetesYamlService extends ExperimentYamlService {
 
       experiment.unsavedChanges = true;
       const [templates, steps] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
-
       // Add to steps in entry template
       if (parallelNodeIdentifier !== '') {
         steps?.map(step => {
@@ -64,6 +63,12 @@ export class KubernetesYamlService extends ExperimentYamlService {
       const installTemplateArtifacts = templates?.filter(template => template.name === 'install-chaos-faults')[0].inputs
         ?.artifacts;
 
+      if (faultCR?.spec?.definition) {
+        faultCR.spec.definition.image = updateContainerImage(
+          faultCR?.spec?.definition?.image,
+          experiment.imageRegistry
+        );
+      }
       // Add faults in install-chaos-faults template
       installTemplateArtifacts?.push({
         name: faultName,
@@ -96,7 +101,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: updateContainerImage(`docker.io/litmuschaos/litmus-checker:2.11.0`, experiment.imageRegistry),
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -193,6 +198,13 @@ export class KubernetesYamlService extends ExperimentYamlService {
         if (template.name === 'install-chaos-faults') {
           template.inputs?.artifacts?.map(artifact => {
             if (artifact.name === faultName) {
+              if (faultCR?.spec?.definition) {
+                faultCR.spec.definition.image = updateContainerImage(
+                  faultCR?.spec?.definition?.image,
+                  experiment.imageRegistry
+                );
+              }
+
               artifact.raw = {
                 data: yamlStringify(faultCR)
               };
@@ -230,7 +242,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: updateContainerImage(`docker.io/litmuschaos/litmus-checker:2.11.0`, experiment.imageRegistry),
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -1157,6 +1169,18 @@ export class KubernetesYamlService extends ExperimentYamlService {
       this.handleIDBFailure();
     }
   }
+}
+
+function updateContainerImage(image: string, registry: ImageRegistry | undefined): string {
+  // Extract image name + tag from original image
+  // Example: docker.io/litmuschaos/litmus-checker:2.11.0
+  const parts = image.split('/');
+  const lastPart = parts[parts.length - 1]; // litmus-checker:2.11.0
+
+  // Build new image
+  const newImage = `${registry?.repo}/${lastPart}`;
+
+  return newImage;
 }
 
 const kubernetesYamlService = new KubernetesYamlService();
