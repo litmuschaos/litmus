@@ -4,13 +4,14 @@ import { Icon } from '@harnessio/icons';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { Link, useParams } from 'react-router-dom';
 import { withErrorBoundary } from 'react-error-boundary';
-import { toTitleCase } from '@utils';
+import { toTitleCase, getScope } from '@utils';
 import { useStrings } from '@strings';
 import NoExperiments from '@images/NoExperiments.svg';
 import { Fallback } from '@errors';
 import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
+import config from '@config';
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
@@ -41,6 +42,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   const searchParams = useSearchParams();
   const hubName = searchParams.get('hubName');
   const isDefault = searchParams.get('isDefault');
+  const scope = getScope();
   const tags: TagProps[] = [];
   const faultsArray: Fault[] = [];
   const [activeTag, setActiveTag] = React.useState<string>('All');
@@ -89,12 +91,6 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
-    const isAzureFault = fault.tag.toLowerCase() === 'azure';
-    const isChartNameAws = fault.chartName.toLowerCase().includes('aws');
-    const isK6Fault = fault.name.toLowerCase().includes('k6-loadgen');
-    const isGcpFault = fault.tag.toLowerCase() === 'gcp';
-    const isSpringbootFault = fault.chartName.toLowerCase() === 'spring-boot';
-
     return (
       <Link
         to={{
@@ -105,35 +101,15 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {isAzureFault ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'spring-boot' || fault.chartName.toLowerCase() === 'k6-loadgen' || fault.chartName.toLowerCase() === 'azure' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
                 <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/azure/azure-instance-stop.png"
-                  alt="Azure"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
-                />
-              ) : isChartNameAws ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/aws/aws-az-chaos.png"
-                  alt="AWS"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
-                />
-              ) : isK6Fault ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/load/k6-loadgen.png"
-                  alt="k6-logo"
-                  className={css.k6Logo}
-                />
-              ) : isGcpFault ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/gcp/gcp-vm-instance-stop.png"
-                  alt="GCP"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
+                  src={
+                    isDefault === 'true'
+                      ? `${config.restEndpoints?.chaosManagerUri}/icon/default/${hubName}/${fault.chartName}/${fault.name}.png`
+                      : `${config.restEndpoints?.chaosManagerUri}/icon/${scope.projectID}/${hubName}/${fault.chartName}/${fault.name}.png`
+                  }
+                  alt={`${fault.name} icon`}
+                  style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
               ) : isSpringbootFault ? (
                 <img
