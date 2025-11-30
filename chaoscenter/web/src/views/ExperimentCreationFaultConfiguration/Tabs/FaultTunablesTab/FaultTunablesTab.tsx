@@ -63,6 +63,27 @@ export default function FaultTunablesTab({
                 faultData,
                 getFaultTunableFromTuneExperimentFormValues(values)
               );
+
+              if (updatedFaultData && faultData?.engineCR?.spec?.components?.runner?.resources) {
+                if (!updatedFaultData.engineCR) {
+                  updatedFaultData.engineCR = {} as any;
+                }
+
+                if (!updatedFaultData.engineCR!.spec) {
+                  updatedFaultData.engineCR!.spec = {} as any;
+                }
+
+                if (!updatedFaultData.engineCR!.spec!.components) {
+                  updatedFaultData.engineCR!.spec!.components = {} as any;
+                }
+
+                if (!updatedFaultData.engineCR!.spec!.components!.runner) {
+                  updatedFaultData.engineCR!.spec!.components!.runner = {} as any;
+                }
+
+                updatedFaultData.engineCR!.spec!.components!.runner!.resources =
+                  faultData.engineCR.spec.components.runner.resources;
+              }
               setFaultData(updatedFaultData);
             }}
           >
