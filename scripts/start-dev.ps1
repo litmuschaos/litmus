@@ -153,26 +153,27 @@ function Setup-MongoDB {
     if ($isInitiated -eq "1") {
         Write-Host "Replica set already initiated. Skipping rs.initiate()."
     } else {
-        Write-Host "Initializing replica set..."
-        $rsConfig = @'
-config = {
-    "_id": "rs0",
-    "members": [
-        { "_id": 0, "host": "m1:27015" },
-        { "_id": 1, "host": "m2:27016" },
-        { "_id": 2, "host": "m3:27017" }
-    ]
-};
-rs.initiate(config);
-'@
+       Write-Host "Checking replica set status..."
+$replicaStatus = docker exec m1 mongo --port 27015 --quiet --eval "try { rs.status().ok } catch(e) { print(e.code); }" 2>$null
 
-        docker exec m1 mongo --port 27015 --quiet --eval $rsConfig
+if ($replicaStatus -eq "1") {
+    Write-Host "Replica set already initialized. Skipping rs.initiate()."
+} else {
+    Write-Host "Initializing replica set..."
 
-        if ($LASTEXITCODE -ne 0) {
-            Write-ColorOutput "Failed to run rs.initiate" "Red"
-            return $false
-        }
+    # Simple one-line rs.initiate to avoid quoting/multiline issues
+    $rsConfig = "rs.initiate({_id:'rs0',members:[{_id:0,host:'m1:27015'},{_id:1,host:'m2:27016'},{_id:2,host:'m3:27017'}]})"
+
+    $initOutput = docker exec m1 mongo --port 27015 --quiet --eval "$rsConfig" 2>&1
+    Write-Host $initOutput
+
+    # If it failed for a reason other than "AlreadyInitialized", bail out
+    if ($LASTEXITCODE -ne 0 -and ($initOutput -notmatch "AlreadyInitialized")) {
+        Write-ColorOutput "Failed to run rs.initiate (exit code $LASTEXITCODE)" "Red"
+        return $false
     }
+}
+
 
     # Wait for primary election
     Write-Host "Waiting for primary election..."
