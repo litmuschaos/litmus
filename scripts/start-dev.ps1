@@ -252,7 +252,6 @@ Write-Host 'Press any key to close this window...' -ForegroundColor Yellow
     Start-Process powershell -ArgumentList "-NoExit", "-Command", $psCommand
     Start-Sleep -Seconds 1
 }
-}
 
 # Function to load environment file
 function Get-EnvFileContent {
