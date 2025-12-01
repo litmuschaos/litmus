@@ -1,49 +1,45 @@
-# ==============================
-# generate-certificate.ps1
-# Auto-installs OpenSSL (Windows) if missing,
-# then generates localhost certificates.
-# ==============================
+# scripts/generate-certificate.ps1
 
-# Exit on error
 $ErrorActionPreference = "Stop"
 
-# 1️⃣ Check if OpenSSL is installed
+# 1) Check if OpenSSL is installed
 if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-    Write-Host "🔍 OpenSSL not found. Installing via Chocolatey..."
+    Write-Host "OpenSSL not found. Installing via Chocolatey..."
 
-    # Check if Chocolatey is installed
+    # 1a) Check if Chocolatey is installed
     if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Host "🍫 Chocolatey not found. Installing Chocolatey first..."
+        Write-Host "Chocolatey not found. Installing Chocolatey first..."
         Set-ExecutionPolicy Bypass -Scope Process -Force
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
         iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     }
 
-    # Install OpenSSL
+    # 1b) Install OpenSSL
     choco install openssl.light -y
 
-    # Refresh PATH so this session sees OpenSSL immediately
-    $env:Path += ";C:\Program Files\OpenSSL-Win64\bin"
+    # 1c) Make sure current session can see it
+    $possiblePath = "C:\Program Files\OpenSSL-Win64\bin"
+    if (Test-Path $possiblePath) {
+        $env:Path += ";$possiblePath"
+    }
 
     if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-        Write-Error "❌ OpenSSL installation failed or path not recognized. Try reopening PowerShell and re-running."
+        Write-Error "OpenSSL installation failed or is still not in PATH. Close this window, reopen PowerShell, and try again."
         exit 1
     }
 
-    Write-Host "✅ OpenSSL installed successfully."
-} else {
-    Write-Host "✅ OpenSSL already installed."
+    Write-Host "OpenSSL installed successfully."
 }
 
-# 2️⃣ Create certificates directory
+# 2) Create certificates directory
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
-# 3️⃣ Generate self-signed certificate
-Write-Host "🔐 Generating localhost SSL certificate..."
+# 3) Generate self-signed certificate
+Write-Host "Generating localhost SSL certificate..."
 openssl req -x509 -newkey rsa:4096 `
   -keyout "certificates\localhost-key.pem" `
   -out "certificates\localhost.pem" `
   -days 365 -nodes `
   -subj "/C=US"
 
-Write-Host "🎉 Certificate generation complete!"
+Write-Host "Certificate generation complete."
