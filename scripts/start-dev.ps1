@@ -24,12 +24,10 @@ $ErrorActionPreference = "Stop"
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $PROJECT_ROOT = Split-Path -Parent $SCRIPT_DIR
 
-# Configuration
 $MONGO_VERSION = "4.2"
 $DB_USER = "admin"
 $DB_PASSWORD = "1234"
 
-# Color functions
 function Write-ColorOutput {
     param(
         [string]$Message,
@@ -60,7 +58,6 @@ function Update-HostsFile {
     if ($hostsContent -notmatch "127\.0\.0\.1\s+m1\s+m2\s+m3") {
         Write-ColorOutput "Hosts file missing MongoDB entries. Adding them..." "Yellow"
        
-        # Check for admin privileges
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
        
         if (-not $isAdmin) {
@@ -101,11 +98,8 @@ function Wait-ForMongo {
     return $false
 }
 
-# Function to setup MongoDB cluster
 function Setup-MongoDB {
     Write-ColorOutput "Setting up MongoDB cluster..." "Green"
-
-    # --- Clean up existing containers ---
     Write-Information "Cleaning up existing containers..."
 
     $containers = @("m1", "m2", "m3")
@@ -120,7 +114,6 @@ function Setup-MongoDB {
         }
     }
 
-    # --- Create network if not exists (DON'T remove it) ---
     $networkName = "mongo-cluster"
     $networkExists = docker network ls --format "{{.Name}}" | Where-Object { $_ -eq $networkName }
     if ($networkExists) {
@@ -130,11 +123,9 @@ function Setup-MongoDB {
         docker network create $networkName | Out-Null
     }
 
-    # Pull MongoDB image
     Write-Information "Pulling MongoDB image..."
     docker pull mongo:$MONGO_VERSION | Out-Null
 
-    # Start MongoDB containers
     Write-Information "Starting MongoDB containers..."
     docker run -d --net $networkName -p 27015:27015 --name m1 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27015 | Out-Null
     docker run -d --net $networkName -p 27016:27016 --name m2 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27016 | Out-Null
@@ -160,13 +151,11 @@ if ($replicaStatus -eq "1") {
 } else {
     Write-Information "Initializing replica set..."
 
-    # Simple one-line rs.initiate to avoid quoting/multiline issues
     $rsConfig = "rs.initiate({_id:'rs0',members:[{_id:0,host:'m1:27015'},{_id:1,host:'m2:27016'},{_id:2,host:'m3:27017'}]})"
 
     $initOutput = docker exec m1 mongo --port 27015 --quiet --eval "$rsConfig" 2>&1
     Write-Information $initOutput
 
-    # If it failed for a reason other than "AlreadyInitialized", bail out
     if ($LASTEXITCODE -ne 0 -and ($initOutput -notmatch "AlreadyInitialized")) {
         Write-ColorOutput "Failed to run rs.initiate (exit code $LASTEXITCODE)" "Red"
         return $false
@@ -200,10 +189,8 @@ if ($replicaStatus -eq "1") {
         return $false
     }
 
-    # Additional wait to ensure stability
     Start-Sleep -Seconds 3
 
-    # Create admin user (idempotent-ish: ignore error if already exists)
     Write-Information "Creating admin user (if not exists)..."
     $createUserCmd = @"
 db = db.getSiblingDB('admin');
@@ -229,7 +216,7 @@ if (!db.getUser('$DB_USER')) {
     return $true
 }
 }
-# Function to launch service in new PowerShell window
+
 function Start-ServiceWindow {
     param(
         [string]$Title,
@@ -249,7 +236,6 @@ Write-Information 'Press any key to close this window...' -ForegroundColor Yello
     Start-Sleep -Seconds 1
 }
 
-# Function to load environment file
 function Get-EnvFileContent {
     param([string]$FilePath)
    
@@ -267,13 +253,10 @@ function Get-EnvFileContent {
 
 # Main execution
 function Main {
-    # Check Docker
     Test-Docker
    
-    # Check/Update hosts file
     Update-HostsFile
    
-    # Setup MongoDB
     if (-not (Setup-MongoDB)) {
         Write-ColorOutput "MongoDB setup failed. Exiting." "Red"
         exit 1
@@ -307,7 +290,6 @@ function Main {
     $graphqlCmd = "$graphqlEnvVars; Set-Location '$PROJECT_ROOT\chaoscenter\graphql\server'; go run server.go"
     Start-ServiceWindow -Title "Litmus GraphQL" -Command $graphqlCmd
    
-    # Wait for GraphQL to start
     Start-Sleep -Seconds 2
    
     # Launch Frontend
@@ -328,5 +310,4 @@ function Main {
 "
 }
 
-# Run main function
 Main

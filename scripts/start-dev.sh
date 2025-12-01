@@ -7,12 +7,10 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Configuration
 MONGO_VERSION="4.2"
@@ -53,8 +51,6 @@ check_hosts_file() {
     fi
 }
 
-
-# Function to wait for MongoDB to be ready
 wait_for_mongo() {
     local port=$1
     local max_attempts=30
@@ -82,10 +78,8 @@ setup_mongodb() {
     docker rm -f m1 m2 m3 2>/dev/null || true
     docker network rm mongo-cluster 2>/dev/null || true
     
-    # Pull MongoDB image
     docker pull mongo:$MONGO_VERSION
     
-    # Create network
     docker network create mongo-cluster
     
     # Start MongoDB containers
@@ -203,7 +197,6 @@ main() {
 
     launch_terminal "Litmus API" "$API_CMD"
     
-    # Wait a bit for API to start
     sleep 3
     
     # Step 3: Launch GraphQL server
@@ -212,7 +205,6 @@ main() {
 
     launch_terminal "Litmus GraphQL" "$GRAPHQL_CMD"
     
-    # Wait a bit for GraphQL to start
     sleep 2
     
     # Step 4: Launch Frontend
