@@ -316,7 +316,7 @@ function Main {
    
     # Launch Frontend
     Write-Host "Launching Frontend..."
-    $frontendCmd = "Set-Location '$PROJECT_ROOT\chaoscenter\web'; yarn; yarn generate-certificate; yarn dev"
+    $frontendCmd = "Set-Location '$PROJECT_ROOT\chaoscenter\web'; yarn; yarn generate-certificate:win; yarn dev"
     Start-ServiceWindow -Title "Litmus Frontend" -Command $frontendCmd
    
     Write-ColorOutput "`nAll services launched successfully!" "Green"
