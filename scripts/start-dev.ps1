@@ -232,7 +232,7 @@ if (!db.getUser('$DB_USER')) {
     Write-ColorOutput "MongoDB setup complete!" "Green"
     return $true
 }
-
+}
 # Function to launch service in new PowerShell window
 function Start-ServiceWindow {
     param(
