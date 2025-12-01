@@ -1,40 +1,24 @@
 # scripts/generate-certificate.ps1
-
 $ErrorActionPreference = "Stop"
 
-# 1) Check if OpenSSL is installed
+# 1) Require OpenSSL, but don't try to be the system package manager
 if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-    Write-Host "OpenSSL not found. Installing via Chocolatey..."
+    Write-Error @"
+OpenSSL is not installed or not on PATH.
 
-    # 1a) Check if Chocolatey is installed
-    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Host "Chocolatey not found. Installing Chocolatey first..."
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-        iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-    }
+On Windows, install it once using (in an elevated PowerShell):
+  winget install -e --id ShiningLight.OpenSSL.Light
 
-    # 1b) Install OpenSSL
-    choco install openssl.light -y
-
-    # 1c) Make sure current session can see it
-    $possiblePath = "C:\Program Files\OpenSSL-Win64\bin"
-    if (Test-Path $possiblePath) {
-        $env:Path += ";$possiblePath"
-    }
-
-    if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-        Write-Error "OpenSSL installation failed or is still not in PATH. Close this window, reopen PowerShell, and try again."
-        exit 1
-    }
-
-    Write-Host "OpenSSL installed successfully."
+Then reopen your terminal and rerun:
+  yarn generate-certificate:win
+"@
+    exit 1
 }
 
 # 2) Create certificates directory
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
-# 3) Generate self-signed certificate
+# 4) Generate self-signed certificate
 Write-Host "Generating localhost SSL certificate..."
 openssl req -x509 -newkey rsa:4096 `
   -keyout "certificates\localhost-key.pem" `
