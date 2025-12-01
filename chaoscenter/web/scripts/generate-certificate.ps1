@@ -23,7 +23,7 @@ if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
 
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
-Write-Host "🔒 Generating localhost SSL certificate..."
+Write-Host "Generating localhost SSL certificate..."
 openssl req -x509 -newkey rsa:4096 `
   -keyout "certificates\localhost-key.pem" `
   -out "certificates\localhost.pem" `
