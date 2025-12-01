@@ -62,7 +62,7 @@ wait_for_mongo() {
     
     echo "Waiting for MongoDB on port $port..."
     while [ $attempt -lt $max_attempts ]; do
-        if docker exec m1 mongo --port $port --eval "db.runCommand({ ping: 1 })" &> /dev/null; then
+        if docker exec m1 mongo --port "$port" --eval "db.runCommand({ ping: 1 })" &> /dev/null; then
             echo "MongoDB is ready on port $port"
             return 0
         fi

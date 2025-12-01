@@ -92,7 +92,7 @@ function Wait-ForMongo {
             }
         }
         catch {
-            # Continue waiting
+         throw $_'error occured in wait for mongo function'
         }
         Start-Sleep -Seconds 1
     }
@@ -187,7 +187,7 @@ if ($replicaStatus -eq "1") {
                 break
             }
         } catch {
-            # ignore and continue
+            throw $_'error occured in wait for primary election'
         }
 
         Write-Information "Waiting for primary... ($elapsed/$maxWaitSeconds seconds)"
