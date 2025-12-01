@@ -35,6 +35,8 @@ if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
     Write-Host "✅ OpenSSL already installed."
 }
 
+
+
 # 2️⃣ Create certificates directory
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
