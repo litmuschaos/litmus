@@ -130,7 +130,6 @@ setup_mongodb() {
         return 1
     fi
     
-    # Additional wait to ensure stability
     sleep 3
     
     # Create admin user
@@ -230,8 +229,6 @@ main() {
     echo "  - API: check API terminal for port"
     echo "  - GraphQL: check GraphQL terminal for port"
     echo "  - Frontend: check Frontend terminal for port"
-    echo ""
-    echo "To stop all services, run: ./stop-litmus.sh"
 }
 
 main
