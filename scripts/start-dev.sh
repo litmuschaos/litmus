@@ -18,7 +18,6 @@ NC='\033[0m' # No Color
 MONGO_VERSION="4.2"
 DB_USER="admin"
 DB_PASSWORD="1234"
-DB_NAME="admin"
 
 echo -e "${GREEN}Starting Litmus Local Development Environment${NC}"
 

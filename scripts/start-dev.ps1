@@ -6,7 +6,7 @@ param(
 )
 
 if ($Help) {
-    Write-Host @"
+    Write-Information @"
 Litmus Local Development Setup Script
 Usage: .\setup-litmus.ps1
 
@@ -28,7 +28,6 @@ $PROJECT_ROOT = Split-Path -Parent $SCRIPT_DIR
 $MONGO_VERSION = "4.2"
 $DB_USER = "admin"
 $DB_PASSWORD = "1234"
-$DB_NAME = "admin"
 
 # Color functions
 function Write-ColorOutput {
@@ -36,7 +35,7 @@ function Write-ColorOutput {
         [string]$Message,
         [string]$Color = "White"
     )
-    Write-Host $Message -ForegroundColor $Color
+    Write-Information $Message -ForegroundColor $Color
 }
 
 Write-ColorOutput "Starting Litmus Local Development Environment" "Green"
@@ -82,13 +81,13 @@ function Wait-ForMongo {
         [int]$MaxAttempts = 30
     )
    
-    Write-Host "Waiting for MongoDB on port $Port..."
+    Write-Information "Waiting for MongoDB on port $Port..."
    
     for ($attempt = 0; $attempt -lt $MaxAttempts; $attempt++) {
         try {
             docker exec m1 mongo --port $Port --eval "db.runCommand({ ping: 1 })" 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0) {
-                Write-Host "MongoDB is ready on port $Port"
+                Write-Information "MongoDB is ready on port $Port"
                 return $true
             }
         }
@@ -107,17 +106,17 @@ function Setup-MongoDB {
     Write-ColorOutput "Setting up MongoDB cluster..." "Green"
 
     # --- Clean up existing containers ---
-    Write-Host "Cleaning up existing containers..."
+    Write-Information "Cleaning up existing containers..."
 
     $containers = @("m1", "m2", "m3")
 
     foreach ($c in $containers) {
         $exists = docker ps -a --format "{{.Names}}" | Where-Object { $_ -eq $c }
         if ($exists) {
-            Write-Host "Removing existing container: $c"
+            Write-Information "Removing existing container: $c"
             docker rm -f $c | Out-Null
         } else {
-            Write-Host "Container not found: $c (skipping)"
+            Write-Information "Container not found: $c (skipping)"
         }
     }
 
@@ -125,18 +124,18 @@ function Setup-MongoDB {
     $networkName = "mongo-cluster"
     $networkExists = docker network ls --format "{{.Name}}" | Where-Object { $_ -eq $networkName }
     if ($networkExists) {
-        Write-Host "Docker network '$networkName' already exists (reusing)"
+        Write-Information "Docker network '$networkName' already exists (reusing)"
     } else {
-        Write-Host "Creating Docker network: $networkName"
+        Write-Information "Creating Docker network: $networkName"
         docker network create $networkName | Out-Null
     }
 
     # Pull MongoDB image
-    Write-Host "Pulling MongoDB image..."
+    Write-Information "Pulling MongoDB image..."
     docker pull mongo:$MONGO_VERSION | Out-Null
 
     # Start MongoDB containers
-    Write-Host "Starting MongoDB containers..."
+    Write-Information "Starting MongoDB containers..."
     docker run -d --net $networkName -p 27015:27015 --name m1 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27015 | Out-Null
     docker run -d --net $networkName -p 27016:27016 --name m2 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27016 | Out-Null
     docker run -d --net $networkName -p 27017:27017 --name m3 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27017 | Out-Null
@@ -147,25 +146,25 @@ function Setup-MongoDB {
     }
 
     # Check if replica set already initiated
-    Write-Host "Checking replica set status..."
+    Write-Information "Checking replica set status..."
     $isInitiated = docker exec m1 mongo --port 27015 --quiet --eval "rs.status().ok" 2>$null
 
     if ($isInitiated -eq "1") {
-        Write-Host "Replica set already initiated. Skipping rs.initiate()."
+        Write-Information "Replica set already initiated. Skipping rs.initiate()."
     } else {
-       Write-Host "Checking replica set status..."
+       Write-Information "Checking replica set status..."
 $replicaStatus = docker exec m1 mongo --port 27015 --quiet --eval "try { rs.status().ok } catch(e) { print(e.code); }" 2>$null
 
 if ($replicaStatus -eq "1") {
-    Write-Host "Replica set already initialized. Skipping rs.initiate()."
+    Write-Information "Replica set already initialized. Skipping rs.initiate()."
 } else {
-    Write-Host "Initializing replica set..."
+    Write-Information "Initializing replica set..."
 
     # Simple one-line rs.initiate to avoid quoting/multiline issues
     $rsConfig = "rs.initiate({_id:'rs0',members:[{_id:0,host:'m1:27015'},{_id:1,host:'m2:27016'},{_id:2,host:'m3:27017'}]})"
 
     $initOutput = docker exec m1 mongo --port 27015 --quiet --eval "$rsConfig" 2>&1
-    Write-Host $initOutput
+    Write-Information $initOutput
 
     # If it failed for a reason other than "AlreadyInitialized", bail out
     if ($LASTEXITCODE -ne 0 -and ($initOutput -notmatch "AlreadyInitialized")) {
@@ -174,7 +173,7 @@ if ($replicaStatus -eq "1") {
     }
 }
     # Wait for primary election
-    Write-Host "Waiting for primary election..."
+    Write-Information "Waiting for primary election..."
     $maxWaitSeconds = 60
     $elapsed = 0
     $primaryElected = $false
@@ -183,7 +182,7 @@ if ($replicaStatus -eq "1") {
         try {
             $result = docker exec m1 mongo --port 27015 --quiet --eval "rs.isMaster().ismaster" 2>$null
             if ($result -match "true") {
-                Write-Host "Primary elected successfully"
+                Write-Information "Primary elected successfully"
                 $primaryElected = $true
                 break
             }
@@ -191,7 +190,7 @@ if ($replicaStatus -eq "1") {
             # ignore and continue
         }
 
-        Write-Host "Waiting for primary... ($elapsed/$maxWaitSeconds seconds)"
+        Write-Information "Waiting for primary... ($elapsed/$maxWaitSeconds seconds)"
         Start-Sleep -Seconds 3
         $elapsed += 3
     }
@@ -205,7 +204,7 @@ if ($replicaStatus -eq "1") {
     Start-Sleep -Seconds 3
 
     # Create admin user (idempotent-ish: ignore error if already exists)
-    Write-Host "Creating admin user (if not exists)..."
+    Write-Information "Creating admin user (if not exists)..."
     $createUserCmd = @"
 db = db.getSiblingDB('admin');
 if (!db.getUser('$DB_USER')) {
@@ -239,10 +238,10 @@ function Start-ServiceWindow {
    
     $psCommand = @"
 Set-Location '$PROJECT_ROOT'
-Write-Host '=== $Title ===' -ForegroundColor Cyan
+Write-Information '=== $Title ===' -ForegroundColor Cyan
 $Command
-Write-Host ''
-Write-Host 'Press any key to close this window...' -ForegroundColor Yellow
+Write-Information ''
+Write-Information 'Press any key to close this window...' -ForegroundColor Yellow
 `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 "@
    
@@ -284,7 +283,7 @@ function Main {
     Start-Sleep -Seconds 2
    
     # Launch API server
-    Write-Host "Launching API server..."
+    Write-Information "Launching API server..."
     $apiEnvFile = Join-Path $SCRIPT_DIR ".env.auth"
     $apiEnvVars = ""
     if (Test-Path $apiEnvFile) {
@@ -298,7 +297,7 @@ function Main {
     Start-Sleep -Seconds 3
    
     # Launch GraphQL server
-    Write-Host "Launching GraphQL server..."
+    Write-Information "Launching GraphQL server..."
     $graphqlEnvFile = Join-Path $SCRIPT_DIR ".env.api"
     $graphqlEnvVars = ""
     if (Test-Path $graphqlEnvFile) {
@@ -312,20 +311,20 @@ function Main {
     Start-Sleep -Seconds 2
    
     # Launch Frontend
-    Write-Host "Launching Frontend..."
+    Write-Information "Launching Frontend..."
     $frontendCmd = "Set-Location '$PROJECT_ROOT\chaoscenter\web'; yarn; yarn generate-certificate:win; yarn dev"
     Start-ServiceWindow -Title "Litmus Frontend" -Command $frontendCmd
    
     Write-ColorOutput "`nAll services launched successfully!" "Green"
     Write-ColorOutput "Note: Check individual PowerShell windows for service status" "Yellow"
-    Write-Host ""
-    Write-Host "Services:"
-    Write-Host "  - MongoDB: ports 27015, 27016, 27017"
-    Write-Host "  - API: check API window for port"
-    Write-Host "  - GraphQL: check GraphQL window for port"
-    Write-Host "  - Frontend: check Frontend window for port"
-    Write-Host ""
-    Write-Host "To stop MongoDB, run: docker rm -f m1 m2 m3 2>$null || $true
+    Write-Information ""
+    Write-Information "Services:"
+    Write-Information "  - MongoDB: ports 27015, 27016, 27017"
+    Write-Information "  - API: check API window for port"
+    Write-Information "  - GraphQL: check GraphQL window for port"
+    Write-Information "  - Frontend: check Frontend window for port"
+    Write-Information ""
+    Write-Information "To stop MongoDB, run: docker rm -f m1 m2 m3 2>$null || $true
 "
 }
 
