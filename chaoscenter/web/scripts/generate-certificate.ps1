@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-# 1) Check if OpenSSL is installed
+# Check if OpenSSL is installed else install it
 if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
     Write-Information "OpenSSL not found. Installing via winget..." -ForegroundColor Yellow
 

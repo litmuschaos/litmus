@@ -1,10 +1,10 @@
-# 🚀 Project Setup Guide
+# Project Setup Guide
 
 Follow these steps to set up and run the project locally.
 
 ---
 
-## 🧩 Prerequisites
+## Prerequisites
 
 Install the following tools:
 
@@ -15,11 +15,9 @@ Install the following tools:
 - PowerShell (Windows)
 - Terminal / Bash (macOS & Linux)
 
-(Ensure PATH is configured for Git/Go/Node/yarn.)
-
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Clone the repository
 ```bash
