@@ -12,7 +12,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# Configuration
 MONGO_VERSION="4.2"
 DB_USER="admin"
 DB_PASSWORD="1234"
@@ -183,31 +182,30 @@ EOF
 # Main execution
 main() {
     check_docker
+
     check_hosts_file
     
-    # Step 1: Setup MongoDB (in current terminal)
     setup_mongodb
     
     echo -e "${GREEN}MongoDB is ready. Launching application services...${NC}"
+    
     sleep 2
     
-    # Step 2: Launch API server
+    # Launch API server
     echo "Launching API server..."
     API_CMD="set -a; source \"$SCRIPT_DIR/.env.auth\"; set +a; cd chaoscenter/authentication/api && go run main.go"
-
     launch_terminal "Litmus API" "$API_CMD"
     
     sleep 3
     
-    # Step 3: Launch GraphQL server
+    # Launch GraphQL server
     echo "Launching GraphQL server..."
     GRAPHQL_CMD="set -a; source \"$SCRIPT_DIR/.env.api\"; set +a; cd chaoscenter/graphql/server && go run server.go"
-
     launch_terminal "Litmus GraphQL" "$GRAPHQL_CMD"
     
     sleep 2
     
-    # Step 4: Launch Frontend
+    # Launch Frontend
     echo "Launching Frontend..."
     FRONTEND_CMD="cd chaoscenter/web && yarn && yarn generate-certificate && yarn dev"
     launch_terminal "Litmus Frontend" "$FRONTEND_CMD"

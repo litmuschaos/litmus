@@ -1,24 +1,6 @@
 # Litmus Local Development Setup Script for Windows
 # This script launches all required services in separate PowerShell windows
 
-param(
-    [switch]$Help
-)
-
-if ($Help) {
-    Write-Information @"
-Litmus Local Development Setup Script
-Usage: .\setup-litmus.ps1
-
-This script will:
-1. Check Docker is running
-2. Update hosts file with MongoDB entries
-3. Setup MongoDB replica set cluster
-4. Launch API, GraphQL, and Frontend services in separate windows
-"@
-    exit 0
-}
-
 $ErrorActionPreference = "Stop"
 
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -276,7 +258,6 @@ function Main {
     $apiCmd = "$apiEnvVars; Set-Location '$PROJECT_ROOT\chaoscenter\authentication\api'; go run main.go"
     Start-ServiceWindow -Title "Litmus API" -Command $apiCmd
    
-    # Wait for API to start
     Start-Sleep -Seconds 3
    
     # Launch GraphQL server
@@ -306,8 +287,7 @@ function Main {
     Write-Information "  - GraphQL: check GraphQL window for port"
     Write-Information "  - Frontend: check Frontend window for port"
     Write-Information ""
-    Write-Information "To stop MongoDB, run: docker rm -f m1 m2 m3 2>$null || $true
-"
+    Write-Information "To stop MongoDB, run: docker rm -f m1 m2 m3 2>$null || $true"
 }
 
 Main
