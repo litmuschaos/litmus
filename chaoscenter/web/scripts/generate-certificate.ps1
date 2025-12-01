@@ -1,29 +1,31 @@
-# scripts/generate-certificate.ps1
 $ErrorActionPreference = "Stop"
 
-# 1) Require OpenSSL, but don't try to be the system package manager
+# 1) Check if OpenSSL is installed
 if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-    Write-Error @"
-OpenSSL is not installed or not on PATH.
+    Write-Host "OpenSSL not found. Installing via winget..." -ForegroundColor Yellow
 
-On Windows, install it once using (in an elevated PowerShell):
-  winget install -e --id ShiningLight.OpenSSL.Light
+    try {
+        if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+            Write-Error "winget not found. Please install winget manually from Microsoft Store."
+            exit 1
+        }
 
-Then reopen your terminal and rerun:
-  yarn generate-certificate:win
-"@
-    exit 1
+        winget install -e --id ShiningLight.OpenSSL.Light --accept-package-agreements --accept-source-agreements -h
+
+        Write-Host "OpenSSL installed successfully. Please restart your terminal if needed." -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to install OpenSSL automatically. Please install manually using:
+  winget install -e --id ShiningLight.OpenSSL.Light"
+        exit 1
+    }
 }
 
-# 2) Create certificates directory
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
-# 4) Generate self-signed certificate
-Write-Host "Generating localhost SSL certificate..."
+Write-Host "🔒 Generating localhost SSL certificate..."
 openssl req -x509 -newkey rsa:4096 `
   -keyout "certificates\localhost-key.pem" `
   -out "certificates\localhost.pem" `
   -days 365 -nodes `
   -subj "/C=US"
-
-Write-Host "Certificate generation complete."

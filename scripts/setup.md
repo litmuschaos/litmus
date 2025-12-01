@@ -1,67 +1,71 @@
 # 🚀 Project Setup Guide
 
-Follow the steps below to set up and run the project on your local machine.
+Follow these steps to set up and run the project locally.
 
 ---
 
 ## 🧩 Prerequisites
 
-Make sure the following are installed:
+Install the following tools:
 
 - Git
 - Go
-- Node
+- Node.js
 - yarn
-- PowerShell (Windows users)
-- Terminal / Bash (macOS & Linux users)
+- PowerShell (Windows)
+- Terminal / Bash (macOS & Linux)
+
+(Ensure PATH is configured for Git/Go/Node/yarn.)
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the forked repository
+### 1. Clone the repository
 ```bash
 git clone <your-repository-url>
+cd <your-repository-folder>
 ```
 
-### 2. Prepare startup scripts
+### 2. Prepare and run startup scripts
 
-- Windows (PowerShell)
-    ```powershell
-    # Allow running local scripts for the current session
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
-    ```
-    (No chmod needed on Windows; ensure the script path is correct.)
+- Windows (PowerShell, run as Administrator)
+```powershell
+cd <path-to-forked-litmus-repo>
+.\scripts\start-dev.ps1
+#### If you get execution policy errors
 
-- macOS / Linux
-    ```bash
-    chmod +x ./scripts/start-dev.sh
-    ```
+Run the following in PowerShell (no admin required for Process scope):
 
-### 3. Run the startup script
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+```
 
-- Windows (PowerShell)
-    ```powershell
-    .\scripts\start-dev.ps1
-    ```
+*This changes the execution policy only for the current PowerShell session.*
 
 - macOS / Linux
-    ```bash
-    ./scripts/start-dev.sh
-    ```
+```bash
+chmod +x ./scripts/start-dev.sh
+./scripts/start-dev.sh
+```
 
-The script prompt for your system password (sudo) to start required background services.
+Note: The script may prompt for your system password (macOS/Linux) to start background services.
 ![setup-example](./passwordInput.png)
 
+### 3. Automatic terminals / services
 
-### 4. Automatic terminal setup
+The startup script opens three terminals automatically. Each terminal runs one part of the app:
+- API
+- GraphQL
+- UI
 
-After entering your password, the script will open three terminals automatically. Each terminal runs a different part of the application (API, GRAPHQL & UI). You do not need to start them manually.
+### 4. Wait for the frontend build
+
+Allow the frontend build to finish in the UI terminal. Logs will indicate when the app is ready (watch for "Compiled" / "Listening" messages).
 
 ### 5. Access the application
 
-Once the frontend finishes building, open:
-
+Open in your browser:
 https://localhost:8185
 
 Credentials:

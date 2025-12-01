@@ -173,9 +173,6 @@ if ($replicaStatus -eq "1") {
         return $false
     }
 }
-
-
-
     # Wait for primary election
     Write-Host "Waiting for primary election..."
     $maxWaitSeconds = 60
