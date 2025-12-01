@@ -103,7 +103,7 @@ function Wait-ForMongo {
 }
 
 # Function to setup MongoDB cluster
-ffunction Setup-MongoDB {
+function Setup-MongoDB {
     Write-ColorOutput "Setting up MongoDB cluster..." "Green"
 
     # --- Clean up existing containers ---
