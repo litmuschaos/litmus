@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 # Check if OpenSSL is installed else install it
 if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
-    Write-Information "OpenSSL not found. Installing via winget..." -ForegroundColor Yellow
+    Write-Host "OpenSSL not found. Installing via winget..." -ForegroundColor Yellow
 
     try {
         if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
@@ -12,7 +12,7 @@ if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
 
         winget install -e --id ShiningLight.OpenSSL.Light --accept-package-agreements --accept-source-agreements -h
 
-        Write-Information "OpenSSL installed successfully. Please restart your terminal if needed." -ForegroundColor Green
+        Write-Host "OpenSSL installed successfully. Please restart your terminal if needed." -ForegroundColor Green
     }
     catch {
         Write-Error "Failed to install OpenSSL automatically. Please install manually using:
@@ -23,7 +23,7 @@ if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
 
 New-Item -ItemType Directory -Force -Path "certificates" | Out-Null
 
-Write-Information "Generating localhost SSL certificate..."
+Write-Host "Generating localhost SSL certificate..."
 openssl req -x509 -newkey rsa:4096 `
   -keyout "certificates\localhost-key.pem" `
   -out "certificates\localhost.pem" `
