@@ -189,7 +189,8 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 
 	err = handler.DownloadRemoteHub(chaosHub, projectID)
 	if err != nil {
-		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
+		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: %v", err)
+
 		log.Error(err)
 		return nil, err
 	}

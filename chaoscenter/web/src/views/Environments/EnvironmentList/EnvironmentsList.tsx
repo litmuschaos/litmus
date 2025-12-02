@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, TableV2, useToggleOpen, Dialog } from '@harnessio/uicore';
+import { Layout, TableV2, useToggleOpen, Dialog, Container, Text } from '@harnessio/uicore';
 import type { Column, Row } from 'react-table';
 import { useHistory } from 'react-router-dom';
 import type { MutationFunction } from '@apollo/client';
@@ -20,6 +20,7 @@ import type {
   EnvironmentDetailsTableProps,
   RefetchEnvironments
 } from '@controllers/Environments/types';
+import Envirnoment from '@images/Environment.svg';
 import CreateEnvironment from './CreateEnvironment';
 import { MenuCell } from './EnvironmentsTableMenu';
 import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
@@ -121,27 +122,35 @@ export default function EnvironmentListView({
         </Layout.Horizontal>
       }
     >
-      <Loader
-        loading={loading.listEnvironments}
-        noData={{
-          when: () => environmentTableData === null,
-          messageTitle: getString('noEnvironmentFound'),
-          message: getString('noEnvironmentFoundMessage')
-        }}
-      >
-        <TableV2<EnvironmentDetails>
-          columns={envColumns}
-          sortable
-          onRowClick={rowDetails =>
-            rowDetails.environmentID &&
-            history.push({
-              pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
-            })
-          }
-          data={environmentTableData?.content ?? []}
-          pagination={environmentTableData?.pagination}
-        />
-      </Loader>
+      {environmentTableData === null && !loading.listEnvironments ? (
+        <Container className={css.noEnvExecution} height="calc(100vh - 100px)">
+          <img src={Envirnoment} alt={getString('environment')} />
+          <Text className={css.title}>{getString('noEnvironmentFound')}</Text>
+          <Text className={css.subtitle}>{getString('noEnvironmentFoundNewMessage')}</Text>
+        </Container>
+      ) : (
+        <Loader
+          loading={loading.listEnvironments}
+          noData={{
+            when: () => environmentTableData === null,
+            messageTitle: getString('noEnvironmentFound'),
+            message: getString('noEnvironmentFoundMessage')
+          }}
+        >
+          <TableV2<EnvironmentDetails>
+            columns={envColumns}
+            sortable
+            onRowClick={rowDetails =>
+              rowDetails.environmentID &&
+              history.push({
+                pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
+              })
+            }
+            data={environmentTableData?.content ?? []}
+            pagination={environmentTableData?.pagination}
+          />
+        </Loader>
+      )}
     </DefaultLayout>
   );
 }

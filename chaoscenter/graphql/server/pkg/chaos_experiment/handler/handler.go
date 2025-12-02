@@ -83,10 +83,10 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		"experimentId": request.ID,
 	}
 
-	// Check if the workflow_name exists under same project
+	// Check if the experiment exists under same project
 	wfDetails, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
 		{"experiment_id", request.ID},
-		{"tags", request.Tags},
+		{"project_id", projectID},
 		{"is_removed", false},
 	})
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -160,10 +160,23 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Check if the experiment_name exists under same project
-	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	// Fetch the existing experiment to check if name has changed
+	existingExperiment, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
+		{"experiment_id", *request.ExperimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	})
+
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if the experiment_name exists under same project only if name has changed
+	if existingExperiment.Name != request.ExperimentName {
+		err = c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
@@ -1291,10 +1304,7 @@ func (c *ChaosExperimentHandler) GetDBExperiment(query bson.D) (dbChaosExperimen
 
 func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
 	var (
-		probeDetails        []*model.GetProbesInExperimentRunResponse
-		probeStatusMap      = make(map[string]model.ProbeVerdict)
-		probeDescriptionMap = make(map[string]*string)
-		probeModeMap        = make(map[string]model.Mode)
+		probeDetails []*model.GetProbesInExperimentRunResponse
 	)
 
 	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
@@ -1310,10 +1320,16 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		if _probe.FaultName == faultName {
 			for _, probeName := range _probe.ProbeNames {
 				var executionData types.ExecutionData
-				probeStatusMap[probeName] = model.ProbeVerdictNa
-				probeModeMap[probeName] = model.ModeSot
 				description := "Either probe is not executed or not evaluated"
-				probeDescriptionMap[probeName] = &description
+
+				probeVal := model.GetProbesInExperimentRunResponse{
+					Probe: &model.Probe{
+						Name: probeName,
+					},
+					Status: &model.Status{
+						Description: &description,
+					},
+				}
 
 				if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
 					return nil, errors.New("failed to unmarshal workflow manifest")
@@ -1323,34 +1339,20 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 					for _, nodeData := range executionData.Nodes {
 						if nodeData.Name == faultName {
 							if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
+								probeVal.Status.Verdict = model.ProbeVerdictNa
 							} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
+								probeVal.Status.Verdict = model.ProbeVerdictNa
 								if nodeData.ChaosExp.ChaosResult != nil {
-									probeStatusMap[probeName] = model.ProbeVerdictAwaited
+									probeVal.Status.Verdict = model.ProbeVerdictAwaited
 									probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
 
 									for _, probeStatus := range probeStatuses {
 										if probeStatus.Name == probeName {
-											probeModeMap[probeName] = model.Mode(probeStatus.Mode)
+											probeVal.Mode = model.Mode(probeStatus.Mode)
 
-											description := probeStatus.Status.Description
-											probeDescriptionMap[probeStatus.Name] = &description
-
-											switch probeStatus.Status.Verdict {
-											case chaosTypes.ProbeVerdictPassed:
-												probeStatusMap[probeName] = model.ProbeVerdictPassed
-												break
-											case chaosTypes.ProbeVerdictFailed:
-												probeStatusMap[probeName] = model.ProbeVerdictFailed
-												break
-											case chaosTypes.ProbeVerdictAwaited:
-												probeStatusMap[probeName] = model.ProbeVerdictAwaited
-												break
-											default:
-												probeStatusMap[probeName] = model.ProbeVerdictNa
-												break
-											}
+											description = probeStatus.Status.Description
+											probeVal.Status.Description = &description
+											probeVal.Status.Verdict = convertProbeVerdict(probeStatus.Status.Verdict)
 										}
 									}
 								}
@@ -1358,28 +1360,36 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 						}
 					}
 				}
+				probeDetails = append(probeDetails, &probeVal)
 			}
-
-			for _, probeName := range _probe.ProbeNames {
-				singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, probeName, projectID)
-				if err != nil {
-					return nil, err
-				}
-
-				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
-					Probe: singleProbe.GetOutputProbe(),
-					Mode:  probeModeMap[probeName],
-					Status: &model.Status{
-						Verdict:     probeStatusMap[probeName],
-						Description: probeDescriptionMap[probeName],
-					},
-				})
-			}
-
 		}
 	}
 
+	for i, probeData := range probeDetails {
+		value := probeData
+		singleProbe, err := dbSchemaProbe.NewChaosProbeOperator(c.mongodbOperator).GetProbeByName(ctx, value.Probe.Name, projectID)
+		if err != nil {
+			return nil, err
+		}
+
+		probeDetails[i].Probe = singleProbe.GetOutputProbe()
+	}
+
 	return probeDetails, nil
+}
+
+// convertProbeVerdict maps chaosTypes verdicts to GraphQL model verdicts
+func convertProbeVerdict(verdict chaosTypes.ProbeVerdict) model.ProbeVerdict {
+	switch verdict {
+	case chaosTypes.ProbeVerdictPassed:
+		return model.ProbeVerdictPassed
+	case chaosTypes.ProbeVerdictFailed:
+		return model.ProbeVerdictFailed
+	case chaosTypes.ProbeVerdictAwaited:
+		return model.ProbeVerdictAwaited
+	default:
+		return model.ProbeVerdictNa
+	}
 }
 
 // validateDuplicateExperimentName validates if the name of experiment is duplicate

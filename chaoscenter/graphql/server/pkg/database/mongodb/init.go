@@ -3,14 +3,15 @@ package mongodb
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // Enum for Database collections
@@ -127,7 +128,11 @@ func (m *MongoClient) initAllCollection() {
 	// Initialize chaos infra collection
 	err := m.Database.CreateCollection(context.TODO(), Collections[ChaosInfraCollection], nil)
 	if err != nil {
-		logrus.WithError(err).Error("failed to create chaosInfrastructures collection")
+		if strings.Contains(err.Error(), "already exists") {
+			logrus.Info(Collections[ChaosInfraCollection] + "'s collection already exists, continuing with the existing mongo collection")
+		} else {
+			logrus.WithError(err).Error("failed to create chaosInfrastructures collection")
+		}
 	}
 
 	m.ChaosInfraCollection = m.Database.Collection(Collections[ChaosInfraCollection])
@@ -151,7 +156,11 @@ func (m *MongoClient) initAllCollection() {
 	// Initialize chaos experiment collection
 	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosExperimentCollection], nil)
 	if err != nil {
-		logrus.WithError(err).Error("failed to create chaosExperiments collection")
+		if strings.Contains(err.Error(), "already exists") {
+			logrus.Info(Collections[ChaosExperimentCollection] + "'s collection already exists, continuing with the existing mongo collection")
+		} else {
+			logrus.WithError(err).Error("failed to create chaosExperiments collection")
+		}
 	}
 
 	m.ChaosExperimentCollection = m.Database.Collection(Collections[ChaosExperimentCollection])
@@ -175,7 +184,11 @@ func (m *MongoClient) initAllCollection() {
 	// Initialize chaos experiment runs collection
 	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosExperimentRunsCollection], nil)
 	if err != nil {
-		logrus.WithError(err).Error("failed to create chaosExperimentRuns collection")
+		if strings.Contains(err.Error(), "already exists") {
+			logrus.Info(Collections[ChaosExperimentRunsCollection] + "'s collection already exists, continuing with the existing mongo collection")
+		} else {
+			logrus.WithError(err).Error("failed to create chaosExperimentRuns collection")
+		}
 	}
 
 	m.ChaosExperimentRunsCollection = m.Database.Collection(Collections[ChaosExperimentRunsCollection])
@@ -193,7 +206,11 @@ func (m *MongoClient) initAllCollection() {
 	// Initialize chaos hubs collection
 	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosHubCollection], nil)
 	if err != nil {
-		logrus.WithError(err).Error("failed to create chaosHubs collection")
+		if strings.Contains(err.Error(), "already exists") {
+			logrus.Info(Collections[ChaosHubCollection] + "'s collection already exists, continuing with the existing mongo collection")
+		} else {
+			logrus.WithError(err).Error("failed to create chaosHubs collection")
+		}
 	}
 
 	m.ChaosHubCollection = m.Database.Collection(Collections[ChaosHubCollection])
@@ -272,21 +289,23 @@ func (m *MongoClient) initAllCollection() {
 	// Initialize chaos probes collection
 	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosProbeCollection], nil)
 	if err != nil {
-		logrus.WithError(err).Error("failed to create chaosProbes collection")
+		if strings.Contains(err.Error(), "already exists") {
+			logrus.Info(Collections[ChaosProbeCollection] + "'s collection already exists, continuing with the existing mongo collection")
+		} else {
+			logrus.WithError(err).Error("failed to create chaosProbes collection")
+		}
 	}
 
 	m.ChaosProbeCollection = m.Database.Collection(Collections[ChaosProbeCollection])
 	_, err = m.ChaosProbeCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
 		{
-			Keys: bson.M{
-				"name": 1,
-			},
-			Options: options.Index().SetUnique(true),
-		},
-		{
 			Keys: bson.D{
-				{"project_id", 1},
+				{Key: "name", Value: 1},
+				{Key: "project_id", Value: 1},
 			},
+			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{{
+				Key: "is_removed", Value: false,
+			}}),
 		},
 	})
 	if err != nil {
