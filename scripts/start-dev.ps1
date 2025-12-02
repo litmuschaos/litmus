@@ -76,7 +76,7 @@ function Wait-ForMongo {
             }
         }
         catch {
-         throw $_'error occured in wait for mongo function'
+        #
         }
         Start-Sleep -Seconds 1
     }
