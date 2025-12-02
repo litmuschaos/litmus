@@ -34,6 +34,9 @@ function Test-Docker {
 
 # Function to check and update hosts file
 function Update-HostsFile {
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    param()
+
     $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
     $hostsContent = Get-Content $hostsPath -Raw
    
@@ -47,9 +50,11 @@ function Update-HostsFile {
             Write-ColorOutput "Please right-click PowerShell and select 'Run as Administrator', then run this script again." "Yellow"
             exit 1
         }
-       
-        Add-Content -Path $hostsPath -Value "`n127.0.0.1 m1 m2 m3"
-        Write-ColorOutput "Hosts entry added successfully." "Green"
+
+        if ($PSCmdlet.ShouldProcess($hostsPath, "Add MongoDB host entries (m1 m2 m3)")) {
+            Add-Content -Path $hostsPath -Value "`n127.0.0.1 m1 m2 m3"
+            Write-ColorOutput "Hosts entry added successfully." "Green"
+        }
     }
 }
 
@@ -80,7 +85,7 @@ function Wait-ForMongo {
     return $false
 }
 
-function Setup-MongoDB {
+function Initialize-MongoDBCluster {
     Write-ColorOutput "Setting up MongoDB cluster..." "Green"
     Write-Information "Cleaning up existing containers..."
 
@@ -200,11 +205,12 @@ if (!db.getUser('$DB_USER')) {
 }
 
 function Start-ServiceWindow {
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     param(
         [string]$Title,
         [string]$Command
     )
-   
+
     $psCommand = @"
 Set-Location '$PROJECT_ROOT'
 Write-Information '=== $Title ===' -ForegroundColor Cyan
@@ -213,9 +219,11 @@ Write-Information ''
 Write-Information 'Press any key to close this window...' -ForegroundColor Yellow
 `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 "@
-   
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", $psCommand
-    Start-Sleep -Seconds 1
+
+    if ($PSCmdlet.ShouldProcess("PowerShell window for '$Title'", "Start service window")) {
+        Start-Process powershell -ArgumentList "-NoExit", "-Command", $psCommand
+        Start-Sleep -Seconds 1
+    }
 }
 
 function Get-EnvFileContent {
@@ -239,7 +247,7 @@ function Main {
    
     Update-HostsFile
    
-    if (-not (Setup-MongoDB)) {
+    if (-not (Initialize-MongoDBCluster)) {
         Write-ColorOutput "MongoDB setup failed. Exiting." "Red"
         exit 1
     }
