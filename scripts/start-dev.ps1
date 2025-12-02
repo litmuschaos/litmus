@@ -76,7 +76,7 @@ function Wait-ForMongo {
             }
         }
         catch {
-        #
+        Write-ColorOutput "MongoDB not ready yet (attempt $($attempt + 1)/$MaxAttempts)" "Yellow"
         }
         Start-Sleep -Seconds 1
     }
@@ -163,7 +163,7 @@ if ($replicaStatus -eq "1") {
                 break
             }
         } catch {
-    #
+            Write-ColorOutput "Error checking primary status: $_" "Yellow"
         }
 
         Write-Host "Waiting for primary... ($elapsed/$maxWaitSeconds seconds)"
