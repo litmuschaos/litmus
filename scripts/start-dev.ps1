@@ -163,7 +163,7 @@ if ($replicaStatus -eq "1") {
                 break
             }
         } catch {
-            throw $_'error occured in wait for primary election'
+    #
         }
 
         Write-Information "Waiting for primary... ($elapsed/$maxWaitSeconds seconds)"
