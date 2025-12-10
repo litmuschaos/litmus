@@ -87,8 +87,7 @@ export default function StudioOverviewView({
           })
         })}
         onSubmit={values => {
-
-          values.imageRegistry = imageRegistry
+          values.imageRegistry = imageRegistry;
 
           if (values.chaosInfrastructure.namespace === undefined) {
             delete values.chaosInfrastructure.namespace;
@@ -150,10 +149,10 @@ export default function StudioOverviewView({
                       onClick={openDiscardDialog}
                     />
                     <Button
-                      type="submit" 
-                      intent="primary" 
-                      text={getString('next')} 
-                      rightIcon="chevron-right" 
+                      type="submit"
+                      intent="primary"
+                      text={getString('next')}
+                      rightIcon="chevron-right"
                       disabled={imageRegistryLoading}
                     />
                   </Layout.Horizontal>
