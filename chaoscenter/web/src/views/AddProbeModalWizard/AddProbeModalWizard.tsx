@@ -355,7 +355,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
         {formikProps => {
           return (
             <Form style={{ height: '100%' }}>
-              <Layout.Vertical height={516} style={{ overflow: 'auto' }}>
+              <Layout.Vertical height={516} style={{ overflow: 'auto' }} padding={{ left: 'xsmall', right: 'xsmall' }}>
                 <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
                   {getString(`properties`)}
                 </Text>
@@ -521,8 +521,8 @@ const TuneDetailsStep: React.FC<
             ...props.formData,
             kubernetesCMDProperties: {
               ...props.formData.kubernetesCMDProperties,
-              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined,
-              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs)
+              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs),
+              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined
             } as Probe['kubernetesCMDProperties']
           };
 

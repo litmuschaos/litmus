@@ -1,7 +1,12 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
-RUN microdnf module enable nginx:1.20
-RUN microdnf install nginx
-RUN microdnf update --refresh --best --noplugins --setopt=install_weak_deps=0
+
+# apply latest patches
+RUN microdnf update --nodocs \
+&& microdnf module enable nginx:1.20 \
+&& microdnf install --nodocs nginx \
+&& microdnf install --nodocs python3 \
+&& pip3 install --no-cache-dir pyyaml \
+&& microdnf clean all
     
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
