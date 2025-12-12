@@ -283,10 +283,18 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		revID = uuid.New().String()
 	)
 
-	// Check if the experiment_name exists under same project
-	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	// Check if the experiment name exists under same project
+	experiments, err := c.chaosExperimentOperator.GetExperiments(bson.D{
+		{"project_id", projectID},
+		{"name", request.ExperimentName},
+	})
 	if err != nil {
 		return nil, err
+	}
+	for _, exp := range experiments {
+		if exp.ExperimentID != *request.ExperimentID {
+			return nil, errors.New("experiment name should be unique, duplicate experiment found with name: " + request.ExperimentName)
+		}
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &request, projectID, revID)
