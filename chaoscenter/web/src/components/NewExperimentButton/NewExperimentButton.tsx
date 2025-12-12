@@ -18,7 +18,7 @@ export default function NewExperimentButton({ disabled }: { disabled?: boolean }
     <ParentComponentErrorWrapper>
       <RbacButton
         disabled={disabled}
-        permission={PermissionGroup.OWNER}
+        permission={PermissionGroup.EDITOR}
         variation={ButtonVariation.PRIMARY}
         text={getString('newExperiment')}
         icon="plus"

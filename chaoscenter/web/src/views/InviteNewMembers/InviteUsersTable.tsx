@@ -106,6 +106,18 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                     })
                   }
                 />
+                <SplitButtonOption
+                  text={getString('Editor')}
+                  onClick={() =>
+                    sendInvitationMutation({
+                      body: {
+                        projectID: projectID,
+                        role: PermissionGroup.EDITOR,
+                        userID: data.userID
+                      }
+                    })
+                  }
+                />
               </SplitButton>
             </Layout.Vertical>
           );
