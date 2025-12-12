@@ -190,19 +190,18 @@ main() {
     echo -e "${GREEN}MongoDB is ready. Launching application services...${NC}"
     
     sleep 2
-    
     # Launch API server
     echo "Launching API server..."
-    API_CMD="set -a; source \"$SCRIPT_DIR/.env.auth\"; set +a; cd chaoscenter/authentication/api && go run main.go"
+    RAW_INFRA_VERSIONS=$(grep '^INFRA_COMPATIBLE_VERSIONS=' "$SCRIPT_DIR/.env.auth" | cut -d'=' -f2-)
+    export INFRA_COMPATIBLE_VERSIONS="'$RAW_INFRA_VERSIONS'"
+
+    API_CMD="set -a; source \"$SCRIPT_DIR/.env.auth\"; export INFRA_COMPATIBLE_VERSIONS='$RAW_INFRA_VERSIONS'; set +a; cd chaoscenter/authentication/api && go run main.go"
     launch_terminal "Litmus API" "$API_CMD"
-    
     sleep 3
-    
-    # Launch GraphQL server
     echo "Launching GraphQL server..."
-    GRAPHQL_CMD="set -a; source \"$SCRIPT_DIR/.env.api\"; set +a; cd chaoscenter/graphql/server && go run server.go"
+
+    GRAPHQL_CMD="set -a; source \"$SCRIPT_DIR/.env.api\"; export INFRA_COMPATIBLE_VERSIONS='$RAW_INFRA_VERSIONS'; set +a; cd chaoscenter/graphql/server && go run server.go"
     launch_terminal "Litmus GraphQL" "$GRAPHQL_CMD"
-    
     sleep 2
     
     # Launch Frontend
