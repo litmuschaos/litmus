@@ -6,7 +6,7 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-COPY . /subscriber
+ADD . /subscriber
 WORKDIR /subscriber
 
 ENV GOOS=${TARGETOS} \

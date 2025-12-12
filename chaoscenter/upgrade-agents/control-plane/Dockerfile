@@ -6,7 +6,7 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-COPY . /upgrade-agent
+ADD . /upgrade-agent
 WORKDIR /upgrade-agent
 
 ENV GOOS=${TARGETOS} \

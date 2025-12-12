@@ -4,7 +4,7 @@ FROM golang:1.24 AS builder
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-COPY . /auth-server
+ADD . /auth-server
 WORKDIR /auth-server
 
 ENV GOOS=${TARGETOS} \
