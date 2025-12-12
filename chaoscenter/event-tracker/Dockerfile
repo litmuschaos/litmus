@@ -6,7 +6,7 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /event-tracker
+COPY . /event-tracker
 WORKDIR /event-tracker
 
 ENV GOOS=${TARGETOS} \
