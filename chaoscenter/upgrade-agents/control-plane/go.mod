@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.8.3
 	go.mongodb.org/mongo-driver v1.11.9
 )
 
@@ -20,7 +20,6 @@ require (
 require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.17.8 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mongodb/mongo-tools v0.0.0-20240711192303-088725fbaf4b
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
