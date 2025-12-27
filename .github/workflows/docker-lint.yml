@@ -1,0 +1,35 @@
+name: Dockerfile Linter
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  hadolint:
+    name: Lint Dockerfiles
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install hadolint
+        run: sudo wget -O /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 && sudo chmod +x /usr/local/bin/hadolint
+
+      - name: Find and lint all Dockerfiles
+        run: |
+          echo "Searching for Dockerfiles..."
+          files=$(find . -type f -name "Dockerfile")
+          for file in $files; do
+            echo "Linting $file"
+            hadolint --failure-threshold error "$file" || {
+            echo "Lint failed for $file"
+            exit 1
+            }
+          done
+
+      - name: Summary
+        if: success()
+        run: echo "All Dockerfiles passed linting checks"
