@@ -101,7 +101,12 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'spring-boot' || fault.chartName.toLowerCase() === 'k6-loadgen' || fault.chartName.toLowerCase() === 'azure' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' ||
+              fault.chartName.toLowerCase() === 'k6-loadgen' ||
+              fault.chartName.toLowerCase() === 'azure' ||
+              fault.chartName.toLowerCase() === 'gcp' ||
+              fault.chartName.toLowerCase() === 'aws' ||
+              fault.chartName.toLowerCase() === 'k6-logo' ? (
                 <img
                   src={
                     isDefault === 'true'
@@ -111,7 +116,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   alt={`${fault.name} icon`}
                   style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
-              ) : isSpringbootFault ? (
+              ) : fault.chartName.toLowerCase() === 'spring-boot' ? (
                 <img
                   src="https://hub.litmuschaos.io/api/icon/3.22.0/spring-boot/spring-boot.png"
                   alt="spring-boot"
