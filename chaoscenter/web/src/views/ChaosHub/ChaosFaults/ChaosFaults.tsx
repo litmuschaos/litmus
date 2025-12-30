@@ -12,7 +12,7 @@ import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
 import config from '@config';
-import litmusIcon from '../../../images/litmusIcon.svg';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
