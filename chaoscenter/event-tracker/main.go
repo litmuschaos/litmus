@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Event Tracker service for LitmusChoas.
+// This service watches Kubernetes resources and tracks events
+// required for chaos workflows and observability.
 package main
 
 import (
@@ -50,10 +53,14 @@ import (
 )
 
 var (
+	// scheme registers all Kubernetes and custom resource schemes
 	scheme   = runtime.NewScheme()
+	// setupLog is used for logging controller setup and startup messages
 	setupLog = ctrl.Log.WithName("setup")
 )
 
+// init initializes configuration, Kubernetes clients, 
+// informers and registers required schemes before the service starts.
 func init() {
 	logrus.Info("Go Version: ", rt.Version())
 	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
@@ -72,7 +79,7 @@ func init() {
 	if err != nil {
 		logrus.Error(err)
 	}
-
+   // Create shared informers to watch Kubernetes resources
 	var factory informers.SharedInformerFactory
 	if utils.Config.InfraScope == "cluster" {
 		factory = informers.NewSharedInformerFactory(clientset, 30*time.Second)
@@ -85,7 +92,8 @@ func init() {
 	go utils.RunStsInformer(factory)
 
 }
-
+// main sets up the controller manager, TLS configuration,
+// health checks, and starts the Event Tracker service.
 func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
@@ -102,7 +110,8 @@ func main() {
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
-
+    // Configure TLS settings based on environment configuration
+	// Supports skipping SSL verification or using a custom CA certificate.
 	// disable ssl verification if configured
 	if utils.Config.SkipSSLVerify {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
@@ -123,7 +132,8 @@ func main() {
 		mgr manager.Manager
 		err error
 	)
-
+   // Create controller manager scoped to either a namespace
+	// or the entire cluster based on InfraScope configuration
 	if utils.Config.InfraScope == "namespace" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
@@ -146,7 +156,7 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-
+ // Register the EventTrackerPolicy controller with the manager
 	if err = (&controllers.EventTrackerPolicyReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -155,7 +165,7 @@ func main() {
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
-
+   // Register health and readiness probes for Kubernetes
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
 		os.Exit(1)
