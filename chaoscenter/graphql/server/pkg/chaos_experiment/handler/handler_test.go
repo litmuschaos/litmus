@@ -390,6 +390,40 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
 			},
 			wantErr: false,
+		},{
+			name: "success: verifies query filters out removed experiments",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					ExperimentID:   &experimentId,
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
+				},
+			},
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
+	
+				filterCheck := func(filter interface{}) bool {
+					bsonFilter, ok := filter.(bson.D)
+					if !ok {
+						return false
+					}
+					for _, elem := range bsonFilter {
+						if elem.Key == "is_removed" && elem.Value == false {
+							return true
+						}
+					}
+					return false
+				}
+
+				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.MatchedBy(filterCheck)).Return(cursor, nil).Once()
+
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
+			},
+			wantErr: false,
 		},
 		{
 			name: "success: provided experiment name is different from the existing experiment name",
