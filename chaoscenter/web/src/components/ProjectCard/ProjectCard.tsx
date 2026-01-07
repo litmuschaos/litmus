@@ -1,7 +1,7 @@
 import React from 'react';
 import { AvatarGroup, Card, Container, Text } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useAppStore } from '@context';
 import { useStrings } from '@strings';
 import type { Project } from '@api/auth';
@@ -15,6 +15,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ data }: ProjectCardProps): React.ReactElement {
   const { getString } = useStrings();
   const history = useHistory();
+  const { accountID } = useParams<{ accountID: string }>();
   const { projectID, currentUserInfo, updateAppStore } = useAppStore();
 
   const isSelected = projectID === data.projectID;
@@ -32,7 +33,7 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
       projectRole,
       projectID: data.projectID
     });
-    history.replace(`/`);
+    history.replace(`/account/${accountID}/project/${data.projectID}/dashboard`);
   };
 
   return (
