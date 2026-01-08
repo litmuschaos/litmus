@@ -18,6 +18,7 @@ type projectService interface {
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
+	RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
@@ -57,6 +58,10 @@ func (a applicationService) AddMember(projectID string, member *entities.Member)
 
 func (a applicationService) RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error {
 	return a.projectRepository.RemoveInvitation(projectID, userID, invitation)
+}
+
+func (a applicationService) RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error {
+	return a.projectRepository.RemoveInvitationIfNotLastOwner(projectID, userID, invitation)
 }
 
 func (a applicationService) UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error {

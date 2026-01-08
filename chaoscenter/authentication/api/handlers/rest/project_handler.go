@@ -803,8 +803,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 		switch invitation {
 		case entities.AcceptedInvitation, entities.PendingInvitation:
 			{
-				err := service.RemoveInvitation(member.ProjectID, member.UserID, invitation)
+				err := service.RemoveInvitationIfNotLastOwner(member.ProjectID, member.UserID, invitation)
 				if err != nil {
+					if err == utils.ErrLastProjectOwner {
+						c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
+						return
+					}
 					log.Error(err)
 					c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 					return
@@ -941,6 +945,27 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 		if uid == member.UserID {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change their own role."})
 			return
+		}
+
+		if *member.Role != entities.RoleOwner {
+			targetRole, err := service.GetProjectRole(member.ProjectID, member.UserID)
+			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+				return
+			}
+			if targetRole != nil && *targetRole == entities.RoleOwner {
+				owners, err := service.GetProjectOwners(member.ProjectID)
+				if err != nil {
+					log.Error(err)
+					c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+					return
+				}
+				if len(owners) == 1 {
+					c.JSON(http.StatusBadRequest, gin.H{"message": "Cannot demote the only owner of the project"})
+					return
+				}
+			}
 		}
 
 		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)

@@ -24,6 +24,7 @@ type Repository interface {
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
+	RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
@@ -248,6 +249,61 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 	}
 	if result.MatchedCount == 0 {
 		return errors.New("could not find matching projectID in database")
+	}
+
+	return nil
+}
+
+// RemoveInvitationIfNotLastOwner atomically removes a member only if they are not the last owner
+func (r repository) RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error {
+	project, err := r.GetProjectByProjectID(projectID)
+	if err != nil {
+		return err
+	}
+
+	var targetMember *entities.Member
+	ownerCount := 0
+	for _, member := range project.Members {
+		if member.Role == entities.RoleOwner && member.Invitation == entities.AcceptedInvitation {
+			ownerCount++
+		}
+		if member.UserID == userID {
+			targetMember = member
+		}
+	}
+
+	if targetMember != nil && targetMember.Role == entities.RoleOwner && ownerCount <= 1 {
+		return utils.ErrLastProjectOwner
+	}
+
+	query := bson.D{
+		{"_id", projectID},
+		{"$or", bson.A{
+			bson.D{{"members", bson.D{{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"role", bson.D{{"$ne", entities.RoleOwner}}},
+			}}}}},
+			bson.D{{"members", bson.D{{"$elemMatch", bson.D{
+				{"role", entities.RoleOwner},
+				{"invitation", entities.AcceptedInvitation},
+				{"user_id", bson.D{{"$ne", userID}}},
+			}}}}},
+		}},
+	}
+	update := bson.D{
+		{"$pull", bson.D{
+			{"members", bson.D{
+				{"user_id", userID},
+			}},
+		}},
+	}
+
+	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return utils.ErrLastProjectOwner
 	}
 
 	return nil
