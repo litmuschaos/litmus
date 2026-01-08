@@ -256,26 +256,6 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 
 // RemoveInvitationIfNotLastOwner atomically removes a member only if they are not the last owner
 func (r repository) RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error {
-	project, err := r.GetProjectByProjectID(projectID)
-	if err != nil {
-		return err
-	}
-
-	var targetMember *entities.Member
-	ownerCount := 0
-	for _, member := range project.Members {
-		if member.Role == entities.RoleOwner && member.Invitation == entities.AcceptedInvitation {
-			ownerCount++
-		}
-		if member.UserID == userID {
-			targetMember = member
-		}
-	}
-
-	if targetMember != nil && targetMember.Role == entities.RoleOwner && ownerCount <= 1 {
-		return utils.ErrLastProjectOwner
-	}
-
 	query := bson.D{
 		{"_id", projectID},
 		{"$or", bson.A{

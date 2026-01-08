@@ -962,7 +962,7 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 					return
 				}
 				if len(owners) == 1 {
-					c.JSON(http.StatusBadRequest, gin.H{"message": "Cannot demote the only owner of the project"})
+					c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
 					return
 				}
 			}
