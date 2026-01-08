@@ -137,6 +137,11 @@ func (m *MockedApplicationService) UpdateMemberRole(projectID, userID string, ro
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) UpdateMemberRoleIfNotLastOwner(projectID, userID string, role *entities.MemberRole) error {
+	args := m.Called(projectID, userID, role)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
 	args := m.Called(pipeline, opts)
 	return args.Get(0).(*mongo.Cursor), args.Error(1)

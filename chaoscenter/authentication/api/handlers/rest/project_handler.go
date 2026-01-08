@@ -947,29 +947,12 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		if *member.Role != entities.RoleOwner {
-			targetRole, err := service.GetProjectRole(member.ProjectID, member.UserID)
-			if err != nil {
-				log.Error(err)
-				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		err = service.UpdateMemberRoleIfNotLastOwner(member.ProjectID, member.UserID, member.Role)
+		if err != nil {
+			if err == utils.ErrLastProjectOwner {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
 				return
 			}
-			if targetRole != nil && *targetRole == entities.RoleOwner {
-				owners, err := service.GetProjectOwners(member.ProjectID)
-				if err != nil {
-					log.Error(err)
-					c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-					return
-				}
-				if len(owners) == 1 {
-					c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
-					return
-				}
-			}
-		}
-
-		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
-		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return

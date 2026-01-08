@@ -28,6 +28,7 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
+	UpdateMemberRoleIfNotLastOwner(projectID string, userID string, role *entities.MemberRole) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
@@ -361,6 +362,40 @@ func (r repository) UpdateMemberRole(projectID string, userID string, role *enti
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// UpdateMemberRoleIfNotLastOwner atomically updates member role only if it won't leave the project without owners
+func (r repository) UpdateMemberRoleIfNotLastOwner(projectID string, userID string, role *entities.MemberRole) error {
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.user_id", userID}},
+		},
+	})
+	query := bson.D{
+		{"_id", projectID},
+		{"$or", bson.A{
+			bson.D{{"members", bson.D{{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"role", bson.D{{"$ne", entities.RoleOwner}}},
+			}}}}},
+			bson.D{{"members", bson.D{{"$elemMatch", bson.D{
+				{"role", entities.RoleOwner},
+				{"invitation", entities.AcceptedInvitation},
+				{"user_id", bson.D{{"$ne", userID}}},
+			}}}}},
+		}},
+	}
+	update := bson.D{{"$set", bson.M{"members.$[elem].role": role}}}
+
+	result, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return utils.ErrLastProjectOwner
 	}
 
 	return nil
