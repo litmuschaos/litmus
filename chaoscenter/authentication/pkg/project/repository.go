@@ -373,7 +373,7 @@ func (r repository) UpdateProjectState(ctx context.Context, userID string, deact
 				{"$elemMatch", bson.D{
 					{"user_id", bson.D{{"$ne", userID}}},
 					{"role", entities.RoleOwner},
-					{"deactivated_at", 0},
+					{"deactivated_at", bson.D{{"$not", bson.D{{"$gt", int64(0)}}}}},
 				}},
 			}},
 		}},
