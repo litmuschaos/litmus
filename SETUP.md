@@ -48,7 +48,7 @@ chmod +x ./scripts/start-dev.sh
 ```
 
 Note: The script may prompt for your system password (macOS/Linux) to start background services.
-![setup-example](./passwordInput.png)
+![setup-example](images/passwordInput.png)
 
 ### 3. Automatic terminals / services
 
