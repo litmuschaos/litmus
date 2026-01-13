@@ -17,16 +17,15 @@ We welcome contributions of all kinds:
 ### Ask Questions or Discuss Ideas
 - Join our community on [Slack](http://slack.litmuschaos.io) and post in **#litmus** for general questions or **#litmus-dev** for technical discussions.
 
-
-### Set Up Your Local Environment
-- Follow the [Local Setup Guide](SETUP.md) to configure your development environment for contributions.
-
 ### Report Issues or Propose Changes
 - Open a new [GitHub issue](https://github.com/litmuschaos/litmus/issues/new) describing your request, bug, or feature idea.  
 - Check the [good-first-issues](https://github.com/litmuschaos/litmus/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label for beginner-friendly contributions.
 
 ### Set Up Your Development Environment
-- Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)  
+- **One-click automated setup**  
+  Follow the [Local Setup Guide](SETUP.md) to configure the environment automatically using shell scripts.
+- **Manual setup**  
+  Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/) if you prefer to set up and configure the environment yourself.
 - Review [Development Best Practices](https://github.com/litmuschaos/litmus/wiki/Development-Best-Practices)  
 - For Go contributors, read [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
 
