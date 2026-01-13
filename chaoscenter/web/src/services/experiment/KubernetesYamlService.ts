@@ -286,6 +286,33 @@ export class KubernetesYamlService extends ExperimentYamlService {
     }
   }
 
+  async updateFaultStepName(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    faultName: string,
+    stepName: string
+  ): Promise<void> {
+    try {
+      const tx = (await this.db).transaction(ChaosObjectStoreNameMap.EXPERIMENTS, 'readwrite');
+      const store = tx.objectStore(ChaosObjectStoreNameMap.EXPERIMENTS);
+      const experiment = await store.get(key);
+      if (!experiment) return;
+
+      experiment.unsavedChanges = true;
+      const [, steps] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      steps?.forEach(step => {
+        step.forEach(s => {
+          if (s.template === faultName) s.name = stepName;
+        });
+      });
+
+      await store.put({ ...experiment }, key);
+      await tx.done;
+    } catch (_) {
+      this.handleIDBFailure();
+    }
+  }
+
   async updateNodeSelector(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
     nodeSelector: {
@@ -781,7 +808,16 @@ export class KubernetesYamlService extends ExperimentYamlService {
       faultName
     };
 
-    const [templates] = this.getTemplatesAndSteps(manifest);
+    const [templates, steps] = this.getTemplatesAndSteps(manifest);
+
+    // Get step name from workflow steps
+    steps?.forEach(step => {
+      step.forEach(s => {
+        if (s.template === faultName) {
+          faultData.stepName = s.name;
+        }
+      });
+    });
 
     // Get install-chaos-faults template artifacts
     const installTemplateArtifacts = templates?.filter(template => template.name === 'install-chaos-faults')[0].inputs
