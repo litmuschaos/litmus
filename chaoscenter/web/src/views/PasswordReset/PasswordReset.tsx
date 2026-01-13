@@ -9,7 +9,7 @@ import { useStrings } from '@strings';
 import { PASSWORD_REGEX } from '@constants/validation';
 import { User, UpdatePasswordMutationProps, ResponseMessageResponse, UpdatePasswordErrorResponse } from '@api/auth';
 import PasswordInput from '@components/PasswordInput';
-import litmusIcon from '../../images/litmusIcon.svg';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './PasswordReset.module.scss';
 
 interface PasswordResetViewProps {

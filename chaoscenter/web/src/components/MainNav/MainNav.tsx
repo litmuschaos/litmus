@@ -6,7 +6,7 @@ import { Color, FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { useAppStore } from '@context';
 import { useRouteWithBaseUrl } from '@hooks';
-import litmusIcon from '../../images/litmusIcon.svg';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './MainNav.module.scss';
 
 export const LitmusNavItem = (): React.ReactElement => {

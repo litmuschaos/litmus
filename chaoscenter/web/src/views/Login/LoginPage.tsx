@@ -9,7 +9,7 @@ import { useStrings } from '@strings';
 import type { ErrorModel, LoginMutationProps, LoginResponse, GetCapabilitiesOkResponse } from '@api/auth';
 import PasswordInput from '@components/PasswordInput';
 import UserNameInput from '@components/UserNameInput';
-import litmusIcon from '../../images/litmusIcon.svg';
+import litmusIcon from '@images/litmusIcon.svg';
 
 interface LoginForm {
   username: string;
