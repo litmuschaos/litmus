@@ -25,7 +25,7 @@ We welcome contributions of all kinds:
 - **One-click automated setup**  
   Follow the [Local Setup Guide](SETUP.md) to configure the environment automatically using shell scripts.
 - **Manual setup**  
-  Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/) if you prefer to set up and configure the environment yourself.
+  Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide) if you prefer to set up and configure the environment yourself.
 - Review [Development Best Practices](https://github.com/litmuschaos/litmus/wiki/Development-Best-Practices)  
 - For Go contributors, read [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
 
