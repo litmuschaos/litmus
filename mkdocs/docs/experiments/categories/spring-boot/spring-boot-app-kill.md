@@ -169,7 +169,7 @@
       </tr>
       <tr>
         <td> CM_WATCHED_CUSTOM_SERVICES </td>
-        <td> It limits watched packages/classes/methods by providing a comma-seperated list of fully qualified packages(class and/or method names)</td>
+        <td> It limits watched packages/classes/methods by providing a comma-separated list of fully qualified packages(class and/or method names)</td>
         <td> Default is an empty list, which means it will target all services </td>
       </tr>
       <tr>
