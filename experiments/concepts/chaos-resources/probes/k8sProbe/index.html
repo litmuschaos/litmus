@@ -5873,7 +5873,7 @@ It can be executed by setting <code>type</code> as <code>k8sProbe</code> inside 
 <h3 id="present-operation">Present Operation<a class="headerlink" href="#present-operation" title="Permanent link">&para;</a></h3>
 <p>It checks for the presence of kubernetes resource based on GVR and filters (field selectors/labelselectors) provided at <code>probe.k8sProbe/inputs</code>. It can be defined by setting <code>operation</code> to <code>present</code> operation.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># verify the existance of the resource matched with the given inputs inside cluster</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># verify the existence of the resource matched with the given inputs inside cluster</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
 <span class="nt">metadata</span><span class="p">:</span>
