@@ -20,12 +20,13 @@ type SubscriberConfigurations struct {
 }
 
 func GetEndpoint(host string) (string, error) {
+	const apiPath = "/api/query"
 	// returns endpoint from env, if provided by user
 	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
+		return strings.TrimRight(utils.Config.ChaosCenterUiEndpoint, "/") + apiPath, nil
 	}
 
-	return host + "/api/query", nil
+	return strings.TrimRight(host, "/") + apiPath, nil
 }
 
 func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
