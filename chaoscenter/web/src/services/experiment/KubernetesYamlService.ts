@@ -988,8 +988,13 @@ export class KubernetesYamlService extends ExperimentYamlService {
       };
     });
 
-    if (chaosEngine.spec?.experiments?.[0].spec.components?.env)
-      chaosEngine.spec.experiments[0].spec.components.env = envs;
+    const experimentSpec = chaosEngine.spec?.experiments?.[0]?.spec;
+    if (!experimentSpec) return faultData;
+
+    experimentSpec.components = {
+      ...(experimentSpec.components ?? {}),
+      env: envs
+    };
 
     return faultData;
   }
