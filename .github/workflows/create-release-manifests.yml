@@ -70,15 +70,36 @@ jobs:
           
           ./scripts/create-release-manifests.sh "$VERSION"
       
+      - name: Verify files created
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Checking if directory exists: mkdocs/docs/$VERSION"
+          if [ -d "mkdocs/docs/$VERSION" ]; then
+            echo "✅ Directory exists"
+            echo "Files in directory:"
+            ls -lah "mkdocs/docs/$VERSION"
+          else
+            echo "❌ Directory does not exist!"
+            exit 1
+          fi
+      
       - name: Check for changes
         id: check_changes
         run: |
-          if git diff --quiet && git diff --cached --quiet; then
+          VERSION="${{ github.event.inputs.version }}"
+          
+          # Check for any changes (modified, staged, or untracked files)
+          git add -N mkdocs/docs/$VERSION/  # Add untracked files to index without staging content
+          
+          if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard mkdocs/docs/$VERSION/)" ]; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No changes detected"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "Changes detected"
+            echo ""
+            echo "Files created/modified:"
+            git status --short mkdocs/docs/$VERSION/
           fi
       
       - name: Commit and push changes
