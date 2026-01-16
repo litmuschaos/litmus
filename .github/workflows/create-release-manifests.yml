@@ -1,0 +1,164 @@
+name: Create Release Manifests
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 3.25.0)'
+        required: true
+        type: string
+
+jobs:
+  create-release-manifests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for pushing commits, tags, and creating releases
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Version must be in format X.Y.Z (e.g., 3.25.0)"
+            exit 1
+          fi
+          echo "Version format is valid: $VERSION"
+      
+      - name: Extract branch version
+        id: extract_branch
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_VERSION=$(echo "$VERSION" | sed -E 's/^([0-9]+\.[0-9]+)\.[0-9]+$/\1.x/')
+          echo "branch_version=$BRANCH_VERSION" >> $GITHUB_OUTPUT
+          echo "Branch version: $BRANCH_VERSION"
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Create or checkout release branch
+        run: |
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          # Check if branch exists remotely
+          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+            echo "Branch $BRANCH_NAME exists remotely, checking out..."
+            git fetch origin "$BRANCH_NAME"
+            git checkout "$BRANCH_NAME"
+          else
+            echo "Creating new branch $BRANCH_NAME..."
+            git checkout -b "$BRANCH_NAME"
+          fi
+      
+      - name: Run release manifest script
+        run: |
+          chmod +x scripts/create-release-manifests.sh
+          # Run script non-interactively by removing the directory if it exists
+          VERSION="${{ github.event.inputs.version }}"
+          TARGET_DIR="mkdocs/docs/$VERSION"
+          
+          if [ -d "$TARGET_DIR" ]; then
+            echo "Directory $TARGET_DIR already exists, removing it..."
+            rm -rf "$TARGET_DIR"
+          fi
+          
+          ./scripts/create-release-manifests.sh "$VERSION"
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          git add mkdocs/docs/$VERSION/
+          git commit -m "chore: Add release manifests for version $VERSION"
+          git push origin "$BRANCH_NAME"
+          
+          echo "✅ Successfully created and pushed manifests for version $VERSION to branch $BRANCH_NAME"
+      
+      - name: Create Git Tag
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          # Create and push tag
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION"
+          
+          echo "✅ Created and pushed tag: $VERSION"
+      
+      - name: Create GitHub Release
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          target_commitish: release-${{ steps.extract_branch.outputs.branch_version }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          body: |
+            ## Release Manifests for v${{ github.event.inputs.version }}
+            
+            This release includes updated manifests for Litmus version `${{ github.event.inputs.version }}`.
+            
+            ### Changes
+            - Created `mkdocs/docs/${{ github.event.inputs.version }}/` directory
+            - Copied and updated manifest files from `chaoscenter/manifests/`
+            - Updated all version references:
+              - Docker image tags: `ci` → `${{ github.event.inputs.version }}`
+              - VERSION config: `ci` → `${{ github.event.inputs.version }}`
+              - DEFAULT_HUB_BRANCH_NAME: `master` → `${{ steps.extract_branch.outputs.branch_version }}`
+              - WORKFLOW_HELPER_IMAGE_VERSION: `ci` → `${{ github.event.inputs.version }}`
+              - INFRA_COMPATIBLE_VERSIONS: `["ci"]` → `["${{ github.event.inputs.version }}"]`
+            
+            ### Manifest Files
+            - `litmus-getting-started.yaml`
+            - `litmus-installation.yaml`
+            - `litmus-portal-crds.yml`
+            - `litmus-without-resources.yaml`
+            
+            **Branch:** `release-${{ steps.extract_branch.outputs.branch_version }}`
+            
+            **Generated by:** [create-release-manifests workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      
+      - name: Summary
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          echo "## Release Manifest Creation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Branch:** $BRANCH_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Tag:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Manifests Location:** \`mkdocs/docs/$VERSION/\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "📝 Changes have been committed and pushed to the release branch." >> $GITHUB_STEP_SUMMARY
+            echo "🏷️ Git tag \`$VERSION\` has been created and pushed." >> $GITHUB_STEP_SUMMARY
+            echo "🚀 GitHub release has been created with auto-generated release notes." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 [View Release](https://github.com/${{ github.repository }}/releases/tag/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No changes were detected. Manifests may already exist." >> $GITHUB_STEP_SUMMARY
+          fi
