@@ -2,11 +2,11 @@ import React from 'react';
 import cx from 'classnames';
 import { NavLink as Link } from 'react-router-dom';
 import { Text, Layout, Avatar } from '@harnessio/uicore';
-import { Icon } from '@harnessio/icons';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { useAppStore } from '@context';
 import { useRouteWithBaseUrl } from '@hooks';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './MainNav.module.scss';
 
 export const LitmusNavItem = (): React.ReactElement => {
@@ -22,7 +22,7 @@ export const LitmusNavItem = (): React.ReactElement => {
         to={projectScopedPaths.toDashboard}
       >
         <Layout.Vertical flex={{ align: 'center-center' }} spacing="small" padding="medium">
-          <Icon name="chaos-litmuschaos" size={30} />
+          <img src={litmusIcon} alt="Litmus Icon" width={30} height={30} />
           <Text
             font={{ weight: 'semi-bold', align: 'center' }}
             padding={{ bottom: 'xsmall' }}

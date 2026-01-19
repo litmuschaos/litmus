@@ -12,6 +12,7 @@ import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
 import config from '@config';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
@@ -101,7 +102,13 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'spring-boot' || fault.chartName.toLowerCase() === 'k6-loadgen' || fault.chartName.toLowerCase() === 'azure' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' ||
+              fault.chartName.toLowerCase() === 'spring-boot' ||
+              fault.chartName.toLowerCase() === 'k6-loadgen' ||
+              fault.chartName.toLowerCase() === 'azure' ||
+              fault.chartName.toLowerCase() === 'gcp' ||
+              fault.chartName.toLowerCase() === 'aws' ||
+              fault.chartName.toLowerCase() === 'k6-logo' ? (
                 <img
                   src={
                     isDefault === 'true'
@@ -111,16 +118,8 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   alt={`${fault.name} icon`}
                   style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
-              ) : isSpringbootFault ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/spring-boot/spring-boot.png"
-                  alt="spring-boot"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
-                />
               ) : (
-                <Icon size={23} name="chaos-litmuschaos" />
+                <img src={litmusIcon} alt="Litmus Icon" width={23} height={23} />
               )}
 
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
