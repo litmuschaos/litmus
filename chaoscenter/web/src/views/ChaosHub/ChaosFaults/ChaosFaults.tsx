@@ -101,23 +101,19 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'spring-boot' || fault.chartName.toLowerCase() === 'k6-loadgen' || fault.chartName.toLowerCase() === 'azure' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
+              {['kubernetes', 'spring-boot', 'k6-loadgen', 'azure', 'gcp', 'aws', 'k6-logo', 'vmware'].includes(
+                fault.chartName.toLowerCase()
+              ) ? (
                 <img
                   src={
-                    isDefault === 'true'
+                    fault.chartName.toLowerCase() === 'vmware'
+                      ? 'https://hub.litmuschaos.io/api/icon/3.22.0/vmware/vmware.png'
+                      : isDefault === 'true'
                       ? `${config.restEndpoints?.chaosManagerUri}/icon/default/${hubName}/${fault.chartName}/${fault.name}.png`
                       : `${config.restEndpoints?.chaosManagerUri}/icon/${scope.projectID}/${hubName}/${fault.chartName}/${fault.name}.png`
                   }
                   alt={`${fault.name} icon`}
                   style={{ width: 23, height: 23, objectFit: 'contain' }}
-                />
-              ) : isSpringbootFault ? (
-                <img
-                  src="https://hub.litmuschaos.io/api/icon/3.22.0/spring-boot/spring-boot.png"
-                  alt="spring-boot"
-                  width={23}
-                  height={23}
-                  style={{ objectFit: 'contain' }}
                 />
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
