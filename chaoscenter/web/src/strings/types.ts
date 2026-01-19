@@ -709,6 +709,7 @@ export interface StringsMap {
   'probeValidation.version': unknown
   'probes': unknown
   'probesArePassed': unknown
+  'problems': unknown
   'prod': unknown
   'project': unknown
   'projectCreatedByYou': unknown

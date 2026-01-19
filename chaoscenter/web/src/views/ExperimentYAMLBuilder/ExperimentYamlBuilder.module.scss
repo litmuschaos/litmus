@@ -12,3 +12,57 @@
     align-items: center;
   }
 }
+
+.errorConsole {
+  margin-top: var(--spacing-small);
+  border: 1px solid var(--red-200);
+  border-radius: 4px;
+  background-color: var(--red-50);
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.errorConsoleHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+  padding: var(--spacing-small) var(--spacing-medium);
+  background-color: var(--red-100);
+  border-bottom: 1px solid var(--red-200);
+  position: sticky;
+  top: 0;
+}
+
+.errorConsoleTitle {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  color: var(--red-700);
+}
+
+.errorConsoleBody {
+  padding: var(--spacing-small);
+}
+
+.errorItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-small);
+  padding: var(--spacing-xsmall) var(--spacing-small);
+  
+  &:hover {
+    background-color: var(--red-100);
+    border-radius: 2px;
+  }
+  
+  & + & {
+    margin-top: var(--spacing-xsmall);
+  }
+}
+
+.errorMessage {
+  font-size: var(--font-size-small);
+  color: var(--red-700);
+  font-family: 'Roboto Mono', monospace;
+  word-break: break-word;
+  line-height: 1.4;
+}
