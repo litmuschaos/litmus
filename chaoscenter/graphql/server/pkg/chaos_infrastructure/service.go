@@ -36,6 +36,13 @@ const (
 	NamespaceScope string = "namespace"
 )
 
+type InstallationMode string
+
+const (
+	Manifest InstallationMode = "kubernetes"
+	Helm     InstallationMode = "helm"
+)
+
 type Service interface {
 	RegisterInfra(c context.Context, projectID string, input model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(request model.InfraIdentity, r store.StateData) (*model.ConfirmInfraRegistrationResponse, error)
@@ -205,17 +212,34 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
-	manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
-	if err != nil {
-		return nil, err
+	if input.InstallationType == nil {
+		return nil, fmt.Errorf("installation type is required")
 	}
 
-	return &model.RegisterInfraResponse{
-		InfraID:  newInfra.InfraID,
-		Token:    token,
-		Name:     newInfra.Name,
-		Manifest: string(manifestYaml),
-	}, nil
+	switch *input.InstallationType {
+	case string(Manifest):
+		manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
+		if err != nil {
+			return nil, err
+		}
+
+		return &model.RegisterInfraResponse{
+			InfraID:  newInfra.InfraID,
+			Token:    token,
+			Name:     newInfra.Name,
+			Manifest: string(manifestYaml),
+		}, nil
+	case string(Helm):
+		helmCommand := GetHelmCommand(newInfra, fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host))
+		return &model.RegisterInfraResponse{
+			InfraID:     newInfra.InfraID,
+			Token:       token,
+			Name:        newInfra.Name,
+			HelmCommand: helmCommand,
+		}, nil
+	default:
+		return nil, errors.New("invalid installation type")
+	}
 }
 
 // DeleteInfra takes infraIDs and r parameters, deletes the infras from the database and sends a request to the subscriber for clean-up
