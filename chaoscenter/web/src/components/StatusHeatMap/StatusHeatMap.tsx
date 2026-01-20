@@ -36,8 +36,6 @@ export function StatusHeatMap(props: StatusHeatMapProps): React.ReactElement {
 
   function hideIconForStatus(experimentRunStatus: ExperimentRunStatus): boolean {
     switch (experimentRunStatus) {
-      case ExperimentRunStatus.COMPLETED_WITH_PROBE_FAILURE:
-      case ExperimentRunStatus.COMPLETED_WITH_ERROR:
       case ExperimentRunStatus.NA:
         return true;
       default:
@@ -47,7 +45,6 @@ export function StatusHeatMap(props: StatusHeatMapProps): React.ReactElement {
 
   function StatusCell({ execution }: StatusCell): React.ReactElement {
     const { iconName, iconColor, color } = getPropsBasedOnExperimentRunStatus(execution.experimentRunStatus);
-
     return (
       <div
         data-state={execution?.experimentRunStatus?.replace(/ /g, '_').toLowerCase()}
