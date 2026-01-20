@@ -40,7 +40,7 @@ spec:
 
 ### Watch Custom Services
 
-It contains comma seperated list of fully qualified packages(class and/or method names), which limits watched packages/classes/methods. It can be tuned by `CM_WATCHED_CUSTOM_SERVICES` ENV.
+It contains comma separated list of fully qualified packages(class and/or method names), which limits watched packages/classes/methods. It can be tuned by `CM_WATCHED_CUSTOM_SERVICES` ENV.
 
 Use the following example to tune this:
 
