@@ -188,6 +188,7 @@ nav:
           - OpenShift SCC: experiments/concepts/security/openshift-scc.md
       - AWS IAM Integration: experiments/concepts/IAM/awsIamIntegration.md
       - GCP IAM Integration: experiments/concepts/IAM/gcpIamIntegration.md
+      - OIDC Configuration: experiments/concepts/IAM/oidc-configuration.md
     - Litmus FAQ:
       - Contents: experiments/faq/content.md
       - FAQ: 
