@@ -4,7 +4,7 @@ import { useAppStore } from './useAppStore';
 
 // Default image registry configuration
 const DEFAULT_IMAGE_REGISTRY = {
-  name: 'docker.io/litmuschaos',
+  name: 'docker.io',
   repo: 'litmuschaos',
   secret: ''
 } as const;
