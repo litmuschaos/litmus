@@ -29,9 +29,16 @@ type Configuration struct {
 	RestPort                    string   `split_words:"true" default:"8080"`
 	GrpcPort                    string   `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string   `required:"true" split_words:"true"`
-	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	GitUsername                 string   `required:"true" split_words:"true" default:"litmus"`
+	DefaultHubName              string   `required:"true" split_words:"true" default:"Litmus ChaosHub"`
+	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string   `required:"true" split_words:"true"`
+	DefaultHubIsPrivate         bool     `required:"true" split_words:"true" default:"false"`
+	DefaultHubAuthType          string   `split_words:"true"`
+	DefaultHubToken             string   `split_words:"true"`
+	DefaultHubUserName          string   `split_words:"true"`
+	DefaultHubPassword          string   `split_words:"true"`
+	DefaultHubSshPrivateKey     string   `split_words:"true"`
 	CustomChaosHubPath          string   `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string   `split_words:"true" default:"false"`
