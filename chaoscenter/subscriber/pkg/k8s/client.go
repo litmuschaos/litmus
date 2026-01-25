@@ -1,6 +1,8 @@
 package k8s
 
 import (
+	"fmt"
+
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned/typed/workflow/v1alpha1"
 	"k8s.io/client-go/discovery"
@@ -15,10 +17,15 @@ var KubeConfig *string
 // getKubeConfig setup the config for access cluster resource
 func (k8s *k8sSubscriber) GetKubeConfig() (*rest.Config, error) {
 	// Use in-cluster config if kubeconfig path is not specified
-	if *KubeConfig == "" {
+	if *KubeConfig == "" || KubeConfig == nil {
 		return rest.InClusterConfig()
 	}
-	return clientcmd.BuildConfigFromFlags("", *KubeConfig)
+
+	config, err := clientcmd.BuildConfigFromFlags("", *KubeConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build config from kubeconfig: %v", err)
+	}
+	return config, nil
 }
 
 func (k8s *k8sSubscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
