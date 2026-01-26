@@ -59,13 +59,15 @@ type Service interface {
 type infraService struct {
 	infraOperator *dbChaosInfra.Operator
 	envOperator   *dbEnvironments.Operator
+	mongodbOperator mongodb.MongoOperator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator, mongodbOperator mongodb.MongoOperator) Service {
 	return &infraService{
 		infraOperator: infraOperator,
 		envOperator:   envOperator,
+		mongodbOperator: mongodbOperator,
 	}
 }
 
@@ -950,7 +952,7 @@ func updateVersionFormat(str string) (int, error) {
 
 // QueryServerVersion is used to fetch the version of the server
 func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
+	dbVersion, err := config.GetConfig(ctx, in.mongodbOperator, "version")
 	if err != nil {
 		return nil, err
 	}
