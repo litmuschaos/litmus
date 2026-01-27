@@ -604,7 +604,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
 			},
 			wantErr: false,
-		},{
+		}, {
 			name: "success: verifies query filters out removed experiments",
 			args: args{
 				projectID: projectId,
@@ -616,7 +616,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-	
+
 				filterCheck := func(filter interface{}) bool {
 					bsonFilter, ok := filter.(bson.D)
 					if !ok {
