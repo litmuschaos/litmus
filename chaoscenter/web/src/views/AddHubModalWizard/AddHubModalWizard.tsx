@@ -96,7 +96,7 @@ const OverviewStep: React.FC<StepProps<StepData>> = props => {
           props.nextStep?.();
         }}
         validationSchema={Yup.object().shape({
-          name: Yup.string().trim().required('Hub Name is a required field')
+          name: Yup.string().trim().required(getString('hubNameRequired'))
         })}
       >
         {formikProps => {
@@ -191,9 +191,9 @@ const GitConnectionStep: React.FC<
           });
         }}
         validationSchema={Yup.object().shape({
-          repoBranch: Yup.string().trim().required('Hub Branch name is a required field'),
-          repoURL: Yup.string().trim().required('Hub Repo name is a required field'),
-          remoteHub: Yup.string().trim().required('Remote Hub name is a required field')
+          repoBranch: Yup.string().trim().required(getString('hubBranchRequired')),
+          repoURL: Yup.string().trim().required(getString('hubRepoRequired')),
+          remoteHub: Yup.string().trim().required(getString('remoteHubRequired'))
         })}
       >
         {formikProps => {
@@ -238,7 +238,7 @@ const GitConnectionStep: React.FC<
 
                 <FormInput.DropDown
                   name="remoteHub"
-                  label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Remote Hub</Text>}
+                  label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('remoteHubLabel')}</Text>}
                   placeholder={getString('remoteHub')}
                   items={[
                     { label: 'GitHub', value: 'GitHub' },
@@ -255,7 +255,7 @@ const GitConnectionStep: React.FC<
                 {formikProps.values.isPrivate && (
                   <RadioButtonGroup
                     name="type"
-                    label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Select Security Key Type</Text>}
+                    label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('securityKeyType')}</Text>}
                     inline={true}
                     selectedValue={formikProps.values.authType}
                     onChange={(e: FormEvent<HTMLInputElement>) => {
@@ -263,11 +263,11 @@ const GitConnectionStep: React.FC<
                     }}
                     options={[
                       {
-                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>SSH</Text>,
+                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('ssh')}</Text>,
                         value: AuthType.SSH
                       },
                       {
-                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>PAT</Text>,
+                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('pat')}</Text>,
                         value: AuthType.TOKEN
                       }
                     ]}
@@ -278,7 +278,7 @@ const GitConnectionStep: React.FC<
                     name="token"
                     label={
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                        PAT
+                        {getString('pat')}
                       </Text>
                     }
                     placeholder={getString('accessTokenPlaceholder')}
@@ -301,7 +301,7 @@ const GitConnectionStep: React.FC<
                     />
                     <div className={css.textInputContainer}>
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                        SSH Key
+                        {getString('sshKey')}
                       </Text>
                       <TextInput
                         placeholder={getString('sshKey')}

@@ -67,8 +67,8 @@ export default function PendingMembersTableView({
               value: 'Executor'
             },
             {
-              label: 'Viewer',
-              value: 'Viewer'
+              label: getString('viewer'),
+              value: getString('viewer')
             },
             {
               label: 'Owner',
