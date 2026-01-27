@@ -91,6 +91,8 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isSpringbootFault =
+      fault.chartName.toLowerCase() === 'spring-boot' || fault.name.toLowerCase().includes('spring-boot');
     return (
       <Link
         to={{
@@ -101,7 +103,13 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              {fault.chartName.toLowerCase() === 'kubernetes' || fault.chartName.toLowerCase() === 'spring-boot' || fault.chartName.toLowerCase() === 'k6-loadgen' || fault.chartName.toLowerCase() === 'azure' || fault.chartName.toLowerCase() === 'gcp' || fault.chartName.toLowerCase() === 'aws' || fault.chartName.toLowerCase() === 'k6-logo' ? (
+              {fault.chartName.toLowerCase() === 'kubernetes' ||
+              fault.chartName.toLowerCase() === 'spring-boot' ||
+              fault.chartName.toLowerCase() === 'k6-loadgen' ||
+              fault.chartName.toLowerCase() === 'azure' ||
+              fault.chartName.toLowerCase() === 'gcp' ||
+              fault.chartName.toLowerCase() === 'aws' ||
+              fault.chartName.toLowerCase() === 'k6-logo' ? (
                 <img
                   src={
                     isDefault === 'true'
