@@ -32,6 +32,7 @@ export function setUserDetails({
 }: Partial<Omit<UserDetailsProps, 'accountID' | 'accountRole'>>): void {
   if (accessToken) localStorage.setItem('accessToken', accessToken);
   if (projectRole) localStorage.setItem('projectRole', projectRole);
-  if (projectID) localStorage.setItem('projectID', projectID);
+  if (projectID !== null && projectID !== undefined) localStorage.setItem('projectID', projectID);
   if (isInitialLogin !== undefined) localStorage.setItem('isInitialLogin', `${isInitialLogin}`);
 }
+
