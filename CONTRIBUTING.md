@@ -119,7 +119,7 @@ You can choose from a list of sub-dependent repos to contribute to, a few highli
 
 The litmus community will have a weekly contributor sync-up on Tuesdays 16.00-16.30 IST / 12.30-13.00 CEST
 
-- The sync up meeting is held online on [Google Hangouts](https://meet.google.com/uvt-ozaw-bvp)
+- Fill out the [LitmusChaos Meetings invite form](https://lnkd.in/gKAzxN_e) to get your Calendar invite!
 - The release items are tracked in the [release sheet](https://github.com/litmuschaos/litmus/releases).
 
 If you cannot attend, participate asynchronously via Slack or GitHub discussions.
