@@ -47,15 +47,15 @@ func init() {
 	}
 }
 
-func validateVersion() error {
+func validateVersion(mongoOperator mongodb.MongoOperator) error {
 	currentVersion := utils.Config.Version
-	dbVersion, err := config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), mongoOperator, "version")
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
 		err := config.CreateConfig(
-			context.Background(),
+			context.Background(), mongoOperator,
 			&config.ServerConfig{Key: "version", Value: currentVersion},
 		)
 		if err != nil {
@@ -90,9 +90,8 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
-	if err := validateVersion(); err != nil {
+	if err := validateVersion(mongodbOperator); err != nil {
 		log.Fatal(err)
 	}
 
@@ -156,7 +155,7 @@ func main() {
 
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
-	router.GET("/readiness", handlers.ReadinessHandler())
+	router.GET("/readiness", handlers.ReadinessHandler(mongodbOperator))
 
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
