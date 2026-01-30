@@ -3,7 +3,9 @@ package graph
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
+	"github.com/prometheus/client_golang/prometheus"
 
 	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 
@@ -85,6 +87,14 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 			chaosExperimentRunHandler:  *choasExperimentRunHandler,
 			probeService:               probeService,
 		}}
+
+	infra := newInfraCollector(func() []Infra {
+		result, _ := chaosInfrastructureService.ListAll()
+		var infras = []Infra{}
+		copier.Copy(&infras, &result)
+		return infras
+	})
+	prometheus.MustRegister(infra)
 
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)
