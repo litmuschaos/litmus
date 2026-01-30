@@ -117,6 +117,14 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   alt={`${fault.name} icon`}
                   style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
+              ) : fault.chartName.toLowerCase() === 'spring-boot' ? (
+                <img
+                  src="https://hub.litmuschaos.io/api/icon/3.22.0/spring-boot/spring-boot.png"
+                  alt="spring-boot"
+                  width={23}
+                  height={23}
+                  style={{ objectFit: 'contain' }}
+                />
               ) : (
                 <Icon size={23} name="chaos-litmuschaos" />
               )}

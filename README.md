@@ -76,7 +76,7 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ### Community Resources:
 
-Feel free to reach out if you have any queries,concerns, or feature requests
+Feel free to reach out if you have any queries, concerns, or feature requests
 
 - Give us a star ⭐️ - If you are using LitmusChaos or think it is an interesting project, we would love a star ❤️
 
