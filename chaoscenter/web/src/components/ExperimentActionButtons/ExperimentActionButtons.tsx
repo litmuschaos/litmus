@@ -271,7 +271,7 @@ export const EditExperimentButton = ({ experimentID, tooltipProps }: ActionButto
             search: `tab=${StudioTabs.BUILDER}`
           });
         }}
-        permission={PermissionGroup.OWNER}
+        permission={PermissionGroup.EDITOR}
       />
     </div>
   );
