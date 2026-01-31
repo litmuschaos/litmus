@@ -36,6 +36,12 @@ func ReadinessHandler() gin.HandlerFunc {
 			dbFlag = "down"
 		}
 
+		// Return 503 Service Unavailable when database is down
+		if dbFlag == "down" {
+			c.JSON(http.StatusServiceUnavailable, ReadinessAPIStatus{DataBase: dbFlag})
+			return
+		}
+
 		c.JSON(http.StatusOK, ReadinessAPIStatus{DataBase: dbFlag})
 	}
 }
