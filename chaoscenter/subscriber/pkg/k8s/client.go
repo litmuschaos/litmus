@@ -1,6 +1,9 @@
 package k8s
 
 import (
+	"sync"
+	"time"
+
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned/typed/workflow/v1alpha1"
 	"k8s.io/client-go/discovery"
@@ -10,24 +13,55 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-var KubeConfig *string
+var (
+	KubeConfig *string
+
+	// Singleton clientset to avoid creating new clients per request
+	clientsetOnce     sync.Once
+	clientsetInstance *kubernetes.Clientset
+	clientsetErr      error
+)
 
 // getKubeConfig setup the config for access cluster resource
 func (k8s *k8sSubscriber) GetKubeConfig() (*rest.Config, error) {
+	var config *rest.Config
+	var err error
+
 	// Use in-cluster config if kubeconfig path is not specified
 	if *KubeConfig == "" {
-		return rest.InClusterConfig()
+		config, err = rest.InClusterConfig()
+	} else {
+		config, err = clientcmd.BuildConfigFromFlags("", *KubeConfig)
 	}
-	return clientcmd.BuildConfigFromFlags("", *KubeConfig)
-}
 
-func (k8s *k8sSubscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
-	config, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	return kubernetes.NewForConfig(config)
+	// Default QPS=5 and Burst=10 are too low for clusters with 100+ namespaces
+	config.QPS = 50.0
+	config.Burst = 100
+	config.Timeout = 30 * time.Second
+
+	return config, nil
+}
+
+func (k8s *k8sSubscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
+	// This eliminates TCP handshake and TLS negotiation overhead
+	clientsetOnce.Do(func() {
+		config, err := k8s.GetKubeConfig()
+		if err != nil {
+			clientsetErr = err
+			return
+		}
+		clientsetInstance, clientsetErr = kubernetes.NewForConfig(config)
+	})
+
+	if clientsetErr != nil {
+		return nil, clientsetErr
+	}
+
+	return clientsetInstance, nil
 }
 
 // This function returns dynamic client and discovery client
