@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
+FROM registry.access.redhat.com/ubi10/ubi-minimal:10.1
 
 # apply latest patches
 RUN microdnf update --nodocs \
