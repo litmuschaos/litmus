@@ -1172,13 +1172,15 @@ export class KubernetesYamlService extends ExperimentYamlService {
 }
 
 function updateContainerImage(image: string, registry: ImageRegistry | undefined): string {
+  if (!registry?.repo) return image;
+
   // Extract image name + tag from original image
   // Example: docker.io/litmuschaos/litmus-checker:2.11.0
   const parts = image.split('/');
   const lastPart = parts[parts.length - 1]; // litmus-checker:2.11.0
 
   // Build new image
-  const newImage = `${registry?.repo}/${lastPart}`;
+  const newImage = `${registry.repo}/${lastPart}`;
 
   return newImage;
 }
