@@ -112,8 +112,8 @@ jobs:
             git fetch origin "$BRANCH_NAME"
             git checkout "$BRANCH_NAME"
             
-            # Cherry-pick the manifest commit from main
-            COMMIT_SHA=$(git rev-parse origin/main)
+            # Cherry-pick the manifest commit from master
+            COMMIT_SHA=$(git rev-parse origin/master)
             git cherry-pick "$COMMIT_SHA"
           else
             echo "Creating new branch $BRANCH_NAME from current state..."
@@ -167,7 +167,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
-            echo "📝 Manifests have been committed and pushed to the main branch." >> $GITHUB_STEP_SUMMARY
+            echo "📝 Manifests have been committed and pushed to the master branch." >> $GITHUB_STEP_SUMMARY
             echo "📝 Manifests have also been pushed to the release branch." >> $GITHUB_STEP_SUMMARY
             echo "🏷️ Git tag \`$VERSION\` has been created and pushed." >> $GITHUB_STEP_SUMMARY
             echo "🚀 GitHub release has been created with auto-generated release notes." >> $GITHUB_STEP_SUMMARY
