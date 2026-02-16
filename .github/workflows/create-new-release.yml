@@ -20,6 +20,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: master
+          token: ${{ secrets.PERSONAL_TOKEN }}
       
       - name: Validate version format
         run: |
