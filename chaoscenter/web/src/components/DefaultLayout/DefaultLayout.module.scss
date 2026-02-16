@@ -32,7 +32,11 @@ $sub-header-height: 65px;
 }
 
 .leftSideBar {
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
+  position: sticky;
+  top: 0;
+  align-self: stretch;
   border-right: 1px solid var(--grey-200);
 }
 
