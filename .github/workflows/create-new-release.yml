@@ -88,16 +88,16 @@ jobs:
             git status --short mkdocs/docs/$VERSION/
           fi
       
-      - name: Commit and push to main branch
+      - name: Commit and push to master branch
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
           VERSION="${{ github.event.inputs.version }}"
           
           git add mkdocs/docs/$VERSION/
           git commit -m "chore: Add release manifests for version $VERSION"
-          git push origin main
+          git push origin master
           
-          echo "✅ Successfully pushed manifests for version $VERSION to main branch"
+          echo "✅ Successfully pushed manifests for version $VERSION to master branch"
       
       - name: Create or checkout release branch and push
         if: steps.check_changes.outputs.has_changes == 'true'
