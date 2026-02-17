@@ -467,8 +467,14 @@ hypothesis: hypothesis
 id: ID
 idlowerCase: id
 imageRegistry: Image Registry
+imageRegistryNameInvalid: 'Registry name must be a valid hostname (e.g., docker.io, gcr.io, my-registry.example.com:5000)'
+imageRegistryNameRequired: Registry name is required for custom image registry
 imageRegistryUpdateSuccess: Image Registry added successfully
+imageRepoNameInvalid: 'Repository name must contain only lowercase letters, numbers, dots, underscores, slashes, and hyphens'
+imageRepoNameRequired: Repository name is required for custom image registry
 imageSecret: Image Secret
+imageSecretNameInvalid: 'Secret name must be a valid Kubernetes name (lowercase letters, numbers, dots, and hyphens)'
+imageSecretNameRequired: Secret name is required for private image registry
 imageSecretPlaceholder: Enter your Image Secret
 improveResilienceOfTheDeployedService: Improve resilience of the deployed service
 inactive: Inactive
