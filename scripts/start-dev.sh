@@ -52,13 +52,14 @@ check_hosts_file() {
 
 wait_for_mongo() {
     local port=$1
+    local container=$2
     local max_attempts=30
     local attempt=0
     
     echo "Waiting for MongoDB on port $port..."
     while [ $attempt -lt $max_attempts ]; do
-        if docker exec m1 mongo --port "$port" --eval "db.runCommand({ ping: 1 })" &> /dev/null; then
-            echo "MongoDB is ready on port $port"
+        if docker exec "$container" mongo --port "$port" --eval "db.runCommand({ ping: 1 })" &> /dev/null; then
+            echo "MongoDB ($container) is ready on port $port"
             return 0
         fi
         attempt=$((attempt + 1))
@@ -87,7 +88,9 @@ setup_mongodb() {
     docker run -d --net mongo-cluster -p 27017:27017 --name m3 mongo:$MONGO_VERSION mongod --replSet rs0 --port 27017
     
     # Wait for MongoDB to be ready
-    wait_for_mongo 27015
+    wait_for_mongo 27015 m1
+    wait_for_mongo 27016 m2
+    wait_for_mongo 27017 m3
     
     # Initialize replica set
     echo "Initializing replica set..."
