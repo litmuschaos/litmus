@@ -120,9 +120,18 @@ You can choose from a list of sub-dependent repos to contribute to, a few highli
 
 ## Community & Meetings
 
-The litmus community will have a weekly contributor sync-up on Tuesdays 16.00-16.30 IST / 12.30-13.00 CEST
+1. Community Meetings
+- These will be hosted every 3rd Wednesday of every month at  5:30 PM GMT /6:30 PM CEST /10 PM IST
+- These meetings cover community updates, new feature or release announcements, and user/adopter stories. Everyone in the community is welcome to join and participate in discussions.
 
-- The sync up meeting is held online on [Google Hangouts](https://meet.google.com/uvt-ozaw-bvp)
+
+2. Contributor Meetings
+- These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
+- These meetings focus on both technical and non-technical contributions to LitmusChaos. Maintainers, current contributors, and aspiring contributors are encouraged to join to discuss issues, fixes, enhancements, and future contributions.
+
+Fill out the [LitmusChaos Meetings invite form](https://forms.gle/qawjtFUeL431jmpv7) to get your Calendar invite!
+
 - The release items are tracked in the [release sheet](https://github.com/litmuschaos/litmus/releases).
+- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 
 If you cannot attend, participate asynchronously via Slack or GitHub discussions.
