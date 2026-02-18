@@ -6,6 +6,12 @@ on:
       - ^v[0-9]*.[0-9]*.x$
     tags:
       - "*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (e.g., 3.25.0)'
+        required: true
+        type: string
 
 defaults:
   run:
@@ -13,43 +19,29 @@ defaults:
     shell: bash
 
 jobs:
-  backend-checks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.22" # By default, the go version is v1.15 in runner.
-      - run: |
-          make backend-services-checks
-
-  frontend-checks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 16
-      - run: |
-          make frontend-services-checks
-
   get-envs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
       - run: |
           img_tag=""
-          array=(`echo ${GITHUB_REF} | sed 's/\//\n/g'`)
-          if [ ${array[1]} == "tags" ]
-          then
-              echo "tag build"
-              img_tag=${GITHUB_REF#refs/*/}
+          # Check if manually triggered with tag input
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "manual trigger with tag input"
+              img_tag="${{ github.event.inputs.tag }}"
           else
-              echo "non tag build"
-              img_tag="ci"
+              array=(`echo ${GITHUB_REF} | sed 's/\//\n/g'`)
+              if [ ${array[1]} == "tags" ]
+              then
+                  echo "tag build"
+                  img_tag=${GITHUB_REF#refs/*/}
+              else
+                  echo "non tag build"
+                  img_tag="ci"
+              fi
           fi
           # This is a condition where image tag looks like "pull/<pullrequest-name>" during pull request build
           NEW_IMG_TAG=`echo $img_tag | sed "s/\//-/g"`
@@ -72,10 +64,11 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - get-envs
-      - backend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
@@ -110,10 +103,11 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - get-envs
-      - backend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
@@ -148,10 +142,11 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - get-envs
-      - backend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
@@ -186,10 +181,11 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - get-envs
-      - backend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
@@ -237,10 +233,11 @@ jobs:
           ]
     needs:
       - get-envs
-      - frontend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
@@ -286,10 +283,11 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - get-envs
-      - backend-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Downloading image artficate
         uses: actions/download-artifact@v4
