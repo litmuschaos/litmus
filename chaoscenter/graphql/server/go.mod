@@ -16,7 +16,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/litmuschaos/chaos-operator v0.0.0-20240601063404-e96a7ee7f1f7
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71
-	github.com/mrz1836/go-sanitize v1.3.2
+	github.com/mrz1836/go-sanitize v1.3.3
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
