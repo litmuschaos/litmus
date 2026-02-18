@@ -22,7 +22,7 @@
     }
 
     &[data-state='completed_with_error'] {
-      background-color: var(--orange-500);
+      background-color: var(--orange-100);
       &:hover,
       &:focus {
         box-shadow: var(--white) 0px 0px 0px 1px, var(--orange-100) 0px 0px 0px 2px;
@@ -30,7 +30,7 @@
     }
 
     &[data-state='completed_with_probe_failure'] {
-      background-color: var(--orange-500);
+      background-color: var(--orange-100);
       &:hover,
       &:focus {
         box-shadow: var(--white) 0px 0px 0px 1px, var(--orange-100) 0px 0px 0px 2px;
