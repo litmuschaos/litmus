@@ -73,9 +73,6 @@ rules:
     resources: [ "deployments", "daemonsets", "replicasets", "statefulsets" ]
     verbs: [ "get", "list" ]
 
-  - apiGroups: [ "batch" ]
-    resources: [ "jobs" ]
-    verbs: [ "get", "list" ]
   - apiGroups: [ "argoproj.io" ]
     resources:
       [
