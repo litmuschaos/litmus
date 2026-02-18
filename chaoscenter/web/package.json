@@ -108,7 +108,7 @@
     "yaml": "^2.1.0",
     "yaml-sort": "^1.2.1",
     "yup": "^0.32.11",
-    "zx": "^5.3.0"
+    "zx": "^8.8.5"
   },
   "devDependencies": {
     "@apollo/react-testing": "^4.0.0",
