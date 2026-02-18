@@ -28,6 +28,8 @@ interface RightSideBarViewV2Props extends Partial<RefetchExperiments>, Partial<R
   isCronEnabled?: boolean;
   setIsCronEnabled?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   isEditMode?: boolean;
+  isExperimentRunning?: boolean;
+  runDisabled?: boolean;
 }
 
 function RightSideBarV2({
@@ -40,6 +42,8 @@ function RightSideBarV2({
   isEditMode,
   isCronEnabled,
   setIsCronEnabled,
+  isExperimentRunning,
+  runDisabled,
   refetchExperiments,
   refetchExperimentRuns
 }: RightSideBarViewV2Props): React.ReactElement {
@@ -70,7 +74,9 @@ function RightSideBarV2({
   }, [experimentList]);
 
   const { getString } = useStrings();
-  const showStopButton = phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
+  const showStopButton = isEditMode
+    ? isExperimentRunning // In edit mode, only rely on isExperimentRunning prop
+    : isExperimentRunning || phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
 
   const showEnableDisableCronButton =
     experimentType && experimentType === ExperimentType.CRON && isCronEnabled !== undefined;
@@ -158,7 +164,7 @@ function RightSideBarV2({
                 tooltipProps={{ disabled: true }}
                 experimentID={experimentID}
                 refetchExperiments={refetchExperiments}
-                // buttonProps={{ disabled: phase === ExperimentRunStatus.QUEUED }}
+                disabled={Boolean(runDisabled)}
               />
               <Text
                 style={{ textAlign: 'center' }}
