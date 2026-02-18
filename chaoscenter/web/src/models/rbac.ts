@@ -1,7 +1,8 @@
 export enum PermissionGroup {
   OWNER = 'Owner',
   Executor = 'Executor',
-  VIEWER = 'Viewer'
+  VIEWER = 'Viewer',
+  EDITOR = 'Editor'
 }
 
 export enum ResourceCategory {

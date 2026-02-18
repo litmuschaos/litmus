@@ -12,6 +12,14 @@ export function usePermissions(props: UserPermissionsProps): boolean {
   if (projectRole) {
     if (projectRole === PermissionGroup.OWNER) {
       return false;
+    } else if (projectRole === PermissionGroup.EDITOR) {
+      if (
+        permission === PermissionGroup.EDITOR ||
+        permission === PermissionGroup.Executor ||
+        permission === PermissionGroup.VIEWER
+      ) {
+        return false;
+      }
     } else if (projectRole === PermissionGroup.Executor) {
       if (permission === PermissionGroup.Executor || permission === PermissionGroup.VIEWER) {
         return false;
