@@ -35,4 +35,3 @@ export function setUserDetails({
   if (projectID !== null && projectID !== undefined) localStorage.setItem('projectID', projectID);
   if (isInitialLogin !== undefined) localStorage.setItem('isInitialLogin', `${isInitialLogin}`);
 }
-

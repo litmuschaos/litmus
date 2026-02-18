@@ -136,10 +136,7 @@ const OverviewStep: React.FC<
         }
       }).then(result => {
         if (result.data?.validateUniqueProbe === false) {
-          formikProps.setFieldError(
-            'name',
-            `The name ${formikProps.values.name} is not unique and was already used before, please provide a unique name`
-          );
+          formikProps.setFieldError('name', getString('probeNameNotUnique', { name: formikProps.values.name }));
         } else {
           props.nextStep?.();
         }
@@ -773,8 +770,15 @@ const TuneDetailsStep: React.FC<
         {props.formData.infrastructureType === InfrastructureType.KUBERNETES ? (
           <>
             {/* Probe details for Kubernetes HTTP probe */}
-            <FormInput.Text name="kubernetesHTTPProperties.url" label={'URL'} placeholder={'http://localhost:8080'} />
-            <FormInput.Toggle name="kubernetesHTTPProperties.insecureSkipVerify" label={'Insecure Skip Verify'} />
+            <FormInput.Text
+              name="kubernetesHTTPProperties.url"
+              label={getString('url')}
+              placeholder={'http://localhost:8080'}
+            />
+            <FormInput.Toggle
+              name="kubernetesHTTPProperties.insecureSkipVerify"
+              label={getString('skipCertificateChecks')}
+            />
             <FormInput.Select
               name={'kubernetesHTTPProperties.methodDropdown'}
               value={
@@ -806,7 +810,7 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.get.responseCode"
-                  label={'Response Code'}
+                  label={getString('responseCode')}
                   placeholder={'200'}
                 />
               </>
@@ -814,17 +818,17 @@ const TuneDetailsStep: React.FC<
               <>
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.contentType"
-                  label={'Content Type'}
+                  label={getString('contentType')}
                   placeholder={'Content type for HTTP body data'}
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.body"
-                  label={'Body'}
+                  label={getString('body')}
                   placeholder={'HTTP body for POST request'}
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.bodyPath"
-                  label={'Body Path'}
+                  label={getString('bodyPath')}
                   placeholder={'Contains filePath, which contains HTTP body'}
                 />
                 <FormInput.Select
@@ -838,7 +842,7 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.responseCode"
-                  label={'Response Code'}
+                  label={getString('responseCode')}
                   placeholder={'200'}
                 />
               </>
@@ -860,7 +864,7 @@ const TuneDetailsStep: React.FC<
           <>
             <FormInput.TextArea
               name="kubernetesCMDProperties.command"
-              label={'Command'}
+              label={getString('command')}
               placeholder={'Command to be executed'}
             />
 
@@ -912,14 +916,14 @@ const TuneDetailsStep: React.FC<
               />
               <FormInput.Text
                 name="kubernetesCMDProperties.comparator.value"
-                label={'Value'}
+                label={getString('value')}
                 style={{ width: '50%' }}
                 placeholder={'Relative value for criteria'}
               />
             </Layout.Horizontal>
 
             <Switch
-              label="Source"
+              label={getString('source')}
               checked={isSourceSelected}
               onChange={event => {
                 setIsSourceSelected(prev => !prev);
@@ -983,17 +987,17 @@ const TuneDetailsStep: React.FC<
       <div>
         <FormInput.Text
           name="promProperties.endpoint"
-          label={'Prometheus endpoint'}
+          label={getString('prometheusEndpoint')}
           placeholder={'http://localhost:8000'}
         />
         <FormInput.TextArea
           name="promProperties.query"
-          label={'Prometheus Query'}
+          label={getString('prometheusQuery')}
           placeholder={'Query to get promethus metrics'}
         />
         <FormInput.Text
           name="promProperties.queryPath"
-          label={'Prometheus Query Path'}
+          label={getString('prometheusQueryPath')}
           placeholder={'FilePath, which contains Prometheus Query'}
         />
         <Divider />
@@ -1003,17 +1007,17 @@ const TuneDetailsStep: React.FC<
           padding={{ top: 'medium', bottom: 'medium' }}
           color={Color.GREY_500}
         >
-          Prometheus Data Comparison
+          {getString('prometheusDataComparison')}
         </Text>
         <FormInput.Select
           name="promProperties.comparator.type"
           label={getString('type')}
           onChange={selected => (promComparatorType.current = selected.value as string)}
-          placeholder="Type of data"
+          placeholder={getString('typeOfData')}
           items={[
-            { label: 'Int', value: 'int' },
-            { label: 'Float', value: 'float' },
-            { label: 'String', value: 'string' }
+            { label: getString('dataTypeInt'), value: 'int' },
+            { label: getString('dataTypeFloat'), value: 'float' },
+            { label: getString('dataTypeString'), value: 'string' }
           ]}
         />
         <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
@@ -1044,7 +1048,7 @@ const TuneDetailsStep: React.FC<
           />
           <FormInput.Text
             name="promProperties.comparator.value"
-            label={'Value'}
+            label={getString('value')}
             style={{ width: '50%' }}
             placeholder={'Relative value for criteria'}
           />
@@ -1052,7 +1056,6 @@ const TuneDetailsStep: React.FC<
       </div>
     );
   };
-
   /**
    * Function to retrieve K8S details
    * @returns K8S details for K8S probes
@@ -1060,17 +1063,29 @@ const TuneDetailsStep: React.FC<
   const k8sRenderer = (): React.ReactElement => {
     return (
       <div>
-        <FormInput.Text name="k8sProperties.group" label={'Kubernetes Resource Group'} placeholder={'Group Name'} />
-        <FormInput.Text name="k8sProperties.version" label={'Version'} placeholder={'v1alpha1'} />
-        <FormInput.Text name="k8sProperties.resource" label={'Resource'} placeholder={'Kind of Resource'} />
+        <FormInput.Text name="k8sProperties.group" label={getString('k8sResourceGroup')} placeholder={'Group Name'} />
+        <FormInput.Text name="k8sProperties.version" label={getString('version')} placeholder={'v1alpha1'} />
+        <FormInput.Text name="k8sProperties.resource" label={getString('resource')} placeholder={'Kind of Resource'} />
         <FormInput.Text
           name="k8sProperties.resourceNames"
-          label={'Resource Names'}
+          label={getString('resourceNames')}
           placeholder={'Resource Name using comma seperated values'}
         />
-        <FormInput.Text name="k8sProperties.namespace" label={'Namespace'} placeholder={'Resource Namespace'} />
-        <FormInput.Text name="k8sProperties.fieldSelector" label={'Field Selector'} placeholder={'Field Selector'} />
-        <FormInput.Text name="k8sProperties.labelSelector" label={'Label Selector'} placeholder={'Label Selector'} />
+        <FormInput.Text
+          name="k8sProperties.namespace"
+          label={getString('namespace')}
+          placeholder={'Resource Namespace'}
+        />
+        <FormInput.Text
+          name="k8sProperties.fieldSelector"
+          label={getString('fieldSelector')}
+          placeholder={'Field Selector'}
+        />
+        <FormInput.Text
+          name="k8sProperties.labelSelector"
+          label={getString('labelSelector')}
+          placeholder={'Label Selector'}
+        />
         <FormInput.Select
           name="k8sProperties.operation"
           label={getString('operation')}

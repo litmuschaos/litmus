@@ -91,6 +91,8 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   };
 
   const FaultCard = (fault: Fault): React.ReactElement => {
+    const isSpringbootFault =
+      fault.chartName.toLowerCase() === 'spring-boot' || fault.name.toLowerCase().includes('spring-boot');
     return (
       <Link
         to={{

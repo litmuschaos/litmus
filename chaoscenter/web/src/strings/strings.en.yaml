@@ -76,8 +76,15 @@ blankCanvasDescription: >-
   experiment.
 blankCanvasTitle: Select and arrange faults from ChaosHubs to create your desire sequence.
 blobLogsNotAvailable: Logs are not available for this node.
+body: Body
+bodyPath: Body Path
 branch: Branch
 cancel: Cancel
+cannotDeleteEnvironment: Cannot Delete Environment
+cannotDeleteEnvironmentDesc: >-
+  The delete operation could not be completed as {{environmentID}} is being
+  referred to by other chaos infrastructures, please delete them first before
+  deleting the environment.
 cannotPushToDefault: Cannot push experiment to default ChaosHub
 cannotReRun: Cannot re-run an already running experiment
 changePassword: Change Password
@@ -128,6 +135,7 @@ chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
 chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
+clear: Clear
 clearSearch: Clear search
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
@@ -161,6 +169,7 @@ command: Command
 comparator: Comparator
 comparisonCriteria: Comparison Criteria
 completed: Completed
+conditionalExecution: Conditional Execution
 configure: Configure
 configureChaosInfrastructure: Configure Chaos Infrastructure
 configureDetails: Configure Details
@@ -170,14 +179,9 @@ confirmPassword: Confirm Password
 confirmText: Are you sure you want to proceed?
 connectChaosHub: Connect ChaosHub
 connectHub: Connect Hub
-connectInfraKubernetes: >-
-  Open your target cluster and run the following command to connect to your
-  kubernetes infrastructure
-connectInfraTooltip: >-
-  Note - It seems the cluster you have selected already has a cluster scope
-  chaos access on it, either remove it or continue with namespace mode.
+connectInfraKubernetes: Connect your Kubernetes infrastructure to LitmusChaos
+connectInfraTooltip: Connect your infrastructure to LitmusChaos
 connected: Connected
-connectingChaosHub: Connecting ChaosHub
 connectionModal:
   method: Select method of connection
   options:
@@ -189,6 +193,7 @@ connectionModal:
       text: Connect other repo
 connectionStatus: Connection Status
 consoleLogs: Console Logs
+contentType: Content-Type
 continue: Continue
 copiedToClipboard: Copied to clipboard
 copyPrompt: >-
@@ -232,6 +237,10 @@ customValueText: All YAML files will use the custom values.
 customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
+data: Data
+dataTypeFloat: Float
+dataTypeInt: Int
+dataTypeString: String
 dateExecuted: Date Executed
 dayOfMonthLabel: Day of month
 dayOfWeekLabel: Day of week
@@ -348,6 +357,7 @@ environmentDescription: >-
   An environment is the place where you will deploy your cluster for chaos
   testing
 environmentError: It seems there was an error fetching the Environment Details.
+environmentName: Environment Name
 environmentNameIsRequired: Environment Name is a required field
 environmentType: Environment Type
 environments: Environments
@@ -457,10 +467,13 @@ httpProbeDetails: >-
   status. It supports http Get and Post methods.
 httpProbeTitle: Query health/downstream URLs
 hubAccess: Hub Access
+hubBranchRequired: Hub Branch name is a required field
 hubConnectedSuccessfully: Hub Connected Successfully
 hubDeletedSuccessfully: Hub Deleted Successfully
 hubEditedSuccessfully: Hub Edited Successfully
 hubName: Hub Name
+hubNameRequired: Hub Name is a required field
+hubRepoRequired: Hub Repo name is a required field
 hubRepositoryBranch: Hub Repository Branch
 hubRepositoryURL: Repository URL
 hypothesis: hypothesis
@@ -482,6 +495,13 @@ inactiveTooltip: >-
   This infrastructure is Inactive as your deployment may have encountered a
   problem. Please check the deployment logs
 infraName: Infrastructure Name
+infraNameValidationLowercase: >-
+  Chaos Infrastructure Name can only contain lowercase letters, numbers and
+  dashes
+infraNameValidationMaxLength: Chaos Infrastructure Name can have a max length of 50 characters
+infraNameValidationNoEndDash: Chaos Infrastructure Name can not end with -
+infraNameValidationNoStartDash: Chaos Infrastructure Name can not start with -
+infraNameValidationRequired: Chaos Infrastructure Name is required!
 infrastructure: Infrastructure
 infrastructureCommand: >-
   Run the following command to apply the Chaos infrastructure to your Kubernetes
@@ -494,11 +514,13 @@ infrastructureStates: Learn more about the states of Infrastructure
 infrastructureType: Infrastructure type
 infrastructures: Infrastructures
 initialDelay: Initial Delay
+initialDelaySec: Initial Delay (sec)
 initialDelaySeconds: Initial Delay Seconds
 insecureSkipVerify: Insecure skip verify
 installYaml: Install Chaos Infrastructure using YML
 interval: Interval
 intervalOptional: Interval (Optional)
+intervalSec: Interval (sec)
 invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
@@ -522,7 +544,9 @@ k8sProbeDetails: >-
   Kubernetes Dynamic Client to achieve this. It supports create, delete, present
   and absent operations.
 k8sProbeTitle: Perform CRUD operations against native & custom Kubernetes resources
+k8sResourceGroup: Kubernetes Resource Group
 key: Key
+keyIsRequired: Key is required
 kubectl: Kubectl
 kubernetes: Kubernetes
 kubernetesChaosInfrastructureClusterScopeDeleteStepTwo: 2. Delete the remaining components
@@ -658,12 +682,12 @@ noDataCV: No Data
 noDataToDisplay: No data to display
 noDescriptionProvided: No description provided
 noEnvironmentFound: No Environments found
-noEnvironmentFoundNewMessage: >-
-  An environment represents where you are installing your chaos infrastructure 
-  and acts as an additional level of abstraction for the same.
 noEnvironmentFoundMessage: >-
   No Environments found in this project, click on 'New Environment' to add
   environments.
+noEnvironmentFoundNewMessage: >-
+  An environment represents where you are installing your chaos infrastructure 
+  and acts as an additional level of abstraction for the same.
 noExpFound: No Predefined Chaos Experiments found using this Fault.
 noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
@@ -737,6 +761,7 @@ objective: Objective
 objectives: Objectives
 observe: Observe
 ofEvery: of every
+ok: OK
 oldPassword: Old Password
 'on': 'On'
 onThe: on the
@@ -765,6 +790,7 @@ passwordValidation: >-
   Password must contain at least one uppercase letter, one lowercase letter, one
   number and one special character
 passwordsDoNotMatch: Passwords do not match
+pat: PAT
 pauseRun: Pause Run
 pending: Pending
 pendingInvitationsNotAvailableMessage: No pending invitations present
@@ -773,6 +799,7 @@ pendingMembers: Pending members
 pendingTime: >-
   It may take 3-5 minutes after applying the manifest for the infrastructure to
   be connected.
+permissions: Permissions
 phase: Phase
 platform: Platform
 pleaseComplete: Please complete all the steps
@@ -780,7 +807,9 @@ pleaseSelectLeastOneExperiment: Please select at least one experiment
 pleaseSpecifyYAMLValues: Please specify the values in the YAML script
 points: point(s)
 pollingInterval: Polling Interval
+pollingIntervalSec: Polling Interval (sec)
 preProd: Pre-Prod
+preProduction: Pre-Production
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
 previous: Previous
@@ -818,6 +847,9 @@ probeModes:
     check.
   SOTVerbose: Start of Test (SOT)
 probeName: Probe Name
+probeNameNotUnique: >-
+  The name {{name}} is not unique and was already used before, please provide a
+  unique name
 probeNotAttachedToRef: >-
   is not attached to a proper reference, please add it to annotations as
   probeRef
@@ -830,6 +862,8 @@ probeResultsInPastRuns: Probe results in the past 10 runs
 probeStatus: Probe Status
 probeSuccessPercentage: Probe Success Percentage
 probeSummary: Probe Summary
+probeTimeoutMs: Probe Timeout (ms)
+probeTimeoutSec: Probe Timeout (sec)
 probeType: Probe Type
 probeTypes:
   cmdProbe: Command Probe
@@ -864,6 +898,7 @@ probeValidation:
 probes: Probes
 probesArePassed: probes are passed
 prod: Prod
+production: Production
 project: Project
 projectCreatedByYou: Your Projects
 projectDashboard:
@@ -891,6 +926,10 @@ promProbeDetails: >-
   satisfies the specified criteria. A PromQL query needs to be provided, whose
   outcome is then used for the probe validation.
 promProbeTitle: Execute promql queries and match prometheus metrics for specific criteria
+prometheusDataComparison: Prometheus Data Comparison
+prometheusEndpoint: Prometheus Endpoint
+prometheusQuery: Prometheus Query
+prometheusQueryPath: Prometheus Query Path
 properties: Properties
 provideTargetApplicationDetails: Provide target application details where you want to induce the chaos
 public: Public
@@ -919,6 +958,8 @@ registry: Registry
 registryName: Registry Name
 registryType: Registry Type
 remoteHub: Select Remote hub
+remoteHubLabel: Remote Hub
+remoteHubRequired: Remote Hub name is a required field
 remoteRepo: Remote Repository
 remove: Remove
 removeMember: Remove Member
@@ -933,6 +974,7 @@ repository: Repository
 required: Required
 rerun: Rerun
 resend: Resend
+reset: Reset
 resetFilters: Reset Filters
 resetPassword: Reset Password
 resilienceOverview: Resilience Overview
@@ -1007,6 +1049,7 @@ seeAllChaosHubs: See All ChaosHubs
 seeAllChaosInfrastructures: See All Infrastructures
 seeAllEnvironments: See All Environments
 seeAllFaults: See All Faults
+select: Select
 selectAProbe: Select a Probe
 selectAppKind: Select App Kind
 selectAppLabel: Select App Label
@@ -1025,6 +1068,7 @@ selectMethod: Select Method GET / POST
 selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
+selectSchedule: Select Schedule
 selectTimeframe: Select time frame
 selectYourProbe: Select your chaos probe
 selectYourProbeType: Select your probe type
@@ -1050,6 +1094,7 @@ signIn: Sign In
 signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
+skipCertificateChecks: Skip certificate checks
 sortDirection: Sort Direction
 sortField: Sort Field
 source: Source
@@ -1135,11 +1180,13 @@ totalChaosInfrastructures: Total Infrastructures
 totalEnvironments: Total Environments
 totalExp: Total Experiments
 totalExperiments: Total Faults in Execution
+totalMembers: Total Members
 totalPendingInvitations: Total Pending Invitations
 totalRuns: Total Runs
 totalUsers: Total Users
 triggeredBy: Triggered by
 troubleshooting: Troubleshooting
+tryAgain: Try again
 tuneFault: Tune Fault
 tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
@@ -1148,6 +1195,7 @@ type: Type
 typeOfData: Type of data
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
+unsavedChanges: Unsaved Changes
 update: Update
 updatePassword: Update Password
 updatedAt: Updated at
@@ -1213,3 +1261,6 @@ yamlBuilder:
     noSnippetsFound: No snippets found.
   yamlError: Invalid or malformed YAML. Please fix the YAML and try again.
 yearlyTabTitle: Yearly
+zoomIn: Zoom In
+zoomOut: Zoom Out
+zoomToFit: Zoom to Fit

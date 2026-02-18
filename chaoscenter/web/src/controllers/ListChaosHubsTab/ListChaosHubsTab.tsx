@@ -50,7 +50,7 @@ export default function ListChaosHubsTabController({ onClose }: ListChaosHubsTab
         <ExpandingSearchInput
           className={css.searchInput}
           alwaysExpanded
-          placeholder="Search"
+          placeholder={getString('search')}
           onChange={text => setSearchText(text.trim())}
         />
         <MultiSelectDropDown

@@ -32,7 +32,7 @@ export default function StudioActionButtons({
     <Layout.Horizontal spacing={'small'} flex={{ alignItems: 'center' }}>
       {hasUnsavedChangesInURL && (
         <Text color={Color.ORANGE_600} font={{ size: 'small' }} className={css.tagRender}>
-          Unsaved Changes
+          {getString('unsavedChanges')}
         </Text>
       )}
       <RbacButton
