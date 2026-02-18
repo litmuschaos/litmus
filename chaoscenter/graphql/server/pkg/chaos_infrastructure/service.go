@@ -1043,7 +1043,12 @@ func (in *infraService) SendInfraEvent(eventType, eventName, description string,
 	r.Mutex.Lock()
 	if r.InfraEventPublish != nil {
 		for _, observer := range r.InfraEventPublish[infra.ProjectID] {
-			observer <- &newEvent
+			// Use non-blocking send to prevent deadlock if channel buffer is full
+			select {
+			case observer <- &newEvent:
+			default:
+				// Channel full or no receiver, skip to prevent blocking
+			}
 		}
 	}
 	r.Mutex.Unlock()
