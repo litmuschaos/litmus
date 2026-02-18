@@ -14,6 +14,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/common"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/sirupsen/logrus"
@@ -327,42 +328,41 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 	fetchExperimentDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperiments"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$and", bson.A{
-								bson.D{
-									{"$eq", bson.A{"$infra_id", "$$infraID"}},
-								},
-								bson.D{
-									{"$eq", bson.A{"$is_removed", false}},
-								},
-							}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"exp_run_count", bson.D{
-							{"$sum", "$total_experiment_runs"},
-						}},
-						{"last_run_timestamp", bson.D{
-							{"$max", "$updated_at"},
-						}},
-						{"experiments_count", bson.D{
-							{"$sum", 1},
-						},
-						},
-					}},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "experimentDetails"},
 		}},
 	}
+
 	pipeline = append(pipeline, fetchExperimentDetailsStage)
+
+	matchStage := bson.D{
+		{"$match", bson.D{
+			{"experimentDetails.is_removed", false},
+		}},
+	}
+
+	pipeline = append(pipeline, matchStage)
+
+	addExpDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"experimentDetails", bson.A{
+				bson.D{
+					{"exp_run_count", bson.D{
+						{"$sum", "$experimentDetails.total_experiment_runs"},
+					}},
+					{"last_run_timestamp", bson.D{
+						{"$max", "$experimentDetails.updated_at"},
+					}},
+					{"experiments_count", bson.D{
+						{"$sum", 1},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addExpDetailsFieldsStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -587,89 +587,79 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	fetchRunDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperimentRuns"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
-						}},
-					}},
-				},
-
-				bson.D{
-					{"$group", bson.D{
-						{"_id", nil},
-						{"exp_run_count", bson.D{
-							{"$sum", 1},
-						}},
-						{"last_run_timestamp", bson.D{
-							{"$last", "$updated_at"},
-						}},
-					}},
-				},
-				bson.D{
-					{"$project", bson.D{
-						{"_id", 0},
-					}},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "expRunDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchRunDetailsStage)
 
+	addExpRunDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"expRunDetails", bson.A{
+				bson.D{
+					{"exp_run_count", bson.D{
+						{"$size", "$expRunDetails"},
+					}},
+					{"last_run_timestamp", bson.D{
+						{"$max", "$expRunDetails.updated_at"},
+					}},
+				},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, addExpRunDetailsFieldsStage)
+
 	fetchExperimentDetailsStage := bson.D{
 		{"$lookup", bson.D{
 			{"from", "chaosExperiments"},
-			{"let", bson.D{{"infraID", "$infra_id"}}},
-			{"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
-						}},
-					}},
-				},
-				bson.D{
-					{"$count", "experiments_count"},
-				},
-			}},
+			{"localField", "infra_id"},
+			{"foreignField", "infra_id"},
 			{"as", "experimentDetails"},
 		}},
 	}
 
 	pipeline = append(pipeline, fetchExperimentDetailsStage)
 
-	//Pagination
-	paginatedInfras := bson.A{
-		fetchExperimentDetailsStage,
-	}
-
-	if request != nil {
-		if request.Pagination != nil {
-			paginationSkipStage := bson.D{
-				{"$skip", request.Pagination.Page * request.Pagination.Limit},
-			}
-			paginationLimitStage := bson.D{
-				{"$limit", request.Pagination.Limit},
-			}
-
-			paginatedInfras = append(paginatedInfras, paginationSkipStage, paginationLimitStage)
-		}
-	}
-
-	// Add two stages where we first count the number of filtered workflow and then paginate the results
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_filtered_infras", bson.A{
-				bson.D{{"$count", "count"}},
+	addExpDetailsFieldsStage := bson.D{
+		{"$addFields", bson.D{
+			{"experimentDetails", bson.A{
+				bson.D{
+					{"experiments_count", bson.D{
+						{"$size", "$experimentDetails"},
+					}},
+				},
 			}},
-			{"infras", paginatedInfras},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	pipeline = append(pipeline, addExpDetailsFieldsStage)
+
+	// Pagination or adding a default limit of 15 if pagination not provided
+	_, skip, limit := common.CreatePaginationStage(request.Pagination)
+
+	// Count total project and get top-level document to array
+	countStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+			{"total_filtered_infras", bson.D{{"$sum", 1}}},
+			{"infras", bson.D{{"$push", "$$ROOT"}}},
+		}},
+	}
+
+	// Paging results
+	pagingStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"total_filtered_infras", 1},
+			{"infras", bson.D{
+				{"$slice", bson.A{"$infras", skip, limit}},
+			}},
+		}}}
+
+	pipeline = append(pipeline, countStage, pagingStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -776,8 +766,8 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	}
 
 	totalFilteredInfrasCounter := 0
-	if len(infras) > 0 && len(infras[0].TotalFilteredInfras) > 0 {
-		totalFilteredInfrasCounter = infras[0].TotalFilteredInfras[0].Count
+	if len(infras) > 0 && infras[0].TotalFilteredInfras > 0 {
+		totalFilteredInfrasCounter = infras[0].TotalFilteredInfras
 	}
 
 	output := model.ListInfraResponse{
@@ -814,43 +804,43 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 		}},
 	}
 
-	// Group by infra status and count their total number by each group
-	groupByInfraStatusStage := bson.D{
-		{
-			"$group", bson.D{
-				{"_id", "$is_active"},
-				{"count", bson.D{
-					{"$sum", 1},
+	// Group by infra status, confirmed stage and count their total number by each group
+	groupByStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+
+			// Count for active status
+			{"total_active_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_active", true}}}, 1, 0}},
 				}},
-			},
-		},
-	}
-
-	// Group by infra confirmed stage and count their total number by each group
-	groupByInfraConfirmedStage := bson.D{
-		{
-			"$group", bson.D{
-				{"_id", "$is_infra_confirmed"},
-				{"count", bson.D{
-					{"$sum", 1},
-				}},
-			},
-		},
-	}
-
-	facetStage := bson.D{
-		{"$facet", bson.D{
-
-			{"total_active_infras", bson.A{
-				matchIdentifierStage, groupByInfraStatusStage,
 			}},
-			{"total_confirmed_infras", bson.A{
-				matchIdentifierStage, groupByInfraConfirmedStage,
+			{"total_not_active_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_active", false}}}, 1, 0}},
+				}},
+			}},
+
+			// Count for confirmed status
+			{"total_confirmed_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_infra_confirmed", true}}}, 1, 0}},
+				}},
+			}},
+
+			{"total_not_confirmed_infras", bson.D{
+				{"$sum", bson.D{
+					{"$cond", bson.A{
+						bson.D{{"$eq", bson.A{"$is_infra_confirmed", true}}}, 1, 0}},
+				}},
 			}},
 		}},
 	}
 
-	pipeline = append(pipeline, facetStage)
+	pipeline = append(pipeline, matchIdentifierStage, groupByStage)
 
 	// Call aggregation on pipeline
 	infraCursor, err := in.infraOperator.GetAggregateInfras(pipeline)
@@ -863,30 +853,12 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 		return nil, err
 	}
 
-	stateMap := map[bool]int{
-		false: 0,
-		true:  0,
-	}
-
-	infraConfirmedMap := map[bool]int{
-		false: 0,
-		true:  0,
-	}
-
-	for _, data := range res[0].TotalConfirmedInfrastructures {
-		infraConfirmedMap[data.Id] = data.Count
-	}
-
-	for _, data := range res[0].TotalActiveInfrastructure {
-		stateMap[data.Id] = data.Count
-	}
-
 	return &model.GetInfraStatsResponse{
-		TotalInfrastructures:             infraConfirmedMap[true] + infraConfirmedMap[false],
-		TotalActiveInfrastructure:        stateMap[true],
-		TotalInactiveInfrastructures:     stateMap[false],
-		TotalConfirmedInfrastructure:     infraConfirmedMap[true],
-		TotalNonConfirmedInfrastructures: infraConfirmedMap[false],
+		TotalInfrastructures:             res[0].TotalActiveInfrastructure + res[0].TotalNotActiveInfrastructure,
+		TotalActiveInfrastructure:        res[0].TotalActiveInfrastructure,
+		TotalInactiveInfrastructures:     res[0].TotalNotActiveInfrastructure,
+		TotalConfirmedInfrastructure:     res[0].TotalConfirmedInfrastructures,
+		TotalNonConfirmedInfrastructures: res[0].TotalNotConfirmedInfrastructures,
 	}, nil
 
 }
