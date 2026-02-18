@@ -53,6 +53,27 @@ func (c *Operator) GetInfra(infraID string) (ChaosInfra, error) {
 	return infra, nil
 }
 
+// Get All non removed infras
+func (c *Operator) GetAll() ([]*ChaosInfra, error) {
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
+
+	query := bson.D{{"is_removed", false}}
+
+	var infras []*ChaosInfra
+	results, err := c.operator.List(ctx, mongodb.ChaosInfraCollection, query)
+	if err != nil {
+		return []*ChaosInfra{}, err
+	}
+
+	err = results.All(ctx, &infras)
+	if err != nil {
+		return []*ChaosInfra{}, err
+	}
+
+	return infras, nil
+}
+
 // GetInfraDetails takes a infraName and projectID to retrieve the chaos_infra details from the database
 func (c *Operator) GetInfraDetails(ctx context.Context, infraID string, projectID string) (ChaosInfra, error) {
 	query := bson.D{

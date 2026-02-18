@@ -39,6 +39,11 @@ func (s *InfraService) ListInfras(projectID string, request *model.ListInfraRequ
 	return args.Get(0).(*model.ListInfraResponse), args.Error(1)
 }
 
+func (s *InfraService) ListAll() ([]*dbChaosInfra.ChaosInfra, error) {
+	args := s.Called()
+	return args.Get(0).([]*dbChaosInfra.ChaosInfra), args.Error(1)
+}
+
 func (s *InfraService) GetInfraDetails(ctx context.Context, infraID string, projectID string) (*model.Infra, error) {
 	args := s.Called(ctx, infraID, projectID)
 	return args.Get(0).(*model.Infra), args.Error(1)
