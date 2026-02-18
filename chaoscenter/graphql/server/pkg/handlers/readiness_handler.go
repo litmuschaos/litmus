@@ -24,10 +24,10 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler() gin.HandlerFunc {
+func ReadinessHandler(mongoOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dbFlag = "up"
-		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mongodb.MgoClient)
+		dbs, err := mongoOperator.ListDataBase(context.Background(), mongodb.MgoClient)
 		if err != nil {
 			dbFlag = "down"
 		}
