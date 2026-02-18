@@ -45,12 +45,14 @@ export function getPropsBasedOnExperimentRunFaultStatus(status: Status): StatusP
         iconName: 'tick-circle',
         color: Color.GREEN_800
       };
-    case ExperimentRunFaultStatus.COMPLETED_WITH_PROBE_FAILURE:
-    case ExperimentRunFaultStatus.COMPLETED_WITH_ERROR: // <!-- needed for backwards compatibility -->
+    case ExperimentRunStatus.COMPLETED_WITH_PROBE_FAILURE:
+    case ExperimentRunStatus.COMPLETED_WITH_ERROR:
       return {
-        iconName: 'error',
-        color: Color.ORANGE_500
+    iconName: 'warning',
+    color: Color.ORANGE_500,
+    bgColor: `var(--orange-100)`
       };
+
     case ExperimentRunFaultStatus.ERROR:
     case ExperimentRunFaultStatus.FAILED: // <!-- needed for backwards compatibility -->
       return {
