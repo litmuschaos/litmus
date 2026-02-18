@@ -75,6 +75,7 @@ func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.S
 			workflow, err := ev.WorkflowEventHandler(nil, workflowObj, "ADD", startTime)
 			if err != nil {
 				logrus.Error(err)
+				return
 			}
 
 			//stream
@@ -87,6 +88,7 @@ func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.S
 			workflow, err := ev.WorkflowEventHandler(oldObj, workflowObj, "UPDATE", startTime)
 			if err != nil {
 				logrus.Error(err)
+				return
 			}
 			//stream
 			stream <- workflow
@@ -153,9 +155,13 @@ func (ev *subscriberEvents) WorkflowEventHandler(oldObj, workflowObj *v1alpha1.W
 		}
 
 		if nodeType == "ChaosEngine" && cd != nil {
-			// this happens if cd.ChaosResult == nil
-			if oldNodeStatus, ok := oldObj.Status.Nodes[i]; ok && oldNodeStatus.Phase == "Pending" && nodeStatus.Phase == "Running" {
-				details.Phase = "Running"
+			if oldObj != nil {
+				// this happens if cd.ChaosResult == nil
+				if oldNodeStatus, ok := oldObj.Status.Nodes[i]; ok && oldNodeStatus.Phase == "Pending" && nodeStatus.Phase == "Running" {
+					details.Phase = "Running"
+				} else {
+					details.Phase = cd.ExperimentStatus
+				}
 			} else {
 				details.Phase = cd.ExperimentStatus
 			}
