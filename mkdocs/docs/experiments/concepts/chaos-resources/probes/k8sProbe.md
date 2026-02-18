@@ -494,7 +494,7 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/probes/k8sProbe/present-operation.yaml yaml)
 ```yaml
-# verify the existance of the resource matched with the given inputs inside cluster
+# verify the existence of the resource matched with the given inputs inside cluster
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
