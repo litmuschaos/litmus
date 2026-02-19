@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Classes, PopoverInteractionKind, Position, Menu, Dialog } from '@blueprintjs/core';
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { ListProjectsOkResponse, Project } from '@api/auth';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import { useStrings } from '@strings';
@@ -24,6 +24,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>();
   const { getString } = useStrings();
   const history = useHistory();
+  const { accountID } = useParams<{ accountID: string }>();
   const { updateAppStore, currentUserInfo } = useAppStore();
 
   const handleProjectSelect = (project: Project): void => {
@@ -33,7 +34,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
       projectRole,
       projectID: project.projectID
     });
-    history.replace(`/`);
+    history.replace(`/account/${accountID}/project/${project.projectID}/dashboard`);
   };
 
   return (
