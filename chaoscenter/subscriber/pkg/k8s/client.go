@@ -1,6 +1,8 @@
 package k8s
 
 import (
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -12,6 +14,31 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
+
+const (
+	// Default values for K8s client configuration
+	DefaultQPS     = 50.0
+	DefaultBurst   = 100
+	DefaultTimeout = 30 // seconds
+)
+
+// getEnvAsFloat reads a float64 from the given env variable, returning defaultVal if not set or invalid
+func getEnvAsFloat(name string, defaultVal float64) float64 {
+	valueStr := os.Getenv(name)
+	if value, err := strconv.ParseFloat(valueStr, 64); err == nil {
+		return value
+	}
+	return defaultVal
+}
+
+// getEnvAsInt reads an int from the given env variable, returning defaultVal if not set or invalid
+func getEnvAsInt(name string, defaultVal int) int {
+	valueStr := os.Getenv(name)
+	if value, err := strconv.Atoi(valueStr); err == nil {
+		return value
+	}
+	return defaultVal
+}
 
 var (
 	KubeConfig *string
@@ -38,10 +65,11 @@ func (k8s *k8sSubscriber) GetKubeConfig() (*rest.Config, error) {
 		return nil, err
 	}
 
+	// K8s client tuning - configurable via env variables for cluster-specific needs
 	// Default QPS=5 and Burst=10 are too low for clusters with 100+ namespaces
-	config.QPS = 50.0
-	config.Burst = 100
-	config.Timeout = 30 * time.Second
+	config.QPS = float32(getEnvAsFloat("K8S_CLIENT_QPS", DefaultQPS))
+	config.Burst = getEnvAsInt("K8S_CLIENT_BURST", DefaultBurst)
+	config.Timeout = time.Duration(getEnvAsInt("K8S_CLIENT_TIMEOUT", DefaultTimeout)) * time.Second
 
 	return config, nil
 }
