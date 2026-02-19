@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
@@ -91,7 +92,7 @@ func MongoConnection() (*mongo.Client, error) {
 		Password: dbPassword,
 	}
 
-	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
+	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential).SetMonitor(telemetry.GetMongoMonitor())
 
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
