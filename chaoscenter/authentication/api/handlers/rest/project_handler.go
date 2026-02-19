@@ -803,8 +803,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 		switch invitation {
 		case entities.AcceptedInvitation, entities.PendingInvitation:
 			{
-				err := service.RemoveInvitation(member.ProjectID, member.UserID, invitation)
+				err := service.RemoveInvitationIfNotLastOwner(member.ProjectID, member.UserID, invitation)
 				if err != nil {
+					if err == utils.ErrLastProjectOwner {
+						c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
+						return
+					}
 					log.Error(err)
 					c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 					return
@@ -943,8 +947,12 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
+		err = service.UpdateMemberRoleIfNotLastOwner(member.ProjectID, member.UserID, member.Role)
 		if err != nil {
+			if err == utils.ErrLastProjectOwner {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrLastProjectOwner], presenter.CreateErrorResponse(utils.ErrLastProjectOwner))
+				return
+			}
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
