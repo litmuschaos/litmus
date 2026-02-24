@@ -20,6 +20,7 @@ type Configuration struct {
 	ContainerRuntimeExecutor    string   `required:"true" split_words:"true"`
 	WorkflowHelperImageVersion  string   `required:"true" split_words:"true"`
 	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
+	ChaosGraphQLEndpoint        string   `split_words:"true" default:"http://chaos-litmus-server-service:9002"`
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string   `split_words:"true" default:"3030"`
