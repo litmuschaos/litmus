@@ -12,7 +12,6 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20LitmusChaos%20Guru-006BFF)](https://gurubase.io/g/litmuschaos)
 <br><br><br><br>
 
 #### *Read this in [other languages](translations/TRANSLATIONS.md).*
@@ -76,7 +75,7 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ### Community Resources:
 
-Feel free to reach out if you have any queries,concerns, or feature requests
+Feel free to reach out if you have any queries, concerns, or feature requests
 
 - Give us a star ⭐️ - If you are using LitmusChaos or think it is an interesting project, we would love a star ❤️
 

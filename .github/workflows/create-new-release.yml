@@ -1,0 +1,180 @@
+name: Create New Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 3.25.0)'
+        required: true
+        type: string
+
+jobs:
+  create-new-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for pushing commits, tags, and creating releases
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+          token: ${{ secrets.PERSONAL_TOKEN }}
+      
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Version must be in format X.Y.Z (e.g., 3.25.0)"
+            exit 1
+          fi
+          echo "Version format is valid: $VERSION"
+      
+      - name: Extract branch version
+        id: extract_branch
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_VERSION=$(echo "$VERSION" | sed -E 's/^([0-9]+\.[0-9]+)\.[0-9]+$/\1.x/')
+          echo "branch_version=$BRANCH_VERSION" >> $GITHUB_OUTPUT
+          echo "Branch version: $BRANCH_VERSION"
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Run release manifest script
+        run: |
+          chmod +x scripts/create-release-manifests.sh
+          # Run script non-interactively by removing the directory if it exists
+          VERSION="${{ github.event.inputs.version }}"
+          TARGET_DIR="mkdocs/docs/$VERSION"
+          
+          if [ -d "$TARGET_DIR" ]; then
+            echo "Directory $TARGET_DIR already exists, removing it..."
+            rm -rf "$TARGET_DIR"
+          fi
+          
+          ./scripts/create-release-manifests.sh "$VERSION"
+      
+      - name: Verify files created
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Checking if directory exists: mkdocs/docs/$VERSION"
+          if [ -d "mkdocs/docs/$VERSION" ]; then
+            echo "✅ Directory exists"
+            echo "Files in directory:"
+            ls -lah "mkdocs/docs/$VERSION"
+          else
+            echo "❌ Directory does not exist!"
+            exit 1
+          fi
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          
+          # Check for any changes (modified, staged, or untracked files)
+          git add -N mkdocs/docs/$VERSION/  # Add untracked files to index without staging content
+          
+          if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard mkdocs/docs/$VERSION/)" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+            echo ""
+            echo "Files created/modified:"
+            git status --short mkdocs/docs/$VERSION/
+          fi
+      
+      - name: Commit and push to master branch
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          
+          git add mkdocs/docs/$VERSION/
+          git commit -m "chore: Add release manifests for version $VERSION"
+          git push origin master
+          
+          echo "✅ Successfully pushed manifests for version $VERSION to master branch"
+      
+      - name: Create or checkout release branch and push
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          # Check if branch exists remotely
+          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+            echo "Branch $BRANCH_NAME exists remotely, checking out..."
+            git fetch origin "$BRANCH_NAME"
+            git checkout "$BRANCH_NAME"
+            
+            # Cherry-pick the manifest commit from master
+            COMMIT_SHA=$(git rev-parse origin/master)
+            git cherry-pick "$COMMIT_SHA"
+          else
+            echo "Creating new branch $BRANCH_NAME from current state..."
+            git checkout -b "$BRANCH_NAME"
+          fi
+          
+          # Push the release branch
+          git push origin "$BRANCH_NAME"
+          
+          echo "✅ Successfully pushed manifests for version $VERSION to branch $BRANCH_NAME"
+      
+      - name: Create Git Tag
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          # Create and push tag
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION"
+          
+          echo "✅ Created and pushed tag: $VERSION"
+      
+      - name: Create GitHub Release
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          target_commitish: release-${{ steps.extract_branch.outputs.branch_version }}
+          generate_release_notes: true
+          make_latest: true
+          draft: false
+          prerelease: false
+          files: |
+            mkdocs/docs/${{ github.event.inputs.version }}/litmus-getting-started.yaml
+            mkdocs/docs/${{ github.event.inputs.version }}/litmus-installation.yaml
+            mkdocs/docs/${{ github.event.inputs.version }}/litmus-portal-crds.yml
+            mkdocs/docs/${{ github.event.inputs.version }}/litmus-without-resources.yaml
+      
+      - name: Summary
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BRANCH_NAME="release-${{ steps.extract_branch.outputs.branch_version }}"
+          
+          echo "## Release Manifest Creation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Branch:** $BRANCH_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Tag:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Manifests Location:** \`mkdocs/docs/$VERSION/\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "📝 Manifests have been committed and pushed to the master branch." >> $GITHUB_STEP_SUMMARY
+            echo "📝 Manifests have also been pushed to the release branch." >> $GITHUB_STEP_SUMMARY
+            echo "🏷️ Git tag \`$VERSION\` has been created and pushed." >> $GITHUB_STEP_SUMMARY
+            echo "🚀 GitHub release has been created with auto-generated release notes." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 [View Release](https://github.com/${{ github.repository }}/releases/tag/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No changes were detected. Manifests may already exist." >> $GITHUB_STEP_SUMMARY
+          fi
