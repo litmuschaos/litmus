@@ -54,7 +54,7 @@ rules:
 
   - apiGroups: [ "batch" ]
     resources: [ "jobs" ]
-    verbs: [ "get", "create", "patch", "update" ]
+    verbs: [ "get", "list", "create", "patch", "update" ]
 
   - apiGroups: [ "" ]
     resources: [ "pods/log" ]
@@ -142,6 +142,10 @@ rules:
   - apiGroups: [ "apps" ]
     resources: [ "deployments", "daemonsets", "replicasets", "statefulsets" ]
     verbs: [ "get","list","watch" ]
+
+  - apiGroups: [ "batch" ]
+    resources: [ "jobs" ]
+    verbs: [ "get", "list", "watch" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
