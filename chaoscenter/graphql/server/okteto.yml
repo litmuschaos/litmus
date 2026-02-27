@@ -1,0 +1,29 @@
+dev:
+  chaos-litmus-server:
+    image: golang:1.24
+    command: bash
+    sync:
+      - .:/gql-server
+
+    volumes:
+      - /go/pkg
+      - /tmp/go-build-cache
+
+    environment:
+      - HOME=/tmp
+      - GOCACHE=/tmp/go-build-cache
+      - GOPATH=/go
+
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 2000
+      fsGroup: 3000
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        add:
+          - SYS_PTRACE
+
+    forward:
+      - 2345:2345
