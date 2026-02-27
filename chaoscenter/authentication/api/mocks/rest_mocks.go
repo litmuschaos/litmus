@@ -117,6 +117,11 @@ func (m *MockedApplicationService) RemoveInvitation(projectID, userID string, in
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) RemoveInvitationIfNotLastOwner(projectID, userID string, invitation entities.Invitation) error {
+	args := m.Called(projectID, userID, invitation)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) UpdateInvite(projectID, userID string, invitation entities.Invitation, role *entities.MemberRole) error {
 	args := m.Called(projectID, userID, invitation, role)
 	return args.Error(0)
@@ -128,6 +133,11 @@ func (m *MockedApplicationService) UpdateProjectName(projectID, projectName stri
 }
 
 func (m *MockedApplicationService) UpdateMemberRole(projectID, userID string, role *entities.MemberRole) error {
+	args := m.Called(projectID, userID, role)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) UpdateMemberRoleIfNotLastOwner(projectID, userID string, role *entities.MemberRole) error {
 	args := m.Called(projectID, userID, role)
 	return args.Error(0)
 }

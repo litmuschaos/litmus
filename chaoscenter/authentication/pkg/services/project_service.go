@@ -18,9 +18,11 @@ type projectService interface {
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
+	RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
+	UpdateMemberRoleIfNotLastOwner(projectID string, userID string, role *entities.MemberRole) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error)
@@ -59,6 +61,10 @@ func (a applicationService) RemoveInvitation(projectID string, userID string, in
 	return a.projectRepository.RemoveInvitation(projectID, userID, invitation)
 }
 
+func (a applicationService) RemoveInvitationIfNotLastOwner(projectID string, userID string, invitation entities.Invitation) error {
+	return a.projectRepository.RemoveInvitationIfNotLastOwner(projectID, userID, invitation)
+}
+
 func (a applicationService) UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error {
 	return a.projectRepository.UpdateInvite(projectID, userID, invitation, role)
 }
@@ -69,6 +75,10 @@ func (a applicationService) UpdateProjectName(projectID string, projectName stri
 
 func (a applicationService) UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error {
 	return a.projectRepository.UpdateMemberRole(projectID, userID, role)
+}
+
+func (a applicationService) UpdateMemberRoleIfNotLastOwner(projectID string, userID string, role *entities.MemberRole) error {
+	return a.projectRepository.UpdateMemberRoleIfNotLastOwner(projectID, userID, role)
 }
 
 func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {

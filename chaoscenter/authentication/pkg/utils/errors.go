@@ -24,6 +24,7 @@ var (
 	ErrInvalidEmail                  AppError = errors.New("invalid email")
 	ErrPasswordNotUpdated            AppError = errors.New("default password not updated")
 	ErrOldPassword                   AppError = errors.New("old and new passwords can't be same")
+	ErrLastProjectOwner              AppError = errors.New("cannot remove the only owner of the project")
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -45,6 +46,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrInvalidEmail:                  400,
 	ErrPasswordNotUpdated:            401,
 	ErrOldPassword:                   400,
+	ErrLastProjectOwner:              400,
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
@@ -62,4 +64,5 @@ var ErrorDescriptions = map[AppError]string{
 	ErrInvalidEmail:                  "Email address is invalid",
 	ErrPasswordNotUpdated:            "Please update your default password",
 	ErrOldPassword:                   "old and new passwords can't be same",
+	ErrLastProjectOwner:              "Cannot remove the only owner of the project",
 }
