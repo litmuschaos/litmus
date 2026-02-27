@@ -20,8 +20,8 @@ data:
     staticClients:
       - id: LitmusPortalAuthBackend
         redirectURIs:
-          - '/auth/dex/callback'
-          - 'http://localhost:8080/auth/dex/callback' # Included for local testing purposes
+          - '/auth/oauth2/callback'
+          - 'http://localhost:8080/auth/oauth2/callback' # Included for local testing purposes
         name: 'LitmusPortalAuthBackend'
         secret: ZXhhbXBsZS1hcHAtc2VjcmV0
 
