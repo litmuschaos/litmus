@@ -4,6 +4,7 @@ import (
 	crypto "crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"net/mail"
 	"regexp"
 	"strings"
 )
@@ -68,7 +69,19 @@ func RandomString(n int) (string, error) {
 // Ensure the length of the username is between 3 and 16 characters (1 character is already matched above) - {2,15}$
 
 func ValidateStrictUsername(username string) error {
-	// Ensure username doesn't contain special characters (only letters, numbers, and underscores are allowed)
+	if _, err := mail.ParseAddress(username); err == nil {
+		if len(username) < 3 {
+			return fmt.Errorf("username must be at least 3 characters long")
+		}
+		if len(username) > 255 {
+			return fmt.Errorf("username must be at most 255 characters long")
+		}
+		if matched, _ := regexp.MatchString(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`, username); !matched {
+			return fmt.Errorf("username must be a valid email address format")
+		}
+		return nil
+	}
+
 	if matched, _ := regexp.MatchString(`^[a-zA-Z][a-zA-Z0-9_-]{2,15}$`, username); !matched {
 		return fmt.Errorf("username can only contain letters, numbers, and underscores")
 	}
