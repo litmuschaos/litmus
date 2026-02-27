@@ -16,7 +16,7 @@ RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
 
 # PACKAGING STAGE
 # Use RedHat UBI minimal image as base
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
+FROM registry.access.redhat.com/ubi10/ubi-minimal:10.1
 
 LABEL maintainer="LitmusChaos"
 
