@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -31,6 +32,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
@@ -80,6 +82,7 @@ func setupGin() *gin.Engine {
 }
 
 func main() {
+	telemetry.RegisterMetrics()
 	router := setupGin()
 	var err error
 	mongodb.MgoClient, err = mongodb.MongoConnection()
@@ -105,9 +108,9 @@ func main() {
 		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
-		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC server
 	} else {
-		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC server
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
@@ -146,6 +149,7 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
