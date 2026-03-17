@@ -862,6 +862,7 @@ const TuneDetailsStep: React.FC<
               name="kubernetesCMDProperties.command"
               label={'Command'}
               placeholder={'Command to be executed'}
+              maxLength={100000} // Increase limit to prevent silent truncation (default is 1024)
             />
 
             <Divider />
@@ -990,6 +991,7 @@ const TuneDetailsStep: React.FC<
           name="promProperties.query"
           label={'Prometheus Query'}
           placeholder={'Query to get promethus metrics'}
+          maxLength={100000} // Increase limit to prevent silent truncation (default is 1024)
         />
         <FormInput.Text
           name="promProperties.queryPath"
