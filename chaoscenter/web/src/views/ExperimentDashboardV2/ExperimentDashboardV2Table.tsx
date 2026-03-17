@@ -144,16 +144,16 @@ const ExperimentDashboardV2Table = ({
       },
       {
         Header: (
-          <div className={css.recentExecutionHeader}>
-            <Layout.Horizontal spacing="xsmall" className={css.latestExecutionText} flex={{ alignItems: 'center' }}>
-              <Text color={Color.GREY_400} font={{ variation: FontVariation.TINY }}>
+          <span className={css.recentExecutionHeader}>
+            <span className={css.latestExecutionText}>
+              <Text inline color={Color.GREY_400} font={{ variation: FontVariation.TINY }}>
                 {`${getString('mostRecentDirection')} `}
               </Text>
               <Icon size={10} name="arrow-right" color={Color.GREY_400} />
-            </Layout.Horizontal>
+            </span>
 
             {getString('recentExperimentRuns')}
-          </div>
+          </span>
         ),
         id: 'recentExecutions',
         Cell: ({ row: { original: data } }: { row: Row<ExperimentDetails> }) => {
