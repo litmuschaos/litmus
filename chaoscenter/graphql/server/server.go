@@ -24,12 +24,20 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
 	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
@@ -143,6 +151,19 @@ func main() {
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).SyncDefaultChaosHubs()
+
+	// go routine for syncing gitops
+	chaosInfraOperator := dbChaosInfra.NewInfrastructureOperator(mongodbOperator)
+	chaosExperimentOperator := chaos_experiment.NewChaosExperimentOperator(mongodbOperator)
+	chaosExperimentRunOperator := chaos_experiment_run.NewChaosExperimentRunOperator(mongodbOperator)
+	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
+	probeOperator := dbSchemaProbe.NewChaosProbeOperator(mongodbOperator)
+
+	probeService := probe.NewProbeService(probeOperator)
+	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+
+	go gitOpsService.GitOpsSyncHandler(false)
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
