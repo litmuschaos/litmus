@@ -81,7 +81,7 @@ backend-services-checks:
 	@echo "------------------"
 	@echo "--> Check chaos-center event tracker [go mod tidy]"
 	@echo "------------------"
-	@tidyRes=$$(cd cluster-agents/event-tracker && go mod tidy); \
+	@tidyRes=$$(cd event-tracker && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
