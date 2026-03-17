@@ -123,8 +123,7 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
 
   React.useEffect(() => {
     if (experimentName) setExperimentNamePersistent(experimentName);
-  }, [experimentName]),
-    [experimentName];
+  }, [experimentName]);
 
   const experimentRunsTableData: ExperimentRunHistoryTableProps | undefined = experimentRunsWithExecutionData && {
     content: generateExperimentRunTableContent(experimentRunsWithExecutionData),

@@ -1,0 +1,41 @@
+.displayMode {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+  width: 100%;
+  min-height: 45px;
+
+  .stepNameTextContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-tiny);
+    flex: 1;
+  }
+}
+
+.editMode {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+  width: 100%;
+  min-height: 45px;
+  animation: fadeIn 0.2s ease-out;
+
+  .stepNameTextInput {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
