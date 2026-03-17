@@ -293,7 +293,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
    * @returns {Yup} the yup object which validates the properties according to the nested structure
    */
   const validateProperties = () => {
-    const unitsRegex = /^(\d+)(ns|us|ms|s|m|h)$/;
+    const unitsRegex = /^$|^(\d+)(ns|us|ms|s|m|h)$/;
     /**
      * Objects shared between the 5 probe keys `httpProperties`, `cmdProperties`, `promProperties`,
      * `k8sProperties` and `sloProperties`
@@ -341,14 +341,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
 
   return (
     <Layout.Vertical height={'100%'} width={400}>
-      <Formik<AddProbeFormData>
-        initialValues={initialValues}
-        onSubmit={() => {
-          validateProperties();
-          props.nextStep?.();
-        }}
-        validationSchema={validateProperties()}
-      >
+      <Formik<AddProbeFormData> initialValues={initialValues} onSubmit={noop} validationSchema={validateProperties()}>
         {formikProps => {
           return (
             <Form style={{ height: '100%' }}>
