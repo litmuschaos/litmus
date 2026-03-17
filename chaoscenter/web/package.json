@@ -22,7 +22,8 @@
     "typecheck": "tsc",
     "typecheck:staged": "sh scripts/typecheck/typecheck-staged.sh",
     "clean": "rm -rf dist && rm -rf node_modules/.cache",
-    "generate-certificate": "sh scripts/generate-certificate.sh"
+    "generate-certificate": "sh scripts/generate-certificate.sh",
+    "generate-certificate:win": "powershell -ExecutionPolicy Bypass -File scripts\\generate-certificate.ps1"
   },
   "repository": {
     "type": "git",
