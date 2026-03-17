@@ -397,8 +397,14 @@ export interface StringsMap {
   'id': unknown
   'idlowerCase': unknown
   'imageRegistry': unknown
+  'imageRegistryNameInvalid': unknown
+  'imageRegistryNameRequired': unknown
   'imageRegistryUpdateSuccess': unknown
+  'imageRepoNameInvalid': unknown
+  'imageRepoNameRequired': unknown
   'imageSecret': unknown
+  'imageSecretNameInvalid': unknown
+  'imageSecretNameRequired': unknown
   'imageSecretPlaceholder': unknown
   'improveResilienceOfTheDeployedService': unknown
   'inactive': unknown
