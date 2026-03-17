@@ -287,6 +287,7 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	experiments, err := c.chaosExperimentOperator.GetExperiments(bson.D{
 		{"project_id", projectID},
 		{"name", request.ExperimentName},
+		{"is_removed", false},
 	})
 	if err != nil {
 		return nil, err
