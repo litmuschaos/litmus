@@ -1,4 +1,5 @@
 import React from 'react';
+import { useStrings } from '@strings';
 
 interface FallbackProps {
   error: Error;
@@ -6,12 +7,13 @@ interface FallbackProps {
 }
 
 export function Fallback({ error, resetErrorBoundary }: FallbackProps): React.ReactElement {
+  const { getString } = useStrings();
   return (
     <div role="alert">
-      <p>Something went wrong:</p>
+      <p>{getString('error')}:</p>
       <pre>{error.message}</pre>
       <pre>{error.stack}</pre>
-      <button onClick={resetErrorBoundary}>Try again</button>
+      <button onClick={resetErrorBoundary}>{getString('tryAgain')}</button>
     </div>
   );
 }

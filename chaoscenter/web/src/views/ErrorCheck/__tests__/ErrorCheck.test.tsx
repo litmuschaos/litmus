@@ -1,13 +1,18 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
+import { TestWrapper } from 'utils/testUtils';
 import ErrorCheckView from '../ErrorCheck';
 
 const operationTime = 2500;
 const operationValue = 0;
 
 beforeEach(() => {
-  render(<ErrorCheckView />);
+  render(
+    <TestWrapper>
+      <ErrorCheckView />
+    </TestWrapper>
+  );
 });
 
 describe('ErrorCheckView Component Tests', () => {
@@ -24,7 +29,7 @@ describe('ErrorCheckView Component Tests', () => {
     fireEvent.click(counter);
     fireEvent.click(counter);
     fireEvent.click(counter);
-    expect(await screen.findByText('Something went wrong:')).toBeInTheDocument();
+    expect(await screen.findByText('error:')).toBeInTheDocument();
   });
 
   test('counter throws a Set Timeout error after 2 seconds', async () => {
@@ -36,7 +41,7 @@ describe('ErrorCheckView Component Tests', () => {
     jest.advanceTimersByTime(operationTime);
 
     await waitFor(() => {
-      expect(screen.getByText('Something went wrong:')).toBeInTheDocument();
+      expect(screen.getByText('error:')).toBeInTheDocument();
     });
     jest.useRealTimers();
   });
@@ -50,7 +55,7 @@ describe('ErrorCheckView Component Tests', () => {
     fireEvent.click(isolatedCounter1);
     fireEvent.click(isolatedCounter1);
 
-    expect(await screen.findByText('Something went wrong:')).toBeInTheDocument();
+    expect(await screen.findByText('error:')).toBeInTheDocument();
 
     expect(isolatedCounter2).toHaveTextContent('0');
   });
