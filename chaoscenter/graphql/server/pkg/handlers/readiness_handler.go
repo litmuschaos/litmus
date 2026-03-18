@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -34,6 +35,12 @@ func ReadinessHandler(mongoOperator mongodb.MongoOperator) gin.HandlerFunc {
 
 		if !contains(dbs, "litmus") {
 			dbFlag = "down"
+		}
+
+		// Return 503 Service Unavailable when database is down
+		if dbFlag == "down" {
+			c.JSON(http.StatusServiceUnavailable, ReadinessAPIStatus{DataBase: dbFlag})
+			return
 		}
 
 		c.JSON(http.StatusOK, ReadinessAPIStatus{DataBase: dbFlag})

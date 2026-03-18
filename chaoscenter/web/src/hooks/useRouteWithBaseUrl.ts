@@ -18,6 +18,9 @@ export function useRouteWithBaseUrl(scope?: RouteScope): UseRouteDefinitionsProp
   const { renderUrl, projectID } = useAppStore();
 
   function withProjectID(route: string): string {
+    if (!projectID || projectID.trim() === '') {
+      return `/settings/projects`;
+    }
     return `/project/${projectID}/${route.replace(/^\//, '')}`;
   }
 
