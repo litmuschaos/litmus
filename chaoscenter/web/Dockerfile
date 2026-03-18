@@ -1,9 +1,10 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
 
 # apply latest patches
-RUN microdnf update -y --nodocs \
-&& microdnf install -y --nodocs nginx \
-&& microdnf install -y --nodocs python3 python3-pip \
+RUN microdnf update --nodocs \
+&& microdnf module enable nginx:1.20 \
+&& microdnf install --nodocs nginx \
+&& microdnf install --nodocs python3 \
 && pip3 install --no-cache-dir pyyaml \
 && microdnf clean all
     
