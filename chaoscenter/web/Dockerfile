@@ -1,11 +1,9 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
+FROM registry.access.redhat.com/ubi10/ubi-minimal:10.1
 
 # apply latest patches
 RUN microdnf update --nodocs \
 && microdnf module enable nginx:1.20 \
 && microdnf install --nodocs nginx \
-&& microdnf install --nodocs python3 \
-&& pip3 install --no-cache-dir pyyaml \
 && microdnf clean all
     
 COPY dist /opt/chaos
