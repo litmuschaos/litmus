@@ -32,6 +32,8 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"	
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
@@ -76,6 +78,7 @@ func setupGin() *gin.Engine {
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
+	router.Use(metrics.MetricsMiddleware())
 	return router
 }
 
@@ -157,7 +160,7 @@ func main() {
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
 	router.GET("/readiness", handlers.ReadinessHandler())
-
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
