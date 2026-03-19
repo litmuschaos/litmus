@@ -17,14 +17,14 @@ func MetricsMiddleware() gin.HandlerFunc {
 		c.Next()
 
 		// Record metrics after request completes
-		duration := time.Since(start).Seconds()
+		duration := time.Since(start).Milliseconds()
 		status := strconv.Itoa(c.Writer.Status())
 
 		// Increment request counter
 		APIRequestsTotal.WithLabelValues(path, status).Inc()
 
-		// Record response time
-		APIResponseTime.WithLabelValues(path).Observe(duration)
+		// Record response time in milliseconds
+		APIResponseTime.WithLabelValues(path).Observe(float64(duration))
 
 		// Track errors (status >= 400)
 		if c.Writer.Status() >= 400 {
