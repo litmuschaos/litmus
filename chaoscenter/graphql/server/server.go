@@ -40,6 +40,8 @@ import (
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"	
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
@@ -84,6 +86,7 @@ func setupGin() *gin.Engine {
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
+	router.Use(metrics.MetricsMiddleware())
 	return router
 }
 
