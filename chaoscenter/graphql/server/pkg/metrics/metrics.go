@@ -2,12 +2,11 @@ package metrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 var (
 	// APIRequestsTotal tracks total API requests
-	APIRequestsTotal = promauto.NewCounterVec(
+	APIRequestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "litmus_api_requests_total",
 			Help: "Total number of API requests",
@@ -16,17 +15,17 @@ var (
 	)
 
 	// APIResponseTime tracks API response duration
-	APIResponseTime = promauto.NewHistogramVec(
+	APIResponseTime = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name:    "litmus_api_response_time_seconds",
-			Help:    "API response time in seconds",
-			Buckets: []float64{0.1, 0.5, 1, 2, 5},
+			Name:    "litmus_api_response_time_milliseconds",
+			Help:    "API response time in milliseconds",
+			Buckets: []float64{10, 50, 100, 200, 500, 1000, 2000, 5000},
 		},
 		[]string{"endpoint"},
 	)
 
 	// APIErrorRequestsTotal tracks API errors
-	APIErrorRequestsTotal = promauto.NewCounterVec(
+	APIErrorRequestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "litmus_api_error_requests_total",
 			Help: "Total number of API errors",
@@ -34,3 +33,10 @@ var (
 		[]string{"endpoint", "error_type"},
 	)
 )
+
+func init() {
+	// Manually register all metrics
+	prometheus.MustRegister(APIRequestsTotal)
+	prometheus.MustRegister(APIResponseTime)
+	prometheus.MustRegister(APIErrorRequestsTotal)
+}
