@@ -1,4 +1,4 @@
-package handlers
+kpackage handlers
 
 import (
 	"context"
@@ -28,7 +28,11 @@ func contains(s []string, str string) bool {
 func ReadinessHandler(mongoOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dbFlag = "up"
-		dbs, err := mongoOperator.ListDataBase(context.Background(), mongodb.MgoClient)
+
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 2*time.Second)
+		defer cancel()
+
+		dbs, err := mongoOperator.ListDataBase(ctx, mongodb.MgoClient)
 		if err != nil {
 			dbFlag = "down"
 		}
