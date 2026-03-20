@@ -160,7 +160,9 @@ func main() {
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
 	router.GET("/readiness", handlers.ReadinessHandler())
-	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Start metrics server on separate port
+	go startMetricsServer()
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
@@ -227,4 +229,19 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 
 	log.Infof("GRPC server listening on %v", lis.Addr())
 	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startMetricsServer starts a separate HTTP server for Prometheus metrics
+func startMetricsServer() {
+	metricsRouter := gin.New()
+	metricsRouter.Use(gin.Recovery())
+	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	
+	metricsPort := utils.Config.MetricsPort
+	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+	
+	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
+		log.Fatalf("Failed to start metrics server: %v", err)
+	}
+
 }
