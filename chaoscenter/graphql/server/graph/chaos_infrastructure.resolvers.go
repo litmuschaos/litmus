@@ -273,6 +273,10 @@ func (r *subscriptionResolver) GetInfraEvents(ctx context.Context, projectID str
 				break
 			}
 		}
+		// Clean up map entry when no subscribers remain for this project
+		if len(data_store.Store.InfraEventPublish[projectID]) == 0 {
+			delete(data_store.Store.InfraEventPublish, projectID)
+		}
 		data_store.Store.Mutex.Unlock()
 	}()
 
