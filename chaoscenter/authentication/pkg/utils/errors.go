@@ -55,7 +55,7 @@ var ErrorDescriptions = map[AppError]string{
 	ErrUnauthorized:                  "The user does not have requested authorization to access this resource",
 	ErrUserExists:                    "This username is already assigned to another user",
 	ErrStrictPasswordPolicyViolation: "Please ensure the password is at least 8 characters long and at most 16 characters long and has at least 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
-	ErrStrictUsernamePolicyViolation: "The username must be either a valid email address or a string of 3 to 256 characters starting and ending with an alphanumeric character and containing only '._-@' as special characters.",
+	ErrStrictUsernamePolicyViolation: "The username must be either a valid email address or a string of 3 to 256 characters that starts and ends with a letter or digit and contains only letters, digits, '_' and '-'.",
 	ErrEmptyProjectName:              "Project name can't be empty",
 	ErrInvalidRole:                   "Role is invalid",
 	ErrProjectNotFound:               "This project does not exist",

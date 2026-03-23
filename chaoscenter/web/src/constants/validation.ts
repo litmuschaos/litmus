@@ -1,9 +1,12 @@
-//  (?=.{3,256}$)      # Ensure the length of the username is between 3 and 256 characters.
-//  ^[a-zA-Z0-9]       # Must start with a letter or digit.
-//  [a-zA-Z0-9_@.-]*   # Allow letters, digits, underscores, at-sign, dots, and hyphens in the middle.
-//  [a-zA-Z0-9]$       # Must end with a letter or digit.
-// This regex allows standard usernames and email addresses, but is stricter to avoid trailing special characters.
-export const USERNAME_REGEX = /^(?=.{3,256}$)[a-zA-Z0-9][a-zA-Z0-9_@.-]*[a-zA-Z0-9]$/;
+// Username validation - accepts email addresses or plain usernames
+// (?=.{3,256}$)      # Length between 3 and 256 characters
+// ^(?:               # Start of alternatives
+//   [a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9] # Plain username: letters/digits/_/- only, alphanumeric start/end
+//   |                # OR
+//   [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,} # Email address
+// )$                 # End of alternatives
+export const USERNAME_REGEX =
+  /^(?=.{3,256}$)(?:[a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9]|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,})$/;
 
 //  ^(?=.*[a-z])       # At least one lowercase letter
 //  (?=.*[A-Z])        # At least one uppercase letter
