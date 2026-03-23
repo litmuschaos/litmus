@@ -4,6 +4,7 @@ import (
 	crypto "crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"net/mail"
 	"regexp"
 	"strings"
 )
@@ -63,15 +64,27 @@ func RandomString(n int) (string, error) {
 	return "", fmt.Errorf("length should be greater than 0")
 }
 
-// Username must start with a letter - ^[a-zA-Z]
-// Allow letters, digits, underscores, and hyphens - [a-zA-Z0-9_-]
-// Ensure the length of the username is between 3 and 16 characters (1 character is already matched above) - {2,15}$
-
+// ValidateStrictUsername validates usernames. Two formats are accepted:
+// 1. Any valid email address
+// 2. Plain usernames matching: ^[a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9]$
+//    - Start/end with letter or digit
+//    - Middle can contain letters, digits, underscores, or hyphens
+//    - Length: 3-256 characters
 func ValidateStrictUsername(username string) error {
-	// Ensure username doesn't contain special characters (only letters, numbers, and underscores are allowed)
-	if matched, _ := regexp.MatchString(`^[a-zA-Z][a-zA-Z0-9_-]{2,15}$`, username); !matched {
-		return fmt.Errorf("username can only contain letters, numbers, and underscores")
+	if len(username) < 3 {
+		return fmt.Errorf("username must be at least 3 characters long")
 	}
+	if len(username) > 256 {
+		return fmt.Errorf("username must be at most 256 characters long")
+	}
+	
+ 	if addr, err := mail.ParseAddress(username); err == nil && addr.Name == "" && addr.Address == username {
+ 		return nil
+ 	}
 
+	plainUsernameRegex := regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9]$`)
+	if !plainUsernameRegex.MatchString(username) {
+		return fmt.Errorf("username can only contain letters, numbers, underscores, and hyphens, must start and end with a letter or digit, and be 3–256 characters long")
+	}
 	return nil
 }

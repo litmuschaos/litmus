@@ -1,7 +1,12 @@
-//  ^[a-zA-Z]          # Must start with a letter
-//  [a-zA-Z0-9_-]      # Allow letters, digits, underscores, and hyphens
-//  {2,15}$            # Ensure the length of the username is between 3 and 16 characters (1 character is already matched above)
-export const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/;
+// Username validation - accepts email addresses or plain usernames
+// (?=.{3,256}$)      # Length between 3 and 256 characters
+// ^(?:               # Start of alternatives
+//   [a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9] # Plain username: letters/digits/_/- only, alphanumeric start/end
+//   |                # OR
+//   [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,} # Email address
+// )$                 # End of alternatives
+export const USERNAME_REGEX =
+  /^(?=.{3,256}$)(?:[a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9]|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,})$/;
 
 //  ^(?=.*[a-z])       # At least one lowercase letter
 //  (?=.*[A-Z])        # At least one uppercase letter
