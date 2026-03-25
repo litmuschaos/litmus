@@ -365,11 +365,19 @@ func (r repository) UpdateProjectState(ctx context.Context, userID string, deact
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
 				{"user_id", userID},
-				{"role", bson.D{
-					{"$eq", entities.RoleOwner},
+				{"role", entities.RoleOwner},
+			}},
+		}},
+		{"members", bson.D{
+			{"$not", bson.D{
+				{"$elemMatch", bson.D{
+					{"user_id", bson.D{{"$ne", userID}}},
+					{"role", entities.RoleOwner},
+					{"deactivated_at", bson.D{{"$not", bson.D{{"$gt", int64(0)}}}}},
 				}},
 			}},
-		}}}
+		}},
+	}
 
 	update = bson.D{
 		{"$set", bson.D{
