@@ -6,14 +6,10 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /subscriber
+COPY . /subscriber
 WORKDIR /subscriber
 
-ENV GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-
-RUN go env
-RUN CGO_ENABLED=0 go build -o /output/subscriber -v
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o /output/subscriber -v
 
 # Packaging stage
 # Use RedHat UBI minimal image as base

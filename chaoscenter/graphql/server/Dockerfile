@@ -9,11 +9,7 @@ ARG TARGETARCH
 COPY . /gql-server
 WORKDIR /gql-server
 
-ENV GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-
-RUN go env
-RUN CGO_ENABLED=0 go build -o /output/server -v
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o /output/server -v
 
 # DEPLOY STAGE
 # Use Red Hat UBI minimal image as base
