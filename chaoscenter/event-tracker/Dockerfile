@@ -23,6 +23,8 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
+RUN microdnf update --nodocs && microdnf clean all
+
 COPY --from=builder /output/event-tracker $APP_DIR/
 RUN chown 65534:0 $APP_DIR/event-tracker && chmod 755 $APP_DIR/event-tracker
 
