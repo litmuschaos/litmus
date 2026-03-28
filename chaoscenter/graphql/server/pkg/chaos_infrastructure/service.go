@@ -974,7 +974,10 @@ func (in *infraService) PodLog(request model.PodLog, r store.StateData) (string,
 		log.Print("ERROR", err)
 		return "", err
 	}
-	if reqChan, ok := r.ExperimentLog[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.ExperimentLog[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		resp := model.PodLogResponse{
 			PodName:         request.PodName,
 			ExperimentRunID: request.ExperimentRunID,
@@ -995,7 +998,10 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeObjectData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		var kubeObjData *model.KubeObject
 		err = json.Unmarshal([]byte(request.KubeObj), &kubeObjData)
 		if err != nil {
@@ -1020,7 +1026,10 @@ func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.S
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeNamespaceData[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeNamespaceData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		var kubeNamespaceData []*model.KubeNamespace
 		err = json.Unmarshal([]byte(request.KubeNamespace), &kubeNamespaceData)
 		if err != nil {
@@ -1048,12 +1057,18 @@ func (in *infraService) SendInfraEvent(eventType, eventName, description string,
 		Infra:       &infra,
 	}
 	r.Mutex.Lock()
-	if r.InfraEventPublish != nil {
-		for _, observer := range r.InfraEventPublish[infra.ProjectID] {
-			observer <- &newEvent
+	observers := make([]chan *model.InfraEventResponse, len(r.InfraEventPublish[infra.ProjectID]))
+	copy(observers, r.InfraEventPublish[infra.ProjectID])
+	r.Mutex.Unlock()
+
+	for _, observer := range observers {
+		// Use non-blocking send to prevent deadlock if channel buffer is full
+		select {
+		case observer <- &newEvent:
+		default:
+			// Channel full or no receiver, skip to prevent blocking
 		}
 	}
-	r.Mutex.Unlock()
 }
 
 // ConfirmInfraRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
