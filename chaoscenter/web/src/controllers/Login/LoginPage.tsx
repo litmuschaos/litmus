@@ -30,7 +30,11 @@ const LoginController: React.FC = () => {
         projectID: dexProjectID,
         projectRole: dexProjectRole ?? ''
       });
-      history.push(normalizePath(`/account/${accountID}/project/${dexProjectID ?? ''}/dashboard`));
+      if (dexProjectID && dexProjectID.trim() !== '') {
+        history.push(normalizePath(`/account/${accountID}/project/${dexProjectID}/dashboard`));
+      } else {
+        history.push(normalizePath(`/account/${accountID}/settings/projects`));
+      }
     }
   }, []);
 
@@ -70,10 +74,10 @@ const LoginController: React.FC = () => {
         });
         if (response.isInitialLogin) {
           history.push(`/account/${userDetails.accountID}/settings/password-reset`);
+        } else if (userDetails.projectID && userDetails.projectID.trim() !== '') {
+          history.push(normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID}/dashboard`));
         } else {
-          history.push(
-            normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID ?? ''}/dashboard`)
-          );
+          history.push(normalizePath(`/account/${userDetails.accountID}/settings/projects`));
         }
       }
     }

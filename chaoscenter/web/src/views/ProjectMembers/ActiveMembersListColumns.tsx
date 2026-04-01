@@ -48,6 +48,7 @@ const MemberPermission = ({ row: { original: data } }: MemberRow): React.ReactEl
 
 const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React.ReactElement => {
   const { role } = data;
+  const { getString } = useStrings();
   const [memberRole, setMemberRole] = React.useState<string>(role);
   const rolesDropDown: SelectOption[] = [
     {
@@ -55,8 +56,8 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
       value: 'Executor'
     },
     {
-      label: 'Viewer',
-      value: 'Viewer'
+      label: getString('viewer'),
+      value: getString('viewer')
     }
   ];
   return <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />;

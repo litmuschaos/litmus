@@ -163,7 +163,7 @@ function ExperimentAdvancedTuningOptionsView({
         <TextInput
           value={advancedTuningOptions.nodeSelector.key}
           intent={keyError ? 'danger' : 'primary'}
-          errorText="Key is required"
+          errorText={getString('keyIsRequired')}
           placeholder={getString('nodeSelectorPlaceholderForKey')}
           onChange={event => {
             const target = event.target as HTMLInputElement;
