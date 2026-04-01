@@ -562,11 +562,11 @@ export const OverviewStep: React.FC<
         validationSchema={Yup.object().shape({
           name: Yup.string()
             .trim()
-            .matches(/^[a-z0-9-]*$/, 'Chaos Infrastructure Name can only contain lowercase letters, numbers and dashes')
-            .matches(/^[^-].*$/, 'Chaos Infrastructure Name can not start with -')
-            .matches(/^.*[^-]$/, 'Chaos Infrastructure Name can not end with -')
-            .max(50, 'Chaos Infrastructure Name can have a max length of 50 characters')
-            .required('Chaos Infrastructure Name is required!')
+            .matches(/^[a-z0-9-]*$/, getString('infraNameValidationLowercase'))
+            .matches(/^[^-].*$/, getString('infraNameValidationNoStartDash'))
+            .matches(/^.*[^-]$/, getString('infraNameValidationNoEndDash'))
+            .max(50, getString('infraNameValidationMaxLength'))
+            .required(getString('infraNameValidationRequired'))
         })}
         onSubmit={data => {
           props.nextStep?.({ value: data });
