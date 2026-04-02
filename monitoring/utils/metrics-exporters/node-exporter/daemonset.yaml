@@ -29,7 +29,7 @@ spec:
         runAsUser: 65534
       serviceAccountName: node-exporter
       containers:
-        - image: quay.io/prometheus/node-exporter:latest
+        - image: quay.io/prometheus/node-exporter:v1.10.2
           args:
             - --web.listen-address=0.0.0.0:9100
             - --path.procfs=/host/proc

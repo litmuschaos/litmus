@@ -74,6 +74,7 @@ func init() {
 
 	// disable ssl verification if configured
 	if strings.ToLower(infraData["SKIP_SSL_VERIFY"]) == "true" {
+		logrus.Warn("TLS certificate verification is disabled (SKIP_SSL_VERIFY=true). This is insecure and must not be used in production.")
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		websocket.DefaultDialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	} else if infraData["CUSTOM_TLS_CERT"] != "" {
