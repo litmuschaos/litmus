@@ -1,0 +1,27 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ResilienceProbe
+metadata:
+  name: http-health-check
+  description: "HTTP probe to check application health endpoint"
+  tags:
+    - health-check
+    - http
+    - production
+spec:
+  type: httpProbe
+  infrastructureType: Kubernetes
+  properties:
+    probeTimeout: "5s"
+    interval: "2s"
+    attempt: 3
+    retry: 1
+    probePollingInterval: "1s"
+    initialDelay: "3s"
+    evaluationTimeout: "10s"
+    stopOnFailure: false
+    url: "http://my-app-service.default.svc.cluster.local:8080/health"
+    insecureSkipVerify: false
+    method:
+      get:
+        criteria: "=="
+        responseCode: "200"
