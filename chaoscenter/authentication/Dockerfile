@@ -1,18 +1,15 @@
 # BUILD STAGE
 FROM golang:1.24 AS builder
 
+LABEL maintainer="LitmusChaos"
+
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /auth-server
+COPY . /auth-server
 WORKDIR /auth-server
 
-ENV GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-
-RUN go env
-
-RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o /output/server -v ./api/
 
 # PACKAGING STAGE
 # Use RedHat UBI minimal image as base
