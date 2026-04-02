@@ -20,6 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	probeHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -54,14 +55,16 @@ type gitOpsService struct {
 	gitOpsOperator         *gitops.Operator
 	chaosExperimentOps     chaos_experiment.Operator
 	chaosExperimentService chaosExperimentOps.Service
+	probeService           probeHandler.Service
 }
 
 // NewGitOpsService returns a new instance of a gitOpsService
-func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator) Service {
+func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator, probeService probeHandler.Service) Service {
 	return &gitOpsService{
 		gitOpsOperator:         gitOpsOperator,
 		chaosExperimentService: chaosExperimentService,
 		chaosExperimentOps:     chaosExperimentOps,
+		probeService:           probeService,
 	}
 }
 
@@ -461,10 +464,19 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
-			err = g.deleteExperiment(file, config)
-			if err != nil {
-				log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
-				continue
+			// Check if it's a probe or experiment file
+			if strings.Contains(file, "/probes/") {
+				err = g.deleteProbe(file, config)
+				if err != nil {
+					log.Error("Error while deleting probe db entry : " + file + " | " + err.Error())
+					continue
+				}
+			} else {
+				err = g.deleteExperiment(file, config)
+				if err != nil {
+					log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
+					continue
+				}
 			}
 			continue
 		}
@@ -479,8 +491,21 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			log.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
-		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
+		
+		// Handle ResilienceProbe resources
+		if kind == "resilienceprobe" {
+			log.Info("Processing ResilienceProbe from git : " + file)
+			err = g.syncProbe(ctx, string(data), file, config)
+			if err != nil {
+				log.Error("Error while syncing probe : " + file + " | " + err.Error())
+				continue
+			}
+			continue
+		}
+		
+		// Handle experiment resources
+		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		if kind != "cronexperiment" && kind != "experiment" && kind != "chaosengine" && kind != "workflow" {
 			continue
 		}
@@ -639,4 +664,412 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	}
 
 	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", dataStore.Store)
+}
+
+// syncProbe helps in creating or updating a probe during the SyncDBToGit operation
+func (g *gitOpsService) syncProbe(ctx context.Context, data, file string, config GitConfig) error {
+	_, fileName := filepath.Split(file)
+	fileName = strings.Replace(fileName, ".yaml", "", -1)
+	probeName := gjson.Get(data, "metadata.name").String()
+	
+	log.Info("Probe Details | probe_name: ", probeName)
+	if probeName == "" {
+		return errors.New("probe name is empty")
+	}
+	
+	if fileName != probeName {
+		return errors.New("file name doesn't match probe name")
+	}
+	
+	// Parse probe manifest into ProbeRequest
+	probeRequest, err := g.parseProbeManifest(data)
+	if err != nil {
+		return fmt.Errorf("failed to parse probe manifest: %s", err.Error())
+	}
+	
+	// Check if probe already exists
+	isUnique, err := g.probeService.ValidateUniqueProbe(ctx, probeName, config.ProjectID)
+	if err != nil {
+		return fmt.Errorf("failed to validate probe uniqueness: %s", err.Error())
+	}
+	
+	if isUnique {
+		// Create new probe
+		log.Info("Creating new probe from git: ", probeName)
+		_, err = g.probeService.AddProbe(ctx, *probeRequest, config.ProjectID)
+		if err != nil {
+			return fmt.Errorf("failed to create probe: %s", err.Error())
+		}
+	} else {
+		// Update existing probe
+		log.Info("Updating existing probe from git: ", probeName)
+		_, err = g.probeService.UpdateProbe(ctx, *probeRequest, config.ProjectID)
+		if err != nil {
+			return fmt.Errorf("failed to update probe: %s", err.Error())
+		}
+	}
+	
+	return nil
+}
+
+// deleteProbe helps in deleting probe from DB during the SyncDBToGit operation
+func (g *gitOpsService) deleteProbe(file string, config GitConfig) error {
+	_, fileName := filepath.Split(file)
+	fileName = strings.Replace(fileName, ".yaml", "", -1)
+	
+	log.Info("Deleting probe from git: ", fileName)
+	
+	// Check if probe exists before deleting
+	isUnique, err := g.probeService.ValidateUniqueProbe(context.Background(), fileName, config.ProjectID)
+	if err != nil {
+		return err
+	}
+	
+	if isUnique {
+		// Probe doesn't exist, nothing to delete
+		log.Info("Probe not found in DB, skipping delete: ", fileName)
+		return nil
+	}
+	
+	_, err = g.probeService.DeleteProbe(context.Background(), fileName, config.ProjectID)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}
+
+// parseProbeManifest converts a ResilienceProbe YAML manifest to ProbeRequest
+func (g *gitOpsService) parseProbeManifest(data string) (*model.ProbeRequest, error) {
+	probeRequest := &model.ProbeRequest{}
+	
+	// Extract basic metadata
+	probeRequest.Name = gjson.Get(data, "metadata.name").String()
+	description := gjson.Get(data, "metadata.description").String()
+	if description != "" {
+		probeRequest.Description = &description
+	}
+	
+	// Extract tags
+	tagsArray := gjson.Get(data, "metadata.tags").Array()
+	if len(tagsArray) > 0 {
+		tags := make([]string, 0, len(tagsArray))
+		for _, tag := range tagsArray {
+			tags = append(tags, tag.String())
+		}
+		probeRequest.Tags = tags
+	}
+	
+	// Extract spec
+	probeType := gjson.Get(data, "spec.type").String()
+	infrastructureType := gjson.Get(data, "spec.infrastructureType").String()
+	
+	// Validate required fields
+	if probeRequest.Name == "" {
+		return nil, errors.New("probe name is required")
+	}
+	if probeType == "" {
+		return nil, errors.New("probe type is required")
+	}
+	if infrastructureType == "" {
+		return nil, errors.New("infrastructure type is required")
+	}
+	
+	// Set probe type
+	switch strings.ToLower(probeType) {
+	case "httpprobe":
+		probeRequest.Type = model.ProbeTypeHTTPProbe
+	case "cmdprobe":
+		probeRequest.Type = model.ProbeTypeCmdProbe
+	case "promprobe":
+		probeRequest.Type = model.ProbeTypePromProbe
+	case "k8sprobe":
+		probeRequest.Type = model.ProbeTypeK8sProbe
+	default:
+		return nil, fmt.Errorf("unsupported probe type: %s", probeType)
+	}
+	
+	// Set infrastructure type
+	switch strings.ToLower(infrastructureType) {
+	case "kubernetes":
+		probeRequest.InfrastructureType = model.InfrastructureTypeKubernetes
+	default:
+		return nil, fmt.Errorf("unsupported infrastructure type: %s", infrastructureType)
+	}
+	
+	// Parse type-specific properties
+	switch probeRequest.Type {
+	case model.ProbeTypeHTTPProbe:
+		httpProps, err := g.parseHTTPProbeProperties(data)
+		if err != nil {
+			return nil, err
+		}
+		probeRequest.KubernetesHTTPProperties = httpProps
+		
+	case model.ProbeTypeCmdProbe:
+		cmdProps, err := g.parseCMDProbeProperties(data)
+		if err != nil {
+			return nil, err
+		}
+		probeRequest.KubernetesCMDProperties = cmdProps
+		
+	case model.ProbeTypePromProbe:
+		promProps, err := g.parsePromProbeProperties(data)
+		if err != nil {
+			return nil, err
+		}
+		probeRequest.PromProperties = promProps
+		
+	case model.ProbeTypeK8sProbe:
+		k8sProps, err := g.parseK8SProbeProperties(data)
+		if err != nil {
+			return nil, err
+		}
+		probeRequest.K8sProperties = k8sProps
+	}
+	
+	return probeRequest, nil
+}
+
+// parseHTTPProbeProperties extracts HTTP probe properties from manifest
+func (g *gitOpsService) parseHTTPProbeProperties(data string) (*model.KubernetesHTTPProbeRequest, error) {
+	props := &model.KubernetesHTTPProbeRequest{}
+	
+	props.ProbeTimeout = gjson.Get(data, "spec.properties.probeTimeout").String()
+	props.Interval = gjson.Get(data, "spec.properties.interval").String()
+	props.URL = gjson.Get(data, "spec.properties.url").String()
+	
+	if props.ProbeTimeout == "" || props.Interval == "" || props.URL == "" {
+		return nil, errors.New("required HTTP probe properties missing")
+	}
+	
+	// Optional fields
+	if val := gjson.Get(data, "spec.properties.attempt"); val.Exists() {
+		attempt := int(val.Int())
+		props.Attempt = &attempt
+	}
+	if val := gjson.Get(data, "spec.properties.retry"); val.Exists() {
+		retry := int(val.Int())
+		props.Retry = &retry
+	}
+	if val := gjson.Get(data, "spec.properties.probePollingInterval"); val.Exists() {
+		pollingInterval := val.String()
+		props.ProbePollingInterval = &pollingInterval
+	}
+	if val := gjson.Get(data, "spec.properties.initialDelay"); val.Exists() {
+		initialDelay := val.String()
+		props.InitialDelay = &initialDelay
+	}
+	if val := gjson.Get(data, "spec.properties.evaluationTimeout"); val.Exists() {
+		evaluationTimeout := val.String()
+		props.EvaluationTimeout = &evaluationTimeout
+	}
+	if val := gjson.Get(data, "spec.properties.stopOnFailure"); val.Exists() {
+		stopOnFailure := val.Bool()
+		props.StopOnFailure = &stopOnFailure
+	}
+	if val := gjson.Get(data, "spec.properties.insecureSkipVerify"); val.Exists() {
+		insecureSkipVerify := val.Bool()
+		props.InsecureSkipVerify = &insecureSkipVerify
+	}
+	
+	// Parse method (GET or POST)
+	props.Method = &model.MethodRequest{}
+	if gjson.Get(data, "spec.properties.method.get").Exists() {
+		props.Method.Get = &model.GETRequest{
+			Criteria:     gjson.Get(data, "spec.properties.method.get.criteria").String(),
+			ResponseCode: gjson.Get(data, "spec.properties.method.get.responseCode").String(),
+		}
+	} else if gjson.Get(data, "spec.properties.method.post").Exists() {
+		postReq := &model.POSTRequest{
+			Criteria:     gjson.Get(data, "spec.properties.method.post.criteria").String(),
+			ResponseCode: gjson.Get(data, "spec.properties.method.post.responseCode").String(),
+		}
+		if val := gjson.Get(data, "spec.properties.method.post.contentType"); val.Exists() {
+			contentType := val.String()
+			postReq.ContentType = &contentType
+		}
+		if val := gjson.Get(data, "spec.properties.method.post.body"); val.Exists() {
+			body := val.String()
+			postReq.Body = &body
+		}
+		if val := gjson.Get(data, "spec.properties.method.post.bodyPath"); val.Exists() {
+			bodyPath := val.String()
+			postReq.BodyPath = &bodyPath
+		}
+		props.Method.Post = postReq
+	}
+	
+	return props, nil
+}
+
+// parseCMDProbeProperties extracts CMD probe properties from manifest
+func (g *gitOpsService) parseCMDProbeProperties(data string) (*model.KubernetesCMDProbeRequest, error) {
+	props := &model.KubernetesCMDProbeRequest{}
+	
+	props.ProbeTimeout = gjson.Get(data, "spec.properties.probeTimeout").String()
+	props.Interval = gjson.Get(data, "spec.properties.interval").String()
+	props.Command = gjson.Get(data, "spec.properties.command").String()
+	
+	if props.ProbeTimeout == "" || props.Interval == "" || props.Command == "" {
+		return nil, errors.New("required CMD probe properties missing")
+	}
+	
+	// Comparator
+	props.Comparator = &model.ComparatorInput{
+		Type:     gjson.Get(data, "spec.properties.comparator.type").String(),
+		Value:    gjson.Get(data, "spec.properties.comparator.value").String(),
+		Criteria: gjson.Get(data, "spec.properties.comparator.criteria").String(),
+	}
+	
+	// Optional fields
+	if val := gjson.Get(data, "spec.properties.attempt"); val.Exists() {
+		attempt := int(val.Int())
+		props.Attempt = &attempt
+	}
+	if val := gjson.Get(data, "spec.properties.retry"); val.Exists() {
+		retry := int(val.Int())
+		props.Retry = &retry
+	}
+	if val := gjson.Get(data, "spec.properties.probePollingInterval"); val.Exists() {
+		pollingInterval := val.String()
+		props.ProbePollingInterval = &pollingInterval
+	}
+	if val := gjson.Get(data, "spec.properties.initialDelay"); val.Exists() {
+		initialDelay := val.String()
+		props.InitialDelay = &initialDelay
+	}
+	if val := gjson.Get(data, "spec.properties.evaluationTimeout"); val.Exists() {
+		evaluationTimeout := val.String()
+		props.EvaluationTimeout = &evaluationTimeout
+	}
+	if val := gjson.Get(data, "spec.properties.stopOnFailure"); val.Exists() {
+		stopOnFailure := val.Bool()
+		props.StopOnFailure = &stopOnFailure
+	}
+	if val := gjson.Get(data, "spec.properties.source"); val.Exists() {
+		source := val.String()
+		props.Source = &source
+	}
+	
+	return props, nil
+}
+
+// parsePromProbeProperties extracts Prometheus probe properties from manifest
+func (g *gitOpsService) parsePromProbeProperties(data string) (*model.PROMProbeRequest, error) {
+	props := &model.PROMProbeRequest{}
+	
+	props.ProbeTimeout = gjson.Get(data, "spec.properties.probeTimeout").String()
+	props.Interval = gjson.Get(data, "spec.properties.interval").String()
+	props.Endpoint = gjson.Get(data, "spec.properties.endpoint").String()
+	
+	if props.ProbeTimeout == "" || props.Interval == "" || props.Endpoint == "" {
+		return nil, errors.New("required PROM probe properties missing")
+	}
+	
+	// Comparator
+	props.Comparator = &model.ComparatorInput{
+		Type:     gjson.Get(data, "spec.properties.comparator.type").String(),
+		Value:    gjson.Get(data, "spec.properties.comparator.value").String(),
+		Criteria: gjson.Get(data, "spec.properties.comparator.criteria").String(),
+	}
+	
+	// Optional fields
+	if val := gjson.Get(data, "spec.properties.query"); val.Exists() {
+		query := val.String()
+		props.Query = &query
+	}
+	if val := gjson.Get(data, "spec.properties.queryPath"); val.Exists() {
+		queryPath := val.String()
+		props.QueryPath = &queryPath
+	}
+	if val := gjson.Get(data, "spec.properties.attempt"); val.Exists() {
+		attempt := int(val.Int())
+		props.Attempt = &attempt
+	}
+	if val := gjson.Get(data, "spec.properties.retry"); val.Exists() {
+		retry := int(val.Int())
+		props.Retry = &retry
+	}
+	if val := gjson.Get(data, "spec.properties.probePollingInterval"); val.Exists() {
+		pollingInterval := val.String()
+		props.ProbePollingInterval = &pollingInterval
+	}
+	if val := gjson.Get(data, "spec.properties.initialDelay"); val.Exists() {
+		initialDelay := val.String()
+		props.InitialDelay = &initialDelay
+	}
+	if val := gjson.Get(data, "spec.properties.evaluationTimeout"); val.Exists() {
+		evaluationTimeout := val.String()
+		props.EvaluationTimeout = &evaluationTimeout
+	}
+	if val := gjson.Get(data, "spec.properties.stopOnFailure"); val.Exists() {
+		stopOnFailure := val.Bool()
+		props.StopOnFailure = &stopOnFailure
+	}
+	
+	return props, nil
+}
+
+// parseK8SProbeProperties extracts K8s probe properties from manifest
+func (g *gitOpsService) parseK8SProbeProperties(data string) (*model.K8SProbeRequest, error) {
+	props := &model.K8SProbeRequest{}
+	
+	props.ProbeTimeout = gjson.Get(data, "spec.properties.probeTimeout").String()
+	props.Interval = gjson.Get(data, "spec.properties.interval").String()
+	props.Version = gjson.Get(data, "spec.properties.version").String()
+	props.Resource = gjson.Get(data, "spec.properties.resource").String()
+	props.Operation = gjson.Get(data, "spec.properties.operation").String()
+	
+	if props.ProbeTimeout == "" || props.Interval == "" || props.Version == "" || props.Resource == "" || props.Operation == "" {
+		return nil, errors.New("required K8s probe properties missing")
+	}
+	
+	// Optional fields
+	if val := gjson.Get(data, "spec.properties.group"); val.Exists() {
+		group := val.String()
+		props.Group = &group
+	}
+	if val := gjson.Get(data, "spec.properties.namespace"); val.Exists() {
+		namespace := val.String()
+		props.Namespace = &namespace
+	}
+	if val := gjson.Get(data, "spec.properties.resourceNames"); val.Exists() {
+		resourceNames := val.String()
+		props.ResourceNames = &resourceNames
+	}
+	if val := gjson.Get(data, "spec.properties.fieldSelector"); val.Exists() {
+		fieldSelector := val.String()
+		props.FieldSelector = &fieldSelector
+	}
+	if val := gjson.Get(data, "spec.properties.labelSelector"); val.Exists() {
+		labelSelector := val.String()
+		props.LabelSelector = &labelSelector
+	}
+	if val := gjson.Get(data, "spec.properties.attempt"); val.Exists() {
+		attempt := int(val.Int())
+		props.Attempt = &attempt
+	}
+	if val := gjson.Get(data, "spec.properties.retry"); val.Exists() {
+		retry := int(val.Int())
+		props.Retry = &retry
+	}
+	if val := gjson.Get(data, "spec.properties.probePollingInterval"); val.Exists() {
+		pollingInterval := val.String()
+		props.ProbePollingInterval = &pollingInterval
+	}
+	if val := gjson.Get(data, "spec.properties.initialDelay"); val.Exists() {
+		initialDelay := val.String()
+		props.InitialDelay = &initialDelay
+	}
+	if val := gjson.Get(data, "spec.properties.evaluationTimeout"); val.Exists() {
+		evaluationTimeout := val.String()
+		props.EvaluationTimeout = &evaluationTimeout
+	}
+	if val := gjson.Get(data, "spec.properties.stopOnFailure"); val.Exists() {
+		stopOnFailure := val.Bool()
+		props.StopOnFailure = &stopOnFailure
+	}
+	
+	return props, nil
 }
