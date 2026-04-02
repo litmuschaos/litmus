@@ -464,7 +464,9 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
-			// Check if it's a probe or experiment file
+			// Check if it's a probe or experiment file by reading the kind from git history
+			// For deleted files, we need to determine type from filename pattern or path
+			// Probes are typically in /probes/ directory or have specific naming
 			if strings.Contains(file, "/probes/") {
 				err = g.deleteProbe(file, config)
 				if err != nil {
@@ -472,6 +474,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 					continue
 				}
 			} else {
+				// Assume it's an experiment if not in probes directory
 				err = g.deleteExperiment(file, config)
 				if err != nil {
 					log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
