@@ -60,6 +60,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.24.0" # By default, the go version is v1.15 in runner.
+          cache: false
 
       - name: Check Golang imports order
         uses: Jerome1337/goimports-action@v1.0.3
@@ -100,6 +101,7 @@ jobs:
        - uses: actions/setup-go@v5
          with:
            go-version: "1.24.0" # By default, the go version is v1.15 in runner.
+           cache: false
        - name: Backend unit tests
          shell: bash
          run: |
