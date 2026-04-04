@@ -263,6 +263,21 @@ func (r *subscriptionResolver) GetInfraEvents(ctx context.Context, projectID str
 
 	go func() {
 		<-ctx.Done()
+		logrus.Print("CLOSED INFRA EVENT LISTENER: ", projectID)
+		data_store.Store.Mutex.Lock()
+		// Remove this channel from the slice to prevent memory leak and deadlock
+		channels := data_store.Store.InfraEventPublish[projectID]
+		for i, ch := range channels {
+			if ch == infraEvent {
+				data_store.Store.InfraEventPublish[projectID] = append(channels[:i], channels[i+1:]...)
+				break
+			}
+		}
+		// Clean up map entry when no subscribers remain for this project
+		if len(data_store.Store.InfraEventPublish[projectID]) == 0 {
+			delete(data_store.Store.InfraEventPublish, projectID)
+		}
+		data_store.Store.Mutex.Unlock()
 	}()
 
 	return infraEvent, nil
@@ -334,7 +349,9 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 	go func() {
 		<-ctx.Done()
 		logrus.Print("CLOSED LOG LISTENER: ", request.InfraID, request.PodName)
+		data_store.Store.Mutex.Lock()
 		delete(data_store.Store.ExperimentLog, reqID.String())
+		data_store.Store.Mutex.Unlock()
 	}()
 	go r.chaosExperimentHandler.GetLogs(reqID.String(), request, *data_store.Store)
 	return workflowLog, nil
@@ -351,7 +368,9 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 	go func() {
 		<-ctx.Done()
 		logrus.Println("Closed KubeObj Listener")
+		data_store.Store.Mutex.Lock()
 		delete(data_store.Store.KubeObjectData, reqID.String())
+		data_store.Store.Mutex.Unlock()
 	}()
 	go r.chaosExperimentHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
 
@@ -369,7 +388,9 @@ func (r *subscriptionResolver) GetKubeNamespace(ctx context.Context, request mod
 	go func() {
 		<-ctx.Done()
 		logrus.Println("Closed KubeNamespace Listener")
+		data_store.Store.Mutex.Lock()
 		delete(data_store.Store.KubeNamespaceData, reqID.String())
+		data_store.Store.Mutex.Unlock()
 	}()
 	go r.chaosExperimentHandler.GetKubeNamespaceData(reqID.String(), request, *data_store.Store)
 
