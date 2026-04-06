@@ -1,0 +1,90 @@
+# Example Kubernetes Deployment with BASE_PATH support
+# This shows how to deploy Litmus frontend with a custom base path
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-frontend
+  labels:
+    component: litmusportal-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-frontend
+  template:
+    metadata:
+      labels:
+        component: litmusportal-frontend
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: litmusportal-frontend
+          image: litmuschaos/litmusportal-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8185
+          env:
+            # Set PUBLIC_URL to serve from a subpath
+            # Examples:
+            #   - "/" (default, serves from root)
+            #   - "/litmus" (serves from /litmus subpath)
+            #   - "/chaos" (serves from /chaos subpath)
+            - name: PUBLIC_URL
+              value: "/"  # Change this to your desired base path, e.g., "/litmus"
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: litmusportal-frontend-nginx-configuration
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-frontend-service
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 9091
+      targetPort: 8185
+  selector:
+    component: litmusportal-frontend
+---
+# Example Ingress configuration for subpath routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: litmus-ingress
+  annotations:
+    # For Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    # For nginx-ingress
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          # Serves Litmus from /litmus path
+          - path: /litmus(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: litmusportal-frontend-service
+                port:
+                  number: 9091
+---
+# Signed-off-by: NETIZEN-11 <kumarnitesh121411@gmail.com>

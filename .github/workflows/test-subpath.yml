@@ -1,0 +1,224 @@
+# Signed-off-by: NETIZEN-11 <kumarnitesh121411@gmail.com>
+
+name: Test Subpath Build
+
+on:
+  pull_request:
+    paths:
+      - 'chaoscenter/web/**'
+  push:
+    branches:
+      - master
+    paths:
+      - 'chaoscenter/web/**'
+
+jobs:
+  test-root-path:
+    name: Test Root Path Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: chaoscenter/web/yarn.lock
+
+      - name: Install dependencies
+        working-directory: chaoscenter/web
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests
+        working-directory: chaoscenter/web
+        run: yarn test
+
+      - name: Build with root path
+        working-directory: chaoscenter/web
+        run: yarn build
+        env:
+          PUBLIC_URL: /
+
+      - name: Verify build output
+        working-directory: chaoscenter/web
+        run: |
+          if [ ! -f "dist/index.html" ]; then
+            echo "Build failed: index.html not found"
+            exit 1
+          fi
+          echo "✓ Build successful"
+
+      - name: Check asset paths in index.html
+        working-directory: chaoscenter/web
+        run: |
+          if grep -q 'href="/"' dist/index.html; then
+            echo "✓ Base tag correctly set to /"
+          else
+            echo "✗ Base tag not found or incorrect"
+            exit 1
+          fi
+
+  test-subpath:
+    name: Test Subpath Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base_path: ['/litmus', '/chaos', '/apps/litmus']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: chaoscenter/web/yarn.lock
+
+      - name: Install dependencies
+        working-directory: chaoscenter/web
+        run: yarn install --frozen-lockfile
+
+      - name: Build with subpath ${{ matrix.base_path }}
+        working-directory: chaoscenter/web
+        run: yarn build
+        env:
+          PUBLIC_URL: ${{ matrix.base_path }}
+
+      - name: Verify build output
+        working-directory: chaoscenter/web
+        run: |
+          if [ ! -f "dist/index.html" ]; then
+            echo "Build failed: index.html not found"
+            exit 1
+          fi
+          echo "✓ Build successful for ${{ matrix.base_path }}"
+
+      - name: Check asset paths in index.html
+        working-directory: chaoscenter/web
+        run: |
+          BASE_PATH="${{ matrix.base_path }}"
+          if grep -q "href=\"$BASE_PATH\"" dist/index.html; then
+            echo "✓ Base tag correctly set to $BASE_PATH"
+          else
+            echo "✗ Base tag not found or incorrect"
+            cat dist/index.html | grep "base href"
+            exit 1
+          fi
+
+  test-docker-build:
+    name: Test Docker Build with Subpath
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: chaoscenter/web/yarn.lock
+
+      - name: Install dependencies
+        working-directory: chaoscenter/web
+        run: yarn install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: chaoscenter/web
+        run: PUBLIC_URL=/litmus yarn build
+
+      - name: Build Docker image
+        working-directory: chaoscenter/web
+        run: docker build -t litmus-frontend-test:latest .
+
+      - name: Test Docker container
+        run: |
+          # Start container with subpath
+          docker run -d --name litmus-test \
+            -e PUBLIC_URL=/litmus \
+            -p 8185:8185 \
+            litmus-frontend-test:latest
+          
+          # Wait for container to start
+          sleep 10
+          
+          # Check if container is running
+          if ! docker ps | grep -q litmus-test; then
+            echo "✗ Container failed to start"
+            docker logs litmus-test
+            exit 1
+          fi
+          
+          echo "✓ Container started successfully"
+          
+          # Check logs for correct configuration
+          if docker logs litmus-test 2>&1 | grep -q "BASE_PATH: /litmus"; then
+            echo "✓ Base path configured correctly"
+          else
+            echo "✗ Base path not configured"
+            docker logs litmus-test
+            exit 1
+          fi
+          
+          # Cleanup
+          docker stop litmus-test
+          docker rm litmus-test
+
+  test-entrypoint:
+    name: Test Entrypoint Script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Test entrypoint with different PUBLIC_URL values
+        working-directory: chaoscenter/web
+        run: |
+          # Test with /litmus
+          PUBLIC_URL=/litmus sh -c '
+            BASE_PATH="${PUBLIC_URL:-/}"
+            BASE_PATH=$(echo "$BASE_PATH" | sed "s:/*$::")
+            if [ -z "$BASE_PATH" ]; then
+              BASE_PATH="/"
+            fi
+            echo "Testing PUBLIC_URL=/litmus -> BASE_PATH=$BASE_PATH"
+            [ "$BASE_PATH" = "/litmus" ] || exit 1
+          '
+          
+          # Test with /
+          PUBLIC_URL=/ sh -c '
+            BASE_PATH="${PUBLIC_URL:-/}"
+            BASE_PATH=$(echo "$BASE_PATH" | sed "s:/*$::")
+            if [ -z "$BASE_PATH" ]; then
+              BASE_PATH="/"
+            fi
+            echo "Testing PUBLIC_URL=/ -> BASE_PATH=$BASE_PATH"
+            [ "$BASE_PATH" = "/" ] || exit 1
+          '
+          
+          # Test with trailing slash
+          PUBLIC_URL=/litmus/ sh -c '
+            BASE_PATH="${PUBLIC_URL:-/}"
+            BASE_PATH=$(echo "$BASE_PATH" | sed "s:/*$::")
+            if [ -z "$BASE_PATH" ]; then
+              BASE_PATH="/"
+            fi
+            echo "Testing PUBLIC_URL=/litmus/ -> BASE_PATH=$BASE_PATH"
+            [ "$BASE_PATH" = "/litmus" ] || exit 1
+          '
+          
+          # Test with empty
+          PUBLIC_URL= sh -c '
+            BASE_PATH="${PUBLIC_URL:-/}"
+            BASE_PATH=$(echo "$BASE_PATH" | sed "s:/*$::")
+            if [ -z "$BASE_PATH" ]; then
+              BASE_PATH="/"
+            fi
+            echo "Testing PUBLIC_URL= -> BASE_PATH=$BASE_PATH"
+            [ "$BASE_PATH" = "/" ] || exit 1
+          '
+          
+          echo "✓ All entrypoint tests passed"

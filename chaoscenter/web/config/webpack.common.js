@@ -19,7 +19,7 @@ module.exports = {
     children: false
   },
   output: {
-    publicPath: '/',
+    publicPath: process.env.PUBLIC_URL || '/',
     path: path.resolve(CONTEXT, 'dist/'),
     pathinfo: false
   },
@@ -136,7 +136,8 @@ module.exports = {
     new HTMLWebpackPlugin({
       template: 'src/index.html',
       filename: 'index.html',
-      minify: true
+      minify: true,
+      publicPath: process.env.PUBLIC_URL || '/'
     }),
     new RetryChunkLoadPlugin({
       retryDelay: 1000,
