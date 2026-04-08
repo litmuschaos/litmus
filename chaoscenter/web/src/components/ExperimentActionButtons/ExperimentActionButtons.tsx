@@ -56,8 +56,11 @@ export const RunExperimentButton = ({
   const { showSuccess, showError } = useToaster();
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
-  const [runChaosExperimentMutation] = runChaosExperiment({
+  const runInFlightRef = React.useRef(false);
+
+  const [runChaosExperimentMutation, { loading: runChaosExperimentLoading }] = runChaosExperiment({
     onCompleted: response => {
+      runInFlightRef.current = false;
       showSuccess(getString('reRunSuccessful'));
       refetchExperiments?.();
       const notifyID = response.runChaosExperiment.notifyID;
@@ -71,6 +74,7 @@ export const RunExperimentButton = ({
       }
     },
     onError: err => {
+      runInFlightRef.current = false;
       showError(err.message);
     }
   });
@@ -84,13 +88,15 @@ export const RunExperimentButton = ({
           isDark: true,
           ...tooltipProps
         }}
-        disabled={disabled}
+        disabled={disabled || runChaosExperimentLoading}
         iconProps={{ size: 18 }}
         icon={'play'}
         withoutCurrentColor
         variation={ButtonVariation.ICON}
         permission={PermissionGroup.Executor}
         onClick={() => {
+          if (disabled || runChaosExperimentLoading || runInFlightRef.current) return;
+          runInFlightRef.current = true;
           runChaosExperimentMutation({
             variables: { projectID: scope.projectID, experimentID: experimentID }
           });
