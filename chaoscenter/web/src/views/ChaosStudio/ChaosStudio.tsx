@@ -51,6 +51,7 @@ interface ChaosStudioViewProps {
     runChaosExperiment: boolean;
   };
   mode: StudioMode;
+  isExperimentRunning?: boolean;
   rightSideBar?: React.ReactElement;
   allowSwitchToRunHistory?: boolean;
 }
@@ -60,6 +61,7 @@ export default function ChaosStudioView({
   runChaosExperimentMutation,
   loading,
   mode,
+  isExperimentRunning,
   rightSideBar,
   allowSwitchToRunHistory
 }: ChaosStudioViewProps): React.ReactElement {
@@ -80,6 +82,7 @@ export default function ChaosStudioView({
   const [error, setError] = React.useState<StudioErrorState>({ OVERVIEW: undefined, BUILDER: undefined });
   const [hasFaults, setHasFaults] = React.useState<boolean>(false);
   const studioOverviewRef = React.useRef<FormikProps<ExperimentMetadata>>();
+  const runExperimentInFlightRef = React.useRef(false);
   const experimentHashKeyForClone = getHash();
   const { showWarning } = useToaster();
   const {
@@ -205,15 +208,25 @@ export default function ChaosStudioView({
   };
 
   const runExperimentHandler = (): void => {
+    if (loading.runChaosExperiment || runExperimentInFlightRef.current) return;
+    runExperimentInFlightRef.current = true;
     runChaosExperimentMutation({
       variables: {
         projectID: scope.projectID,
         experimentID: experimentKey
       },
       onCompleted: response => {
+        runExperimentInFlightRef.current = false;
         showSuccess(getString('reRunSuccessful'));
         setSafeToNavigate(true);
         const notifyID = response.runChaosExperiment.notifyID;
+        try {
+          if (typeof window !== 'undefined' && !isEmpty(notifyID)) {
+            window.sessionStorage.setItem(`litmus:runInProgress:${scope.projectID}:${experimentKey}`, 'true');
+          }
+        } catch (e) {
+          // ignore storage failures
+        }
         if (!isEmpty(notifyID)) {
           history.push(
             paths.toExperimentRunDetailsViaNotifyID({
@@ -224,6 +237,10 @@ export default function ChaosStudioView({
         } else {
           history.push(paths.toExperiments());
         }
+      },
+      onError: err => {
+        runExperimentInFlightRef.current = false;
+        showError(err.message);
       }
     });
   };
@@ -349,6 +366,7 @@ export default function ChaosStudioView({
             <StudioActionButtons
               disabled={error.OVERVIEW || error.BUILDER || !hasFaults}
               loading={loading.saveChaosExperiment || loading.runChaosExperiment}
+              runDisabled={Boolean(isExperimentRunning)}
               handleDiscard={() => {
                 setSafeToNavigate(true);
                 openDiscardExperimentDialog();
