@@ -58,21 +58,21 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
         validationSchema={Yup.object().shape({
           url: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'URL' })),
+            .required(getString('isRequired', { field: getString('url') })),
           method: Yup.string().oneOf(['get', 'post']).required(getString('required')),
           criteria: Yup.string().oneOf(['==', '!=', 'oneOf']).required(getString('required')),
           responseCode: Yup.number()
             .typeError(getString('useIntegerValue'))
             .positive()
             .integer()
-            .required(getString('isRequired', { field: 'Response code' })),
+            .required(getString('isRequired', { field: getString('responseCode') })),
           contentType: Yup.string()
             .trim()
             .when('method', {
               is: 'post',
               then: Yup.string()
                 .trim()
-                .required(getString('isRequired', { field: 'Content-Type' }))
+                .required(getString('isRequired', { field: getString('contentType') }))
             }),
           body: Yup.string()
             .trim()
@@ -80,7 +80,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
               is: 'post',
               then: Yup.string()
                 .trim()
-                .required(getString('isRequired', { field: 'Body' }))
+                .required(getString('isRequired', { field: getString('body') }))
             })
         })}
       >
@@ -99,18 +99,18 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                   >
                     <FormInput.Text
                       name="url"
-                      label="URL"
+                      label={getString('url')}
                       placeholder={formikProps.initialValues.url}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_http_url' }}
                     />
                     <FormInput.CheckBox
                       name="insecureSkipVerify"
-                      label="Skip certificate checks"
+                      label={getString('skipCertificateChecks')}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_http_skip_cc' }}
                     />
                     <FormInput.Select
                       name="method"
-                      label="Method"
+                      label={getString('method')}
                       placeholder={formikProps.initialValues.method}
                       items={[
                         { label: 'GET', value: 'get' },
@@ -131,7 +131,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Text
                       name="responseCode"
-                      label="Response Code"
+                      label={getString('responseCode')}
                       placeholder={formikProps.initialValues.responseCode}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_http_response_code' }}
                     />
@@ -139,13 +139,13 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       <>
                         <FormInput.Text
                           name="contentType"
-                          label="Content-Type"
+                          label={getString('contentType')}
                           placeholder={formikProps.initialValues.contentType}
                           tooltipProps={{ dataTooltipId: 'chaos_probe_http_content_type' }}
                         />
                         <FormInput.Text
                           name="body"
-                          label="Body"
+                          label={getString('body')}
                           placeholder={formikProps.initialValues.body}
                           tooltipProps={{ dataTooltipId: 'chaos_probe_http_body' }}
                         />
@@ -214,13 +214,13 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
           group: Yup.string().trim(),
           version: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Version' })),
+            .required(getString('isRequired', { field: getString('version') })),
           resource: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Resource' })),
+            .required(getString('isRequired', { field: getString('resource') })),
           namespace: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Namespace' })),
+            .required(getString('isRequired', { field: getString('namespace') })),
           fieldSelector: Yup.string()
             .trim()
             .when('operation', {
@@ -233,7 +233,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
               is: (value: string) => ['delete', 'present', 'absent'].includes(value),
               then: Yup.string()
                 .trim()
-                .required(getString('isRequired', { field: 'Label Selector' }))
+                .required(getString('isRequired', { field: getString('labelSelector') }))
             }),
           operation: Yup.string().oneOf(['create', 'delete', 'present', 'absent']).required(getString('required')),
           data: Yup.string()
@@ -242,7 +242,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
               is: 'create',
               then: Yup.string()
                 .trim()
-                .required(getString('isRequired', { field: 'Data' }))
+                .required(getString('isRequired', { field: getString('data') }))
             })
         })}
       >
@@ -271,31 +271,31 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                   >
                     <FormInput.Text
                       name="group"
-                      label="Group"
+                      label={getString('k8sResourceGroup')}
                       placeholder={formikProps.initialValues.group}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_group' }}
                     />
                     <FormInput.Text
                       name="version"
-                      label="Version"
+                      label={getString('version')}
                       placeholder={formikProps.initialValues.version}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_version' }}
                     />
                     <FormInput.Text
                       name="resource"
-                      label="Resource"
+                      label={getString('resource')}
                       placeholder={formikProps.initialValues.resource}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_resource' }}
                     />
                     <FormInput.Text
                       name="namespace"
-                      label="Namespace"
+                      label={getString('namespace')}
                       placeholder={formikProps.initialValues.namespace}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_namespace' }}
                     />
                     <FormInput.Select
                       name="operation"
-                      label="Operation"
+                      label={getString('operation')}
                       placeholder={formikProps.initialValues.operation}
                       items={[
                         { label: 'Create', value: 'create' },
@@ -309,24 +309,24 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       <>
                         <FormInput.Text
                           name="fieldSelector"
-                          label="Field Selector"
+                          label={getString('fieldSelector')}
                           placeholder={formikProps.initialValues.fieldSelector}
                           tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_field_selector' }}
                         />
                         <FormInput.Text
                           name="labelSelector"
-                          label="Label Selector"
+                          label={getString('labelSelector')}
                           placeholder={formikProps.initialValues.labelSelector}
                           tooltipProps={{ dataTooltipId: 'chaos_probe_k8s_label_selector' }}
                         />
                       </>
                     )}
                     {formikProps.values.operation === 'create' && (
-                      <FormGroup label={'Data'}>
+                      <FormGroup label={getString('data')}>
                         <FileInput
                           text={fileName}
                           className={css.fileUploadBox}
-                          buttonText="Select"
+                          buttonText={getString('select')}
                           onInputChange={e => {
                             fileUpload(e as React.ChangeEvent<HTMLInputElement>, onUpload, onUploadError);
                           }}
@@ -392,14 +392,14 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
         validationSchema={Yup.object().shape({
           endpoint: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Endpoint' })),
+            .required(getString('isRequired', { field: getString('endpoint') })),
           query: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Query' })),
+            .required(getString('isRequired', { field: getString('query') })),
           type: Yup.string().oneOf(['int', 'float', 'string']).required(getString('required')),
           value: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Value' })),
+            .required(getString('isRequired', { field: getString('value') })),
           criteria: Yup.string()
             .trim()
             .when('type', {
@@ -430,13 +430,13 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Text
                       name="query"
-                      label="Query"
+                      label={getString('query')}
                       placeholder={formikProps.initialValues.query}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_prom_query' }}
                     />
                     <FormInput.Select
                       name="type"
-                      label="Type"
+                      label={getString('type')}
                       placeholder={formikProps.initialValues.type}
                       items={[
                         { label: 'int', value: 'int' },
@@ -469,7 +469,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Text
                       name="value"
-                      label="Value"
+                      label={getString('value')}
                       placeholder={formikProps.initialValues.value}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_prom_value' }}
                     />
@@ -530,11 +530,11 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
         validationSchema={Yup.object().shape({
           command: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Command' })),
+            .required(getString('isRequired', { field: getString('command') })),
           type: Yup.string().oneOf(['int', 'float', 'string']).required(getString('required')),
           value: Yup.string()
             .trim()
-            .required(getString('isRequired', { field: 'Value' })),
+            .required(getString('isRequired', { field: getString('value') })),
           criteria: Yup.string()
             .trim()
             .when('type', {
@@ -565,7 +565,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Select
                       name="type"
-                      label="Type"
+                      label={getString('type')}
                       placeholder={formikProps.initialValues.type}
                       items={[
                         { label: 'int', value: 'int' },
@@ -598,13 +598,13 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Text
                       name="value"
-                      label="Value"
+                      label={getString('value')}
                       placeholder={formikProps.initialValues.value}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_cmd_value' }}
                     />
                     <FormInput.Text
                       name="source"
-                      label="Source"
+                      label={getString('source')}
                       placeholder={formikProps.initialValues.source}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_cmd_source' }}
                       disabled
