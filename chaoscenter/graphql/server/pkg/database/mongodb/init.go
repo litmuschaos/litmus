@@ -92,6 +92,10 @@ func MongoConnection() (*mongo.Client, error) {
 		Password: dbPassword,
 	}
 
+	// RegisterMetrics ensures Prometheus metrics are always registered before
+	// the monitor is attached, regardless of which entrypoint calls MongoConnection().
+	// Uses sync.Once internally so multiple calls are safe.
+	telemetry.RegisterMetrics()
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential).SetMonitor(telemetry.GetMongoMonitor())
 
 	client, err := mongo.Connect(backgroundContext, clientOptions)

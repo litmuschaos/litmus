@@ -82,6 +82,9 @@ func setupGin() *gin.Engine {
 }
 
 func main() {
+	// RegisterMetrics is also called inside MongoConnection() (mongodb/init.go) for safety,
+	// ensuring metrics are registered even if called from a future entrypoint without main().
+	// The sync.Once guard inside RegisterMetrics() makes double-calls safe.
 	telemetry.RegisterMetrics()
 	router := setupGin()
 	var err error
@@ -149,7 +152,20 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
-	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// metricsAuthMiddleware restricts /metrics to loopback-only access (127.0.0.1 / ::1).
+	// This prevents Prometheus operational data from leaking to external callers if the
+	// server is ever reachable outside the cluster/VPC.
+	metricsAuthMiddleware := func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		ip := net.ParseIP(clientIP)
+		if ip == nil || !ip.IsLoopback() {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+		c.Next()
+	}
+	router.GET("/metrics", metricsAuthMiddleware, gin.WrapH(promhttp.Handler()))
 	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
