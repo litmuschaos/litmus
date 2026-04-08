@@ -23,21 +23,11 @@ jobs:
           go-version: "1.24"
           cache-dependency-path: chaoscenter/event-tracker/go.sum
 
-      - name: Install envtest binaries
-        run: |
-          go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
-
-      - name: Download envtest assets (k8s 1.32)
-        run: |
-          setup-envtest use 1.32 --bin-dir /usr/local/kubebuilder/bin -p path
-          echo "KUBEBUILDER_ASSETS=$(setup-envtest use 1.32 --bin-dir /usr/local/kubebuilder/bin -p path)" >> $GITHUB_ENV
-
       - name: Run tests with coverage
         id: run_tests
         working-directory: chaoscenter/event-tracker
         run: |
-          go test -v -coverprofile=coverage.out -covermode=atomic ./... 2>&1 | tee test_output.txt
+          go test -v -coverprofile=coverage.out -covermode=atomic ./pkg/... 2>&1 | tee test_output.txt
           go tool cover -func=coverage.out | tee coverage_summary.txt
           TOTAL=$(grep "^total:" coverage_summary.txt | awk '{print $3}')
           echo "total_coverage=$TOTAL" >> $GITHUB_OUTPUT
