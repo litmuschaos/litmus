@@ -103,8 +103,8 @@ const ExperimentRunHistoryView = ({
         <Text font={{ variation: FontVariation.H5 }}>{getString('resilienceScoreTrends')}</Text>
         {/* <!-- Column Chart goes here--> */}
         <ColumnChart
-          xAxisLabel="Runs"
-          yAxisLabel="Resilience Score"
+          xAxisLabel={getString('runs')}
+          yAxisLabel={getString('resiliencyScore')}
           gridLines={[0, 35, 65, 100]}
           data={experimentRunsColumnGraphData}
           isLoading={loading}

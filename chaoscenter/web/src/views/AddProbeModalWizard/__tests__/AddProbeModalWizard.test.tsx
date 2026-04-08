@@ -84,7 +84,7 @@ describe('AddProbeModalWizardView CMD Probe', () => {
     await user.click(nextButton2);
 
     // Step 3: Details (CMD Probe)
-    await waitFor(() => getByText('Command'));
+    await waitFor(() => getByText('command'));
 
     const commandInput = container.querySelector('textarea[name$="command"]');
     if (!commandInput) throw new Error('Command input not found');
