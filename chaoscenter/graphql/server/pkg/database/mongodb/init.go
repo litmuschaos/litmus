@@ -131,7 +131,7 @@ func (m *MongoClient) initAllCollection() {
 	m.ProjectCollection = m.Database.Collection(Collections[ProjectCollection])
 
 	// Initialize chaos infra collection
-	err := m.Database.CreateCollection(context.TODO(), Collections[ChaosInfraCollection], nil)
+	err := m.Database.CreateCollection(backgroundContext, Collections[ChaosInfraCollection], nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			logrus.Info(Collections[ChaosInfraCollection] + "'s collection already exists, continuing with the existing mongo collection")
@@ -159,7 +159,7 @@ func (m *MongoClient) initAllCollection() {
 	}
 
 	// Initialize chaos experiment collection
-	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosExperimentCollection], nil)
+	err = m.Database.CreateCollection(backgroundContext, Collections[ChaosExperimentCollection], nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			logrus.Info(Collections[ChaosExperimentCollection] + "'s collection already exists, continuing with the existing mongo collection")
@@ -187,7 +187,7 @@ func (m *MongoClient) initAllCollection() {
 	}
 
 	// Initialize chaos experiment runs collection
-	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosExperimentRunsCollection], nil)
+	err = m.Database.CreateCollection(backgroundContext, Collections[ChaosExperimentRunsCollection], nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			logrus.Info(Collections[ChaosExperimentRunsCollection] + "'s collection already exists, continuing with the existing mongo collection")
@@ -209,7 +209,7 @@ func (m *MongoClient) initAllCollection() {
 	}
 
 	// Initialize chaos hubs collection
-	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosHubCollection], nil)
+	err = m.Database.CreateCollection(backgroundContext, Collections[ChaosHubCollection], nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			logrus.Info(Collections[ChaosHubCollection] + "'s collection already exists, continuing with the existing mongo collection")
@@ -292,7 +292,7 @@ func (m *MongoClient) initAllCollection() {
 		logrus.WithError(err).Fatal("failed to create indexes for environments collection")
 	}
 	// Initialize chaos probes collection
-	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosProbeCollection], nil)
+	err = m.Database.CreateCollection(backgroundContext, Collections[ChaosProbeCollection], nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			logrus.Info(Collections[ChaosProbeCollection] + "'s collection already exists, continuing with the existing mongo collection")

@@ -128,6 +128,7 @@ export const Description = (props: DescriptionComponentProps): JSX.Element => {
           tooltipProps={{ dataTooltipId: 'description' }}
           placeholder={getString('nameIdDescriptionTags.descriptionPlaceholder')}
           {...restDescriptionProps}
+          maxLength={100000} // Increase limit to prevent silent truncation (default is 1024)
         />
       )}
     </Container>

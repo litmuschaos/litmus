@@ -954,9 +954,16 @@ func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVe
 	if err != nil {
 		return nil, err
 	}
+	if dbVersion == nil {
+		return nil, errors.New("server version config not found")
+	}
+	versionStr, ok := dbVersion.Value.(string)
+	if !ok {
+		return nil, errors.New("server version config has unexpected type")
+	}
 	return &model.ServerVersionResponse{
 		Key:   dbVersion.Key,
-		Value: dbVersion.Value.(string),
+		Value: versionStr,
 	}, nil
 }
 
