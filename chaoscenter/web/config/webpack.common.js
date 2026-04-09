@@ -127,7 +127,8 @@ module.exports = {
   },
   plugins: [
     new DefinePlugin({
-      'process.env': '{}' // required for @blueprintjs/core
+      'process.env': '{}', // required for @blueprintjs/core
+      'process.env.PUBLIC_URL': JSON.stringify(process.env.PUBLIC_URL || '/')
     }),
     new GenerateStringTypesPlugin({
       input: 'src/strings/strings.en.yaml',

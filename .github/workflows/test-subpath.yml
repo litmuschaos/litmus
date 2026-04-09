@@ -141,28 +141,28 @@ jobs:
             -e PUBLIC_URL=/litmus \
             -p 8185:8185 \
             litmus-frontend-test:latest
-          
-          # Wait for container to start
-          sleep 10
-          
-          # Check if container is running
-          if ! docker ps | grep -q litmus-test; then
+
+          # Wait for nginx to start
+          sleep 5
+
+          # Check if container is still running (nginx didn't crash)
+          if docker ps | grep -q litmus-test; then
+            echo "✓ Container and nginx started successfully"
+          else
             echo "✗ Container failed to start"
             docker logs litmus-test
             exit 1
           fi
-          
-          echo "✓ Container started successfully"
-          
-          # Check logs for correct configuration
+
+          # Check logs for correct base path configuration
           if docker logs litmus-test 2>&1 | grep -q "BASE_PATH: /litmus"; then
             echo "✓ Base path configured correctly"
           else
-            echo "✗ Base path not configured"
+            echo "✗ Base path not configured correctly"
             docker logs litmus-test
             exit 1
           fi
-          
+
           # Cleanup
           docker stop litmus-test
           docker rm litmus-test
