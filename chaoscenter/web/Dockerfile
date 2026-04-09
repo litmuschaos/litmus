@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi10/nginx-126:latest
+FROM registry.redhat.io/ubi10/nginx-126:10.1
 
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
