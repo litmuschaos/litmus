@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -21,11 +19,13 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt/v4"
+	log "github.com/sirupsen/logrus"
+	ssh2 "golang.org/x/crypto/ssh"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
-	log "github.com/sirupsen/logrus"
-	ssh2 "golang.org/x/crypto/ssh"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // GitConfig structure for the GitOps settings

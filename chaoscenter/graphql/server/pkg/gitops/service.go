@@ -12,6 +12,12 @@ import (
 	"time"
 
 	"github.com/ghodss/yaml"
+	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
+	"go.mongodb.org/mongo-driver/bson"
+	grpc2 "google.golang.org/grpc"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	chaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
@@ -20,13 +26,8 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
-	probeHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
-	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
-	"go.mongodb.org/mongo-driver/bson"
-	grpc2 "google.golang.org/grpc"
+	probeHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 )
 
 const (
