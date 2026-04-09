@@ -6,6 +6,8 @@ COPY ./entrypoint.sh /opt
 
 WORKDIR /opt/chaos
 
+USER 0
+
 RUN chown 65534:0 -R /opt/chaos && \
     chown 65534:0 -R /var/log/nginx && \
     chown 65534:0 -R /etc/nginx
