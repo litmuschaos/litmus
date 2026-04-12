@@ -308,6 +308,8 @@ It defines the order in which target pods are terminated when `SEQUENCE` is set 
 - `reverse`: Target pods are terminated in descending alphabetical order of their names.
 
 To guarantee a **fixed, named kill sequence** (e.g. always kill `session-pod` last), set `TARGET_PODS` to the desired ordered comma-separated list — insertion order is preserved:
+> **Note:** When `TARGET_PODS` is explicitly provided, its comma-separated order takes strict precedence and `POD_TERMINATION_ORDER` is ignored.
+
 ```yaml
 - name: TARGET_PODS
   value: 'worker-pod-1,worker-pod-2,session-pod'
