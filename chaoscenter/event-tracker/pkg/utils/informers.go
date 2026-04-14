@@ -73,8 +73,8 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 				!reflect.DeepEqual(stsNewObj, stsOldObj) &&
 				stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" &&
 				experimentId != "" {
-				logrus.Infof("Event Detected for ExperimentId: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", experimentId, "Deployment", stsNewObj.Name, stsNewObj.Namespace)
-				err := PolicyAuditor("Deployment", stsNewObj, stsOldObj, experimentId)
+				logrus.Infof("Event Detected for ExperimentId: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", experimentId, "StatefulSet", stsNewObj.Name, stsNewObj.Namespace)
+				err := PolicyAuditor("StatefulSet", stsNewObj, stsOldObj, experimentId)
 				if err != nil {
 					logrus.Error(err)
 					return
@@ -104,7 +104,7 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			dsNewObj := newObj.(*v1.DaemonSet)
-			dsOldObj := newObj.(*v1.DaemonSet)
+			dsOldObj := oldObj.(*v1.DaemonSet)
 
 			var experimentId = dsNewObj.GetAnnotations()[annotationKey]
 
@@ -112,8 +112,8 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 				!reflect.DeepEqual(dsNewObj, dsOldObj) &&
 				dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" &&
 				experimentId != "" {
-				logrus.Infof("Event Detected for ExperimentId: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", experimentId, "Deployment", dsNewObj.Name, dsNewObj.Namespace)
-				err := PolicyAuditor("Deployment", dsNewObj, dsOldObj, experimentId)
+				logrus.Infof("Event Detected for ExperimentId: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", experimentId, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
+				err := PolicyAuditor("DaemonSet", dsNewObj, dsOldObj, experimentId)
 				if err != nil {
 					logrus.Error(err)
 					return
