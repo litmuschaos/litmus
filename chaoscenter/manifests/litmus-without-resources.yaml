@@ -282,7 +282,6 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: litmusportal-server
-  namespace: litmus
   labels:
     component: litmusportal-server
 spec:
@@ -384,7 +383,6 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: litmusportal-auth-server
-  namespace: litmus
   labels:
     component: litmusportal-auth-server
 spec:

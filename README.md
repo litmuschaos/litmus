@@ -1,6 +1,6 @@
+# [LitmusChaos](https://litmuschaos.io/)
 <img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
-# [LitmusChaos](https://litmuschaos.io/)
 ### Open Source Chaos Engineering Platform
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
@@ -12,12 +12,11 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20LitmusChaos%20Guru-006BFF)](https://gurubase.io/g/litmuschaos)
 <br><br><br><br>
 
 #### *Read this in [other languages](translations/TRANSLATIONS.md).*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇧🇷](translations/README-pt-br.md) [🇮🇳](translations/README-hi.md)
+[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇧🇷](translations/README-pt-br.md) [🇮🇳](translations/README-hi.md) [🇪🇸](translations/README-es.md)
 
 
 ## Overview
@@ -76,7 +75,7 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ### Community Resources:
 
-Feel free to reach out if you have any queries,concerns, or feature requests
+Feel free to reach out if you have any queries, concerns, or feature requests
 
 - Give us a star ⭐️ - If you are using LitmusChaos or think it is an interesting project, we would love a star ❤️
 
@@ -85,22 +84,20 @@ Feel free to reach out if you have any queries,concerns, or feature requests
 - Subscribe to the [LitmusChaos YouTube channel](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw) for regular updates & meeting recordings. 
 
 - To join our [Slack Community](https://slack.litmuschaos.io/) and meet our community members, put forward your questions & opinions, join the #litmus channel on the [Kubernetes Slack](https://slack.k8s.io/). 
+
 ### Community Meetings
 
 1. Community Meetings
-These will be hosted every 3rd Wednesday of every month at  5:30 PM GMT /6:30 PM CEST /10 PM IST
-The community meetings will involve discussing community updates, sharing updates on new features/releases and discussing user/adopter stories. Everyone in the community is invited for the same to participate in the LitmusChaos community meetings.
+- These will be hosted every 3rd Wednesday of every month at  5:30 PM GMT /6:30 PM CEST /10 PM IST
+- These meetings cover community updates, new feature or release announcements, and user/adopter stories. Everyone in the community is welcome to join and participate in discussions.
 
 
 2. Contributor Meetings
-These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
-The contributor meetings are only meant to discuss technical and non-technical contributions to LitmusChaos. Maintainers, present Contributors and aspiring contributors are invited to participate in the LitmusChaos contributor meetings to discuss issues, fixes, enhancements and future contributions
+- These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
+- These meetings focus on both technical and non-technical contributions to LitmusChaos. Maintainers, current contributors, and aspiring contributors are encouraged to join to discuss issues, fixes, enhancements, and future contributions.
 
+Fill out the [LitmusChaos Meetings invite form](https://forms.gle/qawjtFUeL431jmpv7) to get your Calendar invite!  
 
-Fill out the [LitmusChaos Meetings invite form](https://forms.gle/xYZyZ2gTWMqz7xSs7) to get your Calendar invite!  
-
-
-- [Sync Up Meeting Link](https://harness-io.zoom.us/j/95100368978?pwd=b2VrdCtaakE5U3dhOElFMUJOaXVOUT09)
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 

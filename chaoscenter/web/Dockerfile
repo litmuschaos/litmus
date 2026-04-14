@@ -1,7 +1,11 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
-RUN microdnf module enable nginx:1.20
-RUN microdnf install nginx
-RUN microdnf update --refresh --best --noplugins --setopt=install_weak_deps=0
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
+
+# apply latest patches
+RUN microdnf update -y --nodocs \
+&& microdnf install -y --nodocs nginx \
+&& microdnf install -y --nodocs python3 python3-pip \
+&& pip3 install --no-cache-dir pyyaml \
+&& microdnf clean all
     
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
@@ -11,9 +15,9 @@ WORKDIR /opt/chaos
 
 # Update the permission of group to 0(root) to make it Openshift friendly
 # as Openshift runs container with an arbitrary uid that in the root group
-RUN chown 65534:0 -R /opt/chaos && \
-    chown 65534:0 -R /var/log/nginx && \
-    chown 65534:0 -R /etc/nginx
+RUN touch /run/nginx.pid && \
+    chown -R 65534:0 /opt/chaos /var/log/nginx /etc/nginx /var/lib/nginx /run/nginx.pid && \
+    chmod -R 755 /opt/chaos /var/log/nginx /etc/nginx /var/lib/nginx /run/nginx.pid
 
 USER 65534
 

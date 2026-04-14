@@ -1,5 +1,5 @@
 # BUILD STAGE
-FROM golang:1.22 AS builder
+FROM golang:1.24 AS builder
 
 LABEL maintainer="LitmusChaos"
 
@@ -17,7 +17,7 @@ RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # Packaging stage
 # Use RedHat UBI minimal image as base
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
 
 LABEL maintainer="LitmusChaos"
 

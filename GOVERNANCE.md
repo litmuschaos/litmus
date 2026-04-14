@@ -14,6 +14,14 @@ Roles and their responsibilities are detailed in the [Community Membership](./co
 
 The list of current maintainers and their organizational affiliations is maintained in the [MAINTAINERS.md](./MAINTAINERS.md) file.
 
+## Vendor Neutrality
+
+LitmusChaos, as a CNCF project, follows the principle of vendor neutrality.  
+- No single company or organization should exercise exclusive control over the project.  
+- Maintainers are expected to act in the best interest of the community as a whole, regardless of their employer.  
+- Contributions and leadership roles are open to individuals from diverse organizations and backgrounds.  
+- Project infrastructure, decision-making, and trademarks are owned and governed under the CNCF, ensuring a neutral and community-driven ecosystem.
+
 ## Conflict Resolution and Voting
 
 Most issues within the project are resolved by consensus. When consensus cannot be reached, a voting process is initiated. All decisions are documented publicly, either in GitHub or in meeting notes.

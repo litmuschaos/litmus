@@ -36,7 +36,6 @@ export function StatusHeatMap(props: StatusHeatMapProps): React.ReactElement {
 
   function hideIconForStatus(experimentRunStatus: ExperimentRunStatus): boolean {
     switch (experimentRunStatus) {
-      case ExperimentRunStatus.COMPLETED:
       case ExperimentRunStatus.COMPLETED_WITH_PROBE_FAILURE:
       case ExperimentRunStatus.COMPLETED_WITH_ERROR:
       case ExperimentRunStatus.NA:

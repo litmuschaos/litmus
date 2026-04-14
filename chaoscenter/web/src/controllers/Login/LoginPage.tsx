@@ -11,7 +11,7 @@ import { useSearchParams } from '@hooks';
 
 const LoginController: React.FC = () => {
   const history = useHistory();
-  const { showError } = useToaster();
+  const { showError, clear } = useToaster();
   const searchParams = useSearchParams();
 
   const dexToken = searchParams.get('jwtToken');
@@ -30,20 +30,26 @@ const LoginController: React.FC = () => {
         projectID: dexProjectID,
         projectRole: dexProjectRole ?? ''
       });
-      history.push(normalizePath(`/account/${accountID}/project/${dexProjectID ?? ''}/dashboard`));
+      if (dexProjectID && dexProjectID.trim() !== '') {
+        history.push(normalizePath(`/account/${accountID}/project/${dexProjectID}/dashboard`));
+      } else {
+        history.push(normalizePath(`/account/${accountID}/settings/projects`));
+      }
     }
   }, []);
 
   const { isLoading, mutate: handleLogin } = useLoginMutation(
     {},
     {
-      onError: err =>
+      onError: err => {
+        clear();
         showError(
           toTitleCase({
             separator: '_',
             text: err.error ?? ''
           })
-        ),
+        );
+      },
       onSuccess: response => {
         if (response.accessToken) {
           setUserDetails(response);
@@ -68,10 +74,10 @@ const LoginController: React.FC = () => {
         });
         if (response.isInitialLogin) {
           history.push(`/account/${userDetails.accountID}/settings/password-reset`);
+        } else if (userDetails.projectID && userDetails.projectID.trim() !== '') {
+          history.push(normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID}/dashboard`));
         } else {
-          history.push(
-            normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID ?? ''}/dashboard`)
-          );
+          history.push(normalizePath(`/account/${userDetails.accountID}/settings/projects`));
         }
       }
     }

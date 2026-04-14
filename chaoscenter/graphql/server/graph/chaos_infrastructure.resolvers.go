@@ -216,7 +216,10 @@ func (r *queryResolver) GetInfraManifest(ctx context.Context, infraID string, up
 		return "", err
 	}
 
-	gcaResponse, err := chaos_infrastructure.GetK8sInfraYaml(referrerURL.Host, getInfra)
+	gcaResponse, err := chaos_infrastructure.GetK8sInfraYaml(
+		fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host),
+		getInfra)
+
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err

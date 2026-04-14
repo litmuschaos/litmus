@@ -20,12 +20,13 @@ type SubscriberConfigurations struct {
 }
 
 func GetEndpoint(host string) (string, error) {
+	const apiPath = "/api/query"
 	// returns endpoint from env, if provided by user
 	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
+		return strings.TrimRight(utils.Config.ChaosCenterUiEndpoint, "/") + apiPath, nil
 	}
 
-	return host + "/api/query", nil
+	return strings.TrimRight(host, "/") + apiPath, nil
 }
 
 func GetHelmCommand(infra dbChaosInfra.ChaosInfra, infraURL string) string {
@@ -126,11 +127,11 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
 	if !*infra.InfraNsExists && infra.InfraScope != "namespace" {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(namespaceConfig))
+		generatedYAML = append(generatedYAML, fmt.Sprintf("%v", namespaceConfig))
 	}
 
 	if !*infra.InfraSaExists {
-		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
+		generatedYAML = append(generatedYAML, fmt.Sprintf("%v", serviceAccountStr))
 	}
 
 	// File operations

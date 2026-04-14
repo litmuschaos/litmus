@@ -71,7 +71,7 @@ func AddKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request mod
 	return newProbe
 }
 
-func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) (*dbSchemaProbe.Probe, error) {
 	newProbe.KubernetesCMDProperties = &dbSchemaProbe.KubernetesCMDProbe{
 		// Common Probe Properties
 		ProbeTimeout: request.KubernetesCMDProperties.ProbeTimeout,
@@ -108,8 +108,8 @@ func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 
 		err := json.Unmarshal([]byte(*request.KubernetesCMDProperties.Source), &source)
 		if err != nil {
-			log.Errorf("error unmarshalling soruce: %s", err.Error())
-			return nil
+			log.Errorf("error unmarshalling source: %s", err.Error())
+			return nil, err
 		}
 		if source != nil {
 			newProbe.KubernetesCMDProperties.Source = &v1alpha1.SourceDetails{
@@ -131,7 +131,7 @@ func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 		}
 	}
 
-	return newProbe
+	return newProbe, nil
 }
 
 func AddPROMProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {

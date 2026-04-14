@@ -89,7 +89,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 2. 컨트리뷰터 회의: 
 매월 두 번째 및 마지막 목요일 오후 2:30 GMT / 오후 3:30 CEST / 오후 7:00 IST에 열립니다. 컨트리뷰터 회의는 오직 LitmusChaos에 대한 기술적 기여와 비기술적 기여에 대한 논의를 목적으로 합니다. 메인테이너, 현재 기여중인 분들 및 기여를 희망하는 분들이 참여하여 이슈, 수정, 개선 사항과 향후 기여를 논의합니다.
   
-[LitmusChaos 회의 초대 양식](https://forms.gle/xYZyZ2gTWMqz7xSs7)을 작성하여 캘린더 초대장을 받으세요!
+[LitmusChaos 회의 초대 양식](https://forms.gle/qawjtFUeL431jmpv7)을 작성하여 캘린더 초대장을 받으세요!
 
 - [회의 링크](https://harness-io.zoom.us/j/95100368978?pwd=b2VrdCtaakE5U3dhOElFMUJOaXVOUT09)
 - [회의 의제 및 노트](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)

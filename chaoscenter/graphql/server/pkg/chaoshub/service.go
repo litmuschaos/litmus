@@ -189,7 +189,8 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 
 	err = handler.DownloadRemoteHub(chaosHub, projectID)
 	if err != nil {
-		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
+		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: %v", err)
+
 		log.Error(err)
 		return nil, err
 	}
@@ -962,11 +963,17 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 
 func (c *chaosHubService) listDefaultHubs() *model.ChaosHub {
 	defaultHubs := &model.ChaosHub{
-		ID:         DefaultHubID,
-		Name:       "Litmus ChaosHub",
-		RepoURL:    utils.Config.DefaultHubGitURL,
-		RepoBranch: utils.Config.DefaultHubBranchName,
-		IsDefault:  true,
+		ID:            DefaultHubID,
+		Name:          utils.Config.DefaultHubName,
+		RepoURL:       utils.Config.DefaultHubGitURL,
+		RepoBranch:    utils.Config.DefaultHubBranchName,
+		IsPrivate:     utils.Config.DefaultHubIsPrivate,
+		AuthType:      model.AuthType(utils.Config.DefaultHubAuthType),
+		Token:         &utils.Config.DefaultHubToken,
+		UserName:      &utils.Config.DefaultHubUserName,
+		Password:      &utils.Config.DefaultHubPassword,
+		SSHPrivateKey: &utils.Config.DefaultHubSshPrivateKey,
+		IsDefault:     true,
 	}
 	return defaultHubs
 }
@@ -977,10 +984,16 @@ func (c *chaosHubService) SyncDefaultChaosHubs() {
 		defaultHub := c.listDefaultHubs()
 
 		chartsInput := model.CloningInput{
-			Name:       defaultHub.Name,
-			RepoURL:    defaultHub.RepoURL,
-			RepoBranch: defaultHub.RepoBranch,
-			IsDefault:  true,
+			Name:          defaultHub.Name,
+			RepoURL:       defaultHub.RepoURL,
+			RepoBranch:    defaultHub.RepoBranch,
+			IsPrivate:     defaultHub.IsPrivate,
+			AuthType:      defaultHub.AuthType,
+			Token:         defaultHub.Token,
+			UserName:      defaultHub.UserName,
+			Password:      defaultHub.Password,
+			SSHPrivateKey: defaultHub.SSHPrivateKey,
+			IsDefault:     true,
 		}
 		err := chaosHubOps.GitSyncDefaultHub(chartsInput)
 		if err != nil {
@@ -988,6 +1001,8 @@ func (c *chaosHubService) SyncDefaultChaosHubs() {
 				"repoUrl":    defaultHub.RepoURL,
 				"repoBranch": defaultHub.RepoBranch,
 				"hubName":    defaultHub.Name,
+				"isPrivate":  defaultHub.IsPrivate,
+				"AuthType":   defaultHub.AuthType,
 			}).WithError(err).Error("failed to sync default chaos hubs")
 		}
 		// Syncing Completed

@@ -8,6 +8,7 @@ declare namespace ChaosFaultsModuleScssNamespace {
     gap2: string;
     gap4: string;
     insideCard: string;
+    k6Logo: string;
     listContainer: string;
     listContainerWithoutFaults: string;
     listContainerWithoutLoader: string;

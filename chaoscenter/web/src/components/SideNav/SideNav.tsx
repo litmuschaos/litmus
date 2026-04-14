@@ -124,11 +124,6 @@ export default function SideNav(): ReactElement {
         )}
       </div>
       <Container className={css.bottomContainer} data-isroutepresent={isPathPresent('settings')}>
-        {!isPathPresent('settings') && (
-          <div className={css.iconContainer}>
-            <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />
-          </div>
-        )}
         <div className={css.titleContainer}>
           {isPathPresent('settings') ? (
             <Layout.Horizontal

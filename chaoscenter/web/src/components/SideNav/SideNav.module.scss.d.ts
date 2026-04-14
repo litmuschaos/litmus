@@ -3,8 +3,6 @@ declare namespace SideNavModuleScssNamespace {
     bottomContainer: string;
     collapse: string;
     expand: string;
-    icon: string;
-    iconContainer: string;
     link: string;
     logOutContainer: string;
     main: string;

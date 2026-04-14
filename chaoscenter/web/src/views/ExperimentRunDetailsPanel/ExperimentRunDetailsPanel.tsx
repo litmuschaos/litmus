@@ -81,7 +81,7 @@ const DetailsTabs = ({
             title: getString('logs'),
             panel: (
               <LogsTabController
-                key={node.chaosData?.faultPod ?? podID}
+                key={node.chaosData?.experimentPod ?? podID}
                 chaosData={node.chaosData}
                 nodeType={node.type}
                 namespace={namespace}

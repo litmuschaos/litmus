@@ -22,7 +22,7 @@ func AddSalt(service services.ApplicationService) error {
 		return nil
 	}
 
-	salt, err := utils.RandomString(6)
+	salt, err := utils.RandomString(32)
 	if err != nil {
 		log.Error(err)
 		return err

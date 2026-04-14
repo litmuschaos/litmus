@@ -4,13 +4,14 @@ import { Icon } from '@harnessio/icons';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { Link, useParams } from 'react-router-dom';
 import { withErrorBoundary } from 'react-error-boundary';
-import { toTitleCase } from '@utils';
+import { toTitleCase, getScope } from '@utils';
 import { useStrings } from '@strings';
 import NoExperiments from '@images/NoExperiments.svg';
 import { Fallback } from '@errors';
 import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
+import config from '@config';
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
@@ -41,6 +42,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
   const searchParams = useSearchParams();
   const hubName = searchParams.get('hubName');
   const isDefault = searchParams.get('isDefault');
+  const scope = getScope();
   const tags: TagProps[] = [];
   const faultsArray: Fault[] = [];
   const [activeTag, setActiveTag] = React.useState<string>('All');
@@ -99,7 +101,24 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
         <Card key={fault.name} interactive className={css.insideCard}>
           <Layout.Vertical spacing="medium">
             <Layout.Horizontal spacing="small">
-              <Icon size={23} name="chaos-litmuschaos" />
+              {['kubernetes', 'spring-boot', 'k6-loadgen', 'azure', 'gcp', 'aws', 'k6-logo', 'vmware'].includes(
+                fault.chartName.toLowerCase()
+              ) ? (
+                <img
+                  src={
+                    fault.chartName.toLowerCase() === 'vmware'
+                      ? 'https://hub.litmuschaos.io/api/icon/3.22.0/vmware/vmware.png'
+                      : isDefault === 'true'
+                      ? `${config.restEndpoints?.chaosManagerUri}/icon/default/${hubName}/${fault.chartName}/${fault.name}.png`
+                      : `${config.restEndpoints?.chaosManagerUri}/icon/${scope.projectID}/${hubName}/${fault.chartName}/${fault.name}.png`
+                  }
+                  alt={`${fault.name} icon`}
+                  style={{ width: 23, height: 23, objectFit: 'contain' }}
+                />
+              ) : (
+                <Icon size={23} name="chaos-litmuschaos" />
+              )}
+
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
                 {fault.displayName === ''
                   ? toTitleCase({
