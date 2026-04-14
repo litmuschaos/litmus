@@ -6,10 +6,12 @@ import (
 	"reflect"
 	"testing"
 
-	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
-
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	chaosExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
@@ -17,15 +19,12 @@ import (
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	dbChoasInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/stretchr/testify/mock"
-
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbChoasInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	dbProbeMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/model/mocks"
 )
 
 type MockServices struct {
@@ -606,7 +605,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
 			},
 			wantErr: false,
-		},{
+		}, {
 			name: "success: verifies query filters out removed experiments",
 			args: args{
 				projectID: projectId,
@@ -618,7 +617,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-	
+
 				filterCheck := func(filter interface{}) bool {
 					bsonFilter, ok := filter.(bson.D)
 					if !ok {
