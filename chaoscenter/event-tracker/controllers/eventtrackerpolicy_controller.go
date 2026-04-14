@@ -62,13 +62,12 @@ type apiResponse struct {
 func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
-	// Collect experiment IDs that need to be triggered after successful status update
-	var experimentsToTrigger []string
-
-	// Phase 1: Atomically claim the trigger status using optimistic concurrency
+	// Phase 1: atomically claim pending triggers by flipping IsTriggered to "true"
+	// before any side effect. A concurrent reconcile that loses the CAS will re-read
+	// and observe the winner's claim, so each trigger is owned by exactly one loop.
+	var claimed []string
 	err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		// Reset on each retry - we need fresh state
-		experimentsToTrigger = nil
+		claimed = nil
 
 		var etp eventtrackerv1.EventTrackerPolicy
 		if err := r.Client.Get(ctx, req.NamespacedName, &etp); err != nil {
@@ -79,55 +78,83 @@ func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.R
 			return err
 		}
 
-		modified := false
-		for index, status := range etp.Statuses {
-			if status.Result == utils.ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
-				// Mark as triggered BEFORE sending request to prevent duplicate triggers
-				etp.Statuses[index].IsTriggered = "true"
-				experimentsToTrigger = append(experimentsToTrigger, status.ExperimentID)
-				modified = true
-				logrus.Printf("Claiming trigger for ResourceName: %s, ExperimentID: %s",
-					status.ResourceName, status.ExperimentID)
+		for i, s := range etp.Statuses {
+			if s.Result == utils.ConditionPassed && strings.ToLower(s.IsTriggered) == "false" {
+				etp.Statuses[i].IsTriggered = "true"
+				claimed = append(claimed, s.ExperimentID)
+				logrus.Printf("claiming trigger resource=%s experimentID=%s", s.ResourceName, s.ExperimentID)
 			}
 		}
-
-		if modified {
-			// Atomically update - if this fails due to conflict, retry will re-read
-			// and see IsTriggered="true" set by the winning reconcile
-			return r.Client.Update(ctx, &etp)
+		if len(claimed) == 0 {
+			return nil
 		}
-		return nil
+		return r.Client.Update(ctx, &etp)
 	})
-
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	// Phase 2: Trigger experiments only after successfully claiming the status
-	// This runs outside the retry loop - experiments are only triggered once
-	for _, experimentID := range experimentsToTrigger {
-		logrus.Printf("Triggering ExperimentID: %s", experimentID)
-		response, err := utils.SendRequest(experimentID)
-		if err != nil {
-			logrus.WithError(err).Errorf("Failed to trigger experiment %s", experimentID)
-			// Continue with other experiments - don't fail the whole reconcile
+	// Phase 2: side-effect dispatch. Executed outside the retry loop so each
+	// claim triggers exactly one SendRequest. On a Gitops-Disabled response we
+	// restore IsTriggered="false" to match the pre-fix behavior (retryable).
+	var toRevert []string
+	var dispatchErr error
+	for _, experimentID := range claimed {
+		response, sendErr := utils.SendRequest(experimentID)
+		if sendErr != nil {
+			logrus.WithError(sendErr).Errorf("failed to trigger experiment %s", experimentID)
+			toRevert = append(toRevert, experimentID)
+			dispatchErr = sendErr
 			continue
 		}
 
 		var res apiResponse
-		if err := json.Unmarshal([]byte(response), &res); err != nil {
-			logrus.WithError(err).Errorf("Failed to parse response for experiment %s", experimentID)
+		if jsonErr := json.Unmarshal([]byte(response), &res); jsonErr != nil {
+			logrus.WithError(jsonErr).Errorf("failed to parse response for experiment %s", experimentID)
+			toRevert = append(toRevert, experimentID)
+			dispatchErr = jsonErr
 			continue
 		}
 
 		if res.Data.GitopsNotifer == "Gitops Disabled" {
-			logrus.Infof("GitOps disabled for experiment %s", experimentID)
-		} else {
-			logrus.Infof("Successfully triggered experiment %s", experimentID)
+			logrus.Infof("gitops disabled for experiment %s; releasing claim", experimentID)
+			toRevert = append(toRevert, experimentID)
+			continue
+		}
+		logrus.Infof("successfully triggered experiment %s", experimentID)
+	}
+
+	if len(toRevert) > 0 {
+		revertErr := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+			var etp eventtrackerv1.EventTrackerPolicy
+			if err := r.Client.Get(ctx, req.NamespacedName, &etp); err != nil {
+				if errors.IsNotFound(err) {
+					return nil
+				}
+				return err
+			}
+			revertSet := make(map[string]struct{}, len(toRevert))
+			for _, id := range toRevert {
+				revertSet[id] = struct{}{}
+			}
+			changed := false
+			for i, s := range etp.Statuses {
+				if _, ok := revertSet[s.ExperimentID]; ok && strings.ToLower(s.IsTriggered) == "true" {
+					etp.Statuses[i].IsTriggered = "false"
+					changed = true
+				}
+			}
+			if !changed {
+				return nil
+			}
+			return r.Client.Update(ctx, &etp)
+		})
+		if revertErr != nil {
+			return ctrl.Result{}, revertErr
 		}
 	}
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, dispatchErr
 }
 
 // SetupWithManager sets up the controller with the Manager.
