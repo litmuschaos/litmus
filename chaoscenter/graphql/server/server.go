@@ -160,7 +160,7 @@ func main() {
 
 	probeService := probe.NewProbeService(probeOperator)
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
-	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator, probeService)
 
 	go gitOpsService.GitOpsSyncHandler(false)
 
