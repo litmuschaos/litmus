@@ -1,0 +1,27 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ResilienceProbe
+metadata:
+  name: deployment-ready-check
+  description: "K8s probe to verify deployment readiness"
+  tags:
+    - kubernetes
+    - deployment
+spec:
+  type: k8sProbe
+  infrastructureType: Kubernetes
+  properties:
+    probeTimeout: "10s"
+    interval: "5s"
+    attempt: 3
+    retry: 1
+    probePollingInterval: "2s"
+    initialDelay: "5s"
+    evaluationTimeout: "20s"
+    stopOnFailure: false
+    group: "apps"
+    version: "v1"
+    resource: "deployments"
+    namespace: "default"
+    fieldSelector: "metadata.name=my-app"
+    labelSelector: "app=my-app"
+    operation: "present"
