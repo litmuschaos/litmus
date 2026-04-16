@@ -191,16 +191,28 @@ func main() {
 		conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
 
 		server := http.Server{
-			Addr:      ":" + utils.Config.RestPort,
-			Handler:   router,
-			TLSConfig: conf,
+			Addr:              ":" + utils.Config.RestPort,
+			Handler:           router,
+			TLSConfig:         conf,
+			ReadHeaderTimeout: 10 * time.Second,
+			ReadTimeout:       60 * time.Second,
+			WriteTimeout:      60 * time.Second,
+			IdleTimeout:       120 * time.Second,
 		}
 		if err := server.ListenAndServeTLS("", ""); err != nil {
 			log.Fatalf("Failure to start litmus-portal graphql REST server due to %v", err)
 		}
 	} else {
 		log.Infof("graphql server running at http://localhost:%s", utils.Config.RestPort)
-		log.Fatal(http.ListenAndServe(":"+utils.Config.RestPort, router))
+		server := http.Server{
+			Addr:              ":" + utils.Config.RestPort,
+			Handler:           router,
+			ReadHeaderTimeout: 10 * time.Second,
+			ReadTimeout:       60 * time.Second,
+			WriteTimeout:      60 * time.Second,
+			IdleTimeout:       120 * time.Second,
+		}
+		log.Fatal(server.ListenAndServe())
 	}
 }
 
