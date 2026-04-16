@@ -35,6 +35,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"	
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/99designs/gqlgen/graphql"
 )
 
 func init() {
@@ -141,6 +142,22 @@ func main() {
 	}
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
+	// GraphQL operation tracking middleware
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		oc := graphql.GetOperationContext(ctx)
+		operationType := "query"
+		if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+			operationType = "mutation"
+		}
+		operationName := oc.OperationName
+		if operationName == "" {
+			operationName = "anonymous"
+		}
+	
+		metrics.GraphQLOperationsTotal.WithLabelValues(operationName, operationType).Inc()
+		
+		return next(ctx)
+	})
 	}
 
 	// go routine for syncing chaos hubs
