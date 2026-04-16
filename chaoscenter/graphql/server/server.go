@@ -149,6 +149,8 @@ func main() {
 	}
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
+	}
+	
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 		oc := graphql.GetOperationContext(ctx)
@@ -165,7 +167,6 @@ func main() {
 		
 		return next(ctx)
 	})
-	}
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
