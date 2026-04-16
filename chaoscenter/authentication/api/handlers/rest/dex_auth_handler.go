@@ -29,7 +29,7 @@ func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 		RedirectURL:  utils.DexCallBackURL,
 		ClientID:     utils.DexClientID,
 		ClientSecret: utils.DexClientSecret,
-		Scopes:       []string{"openid", "profile", "email"},
+		Scopes:       []string{"openid", "profile", "email", "groups"},
 		Endpoint:     provider.Endpoint(),
 	}, provider.Verifier(&oidc.Config{ClientID: utils.DexClientID}), nil
 }
@@ -119,6 +119,22 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+
+		// Extract OIDC groups from the configured claim
+		var allClaims map[string]interface{}
+		var oidcGroups []string
+		if err := idToken.Claims(&allClaims); err == nil {
+			if rawGroups, ok := allClaims[utils.OIDCGroupClaim]; ok {
+				if groupSlice, ok := rawGroups.([]interface{}); ok {
+					for _, g := range groupSlice {
+						if gs, ok := g.(string); ok {
+							oidcGroups = append(oidcGroups, gs)
+						}
+					}
+				}
+			}
+		}
+
 		createdAt := time.Now().UnixMilli()
 
 		var userData = entities.User{
@@ -137,6 +153,14 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
+		}
+
+		// Persist OIDC groups on the user record (synced on every login)
+		if len(oidcGroups) > 0 {
+			if err := userService.UpdateUserOIDCGroups(signedInUser.ID, oidcGroups); err != nil {
+				log.Errorf("Failed to update OIDC groups for user %s: %v", signedInUser.ID, err)
+			}
+			signedInUser.OIDCGroups = oidcGroups
 		}
 
 		salt, err := userService.GetConfig("salt")

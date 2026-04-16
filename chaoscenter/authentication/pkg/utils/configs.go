@@ -23,6 +23,7 @@ var (
 	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
 	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
 	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
+	OIDCGroupClaim               = getEnvOrDefault("OIDC_GROUP_CLAIM", "groups")
 	EnableInternalTls            = getEnvAsBool("ENABLE_INTERNAL_TLS", false)
 	TlsCertPath                  = os.Getenv("TLS_CERT_PATH")
 	TlSKeyPath                   = os.Getenv("TLS_KEY_PATH")
@@ -55,6 +56,13 @@ func getEnvAsBool(name string, defaultVal bool) bool {
 	valueStr := os.Getenv(name)
 	if valueStr, err := strconv.ParseBool(valueStr); err == nil {
 		return valueStr
+	}
+	return defaultVal
+}
+
+func getEnvOrDefault(name string, defaultVal string) string {
+	if value := os.Getenv(name); value != "" {
+		return value
 	}
 	return defaultVal
 }
