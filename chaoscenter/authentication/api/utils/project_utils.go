@@ -19,6 +19,13 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 		request.UserID = uID.(string)
 	}
 
+	// Extract OIDC groups from context (set by JWT middleware)
+	if groupsVal, exists := c.Get("groups"); exists {
+		if groups, ok := groupsVal.([]string); ok {
+			request.Groups = groups
+		}
+	}
+
 	// Initialize request.Filter and request.Sort if they are nil
 	if request.Filter == nil {
 		request.Filter = &entities.ListProjectInputFilter{}
@@ -101,22 +108,39 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	return &request
 }
 
-func CreateMatchStage(userID string) bson.D {
-	return bson.D{
-		{"$match", bson.D{
-			{"is_removed", false},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"invitation", bson.D{
-						{"$nin", bson.A{
-							string(entities.PendingInvitation),
-							string(entities.DeclinedInvitation),
-							string(entities.ExitedProject),
-						}},
+func CreateMatchStage(userID string, groups []string) bson.D {
+	memberMatch := bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"invitation", bson.D{
+					{"$nin", bson.A{
+						string(entities.PendingInvitation),
+						string(entities.DeclinedInvitation),
+						string(entities.ExitedProject),
 					}},
 				}},
 			}},
+		}},
+	}
+
+	conditions := bson.A{memberMatch}
+
+	if len(groups) > 0 {
+		groupMatch := bson.D{
+			{"groups", bson.D{
+				{"$elemMatch", bson.D{
+					{"group", bson.D{{"$in", groups}}},
+				}},
+			}},
+		}
+		conditions = append(conditions, groupMatch)
+	}
+
+	return bson.D{
+		{"$match", bson.D{
+			{"is_removed", false},
+			{"$or", conditions},
 		}},
 	}
 }

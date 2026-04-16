@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { Container, Layout, Tabs, useToggleOpen } from '@harnessio/uicore';
 import { Dialog, TabId } from '@blueprintjs/core';
 import DefaultLayout from '@components/DefaultLayout';
@@ -8,6 +9,9 @@ import RbacButton from '@components/RbacButton';
 import ActiveProjectMembersController from '@controllers/ActiveProjectMemberList/ActiveProjectMembers';
 import InviteUsersController from '@controllers/InviteNewMembers';
 import PendingProjectMembersController from '@controllers/PendingProjectMemberList/PendingProjectMembers';
+import ProjectGroupMembersController from '@controllers/ProjectGroupMemberList';
+import AddGroupToProjectView from '@views/AddGroupToProject';
+import { useGetProjectGroupsQuery } from '@api/auth';
 import { useStrings } from '@strings';
 import styles from './ProjectMember.module.scss';
 
@@ -16,8 +20,11 @@ export default function ProjectMembersView(): React.ReactElement {
   const updateSearchParams = useUpdateSearchParams();
   const selectedTabId = searchParams.get('tab') as MembersTabs;
   const { isOpen, close, open } = useToggleOpen();
+  const { isOpen: isGroupModalOpen, close: closeGroupModal, open: openGroupModal } = useToggleOpen();
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
   const { getString } = useStrings();
+  const { projectID } = useParams<{ projectID: string }>();
+  const { refetch: getGroupsRefetch } = useGetProjectGroupsQuery({ project_id: projectID });
 
   useDocumentTitle(getString('members'));
 
@@ -40,6 +47,10 @@ export default function ProjectMembersView(): React.ReactElement {
       case MembersTabs.PENDING:
         setActiveTab(tabID);
         updateSearchParams({ tab: MembersTabs.PENDING });
+        break;
+      case MembersTabs.GROUPS:
+        setActiveTab(tabID);
+        updateSearchParams({ tab: MembersTabs.GROUPS });
         break;
     }
   };
@@ -94,6 +105,44 @@ export default function ProjectMembersView(): React.ReactElement {
               id: 'pending-members',
               title: getString('pendingMembers'),
               panel: <PendingProjectMembersController />
+            },
+            {
+              id: 'groups',
+              title: getString('groupMembers'),
+              panel: (
+                <Layout.Vertical height={'100%'}>
+                  <Layout.Horizontal
+                    flex={{ distribution: 'space-between' }}
+                    className={styles.toolbar}
+                    padding="medium"
+                  >
+                    <Layout.Horizontal>
+                      <RbacButton
+                        intent="primary"
+                        data-testid="add-group"
+                        icon="plus"
+                        iconProps={{ size: 10 }}
+                        text={getString('addGroup')}
+                        permission={PermissionGroup.OWNER}
+                        onClick={() => {
+                          openGroupModal();
+                        }}
+                      />
+                    </Layout.Horizontal>
+                    {isGroupModalOpen && (
+                      <Dialog
+                        isOpen={isGroupModalOpen}
+                        enforceFocus={false}
+                        onClose={() => closeGroupModal()}
+                        className={styles.modalWithHelpPanel}
+                      >
+                        <AddGroupToProjectView handleClose={closeGroupModal} getGroupsRefetch={getGroupsRefetch} />
+                      </Dialog>
+                    )}
+                  </Layout.Horizontal>
+                  <ProjectGroupMembersController />
+                </Layout.Vertical>
+              )
             }
           ]}
         />

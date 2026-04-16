@@ -29,6 +29,8 @@ export interface StringsMap {
   'actualResilienceScore': unknown
   'add': unknown
   'addExperimentToChaosHub': unknown
+  'addGroup': unknown
+  'addGroupToProject': unknown
   'addNewCluster': unknown
   'addNewCustomizedProbes': unknown
   'addNewProbes': unknown
@@ -61,6 +63,7 @@ export interface StringsMap {
   'appNameSpace': unknown
   'apply': unknown
   'applyChanges': unknown
+  'assignedAt': unknown
   'at': unknown
   'atAGlance': unknown
   'attempt': unknown
@@ -292,6 +295,7 @@ export interface StringsMap {
   'endedAt': unknown
   'endpoint': unknown
   'enterCustomCron': unknown
+  'enterGroupName': unknown
   'enterHubAccountURL': unknown
   'enterHubName': unknown
   'enterHubRepositoryBranch': unknown
@@ -383,6 +387,13 @@ export interface StringsMap {
   'goChaosHome': unknown
   'greatJob': unknown
   'group': unknown
+  'groupAdded': unknown
+  'groupAlreadyExists': unknown
+  'groupMembers': unknown
+  'groupName': unknown
+  'groupRemoved': unknown
+  'groupRole': unknown
+  'groupRoleUpdated': unknown
   'healthy': unknown
   'history': unknown
   'hostedOn': unknown
@@ -589,6 +600,8 @@ export interface StringsMap {
   'noFilteredActiveInfra': unknown
   'noFilteredData.subtitle': unknown
   'noFilteredData.title': unknown
+  'noGroupsMessage': unknown
+  'noGroupsTitle': unknown
   'noHealthyState': unknown
   'noInvitationsFound': unknown
   'noKubernetesChaosInfrastructureFound': PrimitiveObject<'value'>
@@ -802,6 +815,8 @@ export interface StringsMap {
   'remoteHubRequired': unknown
   'remoteRepo': unknown
   'remove': unknown
+  'removeGroup': unknown
+  'removeGroupConfirmation': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
   'removeProbeDesc': unknown
@@ -901,6 +916,7 @@ export interface StringsMap {
   'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
+  'selectRole': unknown
   'selectSchedule': unknown
   'selectTimeframe': unknown
   'selectYourProbe': unknown

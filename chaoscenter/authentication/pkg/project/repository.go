@@ -83,7 +83,7 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 	var pipeline mongo.Pipeline
 
 	// Match stage
-	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID))
+	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID, request.Groups))
 
 	// Filter stage
 	if request.Filter != nil {

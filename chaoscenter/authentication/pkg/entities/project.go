@@ -102,6 +102,7 @@ type Pagination struct {
 
 type ListProjectRequest struct {
 	UserID     string                  `json:"userID"`
+	Groups     []string                `json:"groups,omitempty"`
 	Sort       *SortInput              `json:"sort,omitempty"`
 	Filter     *ListProjectInputFilter `json:"filter,omitempty"`
 	Pagination *Pagination             `json:"pagination,omitempty"`
