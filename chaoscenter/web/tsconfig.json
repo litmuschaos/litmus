@@ -37,6 +37,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types", "./typings"],
+    "types": ["jest", "node"],
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true

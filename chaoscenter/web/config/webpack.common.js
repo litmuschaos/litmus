@@ -19,7 +19,7 @@ module.exports = {
     children: false
   },
   output: {
-    publicPath: '/',
+    publicPath: process.env.PUBLIC_URL || '/',
     path: path.resolve(CONTEXT, 'dist/'),
     pathinfo: false
   },
@@ -127,7 +127,8 @@ module.exports = {
   },
   plugins: [
     new DefinePlugin({
-      'process.env': '{}' // required for @blueprintjs/core
+      'process.env': '{}', // required for @blueprintjs/core
+      'process.env.PUBLIC_URL': JSON.stringify(process.env.PUBLIC_URL || '/')
     }),
     new GenerateStringTypesPlugin({
       input: 'src/strings/strings.en.yaml',
@@ -136,7 +137,8 @@ module.exports = {
     new HTMLWebpackPlugin({
       template: 'src/index.html',
       filename: 'index.html',
-      minify: true
+      minify: true,
+      publicPath: process.env.PUBLIC_URL || '/'
     }),
     new RetryChunkLoadPlugin({
       retryDelay: 1000,
