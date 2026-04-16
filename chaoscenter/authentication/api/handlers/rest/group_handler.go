@@ -244,3 +244,34 @@ func GetProjectGroups(service services.ApplicationService) gin.HandlerFunc {
 		c.JSON(http.StatusOK, response.GroupMembers{Data: groupMembers})
 	}
 }
+
+// GetUserGroups 		godoc
+//
+//	@Summary		Get user OIDC groups.
+//	@Description	Return the OIDC groups of the logged-in user.
+//	@Tags			ProjectRouter
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/get_user_groups [get]
+//
+// GetUserGroups returns the OIDC groups of the logged-in user
+func GetUserGroups(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
+
+		user, err := service.GetUser(uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		groups := user.OIDCGroups
+		if groups == nil {
+			groups = []string{}
+		}
+
+		c.JSON(http.StatusOK, gin.H{"groups": groups})
+	}
+}
