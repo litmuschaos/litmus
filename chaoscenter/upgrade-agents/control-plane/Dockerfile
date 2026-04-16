@@ -6,14 +6,10 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /upgrade-agent
+COPY . /upgrade-agent
 WORKDIR /upgrade-agent
 
-ENV GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-
-RUN go env
-RUN CGO_ENABLED=0 go build -o /output/upgrade-agent -v
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o /output/upgrade-agent -v
 
 ## DEPLOY STAGE
 # Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
