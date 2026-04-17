@@ -343,7 +343,8 @@ endTime: End Time
 endedAt: Ended at
 endpoint: Endpoint
 enterCustomCron: Enter a custom cron expression
-enterGroupName: Enter OIDC group name
+enterGroupDisplayName: e.g. Chaos Viewers
+enterGroupName: Enter OIDC group ID
 enterHubAccountURL: Enter Hub Account URL
 enterHubName: Enter Hub Name
 enterHubRepositoryBranch: Enter Hub Repository Branch
@@ -452,8 +453,9 @@ greatJob: Great Job
 group: Group
 groupAdded: Group added to project successfully
 groupAlreadyExists: This group is already assigned to the project
+groupDisplayName: Display Name (optional)
 groupMembers: Group Members
-groupName: Group Name
+groupName: Group ID
 groupRemoved: Group removed from project successfully
 groupRole: Group Role
 groupRoleUpdated: Group role updated successfully

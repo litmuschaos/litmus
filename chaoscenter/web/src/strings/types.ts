@@ -295,6 +295,7 @@ export interface StringsMap {
   'endedAt': unknown
   'endpoint': unknown
   'enterCustomCron': unknown
+  'enterGroupDisplayName': unknown
   'enterGroupName': unknown
   'enterHubAccountURL': unknown
   'enterHubName': unknown
@@ -390,6 +391,7 @@ export interface StringsMap {
   'groupAdded': unknown
   'groupAlreadyExists': unknown
   'groupMembers': unknown
+  'groupDisplayName': unknown
   'groupName': unknown
   'groupRemoved': unknown
   'groupRole': unknown

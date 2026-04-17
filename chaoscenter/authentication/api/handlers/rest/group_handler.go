@@ -78,9 +78,10 @@ func AddGroupToProject(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		groupMember := &entities.GroupMember{
-			Group:      input.Group,
-			Role:       *input.Role,
-			AssignedAt: time.Now().UnixMilli(),
+			Group:       input.Group,
+			DisplayName: input.DisplayName,
+			Role:        *input.Role,
+			AssignedAt:  time.Now().UnixMilli(),
 		}
 
 		err = service.AddGroupMember(input.ProjectID, groupMember)

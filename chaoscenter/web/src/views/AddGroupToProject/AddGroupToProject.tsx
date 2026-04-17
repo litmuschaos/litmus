@@ -18,6 +18,7 @@ interface AddGroupToProjectViewProps {
 
 interface AddGroupFormValues {
   groupName: string;
+  displayName: string;
   role: string;
 }
 
@@ -56,12 +57,13 @@ export default function AddGroupToProjectView({
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Formik<AddGroupFormValues>
-        initialValues={{ groupName: '', role: 'Viewer' }}
+        initialValues={{ groupName: '', displayName: '', role: 'Viewer' }}
         onSubmit={values => {
           addGroupMutation({
             body: {
               projectID: projectID,
               group: values.groupName,
+              displayName: values.displayName || undefined,
               role: values.role as 'Executor' | 'Owner' | 'Viewer'
             }
           });
@@ -81,6 +83,11 @@ export default function AddGroupToProjectView({
                 name="groupName"
                 label={getString('groupName')}
                 placeholder={getString('enterGroupName')}
+              />
+              <FormInput.Text
+                name="displayName"
+                label={getString('groupDisplayName')}
+                placeholder={getString('enterGroupDisplayName')}
               />
               <FormInput.Select name="role" label={getString('selectRole')} items={roleOptions} />
               <Layout.Horizontal style={{ gap: '1rem' }}>

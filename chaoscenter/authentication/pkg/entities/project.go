@@ -71,16 +71,18 @@ type MemberInput struct {
 
 // GroupMember contains the required fields for an OIDC group assigned to a project
 type GroupMember struct {
-	Group      string     `bson:"group" json:"group"`
-	Role       MemberRole `bson:"role" json:"role"`
-	AssignedAt int64      `bson:"assigned_at" json:"assignedAt"`
+	Group       string     `bson:"group" json:"group"`
+	DisplayName string     `bson:"display_name,omitempty" json:"displayName,omitempty"`
+	Role        MemberRole `bson:"role" json:"role"`
+	AssignedAt  int64      `bson:"assigned_at" json:"assignedAt"`
 }
 
 // GroupMemberInput is the input for group-to-project operations
 type GroupMemberInput struct {
-	ProjectID string      `json:"projectID"`
-	Group     string      `json:"group"`
-	Role      *MemberRole `json:"role"`
+	ProjectID   string      `json:"projectID"`
+	Group       string      `json:"group"`
+	DisplayName string      `json:"displayName,omitempty"`
+	Role        *MemberRole `json:"role"`
 }
 
 type ListInvitationResponse struct {

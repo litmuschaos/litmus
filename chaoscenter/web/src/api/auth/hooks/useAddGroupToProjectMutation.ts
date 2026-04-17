@@ -6,6 +6,7 @@ import type { GroupMember } from '../schemas/GroupMember';
 export type AddGroupToProjectRequestBody = {
   projectID: string;
   group: string;
+  displayName?: string;
   role: 'Executor' | 'Owner' | 'Viewer';
 };
 

@@ -36,9 +36,16 @@ export default function GroupsTableView({
         width: '40%',
         accessor: 'group',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
-          <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.BLACK}>
-            {data.group}
-          </Text>
+          <Layout.Vertical spacing="xsmall">
+            <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.BLACK}>
+              {data.displayName || data.group}
+            </Text>
+            {data.displayName && (
+              <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_500}>
+                {data.group}
+              </Text>
+            )}
+          </Layout.Vertical>
         )
       },
       {

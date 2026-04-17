@@ -29,7 +29,7 @@ func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 		RedirectURL:  utils.DexCallBackURL,
 		ClientID:     utils.DexClientID,
 		ClientSecret: utils.DexClientSecret,
-		Scopes:       []string{"openid", "profile", "email", "groups"},
+		Scopes:       []string{"openid", "profile", "email"},
 		Endpoint:     provider.Endpoint(),
 	}, provider.Verifier(&oidc.Config{ClientID: utils.DexClientID}), nil
 }
