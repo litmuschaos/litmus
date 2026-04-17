@@ -117,7 +117,6 @@ export interface StringsMap {
   'chaosInfrastructureSuccess': unknown
   'chaosInfrastructureText': unknown
   'chaosInfrastructures': unknown
-  'clear': unknown
   'chaosResultNotAvailable': unknown
   'chaosResults': unknown
   'chaosStudio': unknown
@@ -131,6 +130,7 @@ export interface StringsMap {
   'chooseHubAccess': unknown
   'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
+  'clear': unknown
   'clearSearch': unknown
   'clickDownload': unknown
   'clone': unknown
@@ -159,9 +159,9 @@ export interface StringsMap {
   'confirmText': unknown
   'connectChaosHub': unknown
   'connectHub': unknown
-  'connected': unknown
   'connectInfraKubernetes': unknown
   'connectInfraTooltip': unknown
+  'connected': unknown
   'connectionModal.method': unknown
   'connectionModal.options.option1.icon': unknown
   'connectionModal.options.option1.text': unknown
@@ -207,10 +207,10 @@ export interface StringsMap {
   'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
+  'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
   'dataTypeString': unknown
-  'data': unknown
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
@@ -436,9 +436,9 @@ export interface StringsMap {
   'inactiveTooltip': unknown
   'infraName': unknown
   'infraNameValidationLowercase': unknown
-  'infraNameValidationNoStartDash': unknown
-  'infraNameValidationNoEndDash': unknown
   'infraNameValidationMaxLength': unknown
+  'infraNameValidationNoEndDash': unknown
+  'infraNameValidationNoStartDash': unknown
   'infraNameValidationRequired': unknown
   'infrastructure': unknown
   'infrastructureCommand': unknown
@@ -757,11 +757,11 @@ export interface StringsMap {
   'probeValidation.url': unknown
   'probeValidation.value': unknown
   'probeValidation.version': unknown
-  'production': unknown
   'probes': unknown
   'probesArePassed': unknown
   'problems': unknown
   'prod': unknown
+  'production': unknown
   'project': unknown
   'projectCreatedByYou': unknown
   'projectDashboard.noProjectDescription': unknown
@@ -779,8 +779,8 @@ export interface StringsMap {
   'promDescription': unknown
   'promProbeDetails': unknown
   'promProbeTitle': unknown
-  'prometheusEndpoint': unknown
   'prometheusDataComparison': unknown
+  'prometheusEndpoint': unknown
   'prometheusQuery': unknown
   'prometheusQueryPath': unknown
   'properties': unknown
