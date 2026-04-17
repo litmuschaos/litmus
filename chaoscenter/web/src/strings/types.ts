@@ -390,8 +390,8 @@ export interface StringsMap {
   'group': unknown
   'groupAdded': unknown
   'groupAlreadyExists': unknown
-  'groupMembers': unknown
   'groupDisplayName': unknown
+  'groupMembers': unknown
   'groupName': unknown
   'groupRemoved': unknown
   'groupRole': unknown
