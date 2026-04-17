@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -39,6 +40,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
@@ -88,6 +90,10 @@ func setupGin() *gin.Engine {
 }
 
 func main() {
+	// RegisterMetrics is also called inside MongoConnection() (mongodb/init.go) for safety,
+	// ensuring metrics are registered even if called from a future entrypoint without main().
+	// The sync.Once guard inside RegisterMetrics() makes double-calls safe.
+	telemetry.RegisterMetrics()
 	router := setupGin()
 	var err error
 	mongodb.MgoClient, err = mongodb.MongoConnection()
@@ -112,9 +118,9 @@ func main() {
 		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
-		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC server
 	} else {
-		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC server
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
@@ -166,6 +172,20 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
+
+	// metricsAuthMiddleware restricts /metrics to loopback-only access (127.0.0.1 / ::1).
+	// This prevents Prometheus operational data from leaking to external callers if the
+	// server is ever reachable outside the cluster/VPC.
+	metricsAuthMiddleware := func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		ip := net.ParseIP(clientIP)
+		if ip == nil || !ip.IsLoopback() {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+		c.Next()
+	}
+	router.GET("/metrics", metricsAuthMiddleware, gin.WrapH(promhttp.Handler()))
 	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
