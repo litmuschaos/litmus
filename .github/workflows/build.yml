@@ -5,6 +5,9 @@ on:
       - master
       - v*
 
+permissions:
+  contents: read
+
 env:
   DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
 
