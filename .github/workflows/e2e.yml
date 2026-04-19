@@ -6,6 +6,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   # Job for finding last commit sha of pull-request
   find-latest-commit-sha:
