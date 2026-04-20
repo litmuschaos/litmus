@@ -39,6 +39,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+  "github.com/prometheus/client_golang/prometheus/promhttp"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
@@ -81,6 +82,7 @@ func validateVersion(mongoOperator mongodb.MongoOperator) error {
 func setupGin() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
