@@ -11,7 +11,7 @@ import (
 
 func RbacValidator(uid string, projectID string,
 	requiredRoles []string, invitation string,
-	service services.ApplicationService) error {
+	service services.ApplicationService, groups ...[]string) error {
 
 	user, err := service.GetUser(uid)
 	if err != nil {
@@ -23,7 +23,7 @@ func RbacValidator(uid string, projectID string,
 		return errors.New("auth gRPC - Deactivated User")
 	}
 
-	// Check for project permission validity
+	// Check for individual member permission
 	filter := bson.D{
 		{"_id", projectID},
 		{"members", bson.D{
@@ -37,15 +37,47 @@ func RbacValidator(uid string, projectID string,
 		}},
 	}
 
-	// Check for permission over projects
 	project, err := service.GetProjects(filter)
 	if err != nil {
 		log.Errorf("authgRPC Error: %s", err)
 		return err
 	}
-	if project == nil {
-		return errors.New("auth gRPC - Unauthorized")
+	if len(project) > 0 {
+		return nil
 	}
 
-	return nil
+	// Individual check failed — try group-based authorization
+	var userGroups []string
+	if len(groups) > 0 && len(groups[0]) > 0 {
+		userGroups = groups[0]
+	} else {
+		userGroups = user.OIDCGroups
+	}
+
+	if len(userGroups) > 0 {
+		groupFilter := bson.D{
+			{"_id", projectID},
+			{"groups", bson.D{
+				{"$elemMatch", bson.D{
+					{"group", bson.D{
+						{"$in", userGroups},
+					}},
+					{"role", bson.D{
+						{"$in", requiredRoles},
+					}},
+				}},
+			}},
+		}
+
+		groupProject, err := service.GetProjects(groupFilter)
+		if err != nil {
+			log.Errorf("authgRPC Error (group check): %s", err)
+			return err
+		}
+		if len(groupProject) > 0 {
+			return nil
+		}
+	}
+
+	return errors.New("auth gRPC - Unauthorized")
 }

@@ -30,6 +30,18 @@ func JwtMiddleware(service services.ApplicationService) gin.HandlerFunc {
 			c.Set("username", claims["username"])
 			c.Set("uid", claims["uid"])
 			c.Set("role", claims["role"])
+			// Extract OIDC groups from JWT claims
+			if rawGroups, ok := claims["groups"]; ok && rawGroups != nil {
+				if groupSlice, ok := rawGroups.([]interface{}); ok {
+					var groups []string
+					for _, g := range groupSlice {
+						if gs, ok := g.(string); ok {
+							groups = append(groups, gs)
+						}
+					}
+					c.Set("groups", groups)
+				}
+			}
 			c.Next()
 		} else {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))

@@ -18,15 +18,16 @@ const (
 // User contains the user information
 type User struct {
 	Audit          `bson:",inline"`
-	ID             string `bson:"_id,omitempty" json:"userID"`
-	Username       string `bson:"username,omitempty" json:"username"`
-	Password       string `bson:"password,omitempty" json:"password,omitempty"`
-	Salt           string `bson:"salt" json:"salt"`
-	Email          string `bson:"email,omitempty" json:"email,omitempty"`
-	Name           string `bson:"name,omitempty" json:"name,omitempty"`
-	Role           Role   `bson:"role,omitempty" json:"role"`
-	DeactivatedAt  *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
-	IsInitialLogin bool   `bson:"is_initial_login" json:"isInitialLogin"`
+	ID             string   `bson:"_id,omitempty" json:"userID"`
+	Username       string   `bson:"username,omitempty" json:"username"`
+	Password       string   `bson:"password,omitempty" json:"password,omitempty"`
+	Salt           string   `bson:"salt" json:"salt"`
+	Email          string   `bson:"email,omitempty" json:"email,omitempty"`
+	Name           string   `bson:"name,omitempty" json:"name,omitempty"`
+	Role           Role     `bson:"role,omitempty" json:"role"`
+	DeactivatedAt  *int64   `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
+	IsInitialLogin bool     `bson:"is_initial_login" json:"isInitialLogin"`
+	OIDCGroups     []string `bson:"oidc_groups,omitempty" json:"oidcGroups,omitempty"`
 }
 
 // UserDetails is used to update user's personal details

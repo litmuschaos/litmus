@@ -8,7 +8,7 @@ import { ListProjectsOkResponse, Project } from '@api/auth';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import { useStrings } from '@strings';
 import ProjectDashboardCardMenuController from '@controllers/ProjectDashboardCardMenu';
-import { setUserDetails, toSentenceCase } from '@utils';
+import { getEffectiveProjectRole, setUserDetails, toSentenceCase } from '@utils';
 import { useAppStore } from '@context';
 import css from './ProjectDashboardCardContainer.module.scss';
 
@@ -28,8 +28,8 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
   const { updateAppStore, currentUserInfo } = useAppStore();
 
   const handleProjectSelect = (project: Project): void => {
-    const projectRole = project.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
-    updateAppStore({ projectID: project.projectID, projectName: project.name });
+    const projectRole = getEffectiveProjectRole(project, currentUserInfo?.ID);
+    updateAppStore({ projectID: project.projectID, projectName: project.name, projectRole });
     setUserDetails({
       projectRole,
       projectID: project.projectID
