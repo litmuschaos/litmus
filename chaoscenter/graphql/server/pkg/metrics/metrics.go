@@ -65,7 +65,7 @@ var (
 			Name: "litmus_experiment_runs_total",
 			Help: "Total number of experiment runs",
 		},
-		[]string{"project_id", "experiment_name", "status"},
+		[]string{"project_id", "experiment_id", "experiment_name", "status"},
 	)
 
 	ExperimentRunDuration = prometheus.NewHistogramVec(
@@ -74,7 +74,7 @@ var (
 			Help:    "Experiment run duration in seconds",
 			Buckets: []float64{1, 5, 10, 30, 60, 120, 300, 600, 1200, 1800},
 		},
-		[]string{"project_id", "experiment_name"},
+		[]string{"project_id", "experiment_id", "experiment_name"},
 	)
 
 	// Agent metrics
@@ -101,15 +101,6 @@ var (
 		},
 		[]string{"project_id"},
 	)
-
-	// Chaos engine metrics
-	ChaosEngineReconciliationsTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "litmus_chaos_engine_reconciliations_total",
-			Help: "Total chaos engine reconciliations",
-		},
-		[]string{"status"},
-	)
 )
 
 func init() {
@@ -125,5 +116,4 @@ func init() {
 	prometheus.MustRegister(ConnectedAgents)
 	prometheus.MustRegister(DisconnectedAgents)
 	prometheus.MustRegister(TotalAgents)
-	prometheus.MustRegister(ChaosEngineReconciliationsTotal)
 }
