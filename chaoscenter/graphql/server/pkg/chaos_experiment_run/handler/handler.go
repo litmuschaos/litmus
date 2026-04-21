@@ -1155,7 +1155,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 	})
 	if err == nil && experimentRun.CreatedAt > 0 {
 		duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
-		metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID).Observe(duration)
+		metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName).Observe(duration)
 	}
 		if err != nil {
 			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
