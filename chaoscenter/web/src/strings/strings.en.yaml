@@ -480,13 +480,19 @@ hypothesis: hypothesis
 id: ID
 idlowerCase: id
 imageRegistry: Image Registry
-imageRegistryNameInvalid: 'Registry name must be a valid hostname (e.g., docker.io, gcr.io, my-registry.example.com:5000)'
+imageRegistryNameInvalid: >-
+  Registry name must be a valid hostname (e.g., docker.io, gcr.io,
+  my-registry.example.com:5000)
 imageRegistryNameRequired: Registry name is required for custom image registry
 imageRegistryUpdateSuccess: Image Registry added successfully
-imageRepoNameInvalid: 'Repository name must contain only lowercase letters, numbers, dots, underscores, slashes, and hyphens'
+imageRepoNameInvalid: >-
+  Repository name must contain only lowercase letters, numbers, dots,
+  underscores, slashes, and hyphens
 imageRepoNameRequired: Repository name is required for custom image registry
 imageSecret: Image Secret
-imageSecretNameInvalid: 'Secret name must be a valid Kubernetes name (lowercase letters, numbers, dots, and hyphens)'
+imageSecretNameInvalid: >-
+  Secret name must be a valid Kubernetes name (lowercase letters, numbers, dots,
+  and hyphens)
 imageSecretNameRequired: Secret name is required for private image registry
 imageSecretPlaceholder: Enter your Image Secret
 improveResilienceOfTheDeployedService: Improve resilience of the deployed service
@@ -1220,7 +1226,9 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
-usernameValidText: Username can only contain letters, digits, underscores, and hyphens
+usernameValidText: >-
+  Username must be a valid email or 3–256 characters using only letters, digits,
+  underscores, and hyphens
 usersNotAvailableMessage: No users available to send invitation
 usersNotAvailableTitle: No users available
 validationError: Validation Error
