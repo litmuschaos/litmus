@@ -11,7 +11,7 @@ var (
 			Name: "litmus_api_requests_total",
 			Help: "Total number of API requests",
 		},
-		[]string{"endpoint", "status"},
+		[]string{"endpoint", "status", "operation_name", "operation_type"},
 	)
 
 	// API response time metrics
@@ -21,7 +21,7 @@ var (
 			Help:    "API response time in milliseconds",
 			Buckets: []float64{10, 50, 100, 200, 500, 1000, 2000, 5000},
 		},
-		[]string{"endpoint"},
+		[]string{"endpoint", "operation_name", "operation_type"},
 	)
 
 	// API error metrics
@@ -33,14 +33,6 @@ var (
 		[]string{"endpoint", "error_type"},
 	)
 
-	// GraphQL operation metrics
-	GraphQLOperationsTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "litmus_graphql_operations_total",
-			Help: "Total number of GraphQL operations",
-		},
-		[]string{"operation_name", "operation_type"},
-	)
 
 	// Authentication failure metrics
 	AuthenticationFailuresTotal = prometheus.NewCounterVec(
@@ -108,7 +100,6 @@ func init() {
 	prometheus.MustRegister(APIRequestsTotal)
 	prometheus.MustRegister(APIResponseTime)
 	prometheus.MustRegister(APIErrorRequestsTotal)
-	prometheus.MustRegister(GraphQLOperationsTotal)
 	prometheus.MustRegister(AuthenticationFailuresTotal)
 	prometheus.MustRegister(ExperimentsTotal)
 	prometheus.MustRegister(ExperimentRunsTotal)

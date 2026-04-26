@@ -146,19 +146,21 @@ func main() {
 	
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
-		oc := graphql.GetOperationContext(ctx)
-		operationType := "query"
-		if oc.Operation != nil && oc.Operation.Operation == "mutation" {
-			operationType = "mutation"
-		}
-		operationName := oc.OperationName
-		if operationName == "" {
-			operationName = "anonymous"
-		}
-	
-		metrics.GraphQLOperationsTotal.WithLabelValues(operationName, operationType).Inc()
-		
-		return next(ctx)
+        	oc := graphql.GetOperationContext(ctx)
+        	operationType := "query"
+        	if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+                	operationType = "mutation"
+        	}
+        	operationName := oc.OperationName
+        	if operationName == "" {
+                	operationName = "anonymous"
+        	}
+
+        	// Store operation details in context for HTTP middleware to use
+       	 	ctx = context.WithValue(ctx, "graphql_operation_name", operationName)
+        	ctx = context.WithValue(ctx, "graphql_operation_type", operationType)
+
+        	return next(ctx)
 	})
 
 	// go routine for syncing chaos hubs
