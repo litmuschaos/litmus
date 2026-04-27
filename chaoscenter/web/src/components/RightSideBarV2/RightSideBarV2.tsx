@@ -14,7 +14,7 @@ import {
 } from '@components/ExperimentActionButtons';
 import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { ExperimentRunStatus, ExperimentType, InfrastructureType } from '@api/entities';
-import { listExperiment, ListExperimentResponse } from '@api/core';
+import { listExperiment } from '@api/core';
 import { getScope } from '@utils';
 import { cronEnabled } from 'utils';
 
@@ -48,20 +48,16 @@ function RightSideBarV2({
   refetchExperimentRuns
 }: RightSideBarViewV2Props): React.ReactElement {
   const { showError } = useToaster();
-  let experimentList: ListExperimentResponse | undefined;
-  if (experimentType === ExperimentType.CRON) {
-    const scope = getScope();
-    const { data: experimentListData } = listExperiment({
-      ...scope,
-      experimentIDs: [experimentID],
-      options: {
-        onError: err => showError(err.message),
-        fetchPolicy: 'network-only'
-      }
-    });
-
-    experimentList = experimentListData;
-  }
+  const scope = getScope();
+  const { data: experimentList } = listExperiment({
+    ...scope,
+    experimentIDs: [experimentID],
+    options: {
+      onError: err => showError(err.message),
+      fetchPolicy: 'network-only',
+      skip: experimentType !== ExperimentType.CRON
+    }
+  });
 
   React.useEffect(() => {
     if (experimentList !== undefined) {
