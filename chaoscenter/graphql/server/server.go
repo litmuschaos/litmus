@@ -153,12 +153,22 @@ func main() {
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
 
+	// getRemotePeerIP extracts the real peer IP from RemoteAddr,
+	// bypassing X-Forwarded-For to prevent IP spoofing.
+	getRemotePeerIP := func(remoteAddr string) net.IP {
+		host, _, err := net.SplitHostPort(remoteAddr)
+		if err == nil {
+			return net.ParseIP(host)
+		}
+		return net.ParseIP(remoteAddr)
+	}
+
 	// metricsAuthMiddleware restricts /metrics to loopback-only access (127.0.0.1 / ::1).
 	// This prevents Prometheus operational data from leaking to external callers if the
 	// server is ever reachable outside the cluster/VPC.
+	// Uses RemoteAddr (not ClientIP) to prevent X-Forwarded-For spoofing.
 	metricsAuthMiddleware := func(c *gin.Context) {
-		clientIP := c.ClientIP()
-		ip := net.ParseIP(clientIP)
+		ip := getRemotePeerIP(c.Request.RemoteAddr)
 		if ip == nil || !ip.IsLoopback() {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
