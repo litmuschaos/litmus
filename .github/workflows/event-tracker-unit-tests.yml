@@ -1,0 +1,106 @@
+name: event-tracker-unit-tests
+
+on:
+  pull_request:
+    branches:
+      - master
+      - v*
+    paths:
+      - 'chaoscenter/event-tracker/**'
+
+jobs:
+  unit-test:
+    name: Run event-tracker unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: chaoscenter/event-tracker/go.sum
+
+      - name: Run tests with coverage
+        id: run_tests
+        working-directory: chaoscenter/event-tracker
+        run: |
+          go test -v -coverprofile=coverage.out -covermode=atomic ./pkg/... 2>&1 | tee test_output.txt
+          go tool cover -func=coverage.out | tee coverage_summary.txt
+          TOTAL=$(grep "^total:" coverage_summary.txt | awk '{print $3}')
+          echo "total_coverage=$TOTAL" >> $GITHUB_OUTPUT
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: event-tracker-coverage
+          path: |
+            chaoscenter/event-tracker/coverage.out
+            chaoscenter/event-tracker/coverage_summary.txt
+
+      - name: Post coverage comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const testOutput = fs.readFileSync('chaoscenter/event-tracker/test_output.txt', 'utf8');
+            const coverageSummary = fs.readFileSync('chaoscenter/event-tracker/coverage_summary.txt', 'utf8');
+            const totalCoverage = '${{ steps.run_tests.outputs.total_coverage }}';
+
+            // Count pass/fail
+            const passed = (testOutput.match(/--- PASS:/g) || []).length;
+            const failed = (testOutput.match(/--- FAIL:/g) || []).length;
+            const status = failed === 0 ? '✅ All tests passed' : `❌ ${failed} test(s) failed`;
+
+            const body = [
+              '## 🧪 event-tracker Unit Test Results',
+              '',
+              `**${status}** &nbsp;|&nbsp; ${passed} passed, ${failed} failed &nbsp;|&nbsp; Coverage: **${totalCoverage}**`,
+              '',
+              '<details>',
+              '<summary>📊 Coverage breakdown</summary>',
+              '',
+              '```',
+              coverageSummary,
+              '```',
+              '</details>',
+              '',
+              '<details>',
+              '<summary>📋 Full test output</summary>',
+              '',
+              '```',
+              testOutput.slice(0, 10000),  // GitHub comment limit
+              '```',
+              '</details>',
+            ].join('\n');
+
+            // Find and update existing comment, or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('event-tracker Unit Test Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

@@ -20,7 +20,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: blackbox-exporter
-          image: 'prom/blackbox-exporter:v0.15.1'
+          image: prom/blackbox-exporter:v0.28.0
           imagePullPolicy: IfNotPresent
           securityContext:
             readOnlyRootFilesystem: true
@@ -44,7 +44,7 @@ spec:
             - mountPath: /config
               name: config
         - name: configmap-reload
-          image: 'jimmidyson/configmap-reload:v0.2.2'
+          image: jimmidyson/configmap-reload:v0.5.0
           imagePullPolicy: 'IfNotPresent'
           securityContext:
             runAsNonRoot: true
