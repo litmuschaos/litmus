@@ -92,7 +92,7 @@ func (c *Operator) UpdateChaosHub(ctx context.Context, query bson.D, update bson
 
 // GetAggregateChaosHubs takes a mongo pipeline to retrieve the project details from the database
 func (c *Operator) GetAggregateChaosHubs(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ChaosHubCollection, pipeline)
+	results, err := c.operator.Aggregate(ctx, mongodb.ChaosHubCollection, pipeline)
 	if err != nil {
 		return nil, fmt.Errorf("error on getting the chaos hubs : %v", err)
 	}
