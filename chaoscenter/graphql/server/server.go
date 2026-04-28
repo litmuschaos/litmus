@@ -25,12 +25,20 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
 	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
@@ -49,15 +57,15 @@ func init() {
 	}
 }
 
-func validateVersion() error {
+func validateVersion(mongoOperator mongodb.MongoOperator) error {
 	currentVersion := utils.Config.Version
-	dbVersion, err := config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), mongoOperator, "version")
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
 		err := config.CreateConfig(
-			context.Background(),
+			context.Background(), mongoOperator,
 			&config.ServerConfig{Key: "version", Value: currentVersion},
 		)
 		if err != nil {
@@ -96,9 +104,8 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
-	if err := validateVersion(); err != nil {
+	if err := validateVersion(mongodbOperator); err != nil {
 		log.Fatal(err)
 	}
 
@@ -150,6 +157,19 @@ func main() {
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).SyncDefaultChaosHubs()
 
+	// go routine for syncing gitops
+	chaosInfraOperator := dbChaosInfra.NewInfrastructureOperator(mongodbOperator)
+	chaosExperimentOperator := chaos_experiment.NewChaosExperimentOperator(mongodbOperator)
+	chaosExperimentRunOperator := chaos_experiment_run.NewChaosExperimentRunOperator(mongodbOperator)
+	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
+	probeOperator := dbSchemaProbe.NewChaosProbeOperator(mongodbOperator)
+
+	probeService := probe.NewProbeService(probeOperator)
+	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+
+	go gitOpsService.GitOpsSyncHandler(false)
+
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
 
@@ -186,7 +206,7 @@ func main() {
 
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
-	router.GET("/readiness", handlers.ReadinessHandler())
+	router.GET("/readiness", handlers.ReadinessHandler(mongodbOperator))
 
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
