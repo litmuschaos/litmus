@@ -10,3 +10,4 @@ export * from './useTrackedRef';
 export * from './useDocumentTitle';
 export * from './useDeepCompareEffect';
 export * from './useProjectFilters';
+export * from './useImageRegistry';
