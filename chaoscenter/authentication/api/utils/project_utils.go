@@ -184,25 +184,28 @@ func CreateSortStage(sort *entities.SortInput) bson.D {
 	}
 }
 
-func CreatePaginationStage(pagination *entities.Pagination) []bson.D {
+func CreatePaginationStage(pagination *entities.Pagination) ([]bson.D, int, int) {
 	var stages []bson.D
+	skip := 0
+	limit := 10
+
 	if pagination != nil {
 		page := pagination.Page
-		limit := pagination.Limit
+		limit = pagination.Limit
+
 		// upper limit of 50 to prevent exceeding max limit 16mb
-		if pagination.Limit > 50 {
+		if limit > 50 {
 			limit = 50
 		}
-		stages = append(stages, bson.D{
-			{"$skip", page * limit},
-		})
-		stages = append(stages, bson.D{
-			{"$limit", limit},
-		})
-	} else {
-		stages = append(stages, bson.D{
-			{"$limit", 10},
-		})
+		skip = page * limit
 	}
-	return stages
+
+	stages = append(stages, bson.D{
+		{"$skip", skip},
+	})
+	stages = append(stages, bson.D{{
+		"$limit", limit},
+	})
+
+	return stages, skip, limit
 }
