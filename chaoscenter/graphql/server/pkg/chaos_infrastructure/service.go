@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 const (
@@ -211,6 +212,9 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	if err != nil {
 		return nil, err
 	}
+	// Track agent registration
+	metrics.ConnectedAgents.WithLabelValues(projectID).Inc()
+	metrics.TotalAgents.WithLabelValues(projectID).Inc()
 
 	return &model.RegisterInfraResponse{
 		InfraID:  newInfra.InfraID,
@@ -253,6 +257,10 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 	if err != nil {
 		return "", err
 	}
+	// Track agent deletion
+	metrics.DisconnectedAgents.WithLabelValues(projectID).Inc()
+	metrics.TotalAgents.WithLabelValues(projectID).Dec()
+
 	envQuery := bson.D{
 		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},

@@ -40,7 +40,10 @@ import (
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"	
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/99designs/gqlgen/graphql"
 )
 
 func init() {
@@ -84,6 +87,7 @@ func setupGin() *gin.Engine {
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
+	router.Use(metrics.MetricsMiddleware())
 	return router
 }
 
@@ -146,6 +150,25 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
+	
+	// GraphQL operation tracking middleware
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+        	oc := graphql.GetOperationContext(ctx)
+        	operationType := "query"
+        	if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+                	operationType = "mutation"
+        	}
+        	operationName := oc.OperationName
+        	if operationName == "" {
+                	operationName = "anonymous"
+        	}
+
+        	// Store operation details in context for HTTP middleware to use
+       	 	ctx = context.WithValue(ctx, "graphql_operation_name", operationName)
+        	ctx = context.WithValue(ctx, "graphql_operation_type", operationType)
+
+        	return next(ctx)
+	})
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
@@ -178,6 +201,8 @@ func main() {
 	router.GET("/status", handlers.StatusHandler())
 	router.GET("/readiness", handlers.ReadinessHandler(mongodbOperator))
 
+	// Start metrics server on separate port
+	go startMetricsServer()
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
@@ -244,4 +269,19 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 
 	log.Infof("GRPC server listening on %v", lis.Addr())
 	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startMetricsServer starts a separate HTTP server for Prometheus metrics
+func startMetricsServer() {
+	metricsRouter := gin.New()
+	metricsRouter.Use(gin.Recovery())
+	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	
+	metricsPort := utils.Config.MetricsPort
+	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+	
+	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
+		log.Fatalf("Failed to start metrics server: %v", err)
+	}
+
 }

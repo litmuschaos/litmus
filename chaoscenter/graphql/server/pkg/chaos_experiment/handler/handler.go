@@ -38,6 +38,7 @@ import (
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentHandler is the handler for chaos experiment
@@ -150,6 +151,8 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 
 	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
+	// Track experiment creation
+	metrics.ExperimentsTotal.WithLabelValues(projectID, "active", request.InfraID).Inc()
 		return "", err
 	}
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -23,13 +24,19 @@ const (
 func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		jwt := ""
+		authMethod := "bearer"
+		
 		if c.Request.Header.Get("Authorization") != "" {
 			jwt = c.Request.Header.Get("Authorization")
 		}
 		if strings.HasPrefix(jwt, BearerSchema) {
 			jwt = jwt[len(BearerSchema):]
 		}
+		
 		if IsRevokedToken(jwt, mongoClient) {
+			// Track authentication failure
+			metrics.AuthenticationFailuresTotal.WithLabelValues(authMethod).Inc()
+			
 			c.Writer.WriteHeader(http.StatusUnauthorized)
 			c.Writer.Write([]byte("Error verifying JWT token: Token is revoked"))
 			return
