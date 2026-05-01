@@ -33,7 +33,6 @@ var (
 		[]string{"endpoint", "error_type"},
 	)
 
-
 	// Authentication failure metrics
 	AuthenticationFailuresTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -49,7 +48,7 @@ var (
 			Name: "litmus_experiments_total",
 			Help: "Total number of experiments",
 		},
-		[]string{"project_id", "status"},
+		[]string{"project_id", "status", "infra_id"},
 	)
 
 	ExperimentRunsTotal = prometheus.NewCounterVec(
@@ -57,7 +56,7 @@ var (
 			Name: "litmus_experiment_runs_total",
 			Help: "Total number of experiment runs",
 		},
-		[]string{"project_id", "experiment_id", "experiment_name", "status"},
+		[]string{"project_id", "experiment_id", "experiment_name", "infra_id"},
 	)
 
 	ExperimentRunDuration = prometheus.NewHistogramVec(
@@ -66,7 +65,17 @@ var (
 			Help:    "Experiment run duration in seconds",
 			Buckets: []float64{1, 5, 10, 30, 60, 120, 300, 600, 1200, 1800},
 		},
-		[]string{"project_id", "experiment_id", "experiment_name"},
+		[]string{"project_id", "experiment_id", "experiment_name", "infra_id"},
+	)
+
+	// ExperimentStatus tracks the current status of experiment runs.
+	// Value 0 = started, 1 = completed. The status label holds the phase string (e.g. "Running", "Completed").
+	ExperimentStatus = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "litmus_experiment_status",
+			Help: "Status of experiment runs: 0 = started, 1 = completed",
+		},
+		[]string{"project_id", "experiment_id", "experiment_name", "status", "infra_id"},
 	)
 
 	// Agent metrics
@@ -104,6 +113,7 @@ func init() {
 	prometheus.MustRegister(ExperimentsTotal)
 	prometheus.MustRegister(ExperimentRunsTotal)
 	prometheus.MustRegister(ExperimentRunDuration)
+	prometheus.MustRegister(ExperimentStatus)
 	prometheus.MustRegister(ConnectedAgents)
 	prometheus.MustRegister(DisconnectedAgents)
 	prometheus.MustRegister(TotalAgents)
