@@ -4,21 +4,19 @@
 ## Cloud-Native Chaos Engineering
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
-[![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
+![GitHub Workflow](https://github.com/litmuschaos/litmus/actions/workflows/push.yml/badge.svg?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/chaos-operator.svg)](https://hub.docker.com/r/litmuschaos/chaos-operator)
 [![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Leer en [otros idiomas](translations/TRANSLATIONS.md)*
+#### *Leer en [otros idiomas](./TRANSLATIONS.md)*
 
-
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇧🇷](translations/README-pt-br.md) [🇮🇳](translations/README-hi.md) [🇪🇸](translations/README-es.md)
+[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-ge.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
 
 ## Descripción general
 
@@ -48,12 +46,12 @@ sus usuarios puedan utilizarlos para incrementar la resiliencia de la aplicació
 ## Casos de uso
 
   - **Para desarrolladores**: Correr Experimentos Chaos durante el desarrollo de la aplicación como extensión de los test unitarios o de los test de integración.
-  - **Contrución y deploy CI/CD pipelines**: Correr Expirementos Chaos como una fase de la pipeline para encontrar bugs cuando se somete a la aplicación a rutas de fallo en la pipeline.
+  - **Construcción y deploy CI/CD pipelines**: Correr Experimentos Chaos como una fase de la pipeline para encontrar bugs cuando se somete a la aplicación a rutas de fallo en la pipeline.
   - **Para SRE**: Planificar y programar Experimentos Chaos en la aplicación o en la infraestructura. Esta práctica identifica las debilidades en el sistema e incrementa su resiliencia.
 
 ## Empezando con Litmus
 
-Para comenzar, consulte la <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> y en especifico la <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">selecion de instalación</a> de  <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Iniciar con Litmus</a> page.
+Para comenzar, consulte la <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> y en específico la <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">sección de instalación</a> de  <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Iniciar con Litmus</a> page.
 
 ## Contribuir al Hub de Chaos 
 
@@ -70,20 +68,20 @@ Revisa los <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.m
 A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](./ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
 se debe consultar la [documentación de los experimentos](https://docs.litmuschaos.io/docs/pod-delete/) respectiva.
 
-  - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos airgapeados los recursos Chaos personalizaos y las imágenes debe ser alojados en local.
+  - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos air-gapped los recursos Chaos personalizados y las imágenes debe ser alojados en local.
   - Cuando se intenta ejecutar Experimentos Chaos en una plataforma concreta (como AWS o el cloud de GCP) los detalles de acceso se pasan como secretos de Kubernetes. El soporte para otros modos de gestión secreta aún no se han testeado o implementado.
   - Algunos Experimentos Chaos hacen uso de la api de docker desde el interior del experimento, por lo que requieren el socket de docker para montarse. Se recomienda permitir el acceso a desarrolladores, devops y SRE para correr estos experimentos.
   - En casos (raros) en que los Experimentos Chaos hacen uso de contenedores privilegiados, se documentarán las políticas de seguridad recomendadas.
 
 ## Licencia
 
-Litmos está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](./LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su lecencia específica.
+Litmus está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](./LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su licencia específica.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
 Litmus Chaos forma parte de los projectos CNCF.
 
-[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/?selected=litmus)
 
 ## Communidad
 
@@ -103,7 +101,7 @@ Recursos de la comunidad:
   Documentación de Litmus <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
 <br>
-<a href="https://landscape.cncf.io/selected=litmus">
+<a href="https://landscape.cncf.io/?selected=litmus">
   CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
 

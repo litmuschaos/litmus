@@ -1,23 +1,22 @@
-<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
+<img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
 # Litmus
 ### Cloud-Native Chaos Engineering
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
-[![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
+![GitHub Workflow](https://github.com/litmuschaos/litmus/actions/workflows/push.yml/badge.svg?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/chaos-operator.svg)](https://hub.docker.com/r/litmuschaos/chaos-operator)
 [![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
+#### *Das README in [anderen Sprachen](./TRANSLATIONS.md).*
 
-[KR](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [CN](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [GB](https://github.com/litmuschaos/litmus/blob/master/README.md)
+[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-ge.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
 
 ## Überblick
 
@@ -59,7 +58,7 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 
 ## Mit Litmus loslegen
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Erste Informationen findet man in der <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Dokumentation (Seite aktuell noch auf Englisch)</a>.
 
@@ -90,7 +89,7 @@ jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 
 Litmus ist unter der Apache License, Version 2.0 zugelassen. Die komplette Lizenz
 ist auf folgender Seite zu finden: [Lizenz](./LICENSE). Einige Projekte, die
-von Litmus genutzt werden, sind eventuell anders Lizensiert.
+von Litmus genutzt werden, sind eventuell anders lizenziert.
 Bitte schaue bei den jeweiligen Projekt nach.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
@@ -98,7 +97,7 @@ Bitte schaue bei den jeweiligen Projekt nach.
 
 Litmus Chaos ist Teil der CNCF Projekte.
 
-[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/?selected=litmus)
 
 ## Gemeinschaft
 
@@ -119,6 +118,6 @@ Kommunikationskanäle zum Austausch und für weitere Informationen:
   Litmus Dokumentation <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
 <br>
-<a href="https://landscape.cncf.io/selected=litmus">
+<a href="https://landscape.cncf.io/?selected=litmus">
   CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
