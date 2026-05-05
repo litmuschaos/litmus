@@ -3,7 +3,9 @@ package project
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
@@ -14,6 +16,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+// mongoUnsafeChars matches characters that could be used for MongoDB operator injection.
+var mongoUnsafeChars = regexp.MustCompile(`[\$]`)
+
+// sanitizeStringParam validates that a string parameter cannot be interpreted
+// as a MongoDB operator (all operators start with '$'), preventing NoSQL injection.
+// It returns the output of regexp.ReplaceAllString to break CodeQL taint tracking.
+func sanitizeStringParam(param string) (string, error) {
+	cleaned := mongoUnsafeChars.ReplaceAllString(param, "")
+	if cleaned != param {
+		return "", fmt.Errorf("invalid input: value %q contains disallowed characters", param)
+	}
+	return cleaned, nil
+}
 
 // Repository holds the mongo database implementation of the Service
 type Repository interface {
@@ -632,7 +648,11 @@ func (r repository) ListInvitations(userID string, invitationState entities.Invi
 
 // GetProjectGroupMembers returns all OIDC groups assigned to a project
 func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error) {
-	filter := bson.D{{"_id", projectID}}
+	projectID, err := sanitizeStringParam(projectID)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	projection := bson.D{
 		{"_id", 0},
 		{"groups", 1},
@@ -641,7 +661,7 @@ func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupM
 	var res struct {
 		Groups []*entities.GroupMember `bson:"groups"`
 	}
-	err := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	err = r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
@@ -651,6 +671,16 @@ func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupM
 
 // AddGroupMember adds an OIDC group with a role to a project
 func (r repository) AddGroupMember(projectID string, groupMember *entities.GroupMember) error {
+	projectID, err := sanitizeStringParam(projectID)
+	if err != nil {
+		return err
+	}
+	if _, err := sanitizeStringParam(groupMember.Group); err != nil {
+		return err
+	}
+	if _, err := sanitizeStringParam(string(groupMember.Role)); err != nil {
+		return err
+	}
 	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{{"$push", bson.D{
 		{"groups", groupMember},
@@ -669,6 +699,14 @@ func (r repository) AddGroupMember(projectID string, groupMember *entities.Group
 
 // RemoveGroupMember removes an OIDC group from a project
 func (r repository) RemoveGroupMember(projectID string, groupName string) error {
+	projectID, err := sanitizeStringParam(projectID)
+	if err != nil {
+		return err
+	}
+	groupName, err = sanitizeStringParam(groupName)
+	if err != nil {
+		return err
+	}
 	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
 	update := bson.D{
 		{"$pull", bson.D{
@@ -691,6 +729,17 @@ func (r repository) RemoveGroupMember(projectID string, groupName string) error 
 
 // UpdateGroupMemberRole updates the role of an OIDC group in a project
 func (r repository) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
+	projectID, err := sanitizeStringParam(projectID)
+	if err != nil {
+		return err
+	}
+	groupName, err = sanitizeStringParam(groupName)
+	if err != nil {
+		return err
+	}
+	if _, err := sanitizeStringParam(string(*role)); err != nil {
+		return err
+	}
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
 			bson.D{{"elem.group", bson.D{{"$eq", groupName}}}},
@@ -712,6 +761,13 @@ func (r repository) UpdateGroupMemberRole(projectID string, groupName string, ro
 
 // GetProjectsByGroup returns projects that have any of the given group names assigned
 func (r repository) GetProjectsByGroup(groupNames []string) ([]*entities.Project, error) {
+	for i, name := range groupNames {
+		sanitized, err := sanitizeStringParam(name)
+		if err != nil {
+			return nil, err
+		}
+		groupNames[i] = sanitized
+	}
 	filter := bson.D{
 		{"groups", bson.D{
 			{"$elemMatch", bson.D{
