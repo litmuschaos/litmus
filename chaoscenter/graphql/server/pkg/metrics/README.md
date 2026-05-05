@@ -12,12 +12,14 @@ This document explains the Prometheus metrics exposed by the LitmusChaos GraphQL
 ### API Metrics
 
 **`litmus_api_requests_total`**  
-Counts total API requests to the GraphQL server.  
-Labels: `endpoint`, `status`
+Counts total API requests to the GraphQL server, including GraphQL operation details.  
+Labels: `endpoint`, `status`, `operation_name`, `operation_type`  
+Example operation names: `listExperiment`, `runChaosExperiment`, `getExperiment`  
+Example operation types: `query`, `mutation`
 
 **`litmus_api_response_time_milliseconds`**  
 Tracks how long API requests take to respond (in milliseconds).  
-Labels: `endpoint`  
+Labels: `endpoint`, `operation_name`, `operation_type`  
 Type: Histogram with buckets from 10ms to 5s
 
 **`litmus_api_error_requests_total`**  
@@ -30,30 +32,26 @@ Labels: `auth_method`
 
 ---
 
-### GraphQL Metrics
-
-**`litmus_graphql_operations_total`**  
-Counts GraphQL operations executed (queries and mutations).  
-Labels: `operation_name`, `operation_type`  
-Example operations: `listExperiment`, `runChaosExperiment`, `getExperiment`
-
----
-
 ### Experiment Metrics
 
 **`litmus_experiments_total`**  
 Shows total number of experiments in the system.  
-Labels: `project_id`, `status`
+Labels: `project_id`, `status`, `infra_id`
 
 **`litmus_experiment_runs_total`**  
 Counts how many times experiments have been run.  
-Labels: `project_id`, `experiment_id`, `experiment_name`, `status`  
-Status values: `started`, `passed`, `failed`, `stopped`
+Labels: `project_id`, `experiment_id`, `experiment_name`, `infra_id`
 
 **`litmus_experiment_run_duration_seconds`**  
 Tracks how long experiment runs take (in seconds).  
-Labels: `project_id`, `experiment_id`, `experiment_name`  
+Labels: `project_id`, `experiment_id`, `experiment_name`, `infra_id`  
 Type: Histogram with buckets from 1s to 30 minutes
+
+**`litmus_experiment_status`**  
+Tracks the current status of experiment runs.  
+Labels: `project_id`, `experiment_id`, `experiment_name`, `status`, `infra_id`  
+Values: `0` = experiment started, `1` = experiment completed  
+The `status` label holds the phase string (e.g. `Running`, `Completed`, `Stopped`, `Error`)
 
 ---
 
@@ -81,3 +79,9 @@ curl http://localhost:8889/metrics
 ```
 
 Or configure Prometheus to scrape from your GraphQL server on port 8889.
+
+---
+
+## Grafana Dashboard
+
+A pre-built Grafana dashboard is available at `grafana/litmuschaos-metrics-dashboard.json`. Import it into Grafana to visualize all metrics out of the box.
