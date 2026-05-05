@@ -1151,17 +1151,17 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if event.Completed {
 		workflowRunMetrics, err = c.chaosExperimentRunService.ProcessCompletedExperimentRun(executionData, event.ExperimentID, event.ExperimentRunID)
-	// Track experiment run duration
-	experimentRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
-		{"experiment_run_id", event.ExperimentRunID},
-		{"experiment_id", event.ExperimentID},
-	})
-	if err == nil && experimentRun.CreatedAt > 0 {
-		duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
-		metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
-		metrics.ExperimentRunsTotal.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Inc()
-		metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(1)
-	}
+		// Track experiment run duration
+		experimentRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
+			{"experiment_run_id", event.ExperimentRunID},
+			{"experiment_id", event.ExperimentID},
+		})
+		if err == nil && experimentRun.CreatedAt > 0 {
+			duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
+			metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
+			metrics.ExperimentRunsTotal.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Inc()
+			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(1)
+		}
 		if err != nil {
 			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
 			return "", err

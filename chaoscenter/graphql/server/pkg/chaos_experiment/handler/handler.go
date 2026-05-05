@@ -151,8 +151,8 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 
 	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
-	// Track experiment creation
-	metrics.ExperimentsTotal.WithLabelValues(projectID, "active", request.InfraID).Inc()
+		// Track experiment creation
+		metrics.ExperimentsTotal.WithLabelValues(projectID, "active", request.InfraID).Inc()
 		return "", err
 	}
 

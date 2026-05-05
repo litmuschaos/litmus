@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
@@ -37,13 +38,12 @@ import (
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
-	"github.com/prometheus/client_golang/prometheus/promhttp"	
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/99designs/gqlgen/graphql"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -150,24 +150,24 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
-	
+
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
-        	oc := graphql.GetOperationContext(ctx)
-        	operationType := "query"
-        	if oc.Operation != nil && oc.Operation.Operation == "mutation" {
-                	operationType = "mutation"
-        	}
-        	operationName := oc.OperationName
-        	if operationName == "" {
-                	operationName = "anonymous"
-        	}
+		oc := graphql.GetOperationContext(ctx)
+		operationType := "query"
+		if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+			operationType = "mutation"
+		}
+		operationName := oc.OperationName
+		if operationName == "" {
+			operationName = "anonymous"
+		}
 
-        	// Store operation details in context for HTTP middleware to use
-       	 	ctx = context.WithValue(ctx, "graphql_operation_name", operationName)
-        	ctx = context.WithValue(ctx, "graphql_operation_type", operationType)
+		// Store operation details in context for HTTP middleware to use
+		ctx = context.WithValue(ctx, "graphql_operation_name", operationName)
+		ctx = context.WithValue(ctx, "graphql_operation_type", operationType)
 
-        	return next(ctx)
+		return next(ctx)
 	})
 
 	// go routine for syncing chaos hubs
@@ -274,10 +274,10 @@ func startMetricsServer() {
 	metricsRouter := gin.New()
 	metricsRouter.Use(gin.Recovery())
 	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	
+
 	metricsPort := utils.Config.MetricsPort
 	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
-	
+
 	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
 		log.Fatalf("Failed to start metrics server: %v", err)
 	}

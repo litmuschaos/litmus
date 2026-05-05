@@ -25,18 +25,18 @@ func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc
 	return func(c *gin.Context) {
 		jwt := ""
 		authMethod := "bearer"
-		
+
 		if c.Request.Header.Get("Authorization") != "" {
 			jwt = c.Request.Header.Get("Authorization")
 		}
 		if strings.HasPrefix(jwt, BearerSchema) {
 			jwt = jwt[len(BearerSchema):]
 		}
-		
+
 		if IsRevokedToken(jwt, mongoClient) {
 			// Track authentication failure
 			metrics.AuthenticationFailuresTotal.WithLabelValues(authMethod).Inc()
-			
+
 			c.Writer.WriteHeader(http.StatusUnauthorized)
 			c.Writer.Write([]byte("Error verifying JWT token: Token is revoked"))
 			return
