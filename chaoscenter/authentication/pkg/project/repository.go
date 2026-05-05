@@ -673,7 +673,7 @@ func (r repository) RemoveGroupMember(projectID string, groupName string) error 
 	update := bson.D{
 		{"$pull", bson.D{
 			{"groups", bson.D{
-				{"group", groupName},
+				{"group", bson.D{{"$eq", groupName}}},
 			}},
 		}},
 	}
@@ -693,7 +693,7 @@ func (r repository) RemoveGroupMember(projectID string, groupName string) error 
 func (r repository) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.group", groupName}},
+			bson.D{{"elem.group", bson.D{{"$eq", groupName}}}},
 		},
 	})
 	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
