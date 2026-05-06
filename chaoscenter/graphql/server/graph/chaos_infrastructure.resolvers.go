@@ -269,7 +269,10 @@ func (r *subscriptionResolver) GetInfraEvents(ctx context.Context, projectID str
 		channels := data_store.Store.InfraEventPublish[projectID]
 		for i, ch := range channels {
 			if ch == infraEvent {
-				data_store.Store.InfraEventPublish[projectID] = append(channels[:i], channels[i+1:]...)
+				copy(channels[i:], channels[i+1:])
+				channels[len(channels)-1] = nil
+				channels = channels[:len(channels)-1]
+				data_store.Store.InfraEventPublish[projectID] = channels
 				break
 			}
 		}
@@ -360,7 +363,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 // GetKubeObject is the resolver for the getKubeObject field.
 func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
 	logrus.Print("NEW KUBEOBJECT REQUEST", request.InfraID)
-	kubeObjData := make(chan *model.KubeObjectResponse)
+	kubeObjData := make(chan *model.KubeObjectResponse, 1)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
 	data_store.Store.KubeObjectData[reqID.String()] = kubeObjData
@@ -380,7 +383,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 // GetKubeNamespace is the resolver for the getKubeNamespace field.
 func (r *subscriptionResolver) GetKubeNamespace(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error) {
 	logrus.Print("NEW NAMESPACE REQUEST", request.InfraID)
-	kubeNamespaceData := make(chan *model.KubeNamespaceResponse)
+	kubeNamespaceData := make(chan *model.KubeNamespaceResponse, 1)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
 	data_store.Store.KubeNamespaceData[reqID.String()] = kubeNamespaceData
