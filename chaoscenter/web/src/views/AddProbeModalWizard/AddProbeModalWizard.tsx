@@ -1064,7 +1064,7 @@ const TuneDetailsStep: React.FC<
         <FormInput.Text
           name="k8sProperties.resourceNames"
           label={getString('resourceNames')}
-          placeholder={'Resource Name using comma seperated values'}
+          placeholder={'Resource Name using comma separated values'}
         />
         <FormInput.Text
           name="k8sProperties.namespace"
