@@ -63,14 +63,15 @@ func RandomString(n int) (string, error) {
 	return "", fmt.Errorf("length should be greater than 0")
 }
 
-// Username must start with a letter - ^[a-zA-Z]
-// Allow letters, digits, underscores, and hyphens - [a-zA-Z0-9_-]
-// Ensure the length of the username is between 3 and 16 characters (1 character is already matched above) - {2,15}$
+// Username must start with a letter or digit - ^[a-zA-Z0-9]
+// Allow letters, digits, and the characters . _ - @ + (so an email address is a valid username,
+// which is required for Dex SSO where the email is used as the username) - [a-zA-Z0-9._@+-]
+// Ensure the length of the username is between 3 and 254 characters
+// (1 character is already matched above, and 254 is the RFC 5321 maximum email length) - {2,253}$
 
 func ValidateStrictUsername(username string) error {
-	// Ensure username doesn't contain special characters (only letters, numbers, and underscores are allowed)
-	if matched, _ := regexp.MatchString(`^[a-zA-Z][a-zA-Z0-9_-]{2,15}$`, username); !matched {
-		return fmt.Errorf("username can only contain letters, numbers, and underscores")
+	if matched, _ := regexp.MatchString(`^[a-zA-Z0-9][a-zA-Z0-9._@+-]{2,253}$`, username); !matched {
+		return fmt.Errorf("username can only contain letters, digits, and the characters . _ - @ +")
 	}
 
 	return nil
