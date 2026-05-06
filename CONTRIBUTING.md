@@ -15,7 +15,7 @@ We welcome contributions of all kinds:
 ## Getting Started
 
 ### Ask Questions or Discuss Ideas
-- Join our community on [Slack](http://slack.litmuschaos.io) and post in **#litmus** for general questions or **#litmus-dev** for technical discussions.
+- Join our community on [Slack](https://slack.litmuschaos.io) and post in **#litmus** for general questions or **#litmus-dev** for technical discussions.
 
 ### Report Issues or Propose Changes
 - Open a new [GitHub issue](https://github.com/litmuschaos/litmus/issues/new) describing your request, bug, or feature idea.  
@@ -27,7 +27,7 @@ We welcome contributions of all kinds:
 - **Manual setup**  
   Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide) if you prefer to set up and configure the environment yourself.
 - Review [Development Best Practices](https://github.com/litmuschaos/litmus/wiki/Development-Best-Practices)  
-- For Go contributors, read [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
+- For Go contributors, read [Effective Go](https://go.dev/doc/effective_go) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
 
 You can contribute fixes and improvements by submitting a Pull Request (PR) on GitHub. Each PR will be reviewed by one or more maintainers and merged once it meets the project’s standards.
 
@@ -64,8 +64,8 @@ For full details, see the [DCO documentation](https://developercertificate.org/)
 
 3. **Develop & Test**  
 - Follow backend and frontend coding guidelines:  
-  - **Backend:** [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments), [Best Practices](https://peter.bourgon.org/go-in-production/#formatting-and-style)  
-  - **Frontend:** [Airbnb React Style Guide](https://airbnb.io/javascript/react/)  
+  - **Backend:** [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments), [Best Practices](https://peter.bourgon.org/go-in-production/#formatting-and-style)  
+  - **Frontend:** [Airbnb React Style Guide](https://javascript.airbnb.tech)  
 
 - If you are making any changes in backend, make sure you have run and tested the code locally, the reviewers might ask for relevant screenshots in the comments.
 - Include relevant tests for new code or bug fixes  
@@ -82,7 +82,7 @@ For full details, see the [DCO documentation](https://developercertificate.org/)
   - Merge occurs when all checks pass and reviews are approved  
   - If your PR is large or high-impact, coordinate with maintainers in **#litmus-dev** Slack
 
-If you are new to Go, consider reading [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
+If you are new to Go, consider reading [Effective Go](https://go.dev/doc/effective_go) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
 
 ## Pull Request Checklist
 - [ ] Rebase to the current master branch before submitting your pull request.
