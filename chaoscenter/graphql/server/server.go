@@ -203,6 +203,7 @@ func main() {
 
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
+	go startMetricsServer()
 
 	if enableHTTPSConnection {
 		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {

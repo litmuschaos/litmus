@@ -11,8 +11,10 @@ import (
 func MetricsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
-		path := c.Request.URL.Path
-
+		path := c.FullPath()
+		if path == "" {
+			path = "unmatched"
+		}
 		// Process request
 		c.Next()
 

@@ -899,12 +899,14 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			RunSequence:     workflow.TotalExperimentRuns + 1,
 			Probes:          probes,
 		})
-		// Track experiment run creation
-		metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+		
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")
 			return err
 		}
+
+		// Track experiment run creation
+		metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
 
 		if err = session.CommitTransaction(sessionContext); err != nil {
 			logrus.Errorf("failed to commit session transaction %v", err)
@@ -1144,23 +1146,22 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		}
 	}
 
-	// Track experiment run status as started (0)
-	metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experiment.Name, executionData.Phase, experiment.InfraID).Set(0)
+	// Track experiment run status as started (1)
+	metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experiment.Name, executionData.Phase, experiment.InfraID).Set(1)
 
 	var workflowRunMetrics types.ExperimentRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if event.Completed {
 		workflowRunMetrics, err = c.chaosExperimentRunService.ProcessCompletedExperimentRun(executionData, event.ExperimentID, event.ExperimentRunID)
 		// Track experiment run duration
-		experimentRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
+		experimentRun, runErr := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
 			{"experiment_run_id", event.ExperimentRunID},
 			{"experiment_id", event.ExperimentID},
 		})
-		if err == nil && experimentRun.CreatedAt > 0 {
+		if runErr == nil && experimentRun.CreatedAt > 0 {
 			duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
 			metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
-			metrics.ExperimentRunsTotal.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Inc()
-			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(1)
+			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(0)
 		}
 		if err != nil {
 			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
