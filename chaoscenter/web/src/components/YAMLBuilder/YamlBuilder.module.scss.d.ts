@@ -1,27 +1,56 @@
 declare namespace YamlBuilderModuleScssNamespace {
   export interface IYamlBuilderModuleScss {
-    main: string;
     borderWithPluginsPanel: string;
+    darkBg: string;
+    details: string;
+    editor: string;
+    entityTag: string;
+    errorList: string;
+    errorSummary: string;
     filePath: string;
     flexCenter: string;
-    entityTag: string;
-    editor: string;
-    layout: string;
-    validationStatus: string;
-    invalidYaml: string;
     header: string;
-    validationIcon: string;
-    darkBg: string;
-    lightBg: string;
-    errorSummary: string;
-    details: string;
-    summaryPopover: string;
+    headerBorder: string;
+    invalidYaml: string;
     item: string;
-    errorList: string;
-    splitPanel: string;
+    layout: string;
+    lightBg: string;
+    main: string;
     pluginDecorator: string;
     resizeIcon: string;
+    splitPanel: string;
+    summaryPopover: string;
+    validationIcon: string;
+    validationStatus: string;
+  }
+}
+
+declare const YamlBuilderModuleScssModule: YamlBuilderModuleScssNamespace.IYamlBuilderModuleScss;
+
+export = YamlBuilderModuleScssModule;declare namespace YamlBuilderModuleScssNamespace {
+  export interface IYamlBuilderModuleScss {
+    borderWithPluginsPanel: string;
+    darkBg: string;
+    details: string;
+    editor: string;
+    entityTag: string;
+    errorList: string;
+    errorSummary: string;
+    filePath: string;
+    flexCenter: string;
+    header: string;
     headerBorder: string;
+    invalidYaml: string;
+    item: string;
+    layout: string;
+    lightBg: string;
+    main: string;
+    pluginDecorator: string;
+    resizeIcon: string;
+    splitPanel: string;
+    summaryPopover: string;
+    validationIcon: string;
+    validationStatus: string;
   }
 }
 
