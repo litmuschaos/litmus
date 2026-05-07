@@ -899,7 +899,9 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 	compatibleVersions := utils.Config.InfraCompatibleVersions
 
 	var compatibleArray []string
-	_ = json.Unmarshal([]byte(compatibleVersions), &compatibleArray)
+	if err := json.Unmarshal([]byte(compatibleVersions), &compatibleArray); err != nil {
+		return &model.InfraVersionDetails{}, fmt.Errorf("failed to parse InfraCompatibleVersions config: %w", err)
+	}
 
 	// To find the latest compatible version
 	compatibleMap := make(map[int]string)
