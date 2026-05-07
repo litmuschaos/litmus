@@ -905,8 +905,8 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			return err
 		}
 
-		// Track experiment run creation
-		metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+		// Track experiment run as started
+		metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusRunning), workflow.InfraID).Set(1)
 
 		if err = session.CommitTransaction(sessionContext); err != nil {
 			logrus.Errorf("failed to commit session transaction %v", err)
@@ -914,6 +914,9 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		}
 		return nil
 	})
+
+	// Track experiment run creation after successful commit
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
 
 	if err != nil {
 		if abortErr := session.AbortTransaction(ctx); abortErr != nil {
@@ -1032,6 +1035,10 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		}, &username, nil, "create", r)
 	}
 
+	// Track cron experiment run as started
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusRunning), workflow.InfraID).Set(1)
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+
 	return nil
 }
 
@@ -1145,9 +1152,6 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			return "", err
 		}
 	}
-
-	// Track experiment run status as started (1)
-	metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experiment.Name, executionData.Phase, experiment.InfraID).Set(1)
 
 	var workflowRunMetrics types.ExperimentRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed

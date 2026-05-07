@@ -55,6 +55,7 @@ type Service interface {
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
+	RecordInfraMetrics(ctx context.Context)
 }
 
 type infraService struct {
@@ -212,9 +213,6 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	if err != nil {
 		return nil, err
 	}
-	// Track agent registration
-	metrics.ConnectedAgents.WithLabelValues(projectID).Inc()
-	metrics.TotalAgents.WithLabelValues(projectID).Inc()
 
 	return &model.RegisterInfraResponse{
 		InfraID:  newInfra.InfraID,
@@ -257,9 +255,6 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 	if err != nil {
 		return "", err
 	}
-	// Track agent deletion
-	metrics.DisconnectedAgents.WithLabelValues(projectID).Inc()
-	metrics.TotalAgents.WithLabelValues(projectID).Dec()
 
 	envQuery := bson.D{
 		{"project_id", bson.D{{"$eq", projectID}}},
@@ -1177,4 +1172,35 @@ func (c *infraService) UpdateInfra(query bson.D, update bson.D) error {
 // GetDBInfra returns cluster details for a given clusterID
 func (c *infraService) GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error) {
 	return c.infraOperator.GetInfra(infraID)
+}
+
+// RecordInfraMetrics queries the DB periodically and sets the infra agent gauges
+func (in *infraService) RecordInfraMetrics(ctx context.Context) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			infras, err := in.infraOperator.GetInfras(ctx, bson.D{{"is_removed", false}})
+			if err != nil {
+				continue
+			}
+			projectCounts := make(map[string][2]int) // [connected, total]
+			for _, infra := range infras {
+				counts := projectCounts[infra.ProjectID]
+				counts[1]++ // total
+				if infra.IsActive {
+					counts[0]++ // connected
+				}
+				projectCounts[infra.ProjectID] = counts
+			}
+			for projectID, counts := range projectCounts {
+				metrics.ConnectedAgents.WithLabelValues(projectID).Set(float64(counts[0]))
+				metrics.DisconnectedAgents.WithLabelValues(projectID).Set(float64(counts[1] - counts[0]))
+				metrics.TotalAgents.WithLabelValues(projectID).Set(float64(counts[1]))
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }

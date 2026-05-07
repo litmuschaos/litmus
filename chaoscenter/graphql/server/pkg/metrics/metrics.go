@@ -4,6 +4,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+const (
+	GraphqlOperationNameKey = "graphql_operation_name"
+	GraphqlOperationTypeKey = "graphql_operation_type"
+)
+
 var (
 	// API request metrics
 	APIRequestsTotal = prometheus.NewCounterVec(

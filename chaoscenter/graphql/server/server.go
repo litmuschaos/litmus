@@ -164,8 +164,8 @@ func main() {
 		}
 
 		// Store operation details in context for HTTP middleware to use
-		ctx = context.WithValue(ctx, "graphql_operation_name", operationName)
-		ctx = context.WithValue(ctx, "graphql_operation_type", operationType)
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationNameKey, operationName)
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationTypeKey, operationType)
 
 		return next(ctx)
 	})
