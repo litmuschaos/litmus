@@ -73,7 +73,7 @@ var (
 	ExperimentStatus = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "litmus_experiment_status",
-			Help: "Status of experiment runs: 0 = started, 1 = completed",
+			Help: "Status of experiment runs: 1 = started, 0 = completed",
 		},
 		[]string{"project_id", "experiment_id", "experiment_name", "status", "infra_id"},
 	)
