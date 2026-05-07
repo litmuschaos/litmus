@@ -154,7 +154,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "", err
 	}
 	// Track experiment creation
-	metrics.ExperimentsTotal.WithLabelValues(projectID, "active", request.InfraID).Inc()
+	metrics.ExperimentsTotal.WithLabelValues(projectID, "Active", request.InfraID).Inc()
 
 	return fmt.Sprintf("experiment saved successfully with ID %s", wfDetails.ExperimentID), nil
 }
