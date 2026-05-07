@@ -26,12 +26,12 @@ func MetricsMiddleware() gin.HandlerFunc {
 		operationName := "N/A"
 		operationType := "N/A"
 
-		if opName := c.Request.Context().Value("graphql_operation_name"); opName != nil {
+		if opName := c.Request.Context().Value(GraphqlOperationNameKey); opName != nil {
 			if name, ok := opName.(string); ok {
 				operationName = name
 			}
 		}
-		if opType := c.Request.Context().Value("graphql_operation_type"); opType != nil {
+		if opType := c.Request.Context().Value(GraphqlOperationTypeKey); opType != nil {
 			if opTypeStr, ok := opType.(string); ok {
 				operationType = opTypeStr
 			}
