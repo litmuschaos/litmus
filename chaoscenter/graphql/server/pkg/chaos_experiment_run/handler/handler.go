@@ -905,9 +905,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			return err
 		}
 
-		// Track experiment run as started
-		metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusRunning), workflow.InfraID).Set(1)
-
 		if err = session.CommitTransaction(sessionContext); err != nil {
 			logrus.Errorf("failed to commit session transaction %v", err)
 			return err
@@ -927,6 +924,9 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	session.EndSession(ctx)
+	// Track experiment run creation and status after successful transaction
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusQueued), workflow.InfraID).Set(0)
 	// Convert updated manifest to string
 	manifestString, err := json.Marshal(workflowManifest)
 	if err != nil {
@@ -1157,6 +1157,10 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if event.Completed {
 		workflowRunMetrics, err = c.chaosExperimentRunService.ProcessCompletedExperimentRun(executionData, event.ExperimentID, event.ExperimentRunID)
+		if err != nil {
+			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
+			return "", err
+		}
 		// Track experiment run duration
 		experimentRun, runErr := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
 			{"experiment_run_id", event.ExperimentRunID},
@@ -1167,11 +1171,6 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
 			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(0)
 		}
-		if err != nil {
-			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
-			return "", err
-		}
-
 	}
 
 	//TODO check for mongo transaction
