@@ -50,7 +50,7 @@ Type: Histogram with buckets from 1s to 30 minutes
 **`litmus_experiment_status`**  
 Tracks the current status of experiment runs.  
 Labels: `project_id`, `experiment_id`, `experiment_name`, `status`, `infra_id`  
-Values: `0` = experiment started, `1` = experiment completed  
+Values: `1` = experiment started, `0` = experiment completed  
 The `status` label holds the phase string (e.g. `Running`, `Completed`, `Stopped`, `Error`)
 
 ---
