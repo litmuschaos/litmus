@@ -912,7 +912,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil
 	})
 
-
 	if err != nil {
 		if abortErr := session.AbortTransaction(ctx); abortErr != nil {
 			logrus.Errorf("failed to abort session transaction %v", err)
