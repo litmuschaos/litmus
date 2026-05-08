@@ -16,7 +16,7 @@ The GraphQL server exposes Prometheus metrics on port `8889` at `/metrics`. This
 Verify the metrics server is running:
 
 ```bash
-kubectl port-forward -n litmus deployment/chaos-litmus-server 8889:8889
+kubectl port-forward -n litmus deployment/litmusportal-server 8889:8889
 curl http://localhost:8889/metrics | grep litmus_
 ```
 
@@ -38,7 +38,7 @@ metadata:
     app: litmus-server-metrics
 spec:
   selector:
-    app: chaos-litmus-server
+    component: litmusportal-server
   ports:
     - name: metrics
       port: 8889
