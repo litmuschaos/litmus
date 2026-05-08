@@ -912,8 +912,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil
 	})
 
-	// Track experiment run creation after successful commit
-	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
 
 	if err != nil {
 		if abortErr := session.AbortTransaction(ctx); abortErr != nil {
