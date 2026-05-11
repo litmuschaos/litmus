@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestMetricsRegistration(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	assert.NotPanics(t, func() {
