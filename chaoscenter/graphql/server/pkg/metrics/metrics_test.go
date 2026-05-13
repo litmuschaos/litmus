@@ -15,47 +15,64 @@ func TestMetricsRegistration(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	assert.NotPanics(t, func() {
 		reg.MustRegister(
-			prometheus.NewCounterVec(prometheus.CounterOpts{Name: "litmus_api_requests_total", Help: "test"}, []string{"endpoint", "status", "operation_name", "operation_type"}),
-			prometheus.NewHistogramVec(prometheus.HistogramOpts{Name: "litmus_api_response_time_milliseconds", Help: "test", Buckets: prometheus.DefBuckets}, []string{"endpoint", "operation_name", "operation_type"}),
-			prometheus.NewCounterVec(prometheus.CounterOpts{Name: "litmus_api_error_requests_total", Help: "test"}, []string{"endpoint", "error_type"}),
-			prometheus.NewCounterVec(prometheus.CounterOpts{Name: "litmus_api_authentication_failures_total", Help: "test"}, []string{"auth_method"}),
-			prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "litmus_experiments_total", Help: "test"}, []string{"project_id", "status", "infra_id"}),
-			prometheus.NewCounterVec(prometheus.CounterOpts{Name: "litmus_experiment_runs_total", Help: "test"}, []string{"project_id", "experiment_id", "experiment_name", "infra_id"}),
-			prometheus.NewHistogramVec(prometheus.HistogramOpts{Name: "litmus_experiment_run_duration_seconds", Help: "test", Buckets: prometheus.DefBuckets}, []string{"project_id", "experiment_id", "experiment_name", "infra_id"}),
-			prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "litmus_experiment_status", Help: "test"}, []string{"project_id", "experiment_id", "experiment_name", "status", "infra_id"}),
-			prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "litmus_connected_agents", Help: "test"}, []string{"project_id"}),
-			prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "litmus_disconnected_agents", Help: "test"}, []string{"project_id"}),
-			prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "litmus_total_agents", Help: "test"}, []string{"project_id"}),
+			APIRequestsTotal,
+			APIResponseTime,
+			APIErrorRequestsTotal,
+			AuthenticationFailuresTotal,
+			ExperimentsTotal,
+			ExperimentRunsTotal,
+			ExperimentRunDuration,
+			ExperimentStatus,
+			ConnectedAgents,
+			DisconnectedAgents,
+			TotalAgents,
 		)
 	})
 }
 
 func TestAPIRequestsTotal(t *testing.T) {
-	counter := prometheus.NewCounterVec(
-		prometheus.CounterOpts{Name: "litmus_api_requests_total_test", Help: "test"},
-		[]string{"endpoint", "status", "operation_name", "operation_type"},
-	)
+	endpointSuccess := "/query/" + t.Name()
+	operationSuccess := "listExperiment_" + t.Name()
+	endpointError := "/mutation/" + t.Name()
+	operationError := "runChaosExperiment_" + t.Name()
 
-	counter.WithLabelValues("/query", "200", "listExperiment", "query").Inc()
-	counter.WithLabelValues("/query", "200", "listExperiment", "query").Inc()
-	counter.WithLabelValues("/query", "500", "runChaosExperiment", "mutation").Inc()
+	successCounter := APIRequestsTotal.WithLabelValues(endpointSuccess, "200", operationSuccess, "query")
+	errorCounter := APIRequestsTotal.WithLabelValues(endpointError, "500", operationError, "mutation")
 
-	assert.Equal(t, float64(2), testutil.ToFloat64(counter.WithLabelValues("/query", "200", "listExperiment", "query")))
-	assert.Equal(t, float64(1), testutil.ToFloat64(counter.WithLabelValues("/query", "500", "runChaosExperiment", "mutation")))
+	successBefore := testutil.ToFloat64(successCounter)
+	errorBefore := testutil.ToFloat64(errorCounter)
+
+	successCounter.Inc()
+	successCounter.Inc()
+	errorCounter.Inc()
+
+	assert.Equal(t, successBefore+2, testutil.ToFloat64(successCounter))
+	assert.Equal(t, errorBefore+1, testutil.ToFloat64(errorCounter))
 }
 
 func TestExperimentRunsTotal(t *testing.T) {
-	counter := prometheus.NewCounterVec(
-		prometheus.CounterOpts{Name: "litmus_experiment_runs_total_test", Help: "test"},
-		[]string{"project_id", "experiment_id", "experiment_name", "infra_id"},
-	)
+	projectOne := "proj-1-" + t.Name()
+	experimentOne := "exp-1-" + t.Name()
+	experimentNameOne := "pod-delete-" + t.Name()
+	infraOne := "infra-1-" + t.Name()
 
-	counter.WithLabelValues("proj-1", "exp-1", "pod-delete", "infra-1").Inc()
-	counter.WithLabelValues("proj-1", "exp-1", "pod-delete", "infra-1").Inc()
-	counter.WithLabelValues("proj-2", "exp-2", "cpu-hog", "infra-2").Inc()
+	projectTwo := "proj-2-" + t.Name()
+	experimentTwo := "exp-2-" + t.Name()
+	experimentNameTwo := "cpu-hog-" + t.Name()
+	infraTwo := "infra-2-" + t.Name()
 
-	assert.Equal(t, float64(2), testutil.ToFloat64(counter.WithLabelValues("proj-1", "exp-1", "pod-delete", "infra-1")))
-	assert.Equal(t, float64(1), testutil.ToFloat64(counter.WithLabelValues("proj-2", "exp-2", "cpu-hog", "infra-2")))
+	firstRunCounter := ExperimentRunsTotal.WithLabelValues(projectOne, experimentOne, experimentNameOne, infraOne)
+	secondRunCounter := ExperimentRunsTotal.WithLabelValues(projectTwo, experimentTwo, experimentNameTwo, infraTwo)
+
+	firstBefore := testutil.ToFloat64(firstRunCounter)
+	secondBefore := testutil.ToFloat64(secondRunCounter)
+
+	firstRunCounter.Inc()
+	firstRunCounter.Inc()
+	secondRunCounter.Inc()
+
+	assert.Equal(t, firstBefore+2, testutil.ToFloat64(firstRunCounter))
+	assert.Equal(t, secondBefore+1, testutil.ToFloat64(secondRunCounter))
 }
 
 func TestExperimentStatus(t *testing.T) {
@@ -71,6 +88,7 @@ func TestExperimentStatus(t *testing.T) {
 	// Experiment completes - set to 0
 	gauge.WithLabelValues("proj-1", "exp-1", "pod-delete", "Completed", "infra-1").Set(0)
 	assert.Equal(t, float64(0), testutil.ToFloat64(gauge.WithLabelValues("proj-1", "exp-1", "pod-delete", "Completed", "infra-1")))
+	assert.Equal(t, float64(1), testutil.ToFloat64(gauge.WithLabelValues("proj-1", "exp-1", "pod-delete", "Running", "infra-1")))
 }
 
 func TestExperimentsTotal(t *testing.T) {
@@ -128,7 +146,8 @@ func TestMetricsMiddleware_SuccessRequest(t *testing.T) {
 	})
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/test", nil)
+	req, err := http.NewRequest("GET", "/test", nil)
+	assert.NoError(t, err)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -144,7 +163,8 @@ func TestMetricsMiddleware_ErrorRequest(t *testing.T) {
 	})
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/test", nil)
+	req, err := http.NewRequest("GET", "/test", nil)
+	assert.NoError(t, err)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -158,7 +178,8 @@ func TestMetricsMiddleware_UnmatchedRoute(t *testing.T) {
 	router.Use(MetricsMiddleware())
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/nonexistent", nil)
+	req, err := http.NewRequest("GET", "/nonexistent", nil)
+	assert.NoError(t, err)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
