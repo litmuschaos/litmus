@@ -65,7 +65,7 @@ rules:
 
   # for creating and managing to execute comands inside target container
 - apiGroups: [""]
-  resources: ["pods/exec","pods/eviction","replicationcontrollers"]
+  resources: ["pods/eviction","replicationcontrollers"]
   verbs: ["get","list","create"]
 
   # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
