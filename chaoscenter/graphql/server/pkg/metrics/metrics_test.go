@@ -132,6 +132,7 @@ func TestMetricsMiddleware_SuccessRequest(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, float64(1), testutil.ToFloat64(APIRequestsTotal.WithLabelValues("/test", "200", "N/A", "N/A")))
 }
 
 func TestMetricsMiddleware_ErrorRequest(t *testing.T) {
@@ -147,6 +148,8 @@ func TestMetricsMiddleware_ErrorRequest(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, float64(1), testutil.ToFloat64(APIRequestsTotal.WithLabelValues("/test", "500", "N/A", "N/A")))
+	assert.Equal(t, float64(1), testutil.ToFloat64(APIErrorRequestsTotal.WithLabelValues("/test", "server_error")))
 }
 
 func TestMetricsMiddleware_UnmatchedRoute(t *testing.T) {
@@ -159,4 +162,5 @@ func TestMetricsMiddleware_UnmatchedRoute(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, float64(1), testutil.ToFloat64(APIRequestsTotal.WithLabelValues("unmatched", "404", "N/A", "N/A")))
 }
