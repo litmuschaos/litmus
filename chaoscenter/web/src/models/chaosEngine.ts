@@ -49,7 +49,7 @@ export type FaultStatus =
   | 'Skipped';
 
 // EngineStatus provides interface for all supported strings in status.EngineStatus
-export type EngineStatus = 'initialized' | 'completed' | 'stopped';
+export type EngineStatus = 'initialized' | 'running' | 'completed' | 'stopped';
 
 // CleanUpPolicy defines the garbage collection method used by chaos-operator
 export type CleanUpPolicy = 'delete' | 'retain';
