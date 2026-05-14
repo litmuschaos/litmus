@@ -284,6 +284,13 @@ func startMetricsServer() {
 	metricsRouter := gin.New()
 	metricsRouter.Use(gin.Recovery())
 
+	// Disable forwarded-header trust so c.ClientIP() always returns the direct
+	// peer IP rather than an X-Forwarded-For value from an untrusted proxy.
+	// This makes the CIDR check reliable regardless of the deployment topology.
+	if err := metricsRouter.SetTrustedProxies(nil); err != nil {
+		log.Warnf("failed to configure trusted proxies for metrics server: %v", err)
+	}
+
 	// Parse optional CIDR allowlist for the metrics endpoint.
 	var allowedNet *net.IPNet
 	if cidr := utils.Config.MetricsAllowedCIDR; cidr != "" {
@@ -295,19 +302,18 @@ func startMetricsServer() {
 		}
 	}
 
+	// Hoist the handler so it's created once at startup, not on every request.
+	metricsHandler := promhttp.Handler()
+
 	metricsRouter.GET("/metrics", func(c *gin.Context) {
 		if allowedNet != nil {
-			host, _, err := net.SplitHostPort(c.Request.RemoteAddr)
-			if err != nil {
-				host = c.Request.RemoteAddr
-			}
-			ip := net.ParseIP(host)
+			ip := net.ParseIP(c.ClientIP())
 			if ip == nil || (!ip.IsLoopback() && !allowedNet.Contains(ip)) {
 				c.AbortWithStatus(http.StatusForbidden)
 				return
 			}
 		}
-		promhttp.Handler().ServeHTTP(c.Writer, c.Request)
+		metricsHandler.ServeHTTP(c.Writer, c.Request)
 	})
 
 	metricsPort := utils.Config.MetricsPort
