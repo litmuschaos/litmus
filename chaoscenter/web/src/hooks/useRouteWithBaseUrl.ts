@@ -34,6 +34,6 @@ export function useRouteWithBaseUrl(scope?: RouteScope): UseRouteDefinitionsProp
           normalizePath(`${renderUrl}/${scope === 'account' ? route(params) : withProjectID(route(params))}`)
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderUrl]
+    [renderUrl, projectID, scope]
   );
 }

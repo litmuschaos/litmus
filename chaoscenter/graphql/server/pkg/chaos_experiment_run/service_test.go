@@ -155,6 +155,97 @@ func Test_chaosExperimentRunService_ProcessExperimentRunDelete(t *testing.T) {
 	}
 }
 
+func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
+	type args struct {
+		ctx           context.Context
+		query         bson.D
+		experimentRun dbChaosExperimentRun.ChaosExperimentRun
+		workflow      dbChaosExperiment.ChaosExperimentRequest
+		username      string
+		r             *store.StateData
+	}
+	experimentRunID := uuid.New().String()
+	projectID := uuid.New().String()
+	experimentID := uuid.New().String()
+	infraID := uuid.New().String()
+
+	testcases := []struct {
+		name    string
+		args    args
+		given   func()
+		wantErr bool
+	}{
+		{
+			name: "success: stop marks run as Stopped in DB even when infra is disconnected",
+			args: args{
+				ctx: context.Background(),
+				query: bson.D{
+					{Key: "experiment_id", Value: experimentID},
+					{Key: "project_id", Value: projectID},
+					{Key: "experiment_run_id", Value: experimentRunID},
+					{Key: "is_removed", Value: false},
+				},
+				experimentRun: dbChaosExperimentRun.ChaosExperimentRun{
+					ProjectID:       projectID,
+					ExperimentID:    experimentID,
+					ExperimentRunID: experimentRunID,
+					InfraID:         infraID,
+					Phase:           "Running",
+				},
+				workflow: dbChaosExperiment.ChaosExperimentRequest{
+					ProjectID:    projectID,
+					InfraID:      infraID,
+					ExperimentID: experimentID,
+				},
+				username: "test",
+				// nil store means no subscriber channel — simulates disconnected infra
+				r: nil,
+			},
+			given: func() {
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+			},
+			wantErr: false,
+		},
+		{
+			name: "failure: DB error propagates",
+			args: args{
+				ctx: context.Background(),
+				query: bson.D{
+					{Key: "experiment_id", Value: experimentID},
+					{Key: "project_id", Value: projectID},
+					{Key: "experiment_run_id", Value: experimentRunID},
+					{Key: "is_removed", Value: false},
+				},
+				experimentRun: dbChaosExperimentRun.ChaosExperimentRun{
+					ProjectID:       projectID,
+					ExperimentID:    experimentID,
+					ExperimentRunID: experimentRunID,
+					InfraID:         infraID,
+				},
+				workflow: dbChaosExperiment.ChaosExperimentRequest{
+					ProjectID:    projectID,
+					InfraID:      infraID,
+					ExperimentID: experimentID,
+				},
+				username: "test",
+				r:        nil,
+			},
+			given: func() {
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 0}, errors.New("db error")).Once()
+			},
+			wantErr: true,
+		},
+	}
+	for _, tc := range testcases {
+		tc.given()
+		t.Run(tc.name, func(t *testing.T) {
+			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(tc.args.ctx, tc.args.query, &experimentRunID, tc.args.workflow, tc.args.username, projectID, tc.args.r); (err != nil) != tc.wantErr {
+				t.Errorf("chaosExperimentRunService.ProcessExperimentRunStop() error = %v, wantErr %v", err, tc.wantErr)
+			}
+		})
+	}
+}
+
 func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) {
 	type args struct {
 		execData ExecutionData
