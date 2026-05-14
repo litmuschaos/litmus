@@ -48,8 +48,8 @@ type Configuration struct {
 	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
 	MetricsPort                 string   `envconfig:"METRICS_PORT" default:"8889"`
-	// MetricsAllowedCIDR optionally restricts the dedicated metrics server to a pod CIDR
-	// (e.g. "10.0.0.0/8"). Leave empty to allow any local or cluster IP to reach it.
+	// MetricsAllowedCIDR optionally restricts the dedicated metrics server to a CIDR
+	// (e.g. "10.0.0.0/8"). Leave empty to allow requests from any IP address.
 	MetricsAllowedCIDR string `split_words:"true" default:""`
 }
 
