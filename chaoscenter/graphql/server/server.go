@@ -16,7 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -196,29 +195,6 @@ func main() {
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
 
-	// getRemotePeerIP extracts the real peer IP from RemoteAddr,
-	// bypassing X-Forwarded-For to prevent IP spoofing.
-	getRemotePeerIP := func(remoteAddr string) net.IP {
-		host, _, err := net.SplitHostPort(remoteAddr)
-		if err == nil {
-			return net.ParseIP(host)
-		}
-		return net.ParseIP(remoteAddr)
-	}
-
-	// metricsAuthMiddleware restricts /metrics to loopback-only access (127.0.0.1 / ::1).
-	// This prevents Prometheus operational data from leaking to external callers if the
-	// server is ever reachable outside the cluster/VPC.
-	// Uses RemoteAddr (not ClientIP) to prevent X-Forwarded-For spoofing.
-	metricsAuthMiddleware := func(c *gin.Context) {
-		ip := getRemotePeerIP(c.Request.RemoteAddr)
-		if ip == nil || !ip.IsLoopback() {
-			c.AbortWithStatus(http.StatusForbidden)
-			return
-		}
-		c.Next()
-	}
-	router.GET("/metrics", metricsAuthMiddleware, gin.WrapH(promhttp.Handler()))
 	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
@@ -300,11 +276,39 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 	log.Fatal(grpcServer.Serve(lis))
 }
 
-// startMetricsServer starts a separate HTTP server for Prometheus metrics
+// startMetricsServer starts a dedicated HTTP server for Prometheus metrics on
+// the port configured by METRICS_PORT (default 8889). If METRICS_ALLOWED_CIDR
+// is set, only requests from that CIDR (plus loopback) are served; otherwise
+// all IPs can reach the endpoint — rely on NetworkPolicy for cluster isolation.
 func startMetricsServer() {
 	metricsRouter := gin.New()
 	metricsRouter.Use(gin.Recovery())
-	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Parse optional CIDR allowlist for the metrics endpoint.
+	var allowedNet *net.IPNet
+	if cidr := utils.Config.MetricsAllowedCIDR; cidr != "" {
+		_, parsedNet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			log.Warnf("METRICS_ALLOWED_CIDR %q is invalid, metrics will be open to all IPs: %v", cidr, err)
+		} else {
+			allowedNet = parsedNet
+		}
+	}
+
+	metricsRouter.GET("/metrics", func(c *gin.Context) {
+		if allowedNet != nil {
+			host, _, err := net.SplitHostPort(c.Request.RemoteAddr)
+			if err != nil {
+				host = c.Request.RemoteAddr
+			}
+			ip := net.ParseIP(host)
+			if ip == nil || (!ip.IsLoopback() && !allowedNet.Contains(ip)) {
+				c.AbortWithStatus(http.StatusForbidden)
+				return
+			}
+		}
+		promhttp.Handler().ServeHTTP(c.Writer, c.Request)
+	})
 
 	metricsPort := utils.Config.MetricsPort
 	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
@@ -312,5 +316,4 @@ func startMetricsServer() {
 	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
 		log.Fatalf("Failed to start metrics server: %v", err)
 	}
-
 }
