@@ -10,17 +10,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
@@ -44,7 +45,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
