@@ -1,3 +1,4 @@
 ---
 exclude_paths:
   - "chaoscenter/web/src/api/auth/**"
+  - "chaoscenter/web/src/components/YAMLBuilder/YamlBuilder.module.scss.d.ts"
