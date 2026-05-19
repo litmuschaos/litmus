@@ -23,6 +23,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -54,6 +55,7 @@ type Service interface {
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
+	RecordInfraMetrics(ctx context.Context)
 }
 
 type infraService struct {
@@ -253,6 +255,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 	if err != nil {
 		return "", err
 	}
+
 	envQuery := bson.D{
 		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
@@ -899,7 +902,9 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 	compatibleVersions := utils.Config.InfraCompatibleVersions
 
 	var compatibleArray []string
-	_ = json.Unmarshal([]byte(compatibleVersions), &compatibleArray)
+	if err := json.Unmarshal([]byte(compatibleVersions), &compatibleArray); err != nil {
+		return &model.InfraVersionDetails{}, fmt.Errorf("failed to parse InfraCompatibleVersions config: %w", err)
+	}
 
 	// To find the latest compatible version
 	compatibleMap := make(map[int]string)
@@ -1167,4 +1172,35 @@ func (c *infraService) UpdateInfra(query bson.D, update bson.D) error {
 // GetDBInfra returns cluster details for a given clusterID
 func (c *infraService) GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error) {
 	return c.infraOperator.GetInfra(infraID)
+}
+
+// RecordInfraMetrics queries the DB periodically and sets the infra agent gauges
+func (in *infraService) RecordInfraMetrics(ctx context.Context) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			infras, err := in.infraOperator.GetInfras(ctx, bson.D{{"is_removed", false}})
+			if err != nil {
+				continue
+			}
+			projectCounts := make(map[string][2]int) // [connected, total]
+			for _, infra := range infras {
+				counts := projectCounts[infra.ProjectID]
+				counts[1]++ // total
+				if infra.IsActive {
+					counts[0]++ // connected
+				}
+				projectCounts[infra.ProjectID] = counts
+			}
+			for projectID, counts := range projectCounts {
+				metrics.ConnectedAgents.WithLabelValues(projectID).Set(float64(counts[0]))
+				metrics.DisconnectedAgents.WithLabelValues(projectID).Set(float64(counts[1] - counts[0]))
+				metrics.TotalAgents.WithLabelValues(projectID).Set(float64(counts[1]))
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }

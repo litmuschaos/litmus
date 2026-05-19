@@ -100,7 +100,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
       </tr>
       <tr>
         <td> LIB_IMAGE  </td>
-        <td> LIB Image used to excute k6 engine </td>
+        <td> LIB Image used to execute k6 engine </td>
         <td> Defaults to <code>ghcr.io/grafana/k6-operator:latest-runner</code></td>
       </tr>
       <tr>
