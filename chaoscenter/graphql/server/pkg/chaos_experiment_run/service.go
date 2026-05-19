@@ -71,10 +71,15 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 	return nil
 }
 
-// ProcessExperimentRunStop deletes a workflow entry and updates the database
+// ProcessExperimentRunStop marks an experiment run as stopped in the database and notifies
+// the infra subscriber if it's currently connected. Updating the DB here is important because
+// the infra might be disconnected (e.g. agent redeployed), in which case the stop signal
+// never reaches the agent and the run would be stuck in Running state forever.
 func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
 	update := bson.D{
 		{"$set", bson.D{
+			{"phase", string(model.ExperimentRunStatusStopped)},
+			{"completed", true},
 			{"updated_at", time.Now().UnixMilli()},
 			{"updated_by", mongodb.UserDetailResponse{
 				Username: username,
@@ -86,6 +91,8 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 	if err != nil {
 		return err
 	}
+	// Best-effort: notify the agent to clean up in-flight resources. If the infra
+	// is not connected the channel send is a no-op and the DB state is still correct.
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
 			InfraID: experiment.InfraID,

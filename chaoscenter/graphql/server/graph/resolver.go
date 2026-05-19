@@ -62,6 +62,7 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	probeService := probe.NewProbeService(probeOperator)
 	chaosHubService := chaoshub.NewService(chaosHubOperator)
 	chaosInfrastructureService := chaos_infrastructure.NewChaosInfrastructureService(chaosInfraOperator, EnvironmentOperator, mongodbOperator)
+	go chaosInfrastructureService.RecordInfraMetrics(context.Background())
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
 	chaosExperimentRunService := chaos_experiment_run2.NewChaosExperimentRunService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator)
 	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator, probeService)
