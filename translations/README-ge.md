@@ -76,7 +76,7 @@ während der Entwicklung Litmus zum Chaos Engineering nutzen_)
 ## Anmerkungen
 
 Ein paar relevante Dinge, die bei der Arbeit mit Litmus zu beachten sind, sind im Folgenden
-aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](./ROADMAP.nd). Für Details zu den
+aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](../ROADMAP.md). Für Details zu den
 Einschränkungen bestimmter Experimente empfiehlt sich ein Blick in die
 jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 
@@ -88,7 +88,7 @@ jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 ## Lizenz
 
 Litmus ist unter der Apache License, Version 2.0 zugelassen. Die komplette Lizenz
-ist auf folgender Seite zu finden: [Lizenz](./LICENSE). Einige Projekte, die
+ist auf folgender Seite zu finden: [Lizenz](../LICENSE). Einige Projekte, die
 von Litmus genutzt werden, sind eventuell anders lizenziert.
 Bitte schaue bei den jeweiligen Projekt nach.
 

@@ -65,7 +65,7 @@ Revisa los <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.m
 
 ## Consideraciones que tener en cuenta
 
-A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](./ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
+A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](../ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
 se debe consultar la [documentación de los experimentos](https://docs.litmuschaos.io/docs/pod-delete/) respectiva.
 
   - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos air-gapped los recursos Chaos personalizados y las imágenes debe ser alojados en local.
@@ -75,15 +75,15 @@ se debe consultar la [documentación de los experimentos](https://docs.litmuscha
 
 ## Licencia
 
-Litmus está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](./LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su licencia específica.
+Litmus está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](../LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su licencia específica.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
-Litmus Chaos forma parte de los projectos CNCF.
+Litmus Chaos forma parte de los proyectos CNCF.
 
 [![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/?selected=litmus)
 
-## Communidad
+## Comunidad
 
 La comunidad Litmus se reúne el tercer miércoles de cada mes a las 10:00 p.m. hora estándar de la India (IST) / 9:30 a.m. hora estándar del Pacífico (PST).
 
