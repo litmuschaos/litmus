@@ -20,11 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
-	"sync"
 
 	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/client-go/util/retry"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -62,50 +62,99 @@ type apiResponse struct {
 func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
-	var mutex = &sync.Mutex{}
-	mutex.Lock()
+	// Phase 1: atomically claim pending triggers by flipping IsTriggered to "true"
+	// before any side effect. A concurrent reconcile that loses the CAS will re-read
+	// and observe the winner's claim, so each trigger is owned by exactly one loop.
+	var claimed []string
+	err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+		claimed = nil
 
-	var etp eventtrackerv1.EventTrackerPolicy
-	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
-	if errors.IsNotFound(err) {
-		logrus.Infof("namespace: %s not found", req.NamespacedName)
-		return ctrl.Result{}, nil
-	} else if err != nil {
-		return ctrl.Result{}, err
-	}
-
-	for index, status := range etp.Statuses {
-		if status.Result == utils.ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
-			logrus.Print("ResourceName: " + status.ResourceName + ", ExperimentID: " + status.ExperimentID)
-			response, err := utils.SendRequest(status.ExperimentID)
-			if err != nil {
-				return ctrl.Result{}, err
+		var etp eventtrackerv1.EventTrackerPolicy
+		if err := r.Client.Get(ctx, req.NamespacedName, &etp); err != nil {
+			if errors.IsNotFound(err) {
+				logrus.Infof("EventTrackerPolicy %s not found", req.NamespacedName)
+				return nil
 			}
+			return err
+		}
 
-			logrus.Print(response)
-
-			var res apiResponse
-			err = json.Unmarshal([]byte(response), &res)
-			if err != nil {
-				return ctrl.Result{}, err
-			}
-
-			if res.Data.GitopsNotifer == "Gitops Disabled" {
-				etp.Statuses[index].IsTriggered = "false"
-			} else {
-				etp.Statuses[index].IsTriggered = "true"
+		for i, s := range etp.Statuses {
+			if s.Result == utils.ConditionPassed && strings.ToLower(s.IsTriggered) == "false" {
+				etp.Statuses[i].IsTriggered = "true"
+				claimed = append(claimed, s.ExperimentID)
+				logrus.Printf("claiming trigger resource=%s experimentID=%s", s.ResourceName, s.ExperimentID)
 			}
 		}
-	}
-
-	err = r.Client.Update(context.Background(), &etp)
+		if len(claimed) == 0 {
+			return nil
+		}
+		return r.Client.Update(ctx, &etp)
+	})
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	defer mutex.Unlock()
+	// Phase 2: side-effect dispatch. Executed outside the retry loop so each
+	// claim triggers exactly one SendRequest. On a Gitops-Disabled response we
+	// restore IsTriggered="false" to match the pre-fix behavior (retryable).
+	var toRevert []string
+	var dispatchErr error
+	for _, experimentID := range claimed {
+		response, sendErr := utils.SendRequest(experimentID)
+		if sendErr != nil {
+			logrus.WithError(sendErr).Errorf("failed to trigger experiment %s", experimentID)
+			toRevert = append(toRevert, experimentID)
+			dispatchErr = sendErr
+			continue
+		}
 
-	return ctrl.Result{}, nil
+		var res apiResponse
+		if jsonErr := json.Unmarshal([]byte(response), &res); jsonErr != nil {
+			logrus.WithError(jsonErr).Errorf("failed to parse response for experiment %s", experimentID)
+			toRevert = append(toRevert, experimentID)
+			dispatchErr = jsonErr
+			continue
+		}
+
+		if res.Data.GitopsNotifer == "Gitops Disabled" {
+			logrus.Infof("gitops disabled for experiment %s; releasing claim", experimentID)
+			toRevert = append(toRevert, experimentID)
+			continue
+		}
+		logrus.Infof("successfully triggered experiment %s", experimentID)
+	}
+
+	if len(toRevert) > 0 {
+		revertErr := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+			var etp eventtrackerv1.EventTrackerPolicy
+			if err := r.Client.Get(ctx, req.NamespacedName, &etp); err != nil {
+				if errors.IsNotFound(err) {
+					return nil
+				}
+				return err
+			}
+			revertSet := make(map[string]struct{}, len(toRevert))
+			for _, id := range toRevert {
+				revertSet[id] = struct{}{}
+			}
+			changed := false
+			for i, s := range etp.Statuses {
+				if _, ok := revertSet[s.ExperimentID]; ok && strings.ToLower(s.IsTriggered) == "true" {
+					etp.Statuses[i].IsTriggered = "false"
+					changed = true
+				}
+			}
+			if !changed {
+				return nil
+			}
+			return r.Client.Update(ctx, &etp)
+		})
+		if revertErr != nil {
+			return ctrl.Result{}, revertErr
+		}
+	}
+
+	return ctrl.Result{}, dispatchErr
 }
 
 // SetupWithManager sets up the controller with the Manager.
