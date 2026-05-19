@@ -56,7 +56,7 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ## 注意事项
 
-我们列举了一些将石蕊作为混沌工程框架应用需要做的一些考量，在[ROADMAP](./ROADMAP.md)我们已经提及了一些改进的方案。
+我们列举了一些将石蕊作为混沌工程框架应用需要做的一些考量，在[ROADMAP](../ROADMAP.md)我们已经提及了一些改进的方案。
 对于某一具体混沌测试的局限性，请参考其各自的文档[experiments docs](https://docs.litmuschaos.io/docs/pod-delete/)。
 
 - 网络混沌测试目前不支持除Docker以外的容器运行时，如containerd和CRIO
@@ -67,7 +67,7 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ## 开源证书
 
-石蕊使用的证书为Apache License, Version 2.0. 全文请见[LICENSE](./LICENSE). 一些由石蕊所使用的软件可能使用了不同的证书，使用时请分别参考这些软件各自的证书.
+石蕊使用的证书为Apache License, Version 2.0. 全文请见[LICENSE](../LICENSE). 一些由石蕊所使用的软件可能使用了不同的证书，使用时请分别参考这些软件各自的证书.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 

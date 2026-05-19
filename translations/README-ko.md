@@ -152,7 +152,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 
 ## 라이선스
 
-Litmus는 아파치(Apache) 라이선스 버전 2.0을 적용합니다. 전체 라이선스 텍스트는 [LICENSE](./LICENSE)를 참고하세요. Litmus 프로젝트에서 사용하는 일부 프로젝트는 다른 라이선스에 적용받을 수 있으며, 별도의 라이선스를 참고하세요.
+Litmus는 아파치(Apache) 라이선스 버전 2.0을 적용합니다. 전체 라이선스 텍스트는 [LICENSE](../LICENSE)를 참고하세요. Litmus 프로젝트에서 사용하는 일부 프로젝트는 다른 라이선스에 적용받을 수 있으며, 별도의 라이선스를 참고하세요.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
