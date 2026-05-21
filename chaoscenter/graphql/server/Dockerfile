@@ -23,6 +23,10 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
+# Apply all available OS security patches so Trivy doesn't flag
+# known CVEs in base image packages (e.g. krb5-libs, libcap).
+RUN microdnf update -y && microdnf clean all
+
 COPY --from=builder /output/server $APP_DIR/
 COPY ./manifests/. $APP_DIR/manifests
 
