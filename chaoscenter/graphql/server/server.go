@@ -296,10 +296,9 @@ func startMetricsServer() {
 	if cidr := utils.Config.MetricsAllowedCIDR; cidr != "" {
 		_, parsedNet, err := net.ParseCIDR(cidr)
 		if err != nil {
-			log.Warnf("METRICS_ALLOWED_CIDR %q is invalid, metrics will be open to all IPs: %v", cidr, err)
-		} else {
-			allowedNet = parsedNet
+			log.Fatalf("METRICS_ALLOWED_CIDR %q is invalid; refusing to start metrics server: %v", cidr, err)
 		}
+		allowedNet = parsedNet
 	}
 
 	// Hoist the handler so it's created once at startup, not on every request.
