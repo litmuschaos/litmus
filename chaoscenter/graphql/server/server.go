@@ -284,9 +284,11 @@ func startMetricsServer() {
 	metricsRouter := gin.New()
 	metricsRouter.Use(gin.Recovery())
 
-	// Disable forwarded-header trust so c.ClientIP() always returns the direct
-	// peer IP rather than an X-Forwarded-For value from an untrusted proxy.
-	// This makes the CIDR check reliable regardless of the deployment topology.
+	// Disable forwarded-header trust so c.ClientIP() resolves to the direct peer
+	// IP rather than an X-Forwarded-For value from an untrusted proxy.
+	// This makes the CIDR check reliable when that direct peer is the actual
+	// scraper source (for example, non-proxied deployments). If requests arrive
+	// through a reverse proxy or load balancer, c.ClientIP() will be the proxy IP.
 	if err := metricsRouter.SetTrustedProxies(nil); err != nil {
 		log.Warnf("failed to configure trusted proxies for metrics server: %v", err)
 	}
@@ -316,7 +318,7 @@ func startMetricsServer() {
 	})
 
 	metricsPort := utils.Config.MetricsPort
-	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+	log.Infof("Metrics server running at http://0.0.0.0:%s/metrics", metricsPort)
 
 	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
 		log.Fatalf("Failed to start metrics server: %v", err)
