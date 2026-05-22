@@ -71,7 +71,7 @@ func RandomString(n int) (string, error) {
 
 func ValidateStrictUsername(username string) error {
 	if matched, _ := regexp.MatchString(`^[a-zA-Z0-9][a-zA-Z0-9._@+-]{2,253}$`, username); !matched {
-		return fmt.Errorf("username can only contain letters, digits, and the characters . _ - @ +")
+		return fmt.Errorf("username should be at least 3 characters long and at most 254 characters long, must start with a letter or digit, and can only contain letters, digits, and the characters . _ - @ +")
 	}
 
 	return nil
