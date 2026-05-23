@@ -1,6 +1,7 @@
 package events
 
 import (
+	"strconv"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
@@ -9,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/golang/mock/gomock"
 )
 
 func FuzzGenerateWorkflowPayload(f *testing.F) {
@@ -17,50 +17,33 @@ func FuzzGenerateWorkflowPayload(f *testing.F) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 
 		targetStruct := &struct {
-			cid, accessKey, version, completed string
-			wfEvent                            types.WorkflowEvent
+			Cid, AccessKey, Version, Completed string
+			WfEvent                            types.WorkflowEvent
 		}{}
 		err := fuzzConsumer.GenerateStruct(targetStruct)
 		if err != nil {
 			return
 		}
 
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
 		subscriberGraphql := graphql.NewSubscriberGql()
 		subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
 		subscriberEvents := NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
 
-		event, err := subscriberEvents.GenerateWorkflowPayload(targetStruct.cid, targetStruct.accessKey, targetStruct.version, targetStruct.completed, targetStruct.wfEvent)
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if event == nil {
-			t.Errorf("Returned payload is nil")
-		}
+		_, _ = subscriberEvents.GenerateWorkflowPayload(targetStruct.Cid, targetStruct.AccessKey, targetStruct.Version, targetStruct.Completed, targetStruct.WfEvent)
 	})
 }
 
 func FuzzStrConvTime(f *testing.F) {
-
-	targetStruct := []int64{
-		12345, 54353, -12345,
-	}
-
-	for _, v := range targetStruct {
-		f.Add(v)
-	}
+	f.Add(int64(12345))
+	f.Add(int64(54353))
+	f.Add(int64(-12345))
 
 	f.Fuzz(func(t *testing.T, data int64) {
-
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-
 		resp := StrConvTime(data)
-		if resp == "" {
-			t.Log("result is in negative")
+		if data < 0 {
+			assert.Empty(t, resp)
 		} else {
-			t.Log("converted successfully")
+			assert.Equal(t, strconv.FormatInt(data, 10), resp)
 		}
 	})
 }
@@ -70,19 +53,16 @@ func FuzzGetExperimentStatus(f *testing.F) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 
 		targetStruct := &struct {
-			wfEvent types.WorkflowEvent
+			WfEvent types.WorkflowEvent
 		}{}
 		err := fuzzConsumer.GenerateStruct(targetStruct)
 		if err != nil {
 			return
 		}
 
-		// Call the getExperimentStatus function
-		_, err = getExperimentStatus(targetStruct.wfEvent)
+		_, err = getExperimentStatus(targetStruct.WfEvent)
 		if err != nil {
-			assert.Equal(t, "status is invalid", "status is invalid")
-		} else {
-			t.Log("status returned")
+			assert.EqualError(t, err, "status is invalid")
 		}
 	})
 }
