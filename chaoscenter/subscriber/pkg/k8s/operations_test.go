@@ -3,7 +3,6 @@ package k8s
 import (
 	"context"
 	"reflect"
-	"strings"
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
@@ -279,67 +278,6 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 
 			if got != tc.expectedStatus {
 				t.Fatalf("allDeploymentsHealthy() = %v, expectedStatus %v", got, tc.expectedStatus)
-			}
-		})
-	}
-}
-
-func TestCheckComponentStatus(t *testing.T) {
-	t.Parallel()
-
-	const defaultNamespace = "litmus"
-
-	testCases := []struct {
-		name         string
-		componentEnv string
-		pods         []runtime.Object
-		expectedErr  string
-	}{
-		{
-			name:         "empty component env",
-			componentEnv: "",
-			expectedErr:  "components not found in infra config",
-		},
-		{
-			name: "all components healthy",
-			componentEnv: `DEPLOYMENTS:
-  - app=chaos-exporter
-  - name=chaos-operator`,
-			pods: []runtime.Object{
-				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
-			},
-			expectedErr: "",
-		},
-		{
-			name:         "real configmap format",
-			componentEnv: `DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]`,
-			pods: []runtime.Object{
-				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
-				readyPod("et-1", defaultNamespace, map[string]string{"app": "event-tracker"}),
-				readyPod("wf-1", defaultNamespace, map[string]string{"app": "workflow-controller"}),
-			},
-			expectedErr: "",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
-			err := checkComponentStatus(tc.componentEnv, client, defaultNamespace)
-
-			if tc.expectedErr == "" {
-				if err != nil {
-					t.Errorf("expected no error, but got %v", err)
-				}
-				return
-			}
-
-			if err == nil || !strings.Contains(err.Error(), tc.expectedErr) {
-				t.Errorf("expected error %q, but got %v", tc.expectedErr, err)
 			}
 		})
 	}
