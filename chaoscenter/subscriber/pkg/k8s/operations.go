@@ -79,6 +79,25 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	return nil
 }
 
+func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
+	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
+	if err != nil || len(podList.Items) == 0 {
+		return false
+	}
+
+	for _, pod := range podList.Items {
+		if pod.Status.Phase != corev1.PodRunning {
+			return false
+		}
+		for _, containerStatus := range pod.Status.ContainerStatuses {
+			if !containerStatus.Ready {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (k8s *k8sSubscriber) checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
 	ctx := context.TODO()
 	downCount := 0

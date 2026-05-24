@@ -10,6 +10,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic/fake"
+	fake_kubernetes "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestAddCustomLabels(t *testing.T) {
@@ -126,5 +127,99 @@ func TestApplyRequest_Create(t *testing.T) {
 	_, err = dr.Get(context.TODO(), "new-cm", metav1.GetOptions{})
 	if err != nil {
 		t.Errorf("Failed to 'get' the newly created object from the fake client: %v", err)
+	}
+}
+
+func readyPod(name, namespace string, labels map[string]string) *corev1.Pod {
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+			Labels:    labels,
+		},
+		Status: corev1.PodStatus{
+			Phase: corev1.PodRunning,
+			ContainerStatuses: []corev1.ContainerStatus{
+				{
+					Ready: true,
+				},
+			},
+		},
+	}
+}
+
+func notRunningPod(name, namespace string, labels map[string]string) *corev1.Pod {
+
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+			Labels:    labels,
+		},
+		Status: corev1.PodStatus{
+			Phase: corev1.PodPending,
+			ContainerStatuses: []corev1.ContainerStatus{
+				{
+					Ready: false,
+				},
+			},
+		},
+	}
+}
+func TestDeploymentHealthy(t *testing.T) {
+	t.Parallel()
+
+	const defaultNamespace = "litmus"
+
+	testCases := []struct {
+		name     string
+		pods     []runtime.Object
+		selector string
+		healthy  bool
+	}{
+		{
+			name: "Ready pod matches selector",
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+			},
+			selector: "app=chaos-exporter",
+			healthy:  true,
+		},
+		{
+			name:     "No pod found",
+			pods:     []runtime.Object{},
+			selector: "app=chaos-exporter",
+			healthy:  false,
+		},
+		{
+			name: "Selector doesnt match any pod",
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+			},
+			selector: "app=chaos-operator",
+			healthy:  false,
+		},
+		{
+			name: "Pod not running",
+			pods: []runtime.Object{
+				notRunningPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+			},
+			selector: "app=chaos-exporter",
+			healthy:  false,
+		},
+	}
+
+	// Run test cases
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
+			got := deploymentHealthy(context.Background(), client, defaultNamespace, tc.selector)
+
+			if got != tc.healthy {
+				t.Errorf("deploymentHealthy(%q, %q) = %v, want %v", tc.selector, tc.name, got, tc.healthy)
+			}
+		})
 	}
 }
