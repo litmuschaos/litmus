@@ -79,6 +79,19 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	return nil
 }
 
+func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, selectors []string) bool {
+	if len(selectors) == 0 {
+		return true
+	}
+
+	for _, selector := range selectors {
+		if !deploymentHealthy(ctx, clientSet, namespace, selector) {
+			return false
+		}
+	}
+	return true
+}
+
 func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
 	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
 	if err != nil || len(podList.Items) == 0 {

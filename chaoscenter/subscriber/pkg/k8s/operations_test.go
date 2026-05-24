@@ -223,3 +223,62 @@ func TestDeploymentHealthy(t *testing.T) {
 		})
 	}
 }
+
+func TestAllDeploymentsHealthy(t *testing.T) {
+	t.Parallel()
+
+	const defaultNamespace = "litmus"
+
+	testCases := []struct {
+		name      string
+		pods      []runtime.Object
+		selectors []string
+		want      bool
+	}{
+		{
+			name: "all selectors healthy",
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
+			},
+			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
+			want:      true,
+		},
+		{
+			name: "one selector missing pods",
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+			},
+			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
+			want:      false,
+		},
+		{
+			name: "one selector unhealthy",
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+				notRunningPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
+			},
+			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
+			want:      false,
+		},
+		{
+			name:      "empty selector list",
+			pods:      []runtime.Object{},
+			selectors: []string{},
+			want:      true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
+			got := allDeploymentsHealthy(context.Background(), client, defaultNamespace, tc.selectors)
+
+			if got != tc.want {
+				t.Fatalf("allDeploymentsHealthy() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
