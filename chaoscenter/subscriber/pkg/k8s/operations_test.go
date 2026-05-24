@@ -3,6 +3,7 @@ package k8s
 import (
 	"context"
 	"reflect"
+	"strings"
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
@@ -230,10 +231,10 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 	const defaultNamespace = "litmus"
 
 	testCases := []struct {
-		name      string
-		pods      []runtime.Object
-		selectors []string
-		want      bool
+		name           string
+		pods           []runtime.Object
+		selectors      []string
+		expectedStatus bool
 	}{
 		{
 			name: "all selectors healthy",
@@ -241,16 +242,16 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
 				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
 			},
-			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
-			want:      true,
+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
+			expectedStatus: true,
 		},
 		{
 			name: "one selector missing pods",
 			pods: []runtime.Object{
 				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
 			},
-			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
-			want:      false,
+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
+			expectedStatus: false,
 		},
 		{
 			name: "one selector unhealthy",
@@ -258,14 +259,14 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
 				notRunningPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
 			},
-			selectors: []string{"app=chaos-exporter", "name=chaos-operator"},
-			want:      false,
+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
+			expectedStatus: false,
 		},
 		{
-			name:      "empty selector list",
-			pods:      []runtime.Object{},
-			selectors: []string{},
-			want:      true,
+			name:           "empty selector list",
+			pods:           []runtime.Object{},
+			selectors:      []string{},
+			expectedStatus: true,
 		},
 	}
 
@@ -276,8 +277,69 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
 			got := allDeploymentsHealthy(context.Background(), client, defaultNamespace, tc.selectors)
 
-			if got != tc.want {
-				t.Fatalf("allDeploymentsHealthy() = %v, want %v", got, tc.want)
+			if got != tc.expectedStatus {
+				t.Fatalf("allDeploymentsHealthy() = %v, expectedStatus %v", got, tc.expectedStatus)
+			}
+		})
+	}
+}
+
+func TestCheckComponentStatus(t *testing.T) {
+	t.Parallel()
+
+	const defaultNamespace = "litmus"
+
+	testCases := []struct {
+		name         string
+		componentEnv string
+		pods         []runtime.Object
+		expectedErr  string
+	}{
+		{
+			name:         "empty component env",
+			componentEnv: "",
+			expectedErr:  "components not found in infra config",
+		},
+		{
+			name: "all components healthy",
+			componentEnv: `DEPLOYMENTS:
+  - app=chaos-exporter
+  - name=chaos-operator`,
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
+			},
+			expectedErr: "",
+		},
+		{
+			name:         "real configmap format",
+			componentEnv: `DEPLOYMENTS: ["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]`,
+			pods: []runtime.Object{
+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
+				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
+				readyPod("et-1", defaultNamespace, map[string]string{"app": "event-tracker"}),
+				readyPod("wf-1", defaultNamespace, map[string]string{"app": "workflow-controller"}),
+			},
+			expectedErr: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
+			err := checkComponentStatus(tc.componentEnv, client, defaultNamespace)
+
+			if tc.expectedErr == "" {
+				if err != nil {
+					t.Errorf("expected no error, but got %v", err)
+				}
+				return
+			}
+
+			if err == nil || !strings.Contains(err.Error(), tc.expectedErr) {
+				t.Errorf("expected error %q, but got %v", tc.expectedErr, err)
 			}
 		})
 	}

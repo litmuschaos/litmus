@@ -79,6 +79,31 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	return nil
 }
 
+func checkComponentStatus(componentEnv string, clientset kubernetes.Interface, namespace string) error {
+	if componentEnv == "" {
+		return errors.New("components not found in infra config")
+	}
+
+	var components InfraComponents
+
+	err := yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+	for retry := range LiveCheckMaxTries {
+		if allDeploymentsHealthy(ctx, clientset, namespace, components.Deployments) {
+			logrus.Info("All infra deployments are up")
+			return nil
+		}
+		if retry < LiveCheckMaxTries-1 {
+			time.Sleep(time.Second * 30)
+		}
+	}
+	return errors.New("all components failed to startup")
+}
+
 func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, selectors []string) bool {
 	if len(selectors) == 0 {
 		return true
