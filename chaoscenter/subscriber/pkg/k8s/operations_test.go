@@ -9,8 +9,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic/fake"
-	fake_kubernetes "k8s.io/client-go/kubernetes/fake"
+	dynamicfake "k8s.io/client-go/dynamic/fake"
+	kubefake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestAddCustomLabels(t *testing.T) {
@@ -67,7 +67,7 @@ func TestApplyRequest(t *testing.T) {
 	s := runtime.NewScheme()
 	s.AddKnownTypes(corev1.SchemeGroupVersion, &corev1.Pod{})
 
-	fakeDynamicClient := fake.NewSimpleDynamicClient(s, objToGet)
+	fakeDynamicClient := dynamicfake.NewSimpleDynamicClient(s, objToGet)
 
 	// The 'dr' (dynamic resource) variable needs to be set, just like in the real code
 	// We tell it to look for "pods" in the "litmus" namespace
@@ -107,7 +107,7 @@ func TestApplyRequest_Create(t *testing.T) {
 	// Create an EMPTY fake dynamic client (it has no objects yet)
 	s := runtime.NewScheme()
 	s.AddKnownTypes(corev1.SchemeGroupVersion, &corev1.ConfigMap{})
-	fakeDynamicClient := fake.NewSimpleDynamicClient(s)
+	fakeDynamicClient := dynamicfake.NewSimpleDynamicClient(s)
 
 	// Set the global 'dr' variable for the test
 	dr = fakeDynamicClient.Resource(corev1.SchemeGroupVersion.WithResource("configmaps")).Namespace("litmus")
@@ -214,7 +214,7 @@ func TestDeploymentHealthy(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
+			client := kubefake.NewSimpleClientset(tc.pods...)
 			got := deploymentHealthy(context.Background(), client, defaultNamespace, tc.selector)
 
 			if got != tc.healthy {
@@ -273,7 +273,7 @@ func TestAllDeploymentsHealthy(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			client := fake_kubernetes.NewSimpleClientset(tc.pods...)
+			client := kubefake.NewSimpleClientset(tc.pods...)
 			got := allDeploymentsHealthy(context.Background(), client, defaultNamespace, tc.selectors)
 
 			if got != tc.expectedStatus {
