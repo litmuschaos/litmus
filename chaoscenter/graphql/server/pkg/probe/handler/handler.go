@@ -547,36 +547,36 @@ func (p *probeService) GetProbeReference(ctx context.Context, probeName, project
 	pipeline = append(pipeline, matchIdentifiersStage)
 
 	experimentWithSelectedProbeName := bson.D{
-		{
-			"$lookup",
-			bson.D{
-				{"from", "chaosExperimentRuns"},
-				{
-					"pipeline", bson.A{
-						bson.D{{"$match", bson.D{
-							{"probes.probe_names", bson.D{
-								{"$eq", probeName},
-							}},
-						}}},
-						bson.D{
-							{"$project", bson.D{
-								{"experiment_name", 1},
-								{"probes.fault_name", 1},
-								{"probes.probe_names", 1},
-								{"phase", 1},
-								{"updated_at", 1},
-								{"updated_by", 1},
-								{"execution_data", 1},
-								{"experiment_id", 1},
-							}},
-						},
-					},
-				},
-				{"as", "execution_history"},
-			},
-		},
+		{"$lookup", bson.D{
+			{"from", "chaosExperimentRuns"},
+			{"localField", "name"},
+			{"foreignField", "probes.probe_names"},
+			{"as", "execution_history"},
+		}},
 	}
-	pipeline = append(pipeline, experimentWithSelectedProbeName)
+
+	projectStage := bson.D{
+		{"$project", bson.D{
+			{"execution_history.completed", 0},
+			{"execution_history.created_at", 0},
+			{"execution_history.created_by", 0},
+			{"execution_history.experiment_run_id", 0},
+			{"execution_history.faults_awaited", 0},
+			{"execution_history.faults_failed", 0},
+			{"execution_history.faults_na", 0},
+			{"execution_history.faults_passed", 0},
+			{"execution_history.faults_stopped", 0},
+			{"execution_history.infra_id", 0},
+			{"execution_history.is_removed", 0},
+			{"execution_history.notify_id", 0},
+			{"execution_history.project_id", 0},
+			{"execution_history.resiliency_score", 0},
+			{"execution_history.revision_id", 0},
+			{"execution_history.run_sequence", 0},
+			{"execution_history.total_faults", 0},
+		}},
+	}
+	pipeline = append(pipeline, experimentWithSelectedProbeName, projectStage)
 
 	// Call aggregation on pipeline
 	probeCursor, err := p.probeOperator.GetAggregateProbes(ctx, pipeline)

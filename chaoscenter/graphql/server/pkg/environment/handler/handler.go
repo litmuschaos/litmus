@@ -8,6 +8,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/common"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"go.mongodb.org/mongo-driver/bson"
@@ -319,38 +320,33 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 		}
 	}
 
+	// Append sort stage to pipeline
+	pipeline = append(pipeline, sortStage)
+
 	// Pagination or adding a default limit of 15 if pagination not provided
-	paginatedExperiments := bson.A{
-		sortStage,
-	}
+	_, skip, limit := common.CreatePaginationStage(request.Pagination)
 
-	if request != nil && request.Pagination != nil {
-		paginationSkipStage := bson.D{
-			{"$skip", request.Pagination.Page * request.Pagination.Limit},
-		}
-		paginationLimitStage := bson.D{
-			{"$limit", request.Pagination.Limit},
-		}
-
-		paginatedExperiments = append(paginatedExperiments, paginationSkipStage, paginationLimitStage)
-	} else {
-		limitStage := bson.D{
-			{"$limit", 15},
-		}
-
-		paginatedExperiments = append(paginatedExperiments, limitStage)
-	}
-
-	// Add two stages where we first count the number of filtered workflow and then paginate the results
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_filtered_environments", bson.A{
-				bson.D{{"$count", "count"}},
-			}},
-			{"environments", paginatedExperiments},
+	// Count total project and get top-level document to array
+	countStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+			{"total_filtered_environments", bson.D{{"$sum", 1}}},
+			{"environments", bson.D{{"$push", "$$ROOT"}}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	// Paging results
+	pagingStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"total_filtered_environments", 1},
+			{"environments", bson.D{
+				{"$slice", bson.A{"$environments", skip, limit}},
+			}},
+		}},
+	}
+
+	pipeline = append(pipeline, countStage, pagingStage)
 
 	cursor, err := e.EnvironmentOperator.GetAggregateEnvironments(pipeline)
 
@@ -363,7 +359,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 		aggregatedEnvironments []environments.AggregatedEnvironments
 	)
 
-	if err = cursor.All(context.Background(), &aggregatedEnvironments); err != nil || len(aggregatedEnvironments) == 0 {
+	if err = cursor.All(context.Background(), &aggregatedEnvironments); err != nil {
 		return &model.ListEnvironmentResponse{
 			TotalNoOfEnvironments: 0,
 			Environments:          envs,
@@ -395,8 +391,8 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	}
 
 	totalFilteredEnvironmentsCounter := 0
-	if len(envs) > 0 && len(aggregatedEnvironments[0].TotalFilteredEnvironments) > 0 {
-		totalFilteredEnvironmentsCounter = aggregatedEnvironments[0].TotalFilteredEnvironments[0].Count
+	if len(envs) > 0 && aggregatedEnvironments[0].TotalFilteredEnvironments > 0 {
+		totalFilteredEnvironmentsCounter = aggregatedEnvironments[0].TotalFilteredEnvironments
 	}
 
 	output := model.ListEnvironmentResponse{
