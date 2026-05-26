@@ -75,7 +75,7 @@ func NewChaosExperimentHandler(
 	}
 }
 
-func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, request model.SaveChaosExperimentRequest, projectID string, username string) (string, error) {
+func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, request model.SaveChaosExperimentRequest, projectID string, r *store.StateData, username string) (string, error) {
 
 	var revID = uuid.New().String()
 
@@ -126,9 +126,24 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			return "", err
 		}
 
-		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
+		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, r)
 		if err != nil {
 			return "", err
+		}
+
+		// For CronWorkflow experiments, force delete the existing CR and recreate it so
+		// the Argo CronWorkflow controller picks up all manifest changes (schedule, spec, etc.).
+		if r != nil && *wfType == dbChaosExperiment.CronExperiment {
+			// Delete using the old manifest so the correct CR name is targeted.
+			if len(wfDetails.Revision) > 0 {
+				oldManifest := wfDetails.Revision[len(wfDetails.Revision)-1].ExperimentManifest
+				chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
+					ExperimentID:       &wfDetails.ExperimentID,
+					ExperimentManifest: oldManifest,
+					InfraID:            wfDetails.InfraID,
+				}, &username, nil, "delete", r)
+			}
+			chaos_infrastructure.SendExperimentToSubscriber(projectID, newRequest, &username, nil, "create", r)
 		}
 
 		return fmt.Sprintf("experiment updated successfully with ID %s", wfDetails.ExperimentID), nil
@@ -148,7 +163,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "", err
 	}
 
-	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
+	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, r)
 	if err != nil {
 		return "", err
 	}
