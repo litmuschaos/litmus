@@ -95,7 +95,7 @@ func (r *mutationResolver) SaveChaosExperiment(ctx context.Context, request mode
 		return "", err
 	}
 
-	uiResponse, err = r.chaosExperimentHandler.SaveChaosExperiment(ctx, request, projectID, username)
+	uiResponse, err = r.chaosExperimentHandler.SaveChaosExperiment(ctx, request, projectID, data_store.Store, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
