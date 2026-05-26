@@ -91,7 +91,7 @@ func FuzzSaveChaosExperiment(f *testing.F) {
 
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
-		res, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, targetStruct.request, targetStruct.projectID, "")
+		res, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, targetStruct.request, targetStruct.projectID, nil, "")
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.SaveChaosExperiment() error = %v", err)
 			return
