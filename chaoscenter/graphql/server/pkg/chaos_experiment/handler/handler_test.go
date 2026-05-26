@@ -200,13 +200,44 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
 		},
+		{
+			name: "Save CronWorkflow experiment triggers delete and recreate on subscriber",
+			args: args{
+				projectID: projectId,
+				request: model.SaveChaosExperimentRequest{
+					ID:      experimentId,
+					Type:    &model.AllExperimentType[1],
+					InfraID: infraId,
+				},
+				request2: &model.ChaosExperimentRequest{
+					ExperimentID:   &experimentId,
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[1],
+				},
+			},
+			given: func(request2 *model.ChaosExperimentRequest, mockServices *MockServices) {
+				cronType := dbChaosExperiment.CronExperiment
+				ctx = context.WithValue(ctx, authorization.AuthKey, username)
+				findResult := []interface{}{bson.D{
+					{Key: "experiment_id", Value: experimentId},
+				}}
+				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &cronType, nil).Once()
+
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			mockServices := NewMockServices()
 			tc.given(tc.args.request2, mockServices)
-			_, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, "")
+			_, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, nil, "")
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.SaveChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return

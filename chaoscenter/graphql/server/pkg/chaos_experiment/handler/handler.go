@@ -38,6 +38,7 @@ import (
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentHandler is the handler for chaos experiment
@@ -167,6 +168,8 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	if err != nil {
 		return "", err
 	}
+	// Track experiment creation
+	metrics.ExperimentsTotal.WithLabelValues(projectID, "Active", request.InfraID).Inc()
 
 	return fmt.Sprintf("experiment saved successfully with ID %s", wfDetails.ExperimentID), nil
 }
@@ -1566,7 +1569,14 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 	}
 
 	for _, runID := range experimentRunsID {
-		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, &runID, experiment, username, projectID, r)
+		// scope the update to the specific run so we don't accidentally touch sibling runs
+		runQuery := bson.D{
+			{"experiment_id", experimentID},
+			{"project_id", projectID},
+			{"experiment_run_id", runID},
+			{"is_removed", false},
+		}
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, &runID, experiment, username, projectID, r)
 		if err != nil {
 			return false, err
 		}
