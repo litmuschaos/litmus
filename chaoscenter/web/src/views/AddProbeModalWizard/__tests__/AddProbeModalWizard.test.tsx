@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TestWrapper } from 'utils/testUtils';
 import AddProbeModalWizardView from 'views/AddProbeModalWizard/AddProbeModalWizard';
-import { ProbeType, InfrastructureType } from 'api/entities';
+import { type Probe, ProbeType, InfrastructureType } from 'api/entities';
 import '@testing-library/jest-dom';
 
 jest.mock('react-monaco-editor', () => ({
@@ -101,17 +101,18 @@ describe('AddProbeModalWizardView CMD Probe', () => {
     const { container, getByText, getByDisplayValue } = renderWizard({
       isEdit: true,
       probeData: {
-        name: 'cmd-probe',
         description: 'cmd probe',
-        tags: [],
-        type: ProbeType.CMD,
         infrastructureType: InfrastructureType.KUBERNETES,
         kubernetesCMDProperties: {
           command: 'echo ok',
           comparator: { type: 'string', criteria: 'contains', value: 'ok' },
           source: ''
-        }
-      } as any
+        },
+        name: 'cmd-probe',
+        projectID: '',
+        tags: [],
+        type: ProbeType.CMD
+      } as Probe
     });
 
     await waitFor(() => getByDisplayValue('cmd-probe'));
@@ -159,18 +160,19 @@ describe('AddProbeModalWizardView PROM Probe', () => {
     const { container, getByText, getByDisplayValue } = renderWizard({
       isEdit: true,
       probeData: {
-        name: 'prom-probe',
         description: 'prom probe',
-        tags: [],
-        type: ProbeType.PROM,
         infrastructureType: InfrastructureType.KUBERNETES,
+        name: 'prom-probe',
+        projectID: '',
         promProperties: {
+          comparator: { type: 'string', criteria: 'matches', value: 'up' },
           endpoint: 'http://prometheus:9090',
           query: 'up',
-          queryPath: '',
-          comparator: { type: 'string', criteria: 'matches', value: 'up' }
-        }
-      } as any
+          queryPath: ''
+        },
+        tags: [],
+        type: ProbeType.PROM
+      } as Probe
     });
 
     await waitFor(() => getByDisplayValue('prom-probe'));
