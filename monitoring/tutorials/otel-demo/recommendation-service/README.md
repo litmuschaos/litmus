@@ -9,7 +9,7 @@
 - name: `recommendation-service-pod-delete-probe`
 - timeout: 3s
 - interval: 3s
-- prometheus endpoint: `http://my-otel-demo-prometheus-server.otel-demo:9090`
+- prometheus endpoint: `http://prometheus.otel-demo:9090`
 - prometheus query: `sum(rate(calls_total{status_code=\"STATUS_CODE_ERROR\", span_name=\"grpc.oteldemo.RecommendationService/ListRecommendations\"}[5m]))`
 - Data Comparison:
   - Type: Float
