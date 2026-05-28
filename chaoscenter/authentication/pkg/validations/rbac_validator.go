@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -55,12 +56,18 @@ func RbacValidator(uid string, projectID string,
 	}
 
 	if len(userGroups) > 0 {
+		sanitizedGroups, sanitizeErr := utils.SanitizeMongoSlice(userGroups)
+		if sanitizeErr != nil {
+			log.Errorf("authgRPC Error (group sanitization): %s", sanitizeErr)
+			return errors.New("auth gRPC - Unauthorized")
+		}
+
 		groupFilter := bson.D{
 			{"_id", projectID},
 			{"groups", bson.D{
 				{"$elemMatch", bson.D{
 					{"group", bson.D{
-						{"$in", userGroups},
+						{"$in", sanitizedGroups},
 					}},
 					{"role", bson.D{
 						{"$in", requiredRoles},

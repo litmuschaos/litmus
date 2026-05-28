@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	pkgUtils "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -127,14 +128,19 @@ func CreateMatchStage(userID string, groups []string) bson.D {
 	conditions := bson.A{memberMatch}
 
 	if len(groups) > 0 {
-		groupMatch := bson.D{
-			{"groups", bson.D{
-				{"$elemMatch", bson.D{
-					{"group", bson.D{{"$in", groups}}},
+		sanitizedGroups, err := pkgUtils.SanitizeMongoSlice(groups)
+		if err != nil {
+			log.Printf("CreateMatchStage: invalid group name: %s", err)
+		} else {
+			groupMatch := bson.D{
+				{"groups", bson.D{
+					{"$elemMatch", bson.D{
+						{"group", bson.D{{"$in", sanitizedGroups}}},
+					}},
 				}},
-			}},
+			}
+			conditions = append(conditions, groupMatch)
 		}
-		conditions = append(conditions, groupMatch)
 	}
 
 	return bson.D{
