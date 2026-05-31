@@ -73,7 +73,6 @@ func TestFileHandlerInvalidTokenReturnsAfterError(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	ctx.Params = []gin.Param{{Key: "key", Value: "not-a-jwt.yaml"}}
-	ctx.Request.Header.Set("Referer", "http://localhost:3000/")
 
 	handlers.FileHandler(mockOp)(ctx)
 
