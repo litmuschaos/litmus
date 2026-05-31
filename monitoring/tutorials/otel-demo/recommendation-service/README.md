@@ -10,7 +10,7 @@
 - timeout: 3s
 - interval: 3s
 - prometheus endpoint: `http://prometheus.otel-demo:9090`
-- prometheus query: `sum(rate(calls_total{status_code=\"STATUS_CODE_ERROR\", span_name=\"grpc.oteldemo.RecommendationService/ListRecommendations\"}[5m]))`
+- prometheus query: `sum(rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\", span_name=\"grpc.oteldemo.RecommendationService/ListRecommendations\"}[5m]))`
 - Data Comparison:
   - Type: Float
   - Criteria: `<`
