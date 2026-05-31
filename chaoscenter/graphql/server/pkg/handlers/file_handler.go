@@ -36,7 +36,14 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			return
 		}
 
-		referrer := c.Request.Header.Get("Referer")
+		reqHeader, ok := c.Value("request-header").(http.Header)
+		if !ok {
+			logrus.Error("unable to parse referer header")
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
+			c.Writer.Write([]byte("unable to parse referer header"))
+			return
+		}
+		referrer := reqHeader.Get("Referer")
 		if referrer == "" {
 			logrus.Error("unable to parse referer header")
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
