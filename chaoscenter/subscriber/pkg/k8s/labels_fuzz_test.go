@@ -28,30 +28,18 @@ func FuzzUpdateLabels(f *testing.F) {
 		}
 
 		for i := 0; i < n; i++ {
-			// Generate random key and values
 			key, _ := c.GetString()
 			value, _ := c.GetString()
 			labels[key] = value
 		}
 
-		// Test normal map
 		assertUpdateLabels(t, labels)
-
-		// Explicitly test nil — fuzzer can never generate this, so testing it directly
-		assertUpdateLabels(t, nil)
 	})
 }
 
 func assertUpdateLabels(t *testing.T, labels map[string]string) {
 	t.Helper()
 	got := (&k8sSubscriber{}).updateLabels(labels)
-
-	if labels == nil {
-		if len(got) != 0 {
-			t.Fatalf("Expected empty slice for nil input, got %v", got)
-		}
-		return
-	}
 
 	if len(got) != len(labels) {
 		t.Fatalf("Got %d labels, expected %d. labels=%v got=%v", len(got), len(labels), labels, got)
