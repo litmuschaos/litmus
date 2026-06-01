@@ -25,6 +25,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 
 		infra, err := dbChaosInfra.NewInfrastructureOperator(mongodbOperator).GetInfra(infraId)
@@ -32,6 +33,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 
 		reqHeader, ok := c.Value("request-header").(http.Header)
@@ -39,6 +41,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error("unable to parse referer header")
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte("unable to parse referer header"))
+			return
 		}
 
 		referrer := reqHeader.Get("Referer")
@@ -46,6 +49,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error("unable to parse referer header")
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte("unable to parse referer header"))
+			return
 		}
 
 		referrerURL, err := url.Parse(referrer)
@@ -53,6 +57,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 
 		response, err := chaos_infrastructure.GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infra)
@@ -60,6 +65,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 
 		utils.WriteHeaders(&c.Writer, 200)
