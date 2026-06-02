@@ -273,9 +273,13 @@ spec:
               value: "8081"
             - name: GRPC_PORT
               value: "8001"
+            - name: METRICS_PORT
+              value: "8889"
           ports:
             - containerPort: 8081
             - containerPort: 8001
+            - containerPort: 8889
+              name: metrics
           imagePullPolicy: Always
 ---
 kind: NetworkPolicy
@@ -309,6 +313,9 @@ spec:
     - name: graphql-rpc-server-https
       port: 8001
       targetPort: 8001
+    - name: metrics
+      port: 8889
+      targetPort: 8889
   selector:
     component: litmusportal-server
 ---
