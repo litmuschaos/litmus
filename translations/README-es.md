@@ -16,7 +16,7 @@
 
 #### *Leer en [otros idiomas](./TRANSLATIONS.md)*
 
-[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-ge.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
+[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-de.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
 
 ## Descripción general
 
@@ -68,7 +68,7 @@ Revisa los <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.m
 A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](../ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
 se debe consultar la [documentación de los experimentos](https://docs.litmuschaos.io/docs/pod-delete/) respectiva.
 
-  - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos air-gapped los recursos Chaos personalizados y las imágenes debe ser alojados en local.
+  - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos air-gapped los recursos Chaos personalizados y las imágenes deben ser alojados en local.
   - Cuando se intenta ejecutar Experimentos Chaos en una plataforma concreta (como AWS o el cloud de GCP) los detalles de acceso se pasan como secretos de Kubernetes. El soporte para otros modos de gestión secreta aún no se han testeado o implementado.
   - Algunos Experimentos Chaos hacen uso de la api de docker desde el interior del experimento, por lo que requieren el socket de docker para montarse. Se recomienda permitir el acceso a desarrolladores, devops y SRE para correr estos experimentos.
   - En casos (raros) en que los Experimentos Chaos hacen uso de contenedores privilegiados, se documentarán las políticas de seguridad recomendadas.
