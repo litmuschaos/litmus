@@ -5,7 +5,7 @@
 |   🇨🇳   |        [Chinese](README-chn.md)        |
 | :uk:  |         [English](../README.md)         |
 |   🇫🇷   |         [French](README-fr.md)         |
-|   🇩🇪   |         [German](README-ge.md)         |
+|   🇩🇪   |         [German](README-de.md)         |
 |   🇮🇳   |          [Hindi](README-hi.md)         |
 |   🇯🇵   |        [Japanese](README-ja.md)        |
 |   🇰🇷   |         [Korean](README-ko.md)          |
