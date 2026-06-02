@@ -1,5 +1,5 @@
 # BUILD STAGE
-FROM golang:1.24 AS builder
+FROM golang:1.24.13 AS builder
 
 LABEL maintainer="LitmusChaos"
 
@@ -17,11 +17,13 @@ RUN CGO_ENABLED=0 go build -o /output/event-tracker -v
 
 # Packaging stage
 # Use RedHat UBI minimal image as base
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
 
 LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
+
+RUN microdnf update --nodocs && microdnf clean all
 
 COPY --from=builder /output/event-tracker $APP_DIR/
 RUN chown 65534:0 $APP_DIR/event-tracker && chmod 755 $APP_DIR/event-tracker

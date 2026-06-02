@@ -18,7 +18,7 @@ spec:
       name: mysql-exporter
     spec:
       containers:
-        - image: prom/mysqld-exporter:latest
+        - image: prom/mysqld-exporter:v0.18.0
           imagePullPolicy: 'Always'
           env:
             - name: DATA_SOURCE_NAME

@@ -23,6 +23,8 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
+RUN microdnf update --nodocs && microdnf clean all
+
 COPY --from=builder /output/server $APP_DIR/
 COPY ./manifests/. $APP_DIR/manifests
 

@@ -200,9 +200,13 @@ func runRestServer(applicationService services.ApplicationService) {
 		if utils.TlsCertPath != "" && utils.TlSKeyPath != "" {
 			conf := utils.GetTlsConfig()
 			server := http.Server{
-				Addr:      ":" + utils.RestPort,
-				Handler:   app,
-				TLSConfig: conf,
+				Addr:              ":" + utils.RestPort,
+				Handler:           app,
+				TLSConfig:         conf,
+				ReadHeaderTimeout: 10 * time.Second,
+				ReadTimeout:       60 * time.Second,
+				WriteTimeout:      60 * time.Second,
+				IdleTimeout:       120 * time.Second,
 			}
 			log.Infof("Listening and serving HTTPS on :%s", utils.RestPort)
 			err := server.ListenAndServeTLS("", "")
@@ -214,7 +218,15 @@ func runRestServer(applicationService services.ApplicationService) {
 		}
 	} else {
 		log.Infof("Listening and serving HTTP on :%s", utils.RestPort)
-		err := app.Run(":" + utils.RestPort)
+		server := http.Server{
+			Addr:              ":" + utils.RestPort,
+			Handler:           app,
+			ReadHeaderTimeout: 10 * time.Second,
+			ReadTimeout:       60 * time.Second,
+			WriteTimeout:      60 * time.Second,
+			IdleTimeout:       120 * time.Second,
+		}
+		err := server.ListenAndServe()
 		if err != nil {
 			log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 		}

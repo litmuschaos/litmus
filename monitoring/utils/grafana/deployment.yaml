@@ -15,7 +15,7 @@ spec:
       name: grafana
     spec:
       containers:
-        - image: grafana/grafana:latest
+        - image: grafana/grafana:11.4.0
           imagePullPolicy: Always
           name: grafana
           resources:

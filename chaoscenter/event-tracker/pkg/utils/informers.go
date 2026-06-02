@@ -23,7 +23,7 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 
 	defer runtime.HandleCrash()
 
-	deploymentInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	if _, err := deploymentInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			depNewObj := newObj.(*v1.Deployment)
@@ -43,7 +43,10 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 				}
 			}
 		},
-	})
+	}); err != nil {
+		runtime.HandleError(fmt.Errorf("failed to add event handler for Deployment informer: %w", err))
+		return
+	}
 
 	deploymentInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, deploymentInformer.HasSynced) {
@@ -61,7 +64,7 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 
 	defer runtime.HandleCrash()
 
-	stsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	if _, err := stsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			stsNewObj := newObj.(*v1.StatefulSet)
@@ -82,7 +85,10 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 			}
 
 		},
-	})
+	}); err != nil {
+		runtime.HandleError(fmt.Errorf("failed to add event handler for StatefulSet informer: %w", err))
+		return
+	}
 
 	stsInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, stsInformer.HasSynced) {
@@ -100,7 +106,7 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 
 	defer runtime.HandleCrash()
 
-	dsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	if _, err := dsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
 			dsNewObj := newObj.(*v1.DaemonSet)
@@ -121,7 +127,10 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 			}
 
 		},
-	})
+	}); err != nil {
+		runtime.HandleError(fmt.Errorf("failed to add event handler for DaemonSet informer: %w", err))
+		return
+	}
 
 	dsInformer.Run(stopper)
 	if !cache.WaitForCacheSync(stopper, dsInformer.HasSynced) {

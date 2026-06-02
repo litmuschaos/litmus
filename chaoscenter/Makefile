@@ -81,7 +81,7 @@ backend-services-checks:
 	@echo "------------------"
 	@echo "--> Check chaos-center event tracker [go mod tidy]"
 	@echo "------------------"
-	@tidyRes=$$(cd cluster-agents/event-tracker && go mod tidy); \
+	@tidyRes=$$(cd event-tracker && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
@@ -103,8 +103,8 @@ backend-unit-tests:
 	@echo "------------------"
 	@cd graphql/server && go test -cover ./...
 	@cd authentication && go test -v ./...
-	@#cd cluster-agents/subscriber && go test -v ./...
-#	@cd cluster-agents/event-tracker && go test -v ./...
+	@#cd subscriber && go test -v ./...
+	@cd event-tracker && go test -v -cover ./...
 
 web-unit-tests:
 	@echo "------------------"
