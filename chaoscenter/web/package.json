@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "webpack serve --config config/webpack.dev.js",
     "build": "rm -rf dist && webpack --config config/webpack.prod.js",
+    "build:subpath": "PUBLIC_URL=/litmus yarn build",
     "lint": "eslint --ext .ts --ext .tsx src",
     "lint:staged": "sh scripts/eslint/eslint-staged.sh",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,scss}\"",

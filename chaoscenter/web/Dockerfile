@@ -9,6 +9,7 @@ RUN microdnf update -y --nodocs \
     
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
+COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY ./entrypoint.sh /opt
 
 WORKDIR /opt/chaos
