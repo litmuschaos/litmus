@@ -19,6 +19,7 @@ import (
 	grpc2 "google.golang.org/grpc"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	chaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	dataStore "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -465,17 +466,23 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
-			// Check if it's a probe or experiment file by reading the kind from git history
-			// For deleted files, we need to determine type from filename pattern or path
-			// Probes are typically in /probes/ directory or have specific naming
-			if strings.Contains(file, "/probes/") {
+			// Determine the resource kind of the deleted file by reading its content
+			// from git history. This avoids misclassifying files based on path conventions
+			// and correctly handles probes stored outside the /probes/ directory.
+			resourceKind, kindErr := g.getDeletedFileKind(file, config)
+			if kindErr != nil {
+				log.Warn("Could not determine kind of deleted file from git history, defaulting to experiment: " + file + " | " + kindErr.Error())
+				resourceKind = ""
+			}
+
+			if resourceKind == "resilienceprobe" {
 				err = g.deleteProbe(file, config)
 				if err != nil {
 					log.Error("Error while deleting probe db entry : " + file + " | " + err.Error())
 					continue
 				}
 			} else {
-				// Assume it's an experiment if not in probes directory
+				// Treat as experiment (covers workflow, cronexperiment, chaosengine, etc.)
 				err = g.deleteExperiment(file, config)
 				if err != nil {
 					log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
@@ -656,6 +663,23 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, false, config.ProjectID, dataStore.Store)
 }
 
+// getDeletedFileKind reads the file content from git history and returns the lowercase
+// resource kind (e.g. "resilienceprobe", "workflow", "cronexperiment"). It is used to
+// determine how to handle a file that has already been deleted from the working tree.
+func (g *gitOpsService) getDeletedFileKind(file string, config GitConfig) (string, error) {
+	data, err := config.GetFileContentFromPreviousCommit(file)
+	if err != nil {
+		return "", err
+	}
+	jsonData, err := yaml.YAMLToJSON(data)
+	if err != nil {
+		// Try interpreting as plain JSON (file might already be JSON)
+		jsonData = data
+	}
+	kind := strings.ToLower(gjson.Get(string(jsonData), "kind").String())
+	return kind, nil
+}
+
 // deleteExperiment helps in deleting experiment from DB during the SyncDBToGit operation
 func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
@@ -668,6 +692,13 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	}
 
 	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", dataStore.Store)
+}
+
+// gitOpsContext returns a context carrying the "git-ops" sentinel value used by
+// probe service methods that extract a username via authorization.AuthKey.
+// This avoids requiring a real JWT when GitOps background sync creates/updates/deletes probes.
+func gitOpsContext() context.Context {
+	return context.WithValue(context.Background(), authorization.AuthKey, "git-ops")
 }
 
 // syncProbe helps in creating or updating a probe during the SyncDBToGit operation
@@ -697,17 +728,21 @@ func (g *gitOpsService) syncProbe(ctx context.Context, data, file string, config
 		return fmt.Errorf("failed to validate probe uniqueness: %s", err.Error())
 	}
 	
+	// Use a system context with the "git-ops" sentinel so that probe service methods
+	// that require authorization.AuthKey do not fail with "JWT token not found".
+	gitCtx := gitOpsContext()
+	
 	if isUnique {
 		// Create new probe
 		log.Info("Creating new probe from git: ", probeName)
-		_, err = g.probeService.AddProbe(ctx, *probeRequest, config.ProjectID)
+		_, err = g.probeService.AddProbe(gitCtx, *probeRequest, config.ProjectID)
 		if err != nil {
 			return fmt.Errorf("failed to create probe: %s", err.Error())
 		}
 	} else {
 		// Update existing probe
 		log.Info("Updating existing probe from git: ", probeName)
-		_, err = g.probeService.UpdateProbe(ctx, *probeRequest, config.ProjectID)
+		_, err = g.probeService.UpdateProbe(gitCtx, *probeRequest, config.ProjectID)
 		if err != nil {
 			return fmt.Errorf("failed to update probe: %s", err.Error())
 		}
@@ -723,8 +758,12 @@ func (g *gitOpsService) deleteProbe(file string, config GitConfig) error {
 	
 	log.Info("Deleting probe from git: ", fileName)
 	
+	// Use a system context with the "git-ops" sentinel so that probe service methods
+	// that require authorization.AuthKey do not fail or panic on type assertion.
+	gitCtx := gitOpsContext()
+	
 	// Check if probe exists before deleting
-	isUnique, err := g.probeService.ValidateUniqueProbe(context.Background(), fileName, config.ProjectID)
+	isUnique, err := g.probeService.ValidateUniqueProbe(gitCtx, fileName, config.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -735,7 +774,7 @@ func (g *gitOpsService) deleteProbe(file string, config GitConfig) error {
 		return nil
 	}
 	
-	_, err = g.probeService.DeleteProbe(context.Background(), fileName, config.ProjectID)
+	_, err = g.probeService.DeleteProbe(gitCtx, fileName, config.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -903,7 +942,17 @@ func (g *gitOpsService) parseHTTPProbeProperties(data string) (*model.Kubernetes
 		}
 		props.Method.Post = postReq
 	}
-	
+
+	if props.Method.Get == nil && props.Method.Post == nil {
+		return nil, errors.New("required HTTP probe method missing: must specify either method.get or method.post")
+	}
+	if props.Method.Get != nil && (props.Method.Get.Criteria == "" || props.Method.Get.ResponseCode == "") {
+		return nil, errors.New("required HTTP GET method properties missing: criteria and responseCode are required")
+	}
+	if props.Method.Post != nil && (props.Method.Post.Criteria == "" || props.Method.Post.ResponseCode == "") {
+		return nil, errors.New("required HTTP POST method properties missing: criteria and responseCode are required")
+	}
+
 	return props, nil
 }
 
@@ -925,7 +974,11 @@ func (g *gitOpsService) parseCMDProbeProperties(data string) (*model.KubernetesC
 		Value:    gjson.Get(data, "spec.properties.comparator.value").String(),
 		Criteria: gjson.Get(data, "spec.properties.comparator.criteria").String(),
 	}
-	
+
+	if props.Comparator.Type == "" || props.Comparator.Criteria == "" || props.Comparator.Value == "" {
+		return nil, errors.New("required CMD probe comparator properties missing: type, criteria and value are required")
+	}
+
 	// Optional fields
 	if val := gjson.Get(data, "spec.properties.attempt"); val.Exists() {
 		attempt := int(val.Int())
@@ -977,7 +1030,11 @@ func (g *gitOpsService) parsePromProbeProperties(data string) (*model.PROMProbeR
 		Value:    gjson.Get(data, "spec.properties.comparator.value").String(),
 		Criteria: gjson.Get(data, "spec.properties.comparator.criteria").String(),
 	}
-	
+
+	if props.Comparator.Type == "" || props.Comparator.Criteria == "" || props.Comparator.Value == "" {
+		return nil, errors.New("required PROM probe comparator properties missing: type, criteria and value are required")
+	}
+
 	// Optional fields
 	if val := gjson.Get(data, "spec.properties.query"); val.Exists() {
 		query := val.String()
