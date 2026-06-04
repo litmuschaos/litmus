@@ -5,11 +5,12 @@ import {
   getKubernetesCMDProbeProperties,
   getKubernetesHTTPProbeProperties,
   getK8SProbeProperties,
-  getPROMProbeProperties
+  getPROMProbeProperties,
+  getProbeYAML
 } from '@api/core';
 import { getScope } from '@utils';
 import ChaosProbeConfigurationView from '@views/ChaosProbeConfiguration';
-import { InfrastructureType, ProbeType } from '@api/entities';
+import { InfrastructureType, Mode, ProbeType } from '@api/entities';
 import { useSearchParams } from '@hooks';
 
 interface ChaosProbeConfigurationControllerProps {
@@ -25,7 +26,6 @@ export default function ChaosProbeConfigurationController({
   const { showError } = useToaster();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType;
 
-  // Lazy Get Kubernetes HTTP Properties query to avoid pre-rendering at component mounting
   const [
     getKubernetesHTTPProbePropertiesQuery,
     { loading: getKubernetesHTTPProbePropertiesLoading, data: kubernetesHTTPProperties }
@@ -38,7 +38,6 @@ export default function ChaosProbeConfigurationController({
     }
   });
 
-  // Lazy Get PROM Properties query to avoid pre-rendering at component mounting
   const [getPROMProbePropertiesQuery, { loading: getPROMProbePropertiesLoading, data: promProperties }] =
     getPROMProbeProperties({
       ...scope,
@@ -49,7 +48,6 @@ export default function ChaosProbeConfigurationController({
       }
     });
 
-  // Lazy Get K8S Properties query to avoid pre-rendering at component mounting
   const [getK8SProbePropertiesQuery, { loading: getK8SProbePropertiesLoading, data: k8sProperties }] =
     getK8SProbeProperties({
       ...scope,
@@ -60,7 +58,6 @@ export default function ChaosProbeConfigurationController({
       }
     });
 
-  // Lazy Get Kubernetes CMD Properties query to avoid pre-rendering at component mounting
   const [
     getKubernetesCMDProbePropertiesQuery,
     { loading: getKubernetesCMDProbePropertiesLoading, data: kubernetesCMDproperties }
@@ -73,40 +70,47 @@ export default function ChaosProbeConfigurationController({
     }
   });
 
+  const [getProbeYAMLQuery, { loading: probeYAMLLoading, data: probeYAMLData }] = getProbeYAML({
+    projectID: scope.projectID,
+    probeID: probeName,
+    mode: Mode.SoT,
+    options: {
+      onError: err => showError(err.message),
+      nextFetchPolicy: 'cache-first'
+    }
+  });
+
   React.useMemo(() => {
     if (infrastructureType === InfrastructureType.KUBERNETES) {
       switch (type) {
         case ProbeType.HTTP:
           return getKubernetesHTTPProbePropertiesQuery({
-            variables: {
-              projectID: scope.projectID,
-              probeName: probeName
-            }
+            variables: { projectID: scope.projectID, probeName: probeName }
           });
         case ProbeType.PROM:
           return getPROMProbePropertiesQuery({
-            variables: {
-              projectID: scope.projectID,
-              probeName: probeName
-            }
+            variables: { projectID: scope.projectID, probeName: probeName }
           });
         case ProbeType.K8S:
           return getK8SProbePropertiesQuery({
-            variables: {
-              projectID: scope.projectID,
-              probeName: probeName
-            }
+            variables: { projectID: scope.projectID, probeName: probeName }
           });
         case ProbeType.CMD:
           return getKubernetesCMDProbePropertiesQuery({
-            variables: {
-              projectID: scope.projectID,
-              probeName: probeName
-            }
+            variables: { projectID: scope.projectID, probeName: probeName }
           });
       }
     }
   }, [type, probeName, infrastructureType]);
+
+  React.useEffect(() => {
+    getProbeYAMLQuery({
+      variables: {
+        projectID: scope.projectID,
+        request: { probeID: probeName, mode: Mode.SoT }
+      }
+    });
+  }, [probeName]);
 
   const probeData =
     infrastructureType === InfrastructureType.KUBERNETES
@@ -115,11 +119,19 @@ export default function ChaosProbeConfigurationController({
         k8sProperties?.getProbe ||
         kubernetesCMDproperties?.getProbe
       : undefined;
+
   const loading =
     getKubernetesHTTPProbePropertiesLoading ||
     getPROMProbePropertiesLoading ||
     getK8SProbePropertiesLoading ||
     getKubernetesCMDProbePropertiesLoading;
 
-  return <ChaosProbeConfigurationView loading={loading} probeData={probeData} />;
+  return (
+    <ChaosProbeConfigurationView
+      loading={loading}
+      probeData={probeData}
+      probeYAML={probeYAMLData?.getProbeYAML}
+      probeYAMLLoading={probeYAMLLoading}
+    />
+  );
 }
