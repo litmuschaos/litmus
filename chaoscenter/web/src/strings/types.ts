@@ -705,6 +705,8 @@ export interface StringsMap {
   'probeNameNotUnique': PrimitiveObject<'name'>
   'probeNotAttachedToRef': unknown
   'probeOverview': unknown
+  'probeVisualView': unknown
+  'probeYAMLView': unknown
   'probePassedSuccessfully': unknown
   'probeProperties': unknown
   'probeResult': unknown
