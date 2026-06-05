@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TestWrapper } from 'utils/testUtils';
 import AddProbeModalWizardView from 'views/AddProbeModalWizard/AddProbeModalWizard';
-import { ProbeType, InfrastructureType } from 'api/entities';
+import { type Probe, ProbeType, InfrastructureType } from 'api/entities';
 import '@testing-library/jest-dom';
 
 jest.mock('react-monaco-editor', () => ({
@@ -26,6 +26,37 @@ const mockMutation = {
 
 const mockValidateName = jest.fn(() => Promise.resolve({ data: { validateUniqueProbe: true } } as any));
 
+const renderWizard = (props?: Partial<React.ComponentProps<typeof AddProbeModalWizardView>>) =>
+  render(
+    <TestWrapper>
+      <AddProbeModalWizardView
+        hideDarkModal={jest.fn()}
+        mutation={mockMutation}
+        validateName={mockValidateName}
+        loading={false}
+        infrastructureType={InfrastructureType.KUBERNETES}
+        error={undefined}
+        {...props}
+      />
+    </TestWrapper>
+  );
+
+const navigateToDetailsStep = async (container: HTMLElement, getByText: (text: string) => HTMLElement) => {
+  const user = userEvent.setup();
+
+  const timeoutInput = container.querySelector('input[name$="probeTimeout"]');
+  if (!timeoutInput) throw new Error('Timeout input not found');
+  await user.clear(timeoutInput);
+  await user.type(timeoutInput, '1s');
+
+  const intervalInput = container.querySelector('input[name$="interval"]');
+  if (!intervalInput) throw new Error('Interval input not found');
+  await user.clear(intervalInput);
+  await user.type(intervalInput, '1s');
+
+  await user.click(getByText('configureDetails'));
+};
+
 describe('AddProbeModalWizardView CMD Probe', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'localStorage', {
@@ -44,46 +75,16 @@ describe('AddProbeModalWizardView CMD Probe', () => {
 
   test('textarea should accept long input > 1024 chars', async () => {
     const user = userEvent.setup();
-    const { container, getByText } = render(
-      <TestWrapper>
-        <AddProbeModalWizardView
-          hideDarkModal={jest.fn()}
-          mutation={mockMutation}
-          validateName={mockValidateName}
-          loading={false}
-          infrastructureType={InfrastructureType.KUBERNETES}
-          error={undefined}
-        />
-      </TestWrapper>
-    );
+    const { container, getByText } = renderWizard();
 
-    // Step 1: Overview
     const nameInput = container.querySelector('input[name="name"]');
     if (!nameInput) throw new Error('Name input not found');
     await user.type(nameInput, 'test-val-probe');
 
-    // Click Configure Properties
-    const nextButton1 = getByText('configureProperties');
-    await user.click(nextButton1);
-
-    // Step 2: Properties
-    // Wait for content specific to Step 2
+    await user.click(getByText('configureProperties'));
     await waitFor(() => getByText('timeout'));
+    await navigateToDetailsStep(container, getByText);
 
-    const timeoutInput = container.querySelector('input[name$="probeTimeout"]');
-    if (!timeoutInput) throw new Error('Timeout input not found');
-    await user.clear(timeoutInput);
-    await user.type(timeoutInput, '1s');
-
-    const intervalInput = container.querySelector('input[name$="interval"]');
-    if (!intervalInput) throw new Error('Interval input not found');
-    await user.clear(intervalInput);
-    await user.type(intervalInput, '1s');
-
-    const nextButton2 = getByText('configureDetails');
-    await user.click(nextButton2);
-
-    // Step 3: Details (CMD Probe)
     await waitFor(() => getByText('command'));
 
     const commandInput = container.querySelector('textarea[name$="command"]');
@@ -92,8 +93,107 @@ describe('AddProbeModalWizardView CMD Probe', () => {
     expect(commandInput).toHaveAttribute('maxLength', '100000');
 
     const longString = 'a'.repeat(2000);
-    // Use fireEvent for instant change, although user.paste relies on clipboard
     fireEvent.change(commandInput, { target: { value: longString } });
     expect(commandInput).toHaveValue(longString);
+  });
+
+  test('edit mode renders string criteria and preserves saved criteria for CMD probe', async () => {
+    const { container, getByText, getByDisplayValue } = renderWizard({
+      isEdit: true,
+      probeData: {
+        description: 'cmd probe',
+        infrastructureType: InfrastructureType.KUBERNETES,
+        kubernetesCMDProperties: {
+          command: 'echo ok',
+          comparator: { type: 'string', criteria: 'contains', value: 'ok' },
+          source: ''
+        },
+        name: 'cmd-probe',
+        projectID: '',
+        tags: [],
+        type: ProbeType.CMD
+      } as Probe
+    });
+
+    await waitFor(() => getByDisplayValue('cmd-probe'));
+
+    fireEvent.click(getByText('configureProperties'));
+    await waitFor(() => getByText('timeout'));
+    await navigateToDetailsStep(container, getByText);
+    await waitFor(() => getByText('command'));
+
+    // The comparator type input should reflect 'string'
+    const typeInput = container.querySelector(
+      'input[name="kubernetesCMDProperties.comparator.type"]'
+    ) as HTMLInputElement;
+    expect(typeInput.value.toLowerCase()).toContain('string');
+
+    // The saved criteria value should be preserved
+    const criteriaInput = container.querySelector(
+      'input[name="kubernetesCMDProperties.comparator.criteria"]'
+    ) as HTMLInputElement;
+    expect(criteriaInput.value).toBe('contains');
+
+    // Numeric criteria should not be present in the DOM
+    expect(document.body).not.toHaveTextContent('>=');
+    expect(document.body).not.toHaveTextContent('<=');
+  });
+});
+
+describe('AddProbeModalWizardView PROM Probe', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(key => {
+          if (key === 'probeType') return ProbeType.PROM;
+          return null;
+        }),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+        clear: jest.fn()
+      },
+      writable: true
+    });
+  });
+
+  test('edit mode renders string criteria and preserves saved criteria for PROM probe', async () => {
+    const { container, getByText, getByDisplayValue } = renderWizard({
+      isEdit: true,
+      probeData: {
+        description: 'prom probe',
+        infrastructureType: InfrastructureType.KUBERNETES,
+        name: 'prom-probe',
+        projectID: '',
+        promProperties: {
+          comparator: { type: 'string', criteria: 'matches', value: 'up' },
+          endpoint: 'http://prometheus:9090',
+          query: 'up',
+          queryPath: ''
+        },
+        tags: [],
+        type: ProbeType.PROM
+      } as Probe
+    });
+
+    await waitFor(() => getByDisplayValue('prom-probe'));
+
+    fireEvent.click(getByText('configureProperties'));
+    await waitFor(() => getByText('timeout'));
+    await navigateToDetailsStep(container, getByText);
+    await waitFor(() => getByText('prometheusEndpoint'));
+
+    // The comparator type input should reflect 'string'
+    const typeInput = container.querySelector('input[name="promProperties.comparator.type"]') as HTMLInputElement;
+    expect(typeInput.value.toLowerCase()).toContain('string');
+
+    // The saved criteria value should be preserved
+    const criteriaInput = container.querySelector(
+      'input[name="promProperties.comparator.criteria"]'
+    ) as HTMLInputElement;
+    expect(criteriaInput.value).toBe('matches');
+
+    // Numeric criteria should not be present in the DOM
+    expect(document.body).not.toHaveTextContent('>=');
+    expect(document.body).not.toHaveTextContent('<=');
   });
 });
