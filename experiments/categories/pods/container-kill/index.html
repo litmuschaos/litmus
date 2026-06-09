@@ -1005,6 +1005,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#deterministic-container-kill-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deterministic Container-Kill Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5575,6 +5586,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#deterministic-container-kill-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deterministic Container-Kill Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5791,6 +5813,16 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> container runtime interface for the cluster</td>
     <td>  Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
   </tr>
+  <tr>
+    <td> POD_TERMINATION_ORDER </td>
+    <td> It defines the order in which target pods are selected for container-kill injection </td>
+    <td> Default value: random. Supported: random, alphabetical, reverse </td>
+  </tr>
+  <tr>
+    <td> INTER_POD_KILL_INTERVAL_SECONDS </td>
+    <td> Wait time (in seconds) between consecutive container-kill injections across target pods in serial mode </td>
+    <td> Defaults to 0 (no additional delay). Only effective when SEQUENCE=serial. Additive to CHAOS_INTERVAL. </td>
+  </tr>
 </table></p>
 </details>
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
@@ -5934,6 +5966,53 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="c1"># supoorts pumba and litmus</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LIB</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;pumba&#39;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+</code></pre></div>
+<h3 id="deterministic-container-kill-injection">Deterministic Container-Kill Injection<a class="headerlink" href="#deterministic-container-kill-injection" title="Permanent link">&para;</a></h3>
+<p>It defines the order in which target pods are selected for container-kill injection when <code>SEQUENCE</code> is set to <code>serial</code>. It can be tuned via <code>POD_TERMINATION_ORDER</code> ENV.</p>
+<ul>
+<li><code>random</code>: Target pods are selected for injection in a random order (default).</li>
+<li><code>alphabetical</code>: Target pods are selected for injection in ascending alphabetical order of their names.</li>
+<li><code>reverse</code>: Target pods are selected for injection in descending alphabetical order of their names.</li>
+</ul>
+<p>To guarantee a <strong>fixed, named injection sequence</strong> (e.g. always target <code>session-pod</code> last), set <code>TARGET_PODS</code> to the desired ordered comma-separated list — insertion order is preserved:</p>
+<blockquote>
+<p><strong>Note:</strong> When <code>TARGET_PODS</code> is explicitly provided, its comma-separated order takes strict precedence and <code>POD_TERMINATION_ORDER</code> is ignored.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_PODS</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;worker-pod-1,worker-pod-2,session-pod&#39;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEQUENCE</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;serial&#39;</span>
+</code></pre></div>
+<p>To add a fixed delay between each injection, combine with <code>INTER_POD_KILL_INTERVAL_SECONDS</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># defines the deterministic container-kill injection order with inter-pod interval</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container-kill-sa</span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container-kill</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># order of container-kill injection</span>
+<span class="w">        </span><span class="c1"># supports: random, alphabetical, reverse</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POD_TERMINATION_ORDER</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;alphabetical&#39;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEQUENCE</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;serial&#39;</span>
+<span class="w">        </span><span class="c1"># optional: seconds to wait between consecutive container-kill injections (serial mode only)</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INTER_POD_KILL_INTERVAL_SECONDS</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;5&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
