@@ -10,6 +10,7 @@
 - interval: 3s
 - prometheus endpoint: `http://prometheus.otel-demo:9090`
 - prometheus query: `histogram_quantile(0.99, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"cart\"}[5m])) by (le))/1000`
+  > **Note:** The escaped quotes (`\"`) are required when configuring the Litmus Prometheus Probe.
 - Data Comparison:
   - Type: Float
   - Criteria: `<`
