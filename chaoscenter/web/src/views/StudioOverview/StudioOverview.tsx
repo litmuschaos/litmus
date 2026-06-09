@@ -17,14 +17,12 @@ import { isEqual } from 'lodash-es';
 import type { ExperimentMetadata } from '@db';
 import { useStrings } from '@strings';
 import FormErrorListener from '@components/FormErrorListener';
-import { useUpdateSearchParams } from '@hooks';
+import { useUpdateSearchParams, useImageRegistry } from '@hooks';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import { ChaosInfrastructureReferenceFieldProps, StudioErrorState, StudioTabs } from '@models';
 import experimentYamlService from 'services/experiment';
 import KubernetesChaosInfrastructureReferenceFieldController from '@controllers/KubernetesChaosInfrastructureReferenceField';
 import { InfrastructureType } from '@api/entities';
-import { getImageRegistry } from '@api/core/ImageRegistry';
-import { getScope } from '@utils';
 import css from './StudioOverview.module.scss';
 
 interface StudioOverviewViewProps {
@@ -54,21 +52,7 @@ export default function StudioOverviewView({
 
   const [currentExperiment, setCurrentExperiment] = React.useState<ExperimentMetadata | undefined>();
 
-  const scope = getScope();
-
-  // Fetch the image registry data using Apollo's useQuery hook
-  const { data: getImageRegistryData, loading: imageRegistryLoading } = getImageRegistry({
-    projectID: scope.projectID
-  });
-
-  const imageRegistry = getImageRegistryData?.getImageRegistry
-    ? {
-        repo: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName
-          ? `${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName}/${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName}`
-          : getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName,
-        secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName
-      }
-    : undefined;
+  const { imageRegistry, loading: imageRegistryLoading } = useImageRegistry();
 
   React.useEffect(() => {
     experimentHandler?.getExperiment(experimentKey).then(experiment => {
