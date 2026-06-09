@@ -23,7 +23,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		infraId, err := chaos_infrastructure.InfraValidateJWT(token)
 		if err != nil {
 			logrus.Error(err)
-			utils.WriteHeaders(&c.Writer, 500)
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
 			c.Writer.Write([]byte(err.Error()))
 			return
 		}
@@ -31,23 +31,15 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		infra, err := dbChaosInfra.NewInfrastructureOperator(mongodbOperator).GetInfra(infraId)
 		if err != nil {
 			logrus.Error(err)
-			utils.WriteHeaders(&c.Writer, 500)
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
 			c.Writer.Write([]byte(err.Error()))
 			return
 		}
 
-		reqHeader, ok := c.Value("request-header").(http.Header)
-		if !ok {
-			logrus.Error("unable to parse referer header")
-			utils.WriteHeaders(&c.Writer, 500)
-			c.Writer.Write([]byte("unable to parse referer header"))
-			return
-		}
-
-		referrer := reqHeader.Get("Referer")
+		referrer := c.GetHeader("Referer")
 		if referrer == "" {
 			logrus.Error("unable to parse referer header")
-			utils.WriteHeaders(&c.Writer, 500)
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
 			c.Writer.Write([]byte("unable to parse referer header"))
 			return
 		}
@@ -55,7 +47,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		referrerURL, err := url.Parse(referrer)
 		if err != nil {
 			logrus.Error(err)
-			utils.WriteHeaders(&c.Writer, 500)
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
 			c.Writer.Write([]byte(err.Error()))
 			return
 		}
@@ -63,12 +55,12 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		response, err := chaos_infrastructure.GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infra)
 		if err != nil {
 			logrus.Error(err)
-			utils.WriteHeaders(&c.Writer, 500)
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
 			c.Writer.Write([]byte(err.Error()))
 			return
 		}
 
-		utils.WriteHeaders(&c.Writer, 200)
+		utils.WriteHeaders(&c.Writer, http.StatusOK)
 		c.Writer.Write(response)
 	}
 }

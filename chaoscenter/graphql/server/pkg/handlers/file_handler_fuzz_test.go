@@ -13,6 +13,8 @@ import (
 )
 
 func FuzzFileHandler(f *testing.F) {
+	gin.SetMode(gin.TestMode)
+
 	testCases := []struct {
 		key     string
 		referer string
@@ -29,7 +31,6 @@ func FuzzFileHandler(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, key string, referer string) {
-		gin.SetMode(gin.TestMode)
 
 		w := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(w)
@@ -44,8 +45,6 @@ func FuzzFileHandler(f *testing.F) {
 				Value: key,
 			},
 		}
-
-		ctx.Set("request-header", req.Header)
 
 		mockOp := new(mocks.MongoOperator)
 
