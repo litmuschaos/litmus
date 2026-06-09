@@ -170,7 +170,7 @@ function PipelineStepNode(props: PipelineStepNodeProps): JSX.Element {
       >
         <div className="execution-running-animation" />
         {props?.data?.isInComplete && (
-          <Icon className={defaultCss.inComplete} size={12} name={'warning-sign'} color="orange500" />
+          <Icon className={defaultCss.inComplete} size={16} name={'execution-issue'} color="orange500" />
         )}
         {stepIcon && (
           <>
