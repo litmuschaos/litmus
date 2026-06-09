@@ -95,7 +95,7 @@ func assertValidQuotedPayload(t *testing.T, got string) {
 		t.Fatalf("MarshalGQLData output is not wrapped as a quoted literal: %q", got)
 	}
 
-	if strings.ContainsAny(got, "\n\r") {
+	if strings.ContainsAny(got, "\n\r\u2028\u2029") {
 		t.Fatalf("MarshalGQLData output contains raw line terminator characters: %q", got)
 	}
 
