@@ -13,6 +13,10 @@ import (
 )
 
 func FuzzGenerateWorkflowPayload(f *testing.F) {
+	subscriberGraphql := graphql.NewSubscriberGql()
+	subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
+	subscriberEvents := NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
+
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 
@@ -24,10 +28,6 @@ func FuzzGenerateWorkflowPayload(f *testing.F) {
 		if err != nil {
 			return
 		}
-
-		subscriberGraphql := graphql.NewSubscriberGql()
-		subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
-		subscriberEvents := NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
 
 		_, _ = subscriberEvents.GenerateWorkflowPayload(targetStruct.Cid, targetStruct.AccessKey, targetStruct.Version, targetStruct.Completed, targetStruct.WfEvent)
 	})
@@ -61,8 +61,10 @@ func FuzzGetExperimentStatus(f *testing.F) {
 		}
 
 		_, err = getExperimentStatus(targetStruct.WfEvent)
-		if err != nil {
+		if targetStruct.WfEvent.Phase == "" {
 			assert.EqualError(t, err, "status is invalid")
+		} else {
+			assert.NoError(t, err)
 		}
 	})
 }
