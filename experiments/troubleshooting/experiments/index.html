@@ -6046,7 +6046,7 @@ If you are running the experiment in an EKS cluster then you have one more optio
 <p>W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
 time="2021-08-17T06:32:26Z" level=error msg="unable to get ChaosEngineUID, error: unable to get ChaosEngine name: pod-delete-chaos, in namespace: default, error: Get \"<a href="https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos">https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos</a>\": dial tcp 10.100.0.1:443: connect: connection refused"</p>
 </details>
-<p>If istio is enabled for the <code>chaos-namespace</code>, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the intial few seconds. Which can fail the experiment.</p>
+<p>If istio is enabled for the <code>chaos-namespace</code>, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the initial few seconds. Which can fail the experiment.</p>
 <p>We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer the following manifest:</p>
 <details class="note">
 <summary>View the ChaosEngine manifest with the required annotations</summary>
