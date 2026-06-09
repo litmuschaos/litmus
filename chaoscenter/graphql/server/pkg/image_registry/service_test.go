@@ -17,10 +17,15 @@ import (
 )
 
 // newTestService wires the real image registry Operator on top of a mocked
-// MongoOperator and returns both so each test can program the mock and assert
-// against the service responses in isolation.
-func newTestService() (*dbMocks.MongoOperator, Service) {
+// MongoOperator, and registers expectation verification for the test.
+func newTestService(t *testing.T) (*dbMocks.MongoOperator, Service) {
+	t.Helper()
+
 	mockOperator := new(dbMocks.MongoOperator)
+	t.Cleanup(func() {
+		mockOperator.AssertExpectations(t)
+	})
+
 	operator := dbImageRegistry.NewImageRegistryOperator(mockOperator)
 	return mockOperator, NewImageRegistryService(operator)
 }
@@ -64,8 +69,8 @@ func Test_imageRegistryService_CreateImageRegistry(t *testing.T) {
 	input := sampleInput()
 
 	t.Run("success: returns mapped response", func(t *testing.T) {
-		mockOperator, service := newTestService()
-		mockOperator.On("Create", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).Return(nil)
+		mockOperator, service := newTestService(t)
+		mockOperator.On("Create", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).Return(nil).Once()
 
 		response, err := service.CreateImageRegistry(context.Background(), projectID, input)
 
@@ -91,9 +96,9 @@ func Test_imageRegistryService_CreateImageRegistry(t *testing.T) {
 	})
 
 	t.Run("failure: propagates insert error", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		mockOperator.On("Create", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return(errors.New("insert failed"))
+			Return(errors.New("insert failed")).Once()
 
 		response, err := service.CreateImageRegistry(context.Background(), projectID, input)
 
@@ -108,9 +113,9 @@ func Test_imageRegistryService_UpdateImageRegistry(t *testing.T) {
 	input := sampleInput()
 
 	t.Run("success: returns mapped response", func(t *testing.T) {
-		mockOperator, service := newTestService()
-		mockOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-			Return(&mongo.UpdateResult{}, nil)
+		mockOperator, service := newTestService(t)
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything, mock.Anything, mock.Anything).
+			Return(&mongo.UpdateResult{}, nil).Once()
 
 		response, err := service.UpdateImageRegistry(context.Background(), registryID, projectID, input)
 
@@ -129,9 +134,9 @@ func Test_imageRegistryService_UpdateImageRegistry(t *testing.T) {
 	})
 
 	t.Run("failure: propagates update error", func(t *testing.T) {
-		mockOperator, service := newTestService()
-		mockOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-			Return((*mongo.UpdateResult)(nil), errors.New("update failed"))
+		mockOperator, service := newTestService(t)
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything, mock.Anything, mock.Anything).
+			Return((*mongo.UpdateResult)(nil), errors.New("update failed")).Once()
 
 		response, err := service.UpdateImageRegistry(context.Background(), registryID, projectID, input)
 
@@ -145,9 +150,9 @@ func Test_imageRegistryService_DeleteImageRegistry(t *testing.T) {
 	registryID := "registry-1"
 
 	t.Run("success: returns confirmation message", func(t *testing.T) {
-		mockOperator, service := newTestService()
-		mockOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-			Return(&mongo.UpdateResult{}, nil)
+		mockOperator, service := newTestService(t)
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything, mock.Anything, mock.Anything).
+			Return(&mongo.UpdateResult{}, nil).Once()
 
 		message, err := service.DeleteImageRegistry(context.Background(), registryID, projectID)
 
@@ -156,9 +161,9 @@ func Test_imageRegistryService_DeleteImageRegistry(t *testing.T) {
 	})
 
 	t.Run("failure: propagates update error", func(t *testing.T) {
-		mockOperator, service := newTestService()
-		mockOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-			Return((*mongo.UpdateResult)(nil), errors.New("update failed"))
+		mockOperator, service := newTestService(t)
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything, mock.Anything, mock.Anything).
+			Return((*mongo.UpdateResult)(nil), errors.New("update failed")).Once()
 
 		message, err := service.DeleteImageRegistry(context.Background(), registryID, projectID)
 
@@ -174,11 +179,11 @@ func Test_imageRegistryService_GetImageRegistry(t *testing.T) {
 	var updatedAt int64 = 2000
 
 	t.Run("success: maps stored document to response", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		singleResult := mongo.NewSingleResultFromDocument(
 			sampleRegistryDoc(registryID, projectID, createdAt, updatedAt), nil, nil)
 		mockOperator.On("Get", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return(singleResult, nil)
+			Return(singleResult, nil).Once()
 
 		response, err := service.GetImageRegistry(context.Background(), projectID)
 
@@ -205,9 +210,9 @@ func Test_imageRegistryService_GetImageRegistry(t *testing.T) {
 	})
 
 	t.Run("failure: propagates get error", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		mockOperator.On("Get", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return((*mongo.SingleResult)(nil), errors.New("not found"))
+			Return((*mongo.SingleResult)(nil), errors.New("not found")).Once()
 
 		response, err := service.GetImageRegistry(context.Background(), projectID)
 
@@ -220,7 +225,7 @@ func Test_imageRegistryService_ListImageRegistries(t *testing.T) {
 	projectID := "project-1"
 
 	t.Run("success: maps every document in the result set", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		docs := []interface{}{
 			sampleRegistryDoc("registry-1", projectID, 1000, 2000),
 			sampleRegistryDoc("registry-2", projectID, 3000, 4000),
@@ -228,7 +233,7 @@ func Test_imageRegistryService_ListImageRegistries(t *testing.T) {
 		cursor, err := mongo.NewCursorFromDocuments(docs, nil, nil)
 		assert.NoError(t, err)
 		mockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return(cursor, nil)
+			Return(cursor, nil).Once()
 
 		response, err := service.ListImageRegistries(context.Background(), projectID)
 
@@ -245,11 +250,11 @@ func Test_imageRegistryService_ListImageRegistries(t *testing.T) {
 	})
 
 	t.Run("success: empty result set returns no registries", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		cursor, err := mongo.NewCursorFromDocuments([]interface{}{}, nil, nil)
 		assert.NoError(t, err)
 		mockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return(cursor, nil)
+			Return(cursor, nil).Once()
 
 		response, err := service.ListImageRegistries(context.Background(), projectID)
 
@@ -258,9 +263,9 @@ func Test_imageRegistryService_ListImageRegistries(t *testing.T) {
 	})
 
 	t.Run("failure: propagates list error", func(t *testing.T) {
-		mockOperator, service := newTestService()
+		mockOperator, service := newTestService(t)
 		mockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).
-			Return((*mongo.Cursor)(nil), errors.New("list failed"))
+			Return((*mongo.Cursor)(nil), errors.New("list failed")).Once()
 
 		response, err := service.ListImageRegistries(context.Background(), projectID)
 
