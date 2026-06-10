@@ -1,23 +1,22 @@
-<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
+<img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
 # लिटमस
 ### क्लाउड-नेटिव कैओस इंजीनियरिंग
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
-[![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
+![GitHub Workflow](https://github.com/litmuschaos/litmus/actions/workflows/push.yml/badge.svg?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/chaos-operator.svg)](https://hub.docker.com/r/litmuschaos/chaos-operator)
 [![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *इसे [अन्य भाषाओं](translations/TRANSLATIONS.md) में पढ़ें।*
+#### *इसे [अन्य भाषाओं](./TRANSLATIONS.md) में पढ़ें।*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇯🇵](translations/README-ja.md)
+[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-de.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
 
 ## अवलोकन
 
@@ -41,7 +40,7 @@
 
 ## लिटमस की व्याख्या
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 समझने के लिए [लिटमस डॉक्स](https://docs.litmuschaos.io/docs/next/getstarted.html) देखें।
 
@@ -58,7 +57,7 @@
 ## कृपया ध्यान रखें
 
 लिटमस (कैओस  ढांचे के रूप में) के साथ किए जाने वाले कुछ विचार मोटे तौर पर यहां सूचीबद्ध हैं। इनमें से कई पर पहले से ही काम किया जा रहा है
-जैसा कि [रोडमैप](./ROADMAP.md) में उल्लेख किया गया है । विशिष्ट प्रयोगों के आसपास विवरण या सीमाओं के लिए, संबंधित [प्रयोगों डॉक्स](https://docs.litmuschaos.io/docs/pod-delete/) का उल्लेख करें ।
+जैसा कि [रोडमैप](../ROADMAP.md) में उल्लेख किया गया है । विशिष्ट प्रयोगों के आसपास विवरण या सीमाओं के लिए, संबंधित [प्रयोगों डॉक्स](https://docs.litmuschaos.io/docs/pod-delete/) का उल्लेख करें ।
 
 - लिटमस कैओस  ऑपरेटर और कैओस  प्रयोग क्लस्टर में कुबेरनेट संसाधनों के रूप में चलते हैं। एयरगेप्ड वातावरण के मामले में, कैओस  कस्टम संसाधन
   और छवियों को आधार पर होस्ट करने की आवश्यकता है।
@@ -70,11 +69,11 @@
 
 ## लाइसेंस
 
-लिटमस अपाचे लाइसेंस, संस्करण 2.0 के तहत लाइसेंस प्राप्त है। पूर्ण लाइसेंस पाठ के लिए [लाइसेंस](./LICENSE) देखें । लिटमस परियोजना द्वारा उपयोग की जाने वाली कुछ परियोजनाएं एक अलग लाइसेंस द्वारा नियंत्रित की जा सकती हैं, कृपया इसके विशिष्ट लाइसेंस का उल्लेख करें।
+लिटमस अपाचे लाइसेंस, संस्करण 2.0 के तहत लाइसेंस प्राप्त है। पूर्ण लाइसेंस पाठ के लिए [लाइसेंस](../LICENSE) देखें । लिटमस परियोजना द्वारा उपयोग की जाने वाली कुछ परियोजनाएं एक अलग लाइसेंस द्वारा नियंत्रित की जा सकती हैं, कृपया इसके विशिष्ट लाइसेंस का उल्लेख करें।
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 लिटमस कैओस सीएनसीएफ परियोजनाओं का हिस्सा है।
-[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/?selected=litmus)
 
 ## समुदाय
 
@@ -94,6 +93,6 @@
   लिटमस डॉक्स <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
 <br>
-<a href="https://landscape.cncf.io/selected=litmus">
+<a href="https://landscape.cncf.io/?selected=litmus">
   सीएनसीएफ लैंडस्केप <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>

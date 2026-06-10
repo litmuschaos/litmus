@@ -1,23 +1,22 @@
-<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
+<img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
 # Litmus
 ### Ingénierie du chaos native du cloud
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
-[![CircleCI](https://circleci.com/gh/litmuschaos/litmus/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/litmuschaos/litmus)
+![GitHub Workflow](https://github.com/litmuschaos/litmus/actions/workflows/push.yml/badge.svg?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/chaos-operator.svg)](https://hub.docker.com/r/litmuschaos/chaos-operator)
 [![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3202/badge)](https://www.bestpractices.dev/projects/3202)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Lisez ceci en [autres langues](translations/TRANSLATIONS.md)*
+#### *Lisez ceci en [autres langues](./TRANSLATIONS.md)*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
+[🇨🇳](README-chn.md) [🇬🇧](../README.md) [🇪🇸](README-es.md) [🇫🇷](README-fr.md) [🇩🇪](README-de.md) [🇮🇳](README-hi.md) [🇯🇵](README-ja.md) [🇰🇷](README-ko.md) [🇧🇷](README-pt-br.md) [🇷🇺](README-ru.md)
 
 ## Aperçu
 
@@ -41,13 +40,13 @@ Les expériences de chaos sont hébergées sur <a href="https://hub.litmuschaos.
 
 ## Premiers pas avec Litmus
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Vérifiez <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a> to get started.
 
 ## Contribuer au Chaos Hub
 
-Vérifiez  <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contribuer aux Guildelines pour le Chaos Hub</a>
+Vérifiez  <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contribuer aux Guidelines pour le Chaos Hub</a>
 
 ## Adopteurs
 
@@ -57,7 +56,7 @@ _Envoyez un PR à la page ci-dessus si vous utilisez Litmus dans votre pratique 
 
 ## Choses à considérer
 
-Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](./ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
+Certaines des considérations qui doivent être prises avec Litmus (en tant que cadre de chaos) sont énumérées ici. Beaucoup d'entre eux sont déjà en cours d'élaboration comme mentionné dans la [ROADMAP](../ROADMAP.md). Pour obtenir des détails ou des limitations concernant des tests spécifiques, reportez-vous aux [documents relatifs aux tests](https://docs.litmuschaos.io/docs/pod-delete/).
 
 - Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
   and images need to be hosted on premise.
@@ -69,13 +68,13 @@ Certaines des considérations qui doivent être prises avec Litmus (en tant que 
 
 ## Licence
 
-Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE](./LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
+Litmus est concédé sous licence Apache, version 2.0. Voir [LICENCE](../LICENSE) pour le texte complet de la licence. Certains des projets utilisés par le projet Litmus peuvent être régis par une licence différente, veuillez vous référer à sa licence spécifique.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
 Litmus Chaos fait partie des projets CNCF.
 
-[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/?selected=litmus)
 
 ## Communauté
 
@@ -94,6 +93,6 @@ Ressources communautaires:
   Litmus Docs <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
 </a>
 <br>
-<a href="https://landscape.cncf.io/selected=litmus">
+<a href="https://landscape.cncf.io/?selected=litmus">
   Paysage CNCF <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>
