@@ -38,6 +38,7 @@ import (
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentHandler is the handler for chaos experiment
@@ -152,6 +153,8 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	if err != nil {
 		return "", err
 	}
+	// Track experiment creation
+	metrics.ExperimentsTotal.WithLabelValues(projectID, "Active", request.InfraID).Inc()
 
 	return fmt.Sprintf("experiment saved successfully with ID %s", wfDetails.ExperimentID), nil
 }
@@ -160,22 +163,32 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Fetch the existing experiment to check if name has changed
-	existingExperiment, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
-		{"experiment_id", *request.ExperimentID},
-		{"project_id", projectID},
-		{"is_removed", false},
-	})
+	if request.ExperimentID == nil {
+		// New experiment: generate a UUID and validate name uniqueness
+		newID := uuid.New().String()
+		request.ExperimentID = &newID
 
-	if err != nil {
-		return nil, err
-	}
-
-	// Check if the experiment_name exists under same project only if name has changed
-	if existingExperiment.Name != request.ExperimentName {
-		err = c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+		err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
 		if err != nil {
 			return nil, err
+		}
+	} else {
+		// Fetch the existing experiment to check if name has changed
+		existingExperiment, err := c.chaosExperimentOperator.GetExperiment(ctx, bson.D{
+			{"experiment_id", *request.ExperimentID},
+			{"project_id", projectID},
+			{"is_removed", false},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		// Check if the experiment_name exists under same project only if name has changed
+		if existingExperiment.Name != request.ExperimentName {
+			err = c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
