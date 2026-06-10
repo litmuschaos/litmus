@@ -41,10 +41,7 @@ func FuzzGitConfigConstruct(f *testing.F) {
 		if err := fuzzConsumer.GenerateStruct(&repoData); err != nil {
 			return
 		}
-		projectID, err := fuzzConsumer.GetString()
-		if err != nil {
-			return
-		}
+		projectID, _ := fuzzConsumer.GetString()
 
 		config := GitConfigConstruct(repoData, projectID)
 
@@ -87,35 +84,14 @@ func FuzzGenerateAuthMethod(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 
-		token, err := fuzzConsumer.GetString()
-		if err != nil {
+		config := ChaosHubConfig{}
+		if err := fuzzConsumer.GenerateStruct(&config); err != nil {
 			return
 		}
-		username, err := fuzzConsumer.GetString()
-		if err != nil {
-			return
-		}
-		password, err := fuzzConsumer.GetString()
-		if err != nil {
-			return
-		}
-		sshPrivateKey, err := fuzzConsumer.GetString()
-		if err != nil {
-			return
-		}
-		idx, err := fuzzConsumer.GetInt()
-		if err != nil {
-			return
-		}
+		// Override AuthType with a valid enum since GenerateStruct rarely produces one.
+		idx, _ := fuzzConsumer.GetInt()
 		authType := authTypes[((idx%len(authTypes))+len(authTypes))%len(authTypes)]
-
-		config := ChaosHubConfig{
-			AuthType:      authType,
-			Token:         &token,
-			UserName:      &username,
-			Password:      &password,
-			SSHPrivateKey: &sshPrivateKey,
-		}
+		config.AuthType = authType
 
 		auth, err := config.generateAuthMethod()
 
