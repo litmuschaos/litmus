@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, Layout, Text } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { withErrorBoundary } from 'react-error-boundary';
 import Loader from '@components/Loader';
@@ -7,6 +7,7 @@ import { InfrastructureType, Probe, ProbeType } from '@api/entities';
 import { useStrings } from '@strings';
 import { Fallback } from '@errors';
 import { useSearchParams } from '@hooks';
+import YAMLBuilder from '@components/YAMLBuilder';
 import ProbeProperties from './ProbeProperties/ProbeProperties';
 import { probeTypeRenderer } from './ChaosProbeType';
 import HTTPProbeDetails from './ProbeProperties/HTTP/HTTPProbeDetails';
@@ -18,14 +19,23 @@ import css from './ChaosProbeConfiguration.module.scss';
 interface ChaosProbeConfigurationViewProps {
   loading: boolean;
   probeData: Probe | undefined;
+  probeYAML?: string;
+  probeYAMLLoading?: boolean;
 }
 
-function ChaosProbeConfigurationView({ loading, probeData }: ChaosProbeConfigurationViewProps): React.ReactElement {
+type ViewMode = 'visual' | 'yaml';
+
+function ChaosProbeConfigurationView({
+  loading,
+  probeData,
+  probeYAML,
+  probeYAMLLoading
+}: ChaosProbeConfigurationViewProps): React.ReactElement {
   const { getString } = useStrings();
   const searchParams = useSearchParams();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType;
+  const [viewMode, setViewMode] = React.useState<ViewMode>('visual');
 
-  // Returns the probe properties of the selected type
   function getProbeProperties(type: ProbeType): React.ReactElement | undefined {
     if (infrastructureType === InfrastructureType.KUBERNETES) {
       switch (type) {
@@ -40,7 +50,7 @@ function ChaosProbeConfigurationView({ loading, probeData }: ChaosProbeConfigura
       }
     }
   }
-  // Returns the probe details of the selected type
+
   function getProbeDetails(type: ProbeType): React.ReactElement | undefined {
     if (infrastructureType === InfrastructureType.KUBERNETES) {
       switch (type) {
@@ -64,98 +74,133 @@ function ChaosProbeConfigurationView({ loading, probeData }: ChaosProbeConfigura
         minHeight: loading ? 'calc(var(--page-min-height) - var(--spacing-xxlarge))' : 'initial'
       }}
     >
-      <Layout.Horizontal spacing={'medium'} padding={'large'}>
-        {/* 80% of the screen from the left reserved for Probe details tables */}
-        <Layout.Vertical width={'80%'}>
-          {/* Probe Overview */}
-          <Container border={{ radius: 5 }} margin={{ bottom: 'xlarge' }} className={css.card} background={Color.WHITE}>
-            <Text
-              font={{ variation: FontVariation.H6 }}
-              padding={{ top: 'medium', bottom: 'medium' }}
-              className={css.tablePadding}
-              border={{ bottom: true }}
-            >
-              {getString('probeOverview')}
-            </Text>
-            <Container className={css.tablePadding}>
-              <Text font={{ variation: FontVariation.LEAD, weight: 'semi-bold' }} margin={{ top: 'large' }}>
-                {getString('probeType')}
-              </Text>
-              {probeData && probeTypeRenderer(probeData.type, getString)}
-            </Container>
-          </Container>
-
-          {/* Run Properties */}
-          <Container
-            border={{ radius: 5 }}
-            margin={{ top: 'xlarge', bottom: 'xlarge' }}
-            className={css.card}
-            background={Color.WHITE}
-          >
-            <Text
-              font={{ variation: FontVariation.H6 }}
-              padding={{ top: 'medium', bottom: 'medium' }}
-              className={css.tablePadding}
-              border={{ bottom: true }}
-            >
-              {getString('probeProperties')}
-            </Text>
-            {probeData && getProbeProperties(probeData.type)}
-          </Container>
-
-          {/* Probe Details */}
-          <Container
-            border={{ radius: 5 }}
-            margin={{ top: 'xlarge', bottom: 'xlarge' }}
-            className={css.card}
-            background={Color.WHITE}
-          >
-            <Text
-              font={{ variation: FontVariation.H6 }}
-              padding={{ top: 'medium', bottom: 'medium' }}
-              className={css.tablePadding}
-              border={{ bottom: true }}
-            >
-              {getString('probeDetails')}
-            </Text>
-            {probeData && getProbeDetails(probeData.type)}
-          </Container>
-        </Layout.Vertical>
-
-        {/* 20% of the screen from the right reserved for content on the page */}
-        <Layout.Vertical width={'20%'} padding={{ top: 'large', left: 'large' }}>
-          <Text font={{ variation: FontVariation.LEAD }} color={Color.GREY_600} margin={{ bottom: 'small' }}>
-            {getString('onThisPage')}
-          </Text>
-          <Container border={{ left: true }} width={'100%'}>
-            <Text
-              font={{ variation: FontVariation.BODY, weight: 'light' }}
-              padding={{ left: 'large', top: 'small', bottom: 'small' }}
-              color={Color.GREY_400}
-            >
-              {getString('probeOverview')}
-            </Text>
-          </Container>
-          <Container border={{ left: true }} width={'100%'}>
-            <Text
-              font={{ variation: FontVariation.BODY, weight: 'light' }}
-              padding={{ left: 'large', top: 'small', bottom: 'small' }}
-              color={Color.GREY_400}
-            >
-              {getString('probeProperties')}
-            </Text>
-          </Container>
-          <Container border={{ left: true }} width={'100%'}>
-            <Text
-              font={{ variation: FontVariation.BODY, weight: 'light' }}
-              padding={{ left: 'large', top: 'small', bottom: 'small' }}
-              color={Color.GREY_400}
-            >
-              {getString('probeDetails')}
-            </Text>
-          </Container>
-        </Layout.Vertical>
+      {/* View mode toggle */}
+      <Layout.Horizontal spacing="small" padding={{ left: 'large', top: 'medium', bottom: 'xsmall' }}>
+        <Button
+          variation={viewMode === 'visual' ? ButtonVariation.SECONDARY : ButtonVariation.TERTIARY}
+          text={getString('probeVisualView')}
+          onClick={() => setViewMode('visual')}
+          className={viewMode === 'visual' ? css.activeTab : css.tab}
+        />
+        <Button
+          variation={viewMode === 'yaml' ? ButtonVariation.SECONDARY : ButtonVariation.TERTIARY}
+          text={getString('probeYAMLView')}
+          onClick={() => setViewMode('yaml')}
+          className={viewMode === 'yaml' ? css.activeTab : css.tab}
+        />
       </Layout.Horizontal>
+
+      {/* YAML view */}
+      {viewMode === 'yaml' && (
+        <Loader loading={probeYAMLLoading ?? false} height="fit-content">
+          <Container padding={{ left: 'large', right: 'large', bottom: 'large' }}>
+            <YAMLBuilder
+              fileName={`${probeData?.name ?? 'probe'}.yml`}
+              existingYaml={probeYAML}
+              height="calc(100vh - 220px)"
+              width="100%"
+              isReadOnlyMode={true}
+              isEditModeSupported={false}
+            />
+          </Container>
+        </Loader>
+      )}
+
+      {/* Visual view */}
+      {viewMode === 'visual' && (
+        <Layout.Horizontal spacing={'medium'} padding={'large'}>
+          <Layout.Vertical width={'80%'}>
+            <Container
+              border={{ radius: 5 }}
+              margin={{ bottom: 'xlarge' }}
+              className={css.card}
+              background={Color.WHITE}
+            >
+              <Text
+                font={{ variation: FontVariation.H6 }}
+                padding={{ top: 'medium', bottom: 'medium' }}
+                className={css.tablePadding}
+                border={{ bottom: true }}
+              >
+                {getString('probeOverview')}
+              </Text>
+              <Container className={css.tablePadding}>
+                <Text font={{ variation: FontVariation.LEAD, weight: 'semi-bold' }} margin={{ top: 'large' }}>
+                  {getString('probeType')}
+                </Text>
+                {probeData && probeTypeRenderer(probeData.type, getString)}
+              </Container>
+            </Container>
+
+            <Container
+              border={{ radius: 5 }}
+              margin={{ top: 'xlarge', bottom: 'xlarge' }}
+              className={css.card}
+              background={Color.WHITE}
+            >
+              <Text
+                font={{ variation: FontVariation.H6 }}
+                padding={{ top: 'medium', bottom: 'medium' }}
+                className={css.tablePadding}
+                border={{ bottom: true }}
+              >
+                {getString('probeProperties')}
+              </Text>
+              {probeData && getProbeProperties(probeData.type)}
+            </Container>
+
+            <Container
+              border={{ radius: 5 }}
+              margin={{ top: 'xlarge', bottom: 'xlarge' }}
+              className={css.card}
+              background={Color.WHITE}
+            >
+              <Text
+                font={{ variation: FontVariation.H6 }}
+                padding={{ top: 'medium', bottom: 'medium' }}
+                className={css.tablePadding}
+                border={{ bottom: true }}
+              >
+                {getString('probeDetails')}
+              </Text>
+              {probeData && getProbeDetails(probeData.type)}
+            </Container>
+          </Layout.Vertical>
+
+          <Layout.Vertical width={'20%'} padding={{ top: 'large', left: 'large' }}>
+            <Text font={{ variation: FontVariation.LEAD }} color={Color.GREY_600} margin={{ bottom: 'small' }}>
+              {getString('onThisPage')}
+            </Text>
+            <Container border={{ left: true }} width={'100%'}>
+              <Text
+                font={{ variation: FontVariation.BODY, weight: 'light' }}
+                padding={{ left: 'large', top: 'small', bottom: 'small' }}
+                color={Color.GREY_400}
+              >
+                {getString('probeOverview')}
+              </Text>
+            </Container>
+            <Container border={{ left: true }} width={'100%'}>
+              <Text
+                font={{ variation: FontVariation.BODY, weight: 'light' }}
+                padding={{ left: 'large', top: 'small', bottom: 'small' }}
+                color={Color.GREY_400}
+              >
+                {getString('probeProperties')}
+              </Text>
+            </Container>
+            <Container border={{ left: true }} width={'100%'}>
+              <Text
+                font={{ variation: FontVariation.BODY, weight: 'light' }}
+                padding={{ left: 'large', top: 'small', bottom: 'small' }}
+                color={Color.GREY_400}
+              >
+                {getString('probeDetails')}
+              </Text>
+            </Container>
+          </Layout.Vertical>
+        </Layout.Horizontal>
+      )}
     </Loader>
   );
 }
