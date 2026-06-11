@@ -1,6 +1,6 @@
 This is a list of organizations that have publicly acknowledged usage of LitmusChaos and shared details of how they are leveraging it for chaos engineering.
 Please send a PR to this file (along with details in a respective [org](./adopters/organizations) folder) to add/remove entries. If you are an independent user
-and wish to to share your adoption story, please raise a PR against the [users](USERS.md) file.
+and wish to share your adoption story, please raise a PR against the [users](USERS.md) file.
 
 These organizations have been broadly classified on the basis of how they contribute to the ecosystem: as vendors, as solution providers or as pure end-users of
 cloud-native technologies. Also included in this list are CNCF (or other) open-source projects that have integrated with Litmus or use it as part of their release/delivery process.
