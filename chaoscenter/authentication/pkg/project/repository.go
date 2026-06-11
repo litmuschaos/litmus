@@ -35,6 +35,11 @@ type Repository interface {
 	GetProjectOwners(projectID string) ([]*entities.Member, error)
 	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
+	GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error)
+	AddGroupMember(projectID string, groupMember *entities.GroupMember) error
+	RemoveGroupMember(projectID string, groupName string) error
+	UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error
+	GetProjectsByGroup(groupNames []string) ([]*entities.Project, error)
 }
 
 type repository struct {
@@ -78,7 +83,7 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 	var pipeline mongo.Pipeline
 
 	// Match stage
-	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID))
+	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID, request.Groups))
 
 	// Filter stage
 	if request.Filter != nil {
@@ -623,6 +628,150 @@ func (r repository) ListInvitations(userID string, invitationState entities.Invi
 
 	return projects, nil
 
+}
+
+// GetProjectGroupMembers returns all OIDC groups assigned to a project
+func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error) {
+	projectID, err := utils.SanitizeMongoParam(projectID)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	projection := bson.D{
+		{"_id", 0},
+		{"groups", 1},
+	}
+
+	var res struct {
+		Groups []*entities.GroupMember `bson:"groups"`
+	}
+	err = r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Groups, nil
+}
+
+// AddGroupMember adds an OIDC group with a role to a project
+func (r repository) AddGroupMember(projectID string, groupMember *entities.GroupMember) error {
+	projectID, err := utils.SanitizeMongoParam(projectID)
+	if err != nil {
+		return err
+	}
+	if _, err := utils.SanitizeMongoParam(groupMember.Group); err != nil {
+		return err
+	}
+	if _, err := utils.SanitizeMongoParam(string(groupMember.Role)); err != nil {
+		return err
+	}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	update := bson.D{{"$push", bson.D{
+		{"groups", groupMember},
+	}}}
+
+	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("could not find matching projectID in database")
+	}
+
+	return nil
+}
+
+// RemoveGroupMember removes an OIDC group from a project
+func (r repository) RemoveGroupMember(projectID string, groupName string) error {
+	projectID, err := utils.SanitizeMongoParam(projectID)
+	if err != nil {
+		return err
+	}
+	groupName, err = utils.SanitizeMongoParam(groupName)
+	if err != nil {
+		return err
+	}
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	update := bson.D{
+		{"$pull", bson.D{
+			{"groups", bson.D{
+				{"group", bson.D{{"$eq", groupName}}},
+			}},
+		}},
+	}
+
+	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("could not find matching projectID in database")
+	}
+
+	return nil
+}
+
+// UpdateGroupMemberRole updates the role of an OIDC group in a project
+func (r repository) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
+	projectID, err := utils.SanitizeMongoParam(projectID)
+	if err != nil {
+		return err
+	}
+	groupName, err = utils.SanitizeMongoParam(groupName)
+	if err != nil {
+		return err
+	}
+	if _, err := utils.SanitizeMongoParam(string(*role)); err != nil {
+		return err
+	}
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.group", bson.D{{"$eq", groupName}}}},
+		},
+	})
+	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	update := bson.D{{"$set", bson.M{"groups.$[elem].role": role}}}
+
+	result, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("could not find matching projectID in database")
+	}
+
+	return nil
+}
+
+// GetProjectsByGroup returns projects that have any of the given group names assigned
+func (r repository) GetProjectsByGroup(groupNames []string) ([]*entities.Project, error) {
+	sanitizedNames, err := utils.SanitizeMongoSlice(groupNames)
+	if err != nil {
+		return nil, err
+	}
+	groupNames = sanitizedNames
+	filter := bson.D{
+		{"groups", bson.D{
+			{"$elemMatch", bson.D{
+				{"group", bson.D{
+					{"$in", groupNames},
+				}},
+			}},
+		}},
+	}
+
+	results, err := r.Collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var projects []*entities.Project
+	err = results.All(context.TODO(), &projects)
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
 }
 
 // NewRepo creates a new instance of this repository

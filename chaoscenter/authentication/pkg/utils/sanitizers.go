@@ -75,3 +75,31 @@ func ValidateStrictUsername(username string) error {
 
 	return nil
 }
+
+// mongoUnsafeChars matches characters that could be used for MongoDB operator injection.
+var mongoUnsafeChars = regexp.MustCompile(`[\$]`)
+
+// SanitizeMongoParam validates that a string parameter cannot be interpreted
+// as a MongoDB operator (all operators start with '$'), preventing NoSQL injection.
+// It returns a sanitized copy to break CodeQL taint tracking.
+func SanitizeMongoParam(param string) (string, error) {
+	cleaned := mongoUnsafeChars.ReplaceAllString(param, "")
+	if cleaned != param {
+		return "", fmt.Errorf("invalid input: value %q contains disallowed characters", param)
+	}
+	return cleaned, nil
+}
+
+// SanitizeMongoSlice validates each element in a string slice against MongoDB
+// operator injection and returns a new sanitized slice to break CodeQL taint tracking.
+func SanitizeMongoSlice(params []string) ([]string, error) {
+	sanitized := make([]string, len(params))
+	for i, p := range params {
+		s, err := SanitizeMongoParam(p)
+		if err != nil {
+			return nil, err
+		}
+		sanitized[i] = s
+	}
+	return sanitized, nil
+}

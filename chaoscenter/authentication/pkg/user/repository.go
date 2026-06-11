@@ -30,6 +30,7 @@ type Repository interface {
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
+	UpdateUserOIDCGroups(userID string, groups []string) error
 }
 
 type repository struct {
@@ -287,6 +288,15 @@ func NewRepo(collection *mongo.Collection) Repository {
 	return &repository{
 		Collection: collection,
 	}
+}
+
+// UpdateUserOIDCGroups updates the OIDC groups for a user
+func (r repository) UpdateUserOIDCGroups(userID string, groups []string) error {
+	filter := bson.M{"_id": userID}
+	update := bson.M{"$set": bson.M{"oidc_groups": groups}}
+
+	_, err := r.Collection.UpdateOne(context.Background(), filter, update)
+	return err
 }
 
 func toDoc(v interface{}) (doc *bson.M, err error) {

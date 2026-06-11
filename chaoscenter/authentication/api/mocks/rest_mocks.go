@@ -236,3 +236,33 @@ func (m *MockedApplicationService) UpdateConfig(ctx context.Context, key string,
 	args := m.Called(ctx, key, value)
 	return args.Error(0)
 }
+
+func (m *MockedApplicationService) GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error) {
+	args := m.Called(projectID)
+	return args.Get(0).([]*entities.GroupMember), args.Error(1)
+}
+
+func (m *MockedApplicationService) AddGroupMember(projectID string, groupMember *entities.GroupMember) error {
+	args := m.Called(projectID, groupMember)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) RemoveGroupMember(projectID string, groupName string) error {
+	args := m.Called(projectID, groupName)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
+	args := m.Called(projectID, groupName, role)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) GetProjectsByGroup(groupNames []string) ([]*entities.Project, error) {
+	args := m.Called(groupNames)
+	return args.Get(0).([]*entities.Project), args.Error(1)
+}
+
+func (m *MockedApplicationService) UpdateUserOIDCGroups(userID string, groups []string) error {
+	args := m.Called(userID, groups)
+	return args.Error(0)
+}
