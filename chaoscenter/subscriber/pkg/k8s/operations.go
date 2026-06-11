@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"k8s.io/apimachinery/pkg/labels"
@@ -35,9 +36,7 @@ const (
 )
 
 type InfraComponents struct {
-	Deployments      []string `yaml:"DEPLOYMENTS"`
-	LiveStatus       bool
-	AccessLiveStatus sync.Mutex
+	Deployments []string `yaml:"DEPLOYMENTS"`
 }
 
 var (
@@ -57,74 +56,63 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	}
 
 	var components InfraComponents
-
-	err = yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components)
-	if err != nil {
+	if err := yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components); err != nil {
 		return err
 	}
 
-	components.LiveStatus = true
-	components.AccessLiveStatus = sync.Mutex{}
-
-	wait := sync.WaitGroup{}
-
-	// add all agent components to waitgroup
-	wait.Add(1)
-	go k8s.checkDeploymentStatus(&components, clientset, &wait)
-
-	wait.Wait()
-	if !components.LiveStatus {
-		return errors.New("all components failed to startup")
-	}
-	return nil
-}
-
-func (k8s *k8sSubscriber) checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
 	ctx := context.TODO()
-	downCount := 0
-	retries := 0
-	defer wait.Done()
-	for retries < LiveCheckMaxTries {
-		for _, dep := range components.Deployments {
-			podList, err := clientset.CoreV1().Pods(InfraNamespace).List(ctx, metav1.ListOptions{LabelSelector: dep})
-			if err != nil {
-				logrus.Errorf("failed to get deployment pods %v , err : %v", dep, err.Error())
-				downCount += 1
-				continue
-			}
-			if len(podList.Items) == 0 {
-				logrus.Errorf("failed to get deployments pods %v , err : pods not found", dep)
-				downCount += 1
-				continue
-			}
-		outer:
-			for _, pod := range podList.Items {
-				if pod.Status.Phase != corev1.PodRunning {
-					logrus.Errorf("failed to get running pods for dep %v", dep)
-					downCount += 1
-					break
-				}
-				for _, containerStatus := range pod.Status.ContainerStatuses {
-					if !containerStatus.Ready {
-						logrus.Errorf("failed to get ready containers for pod %v, dep %v", pod.Name, dep)
-						downCount += 1
-						break outer
-					}
-				}
-			}
-		}
-		if downCount == 0 {
+	for retry := 0; retry < LiveCheckMaxTries; retry++ {
+		if allDeploymentsHealthy(ctx, clientset, InfraNamespace, components.Deployments) {
 			logrus.Info("All infra deployments are up")
-			return
-		} else {
-			retries += 1
-			downCount = 0
+			return nil
+		}
+		if retry < LiveCheckMaxTries-1 {
 			time.Sleep(30 * time.Second)
 		}
 	}
-	components.AccessLiveStatus.Lock()
-	defer components.AccessLiveStatus.Unlock()
-	components.LiveStatus = false
+	return errors.New("all components failed to startup")
+}
+
+func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, selectors []string) bool {
+	if len(selectors) == 0 {
+		return true
+	}
+
+	var (
+		wg     sync.WaitGroup
+		failed atomic.Int32
+	)
+	wg.Add(len(selectors))
+	for _, curSelector := range selectors {
+		go func(labelSelector string) {
+			defer wg.Done()
+			if !deploymentHealthy(ctx, clientSet, namespace, labelSelector) {
+				failed.Add(1)
+			}
+		}(curSelector)
+	}
+	wg.Wait()
+
+	return failed.Load() == 0
+}
+
+func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
+	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
+	if err != nil || len(podList.Items) == 0 {
+		return false
+	}
+
+	for _, pod := range podList.Items {
+		if pod.Status.Phase != corev1.PodRunning {
+			return false
+		}
+		for _, containerStatus := range pod.Status.ContainerStatuses {
+			if !containerStatus.Ready {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
