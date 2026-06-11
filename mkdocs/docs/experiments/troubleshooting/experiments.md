@@ -266,7 +266,7 @@ The error message indicates that the stress process inside the target container 
     W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
     time="2021-08-17T06:32:26Z" level=error msg="unable to get ChaosEngineUID, error: unable to get ChaosEngine name: pod-delete-chaos, in namespace: default, error: Get \"https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos\": dial tcp 10.100.0.1:443: connect: connection refused"
 
-If istio is enabled for the `chaos-namespace`, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the intial few seconds. Which can fail the experiment.
+If istio is enabled for the `chaos-namespace`, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the initial few seconds. Which can fail the experiment.
 
 We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer the following manifest:
 
