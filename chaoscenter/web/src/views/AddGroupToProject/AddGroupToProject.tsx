@@ -32,13 +32,13 @@ const AddGroupToProjectView = ({ handleClose, getGroupsRefetch }: AddGroupToProj
   const { mutate: addGroupMutation, isLoading } = useAddGroupToProjectMutation(
     {},
     {
+      onError: () => {
+        showError(getString('groupAlreadyExists'));
+      },
       onSuccess: () => {
         getGroupsRefetch();
         showSuccess(getString('groupAdded'));
         handleClose();
-      },
-      onError: () => {
-        showError(getString('groupAlreadyExists'));
       }
     }
   );
