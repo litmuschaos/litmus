@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -175,10 +176,11 @@ func CreateFilterStages(filter *entities.ListProjectInputFilter, userID string) 
 	}
 
 	if filter.ProjectName != nil {
+		quotedProjectName := regexp.QuoteMeta(*filter.ProjectName)
 		stages = append(stages, bson.D{
 			{"$match", bson.D{
 				{"name", bson.D{
-					{"$regex", primitive.Regex{Pattern: *filter.ProjectName, Options: "i"}},
+					{"$regex", primitive.Regex{Pattern: quotedProjectName, Options: "i"}},
 				}},
 			}},
 		})

@@ -59,14 +59,14 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
       },
       {
         accessor: 'assignedAt',
-        Header: getString('assignedAt').toUpperCase(),
-        id: 'assignedAt',
-        width: '20%',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
             {new Date(data.assignedAt).toLocaleDateString()}
           </Text>
-        )
+        ),
+        Header: getString('assignedAt').toUpperCase(),
+        id: 'assignedAt',
+        width: '20%'
       },
       {
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => {
