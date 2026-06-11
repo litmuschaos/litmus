@@ -1,0 +1,27 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ResilienceProbe
+metadata:
+  name: cpu-usage-check
+  description: "Prometheus probe to monitor CPU usage"
+  tags:
+    - prometheus
+    - metrics
+    - cpu
+spec:
+  type: promProbe
+  infrastructureType: Kubernetes
+  properties:
+    probeTimeout: "5s"
+    interval: "3s"
+    attempt: 3
+    retry: 2
+    probePollingInterval: "1s"
+    initialDelay: "2s"
+    evaluationTimeout: "10s"
+    stopOnFailure: false
+    endpoint: "http://prometheus-service.monitoring.svc.cluster.local:9090"
+    query: "avg(rate(container_cpu_usage_seconds_total{namespace='default'}[5m])) * 100"
+    comparator:
+      type: "float"
+      criteria: "<"
+      value: "80"
