@@ -61,7 +61,7 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	}
 
 	ctx := context.TODO()
-	for retry := range LiveCheckMaxTries {
+	for retry := 0; retry < LiveCheckMaxTries; retry++ {
 		if allDeploymentsHealthy(ctx, clientset, InfraNamespace, components.Deployments) {
 			logrus.Info("All infra deployments are up")
 			return nil

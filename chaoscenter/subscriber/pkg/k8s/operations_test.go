@@ -192,7 +192,7 @@ func TestDeploymentHealthy(t *testing.T) {
 			healthy:  false,
 		},
 		{
-			name: "Selector doesnt match any pod",
+			name: "Selector doesn't match any pod",
 			pods: []runtime.Object{
 				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
 			},
