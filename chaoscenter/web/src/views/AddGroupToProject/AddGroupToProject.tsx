@@ -6,8 +6,7 @@ import { Icon } from '@harnessio/icons';
 import { useParams } from 'react-router-dom';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import { useAddGroupToProjectMutation } from '@api/auth';
-import type { GetProjectGroupsOkResponse } from '@api/auth';
+import { useAddGroupToProjectMutation, type GetProjectGroupsOkResponse } from '@api/auth';
 
 interface AddGroupToProjectViewProps {
   handleClose: () => void;
@@ -22,10 +21,10 @@ interface AddGroupFormValues {
   role: string;
 }
 
-export default function AddGroupToProjectView({
-  handleClose,
-  getGroupsRefetch
-}: AddGroupToProjectViewProps): React.ReactElement {
+const ADD_GROUP_DIALOG_WIDTH = 500;
+const CLOSE_ICON_SIZE = 18;
+
+const AddGroupToProjectView = ({ handleClose, getGroupsRefetch }: AddGroupToProjectViewProps): React.ReactElement => {
   const { getString } = useStrings();
   const { projectID } = useParams<{ projectID: string }>();
   const { showSuccess, showError } = useToaster();
@@ -51,19 +50,19 @@ export default function AddGroupToProjectView({
   ];
 
   return (
-    <Layout.Vertical padding="medium" style={{ gap: '1rem' }} width={500}>
+    <Layout.Vertical padding="medium" style={{ gap: '1rem' }} width={ADD_GROUP_DIALOG_WIDTH}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('addGroupToProject')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        <Icon name="cross" style={{ cursor: 'pointer' }} size={CLOSE_ICON_SIZE} onClick={handleClose} />
       </Layout.Horizontal>
       <Formik<AddGroupFormValues>
         initialValues={{ groupName: '', displayName: '', role: 'Viewer' }}
         onSubmit={values => {
           addGroupMutation({
             body: {
-              projectID: projectID,
-              group: values.groupName,
               displayName: values.displayName || undefined,
+              group: values.groupName,
+              projectID,
               role: values.role as 'Executor' | 'Owner' | 'Viewer'
             }
           });
@@ -97,7 +96,7 @@ export default function AddGroupToProjectView({
                   text={getString('addGroup')}
                   disabled={isLoading}
                 />
-                <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
+                <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
               </Layout.Horizontal>
             </Layout.Vertical>
           </Form>
@@ -105,4 +104,6 @@ export default function AddGroupToProjectView({
       </Formik>
     </Layout.Vertical>
   );
-}
+};
+
+export { AddGroupToProjectView };

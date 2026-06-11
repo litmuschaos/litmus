@@ -1,17 +1,19 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import * as matchers from '@testing-library/jest-dom/matchers';
 import type { GroupMember } from '@api/auth';
 import { TestWrapper } from 'utils/testUtils';
-import GroupsTableView from '../GroupsTable';
+import { GroupsTableView } from '../GroupsTable';
+
+expect.extend(matchers as unknown as jest.ExpectExtendMap);
 
 describe('GroupsTableView', () => {
   const mockRefetch = jest.fn();
 
   test('renders group members with name, role, and date', () => {
     const groups: GroupMember[] = [
-      { group: 'dev-team-guid', displayName: 'Dev Team', role: 'Executor', assignedAt: 1713700000000 },
-      { group: 'qa-team-guid', role: 'Viewer', assignedAt: 1713700000000 }
+      { assignedAt: 1713700000000, displayName: 'Dev Team', group: 'dev-team-guid', role: 'Executor' },
+      { assignedAt: 1713700000000, group: 'qa-team-guid', role: 'Viewer' }
     ];
 
     render(

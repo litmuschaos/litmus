@@ -1,3 +1,1 @@
-import RemoveGroupView from './RemoveGroup';
-
-export default RemoveGroupView;
+export { RemoveGroupView } from './RemoveGroup';

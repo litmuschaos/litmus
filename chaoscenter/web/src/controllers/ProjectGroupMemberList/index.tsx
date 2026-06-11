@@ -1,3 +1,1 @@
-import ProjectGroupMembersController from './ProjectGroupMembers';
-
-export default ProjectGroupMembersController;
+export { ProjectGroupMembersController } from './ProjectGroupMembers';

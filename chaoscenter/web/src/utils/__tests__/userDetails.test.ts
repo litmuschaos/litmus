@@ -17,10 +17,10 @@ describe('getEffectiveProjectRole', () => {
 
   test('returns individual member role when user is a member', () => {
     const project: Project = {
-      projectID: 'proj1',
+      groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Owner' }],
+      members: [{ invitation: 'Accepted', role: 'Executor', userID: 'user1', username: 'test' }],
       name: 'Test',
-      members: [{ userID: 'user1', username: 'test', role: 'Executor', invitation: 'Accepted' }],
-      groups: [{ group: 'dev-team', role: 'Owner', assignedAt: 1000 }]
+      projectID: 'proj1'
     };
 
     // Individual member role takes priority — no JWT decode needed
@@ -31,18 +31,18 @@ describe('getEffectiveProjectRole', () => {
   test('returns group role when user is not an individual member', () => {
     localStorage.setItem('accessToken', 'fake-token');
     mockedJwtDecode.mockReturnValue({
-      uid: 'user1',
-      username: 'test',
-      role: 'user',
       exp: 9999999999,
-      groups: ['dev-team']
+      groups: ['dev-team'],
+      role: 'user',
+      uid: 'user1',
+      username: 'test'
     });
 
     const project: Project = {
-      projectID: 'proj1',
+      groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
+      members: [{ invitation: 'Accepted', role: 'Owner', userID: 'other-user', username: 'other' }],
       name: 'Test',
-      members: [{ userID: 'other-user', username: 'other', role: 'Owner', invitation: 'Accepted' }],
-      groups: [{ group: 'dev-team', role: 'Executor', assignedAt: 1000 }]
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -52,22 +52,22 @@ describe('getEffectiveProjectRole', () => {
   test('returns highest-priority group role when multiple groups match', () => {
     localStorage.setItem('accessToken', 'fake-token');
     mockedJwtDecode.mockReturnValue({
-      uid: 'user1',
-      username: 'test',
-      role: 'user',
       exp: 9999999999,
-      groups: ['dev-team', 'admin-team']
+      groups: ['dev-team', 'admin-team'],
+      role: 'user',
+      uid: 'user1',
+      username: 'test'
     });
 
     const project: Project = {
-      projectID: 'proj1',
-      name: 'Test',
-      members: [],
       groups: [
-        { group: 'dev-team', role: 'Viewer', assignedAt: 1000 },
-        { group: 'admin-team', role: 'Owner', assignedAt: 2000 },
-        { group: 'qa-team', role: 'Executor', assignedAt: 3000 }
-      ]
+        { assignedAt: 1000, group: 'dev-team', role: 'Viewer' },
+        { assignedAt: 2000, group: 'admin-team', role: 'Owner' },
+        { assignedAt: 3000, group: 'qa-team', role: 'Executor' }
+      ],
+      members: [],
+      name: 'Test',
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -77,18 +77,18 @@ describe('getEffectiveProjectRole', () => {
   test('returns undefined when user has no matching membership or group', () => {
     localStorage.setItem('accessToken', 'fake-token');
     mockedJwtDecode.mockReturnValue({
-      uid: 'user1',
-      username: 'test',
-      role: 'user',
       exp: 9999999999,
-      groups: ['unrelated-group']
+      groups: ['unrelated-group'],
+      role: 'user',
+      uid: 'user1',
+      username: 'test'
     });
 
     const project: Project = {
-      projectID: 'proj1',
-      name: 'Test',
+      groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
-      groups: [{ group: 'dev-team', role: 'Executor', assignedAt: 1000 }]
+      name: 'Test',
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -97,10 +97,10 @@ describe('getEffectiveProjectRole', () => {
 
   test('returns undefined when no access token in localStorage', () => {
     const project: Project = {
-      projectID: 'proj1',
-      name: 'Test',
+      groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
-      groups: [{ group: 'dev-team', role: 'Executor', assignedAt: 1000 }]
+      name: 'Test',
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -111,9 +111,9 @@ describe('getEffectiveProjectRole', () => {
     localStorage.setItem('accessToken', 'fake-token');
 
     const project: Project = {
-      projectID: 'proj1',
+      members: [],
       name: 'Test',
-      members: []
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -123,17 +123,17 @@ describe('getEffectiveProjectRole', () => {
   test('returns undefined when JWT has no groups claim', () => {
     localStorage.setItem('accessToken', 'fake-token');
     mockedJwtDecode.mockReturnValue({
-      uid: 'user1',
-      username: 'test',
+      exp: 9999999999,
       role: 'user',
-      exp: 9999999999
+      uid: 'user1',
+      username: 'test'
     });
 
     const project: Project = {
-      projectID: 'proj1',
-      name: 'Test',
+      groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
-      groups: [{ group: 'dev-team', role: 'Executor', assignedAt: 1000 }]
+      name: 'Test',
+      projectID: 'proj1'
     };
 
     const result = getEffectiveProjectRole(project, 'user1');

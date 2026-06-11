@@ -2,7 +2,7 @@ import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { GetProjectGroupsOkResponse, useRemoveGroupFromProjectMutation } from '@api/auth';
-import RemoveGroupView from '@views/RemoveGroup';
+import { RemoveGroupView } from '@views/RemoveGroup';
 
 interface RemoveGroupControllerProps {
   groupName: string;
@@ -12,7 +12,7 @@ interface RemoveGroupControllerProps {
   ) => Promise<QueryObserverResult<GetProjectGroupsOkResponse, unknown>>;
 }
 
-export default function RemoveGroupController(props: RemoveGroupControllerProps): React.ReactElement {
+const RemoveGroupController = (props: RemoveGroupControllerProps): React.ReactElement => {
   const { groupName, hideDeleteModal, getGroupsRefetch } = props;
   const { showSuccess } = useToaster();
 
@@ -29,4 +29,6 @@ export default function RemoveGroupController(props: RemoveGroupControllerProps)
   return (
     <RemoveGroupView removeGroupMutation={removeGroupMutation} groupName={groupName} handleClose={hideDeleteModal} />
   );
-}
+};
+
+export { RemoveGroupController };

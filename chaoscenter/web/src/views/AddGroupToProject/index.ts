@@ -1,3 +1,1 @@
-import AddGroupToProjectView from './AddGroupToProject';
-
-export default AddGroupToProjectView;
+export { AddGroupToProjectView } from './AddGroupToProject';

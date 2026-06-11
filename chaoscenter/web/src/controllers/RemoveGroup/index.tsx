@@ -1,3 +1,1 @@
-import RemoveGroupController from './RemoveGroup';
-
-export default RemoveGroupController;
+export { RemoveGroupController } from './RemoveGroup';

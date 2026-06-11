@@ -17,7 +17,7 @@ interface RemoveGroupViewProps {
   >;
 }
 
-export default function RemoveGroupView(props: RemoveGroupViewProps): React.ReactElement {
+const RemoveGroupView = (props: RemoveGroupViewProps): React.ReactElement => {
   const { handleClose, groupName, removeGroupMutation } = props;
   const { getString } = useStrings();
   const { projectID } = useParams<{ projectID: string }>();
@@ -37,18 +37,20 @@ export default function RemoveGroupView(props: RemoveGroupViewProps): React.Reac
             removeGroupMutation(
               {
                 body: {
-                  projectID: projectID,
-                  group: groupName
+                  group: groupName,
+                  projectID
                 }
               },
               {
-                onSuccess: () => handleClose()
+                onSuccess: handleClose
               }
             )
           }
         />
-        <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
+        <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
       </Layout.Horizontal>
     </Layout.Vertical>
   );
-}
+};
+
+export { RemoveGroupView };

@@ -4,24 +4,32 @@ import { AppStoreContext } from '@context';
 import { usePermissions } from '@utils';
 import { PermissionGroup } from '@models';
 
-function createWrapper(projectRole?: string) {
-  return function Wrapper({ children }: { children: React.ReactElement }) {
+type WrapperProps = {
+  children: React.ReactElement;
+};
+
+const updateAppStore = (): void => undefined;
+
+const createWrapper = (projectRole?: string): React.ComponentType<WrapperProps> => {
+  const Wrapper = ({ children }: WrapperProps): React.ReactElement => {
     return (
       <AppStoreContext.Provider
         value={{
+          currentUserInfo: { ID: 'uid', username: 'admin', userRole: 'admin' },
+          matchPath: '/account/:accountID',
           projectID: 'test-project',
           projectRole,
-          currentUserInfo: { ID: 'uid', username: 'admin', userRole: 'admin' },
           renderUrl: '/account/uid',
-          matchPath: '/account/:accountID',
-          updateAppStore: () => void 0
+          updateAppStore
         }}
       >
         {children}
       </AppStoreContext.Provider>
     );
   };
-}
+
+  return Wrapper;
+};
 
 describe('usePermissions', () => {
   test('Owner has access to all permissions (returns false = not disabled)', () => {

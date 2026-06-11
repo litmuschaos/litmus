@@ -10,7 +10,7 @@ import { killEvent } from '@utils';
 import { PermissionGroup } from '@models';
 import RbacMenuItem from '@components/RbacMenuItem';
 import Loader from '@components/Loader';
-import RemoveGroupController from '@controllers/RemoveGroup/RemoveGroup';
+import { RemoveGroupController } from '@controllers/RemoveGroup/RemoveGroup';
 import css from './ProjectMember.module.scss';
 
 interface GroupsTableViewProps {
@@ -21,19 +21,14 @@ interface GroupsTableViewProps {
   ) => Promise<QueryObserverResult<GetProjectGroupsOkResponse, unknown>>;
 }
 
-export default function GroupsTableView({
-  groups,
-  getGroupsRefetch,
-  isLoading
-}: GroupsTableViewProps): React.ReactElement {
+const EMPTY_GROUPS_COUNT = 0;
+
+const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableViewProps): React.ReactElement => {
   const { getString } = useStrings();
 
   const columns: Column<GroupMember>[] = useMemo(
     () => [
       {
-        Header: getString('groupName').toUpperCase(),
-        id: 'group',
-        width: '40%',
         accessor: 'group',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Layout.Vertical spacing="xsmall">
@@ -46,23 +41,26 @@ export default function GroupsTableView({
               </Text>
             )}
           </Layout.Vertical>
-        )
+        ),
+        Header: getString('groupName').toUpperCase(),
+        id: 'group',
+        width: '40%'
       },
       {
-        Header: getString('groupRole').toUpperCase(),
-        id: 'role',
         accessor: 'role',
-        width: '30%',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
             {data.role}
           </Text>
-        )
+        ),
+        Header: getString('groupRole').toUpperCase(),
+        id: 'role',
+        width: '30%'
       },
       {
+        accessor: 'assignedAt',
         Header: getString('assignedAt').toUpperCase(),
         id: 'assignedAt',
-        accessor: 'assignedAt',
         width: '20%',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
@@ -71,9 +69,6 @@ export default function GroupsTableView({
         )
       },
       {
-        Header: '',
-        id: 'threeDotMenu',
-        disableSortBy: true,
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => {
           const { open: openDeleteModal, isOpen: isDeleteModalOpen, close: hideDeleteModal } = useToggleOpen();
           return (
@@ -94,7 +89,7 @@ export default function GroupsTableView({
                   isOpen={isDeleteModalOpen}
                   canOutsideClickClose={false}
                   canEscapeKeyClose={false}
-                  onClose={() => hideDeleteModal()}
+                  onClose={hideDeleteModal}
                   className={css.nameChangeDialog}
                 >
                   <RemoveGroupController
@@ -106,7 +101,10 @@ export default function GroupsTableView({
               )}
             </Layout.Vertical>
           );
-        }
+        },
+        disableSortBy: true,
+        Header: '',
+        id: 'threeDotMenu'
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,18 +114,20 @@ export default function GroupsTableView({
   return (
     <Layout.Vertical height={'100%'} padding="medium">
       <Text font={{ variation: FontVariation.H6 }}>
-        {getString('groupMembers')}: {groups?.length ?? 0}
+        {getString('groupMembers')}: {groups?.length ?? EMPTY_GROUPS_COUNT}
       </Text>
       <Loader
         loading={isLoading}
         noData={{
-          when: () => groups?.length === 0,
+          message: getString('noGroupsMessage'),
           messageTitle: getString('noGroupsTitle'),
-          message: getString('noGroupsMessage')
+          when: () => groups?.length === EMPTY_GROUPS_COUNT
         }}
       >
         {groups && <TableV2<GroupMember> columns={columns} sortable data={groups} />}
       </Loader>
     </Layout.Vertical>
   );
-}
+};
+
+export { GroupsTableView };
