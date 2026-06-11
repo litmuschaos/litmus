@@ -66,7 +66,7 @@
           - apiGroups: [""]
             resources: ["pods/log"]
             verbs: ["get","list","watch"]
-          # for creating and managing to execute comands inside target container
+          # for creating and managing to execute commands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
             verbs: ["get","list","create"]
@@ -160,9 +160,9 @@
       </tr>
       <tr>
         <td> CONTENT_ENCODING </td>
-        <td> Encoding type to compress/encodde the response body </td>
+        <td> Encoding type to compress/encode the response body </td>
         <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
-      </td>
+      </tr>
       <tr>
         <td> CONTENT_TYPE </td>
         <td> Content type of the response body </td>
@@ -185,7 +185,7 @@
       </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
-        <td> container runtime interface for the cluster</td>
+        <td> Container runtime interface for the cluster</td>
         <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
       </tr>
       <tr>
@@ -342,7 +342,7 @@ spec:
 
 ### Modify Response Body
 
-It defines whether to modify the respone body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
+It defines whether to modify the response body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
 
 Use the following example to tune this:
 
