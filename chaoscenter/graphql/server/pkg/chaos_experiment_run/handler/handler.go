@@ -45,6 +45,7 @@ import (
 
 	"github.com/google/uuid"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentRunHandler is the handler for chaos experiment
@@ -898,6 +899,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			RunSequence:     workflow.TotalExperimentRuns + 1,
 			Probes:          probes,
 		})
+
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")
 			return err
@@ -919,7 +921,9 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	session.EndSession(ctx)
-
+	// Track experiment run creation and status after successful transaction
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusQueued), workflow.InfraID).Set(0)
 	// Convert updated manifest to string
 	manifestString, err := json.Marshal(workflowManifest)
 	if err != nil {
@@ -1027,6 +1031,10 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 			InfraID:            workflow.InfraID,
 		}, &username, nil, "create", r)
 	}
+
+	// Track cron experiment run as started
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusRunning), workflow.InfraID).Set(1)
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
 
 	return nil
 }
@@ -1150,7 +1158,16 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
 			return "", err
 		}
-
+		// Track experiment run duration
+		experimentRun, runErr := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
+			{"experiment_run_id", event.ExperimentRunID},
+			{"experiment_id", event.ExperimentID},
+		})
+		if runErr == nil && experimentRun.CreatedAt > 0 {
+			duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
+			metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
+			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(0)
+		}
 	}
 
 	//TODO check for mongo transaction

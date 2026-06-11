@@ -210,7 +210,7 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 		role := c.MustGet("role").(string)
 		if role != string(entities.RoleAdmin) {
 			err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
-				validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+				validations.MutationRbacRules["getActiveProjectMembers"], string(entities.AcceptedInvitation), service)
 			if err != nil {
 				log.Warn(err)
 				c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
