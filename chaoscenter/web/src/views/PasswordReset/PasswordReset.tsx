@@ -32,6 +32,8 @@ interface AccountPasswordChangeFormProps {
   reEnterNewPassword: string;
 }
 
+const LITMUS_ICON_SIZE = 50;
+
 const PasswordResetView = (props: PasswordResetViewProps): React.ReactElement => {
   const { currentUserData, updatePasswordMutation, loading } = props;
   const { getString } = useStrings();
@@ -49,7 +51,7 @@ const PasswordResetView = (props: PasswordResetViewProps): React.ReactElement =>
   return (
     <Layout.Vertical width="100%" height="100vh" background={Color.PRIMARY_6}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'center' }} padding="medium">
-        <img src={litmusIcon} alt="Litmus Icon" width={50} height={50} />
+        <img src={litmusIcon} alt="Litmus Icon" width={LITMUS_ICON_SIZE} height={LITMUS_ICON_SIZE} />
       </Layout.Horizontal>
       <Container height="calc(100% - 82px)" flex={{ align: 'center-center' }}>
         <Layout.Vertical
