@@ -463,7 +463,7 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	}
 
 	var weightages []*model.Weightages
-	if exp.Revision[0].Weightages != nil {
+	if len(exp.Revision) > 0 && exp.Revision[len(exp.Revision)-1].Weightages != nil {
 		// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
 		for _, v := range exp.Revision[len(exp.Revision)-1].Weightages {
 			weightages = append(weightages, &model.Weightages{
@@ -839,7 +839,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		}
 
 		var weightages []*model.Weightages
-		if workflow.Revision[0].Weightages != nil {
+		if len(workflow.Revision) > 0 && workflow.Revision[len(workflow.Revision)-1].Weightages != nil {
 			// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
 			for _, v := range workflow.Revision[len(workflow.Revision)-1].Weightages {
 				weightages = append(weightages, &model.Weightages{

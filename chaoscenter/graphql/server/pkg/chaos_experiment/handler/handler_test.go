@@ -1105,3 +1105,139 @@ func TestChaosExperimentHandler_CreateChaosExperiment_NilExperimentID(t *testing
 		assertExpectations(mockServices, t)
 	})
 }
+
+// TestChaosExperimentHandler_GetExperiment_WeightagesFromLatestRevision verifies that
+// GetExperiment returns weightages from the latest revision, not the first. This guards
+// against a bug where the nil check used Revision[0] but the loop read Revision[len-1].
+func TestChaosExperimentHandler_GetExperiment_WeightagesFromLatestRevision(t *testing.T) {
+	projectId := uuid.New().String()
+	experimentId := uuid.New().String()
+	infraId := uuid.New().String()
+	ctx := context.Background()
+
+	t.Run("weightages from latest revision returned when first revision has none", func(t *testing.T) {
+		mockServices := NewMockServices()
+		findResult := []interface{}{bson.D{
+			{Key: "project_id", Value: projectId},
+			{Key: "infra_id", Value: infraId},
+			{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+				{ProjectID: projectId, InfraID: infraId},
+			}},
+			{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
+				{
+					// first revision: no weightages
+					RevisionID: uuid.NewString(),
+					Weightages: nil,
+				},
+				{
+					// latest revision: weightages added
+					RevisionID: uuid.NewString(),
+					Weightages: []*dbChaosExperiment.WeightagesInput{
+						{FaultName: "pod-delete", Weightage: 10},
+					},
+				},
+			}},
+		}}
+		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+		resp, err := mockServices.ChaosExperimentHandler.GetExperiment(ctx, projectId, experimentId)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if resp == nil || resp.ExperimentDetails == nil {
+			t.Fatal("expected non-nil experiment details")
+		}
+		if len(resp.ExperimentDetails.Weightages) != 1 {
+			t.Errorf("expected 1 weightage from latest revision, got %d", len(resp.ExperimentDetails.Weightages))
+		}
+		assertExpectations(mockServices, t)
+	})
+
+	t.Run("no weightages returned when latest revision has none even if first does", func(t *testing.T) {
+		mockServices := NewMockServices()
+		findResult := []interface{}{bson.D{
+			{Key: "project_id", Value: projectId},
+			{Key: "infra_id", Value: infraId},
+			{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+				{ProjectID: projectId, InfraID: infraId},
+			}},
+			{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
+				{
+					// first revision: has weightages
+					RevisionID: uuid.NewString(),
+					Weightages: []*dbChaosExperiment.WeightagesInput{
+						{FaultName: "pod-delete", Weightage: 10},
+					},
+				},
+				{
+					// latest revision: weightages removed
+					RevisionID: uuid.NewString(),
+					Weightages: nil,
+				},
+			}},
+		}}
+		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+		resp, err := mockServices.ChaosExperimentHandler.GetExperiment(ctx, projectId, experimentId)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if resp == nil || resp.ExperimentDetails == nil {
+			t.Fatal("expected non-nil experiment details")
+		}
+		if len(resp.ExperimentDetails.Weightages) != 0 {
+			t.Errorf("expected 0 weightages (latest revision has none), got %d", len(resp.ExperimentDetails.Weightages))
+		}
+		assertExpectations(mockServices, t)
+	})
+}
+
+// TestChaosExperimentHandler_ListExperiment_WeightagesFromLatestRevision mirrors the
+// GetExperiment regression test for the ListExperiment code path.
+func TestChaosExperimentHandler_ListExperiment_WeightagesFromLatestRevision(t *testing.T) {
+	projectId := uuid.New().String()
+	infraId := uuid.New().String()
+
+	t.Run("weightages from latest revision returned when first revision has none", func(t *testing.T) {
+		mockServices := NewMockServices()
+		findResult := []interface{}{bson.D{
+			{Key: "scheduled_experiments", Value: []dbChaosExperiment.ChaosExperimentsWithRunDetails{
+				{
+					KubernetesInfraDetails: []dbChoasInfra.ChaosInfra{
+						{ProjectID: projectId, InfraID: infraId},
+					},
+					Revision: []dbChaosExperiment.ExperimentRevision{
+						{
+							RevisionID: uuid.NewString(),
+							Weightages: nil,
+						},
+						{
+							RevisionID: uuid.NewString(),
+							Weightages: []*dbChaosExperiment.WeightagesInput{
+								{FaultName: "pod-delete", Weightage: 10},
+							},
+						},
+					},
+				},
+			}},
+		}}
+		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+		resp, err := mockServices.ChaosExperimentHandler.ListExperiment(projectId, model.ListExperimentRequest{
+			Pagination: &model.Pagination{Page: 0},
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if resp == nil || len(resp.Experiments) == 0 {
+			t.Fatal("expected at least one experiment in response")
+		}
+		if len(resp.Experiments[0].Weightages) != 1 {
+			t.Errorf("expected 1 weightage from latest revision, got %d", len(resp.Experiments[0].Weightages))
+		}
+		assertExpectations(mockServices, t)
+	})
+}
