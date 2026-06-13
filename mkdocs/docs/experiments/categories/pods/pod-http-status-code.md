@@ -342,7 +342,7 @@ spec:
 
 ### Modify Response Body
 
-It defines whether to modify the respone body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
+It defines whether to modify the response body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
 
 Use the following example to tune this:
 
