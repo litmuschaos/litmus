@@ -926,6 +926,16 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 }
 
 func compareInfraVersions(version, otherVersion string) (int, error) {
+	if version == CIVersion && otherVersion == CIVersion {
+		return 0, nil
+	}
+	if version == CIVersion {
+		return -1, nil
+	}
+	if otherVersion == CIVersion {
+		return 1, nil
+	}
+
 	parsedVersion, err := parseInfraVersion(version)
 	if err != nil {
 		return 0, err
@@ -949,6 +959,7 @@ func compareInfraVersions(version, otherVersion string) (int, error) {
 }
 
 func parseInfraVersion(version string) ([3]int, error) {
+	version = strings.TrimSpace(version)
 	if version == CIVersion {
 		return [3]int{}, nil
 	}
@@ -960,9 +971,9 @@ func parseInfraVersion(version string) ([3]int, error) {
 
 	var parsedVersion [3]int
 	for i, part := range versionParts {
-		versionPart, err := strconv.Atoi(part)
+		versionPart, err := strconv.Atoi(strings.TrimSpace(part))
 		if err != nil {
-			return [3]int{}, err
+			return [3]int{}, fmt.Errorf("invalid infra version %q: %w", version, err)
 		}
 		parsedVersion[i] = versionPart
 	}

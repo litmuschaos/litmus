@@ -43,3 +43,22 @@ func TestGetVersionDetailsTreatsCIVersionAsLowestVersion(t *testing.T) {
 		t.Fatalf("expected latest version 3.10.0, got %q", versionDetails.LatestVersion)
 	}
 }
+
+func TestGetVersionDetailsTreatsCIVersionAsLowerThanZeroVersion(t *testing.T) {
+	previousCompatibleVersions := utils.Config.InfraCompatibleVersions
+	t.Cleanup(func() {
+		utils.Config.InfraCompatibleVersions = previousCompatibleVersions
+	})
+
+	utils.Config.InfraCompatibleVersions = `["ci","0.0.0"]`
+
+	service := NewChaosInfrastructureService(nil, nil, nil)
+	versionDetails, err := service.GetVersionDetails()
+	if err != nil {
+		t.Fatalf("GetVersionDetails returned error: %v", err)
+	}
+
+	if versionDetails.LatestVersion != "0.0.0" {
+		t.Fatalf("expected latest version 0.0.0, got %q", versionDetails.LatestVersion)
+	}
+}
