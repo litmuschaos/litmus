@@ -37,7 +37,7 @@ describe('StatusBadgeV2', () => {
       expect(screen.getByText('QUEUED')).toBeInTheDocument();
     });
 
-    test('renders with tooltip prop', () => {
+    test('renders with tooltip prop and shows status text', () => {
       render(
         <StatusBadgeV2
           status={ExperimentRunStatus.COMPLETED}
@@ -47,18 +47,21 @@ describe('StatusBadgeV2', () => {
       );
       expect(screen.getByTestId('status-badge-v2')).toBeInTheDocument();
       expect(screen.getByText('COMPLETED')).toBeInTheDocument();
+      expect(screen.getByText('COMPLETED').closest('[data-testid="status-badge-v2"]')).toBeInTheDocument();
     });
   });
 
   describe('Infrastructure entity', () => {
-    test('renders ACTIVE status with correct text', () => {
+    test('renders CONNECTED status with correct text', () => {
       render(<StatusBadgeV2 status={ChaosInfrastructureStatus.ACTIVE} entity={StatusBadgeEntity.Infrastructure} />);
       expect(screen.getByTestId('status-badge-v2')).toBeInTheDocument();
+      expect(screen.getByText('CONNECTED')).toBeInTheDocument();
     });
 
     test('renders INACTIVE status with correct text', () => {
       render(<StatusBadgeV2 status={ChaosInfrastructureStatus.INACTIVE} entity={StatusBadgeEntity.Infrastructure} />);
       expect(screen.getByTestId('status-badge-v2')).toBeInTheDocument();
+      expect(screen.getByText('INACTIVE')).toBeInTheDocument();
     });
   });
 });
