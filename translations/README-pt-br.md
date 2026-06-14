@@ -29,7 +29,7 @@ Litmus utiliza uma abordagem cloud-native para criar, gerenciar e monitorar o ca
 - **ChaosExperiment**: Um recurso para agrupar os parâmetros de configuração de um experimento de caos. Recursos ChaosExperiment são criados pelo operador quando experimentos são invocados pelo ChaosEngine.
 - **ChaosResult**: Um recurso para armazenar os resultados de um experimento de caos. O Chaos-exporter lê os resultados e exporta as métricas para um servidor Prometheus configurado.
 
-Experimentos Chaos são hospedados/armazenados em <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. É um hub central onde os desenvolvedores da aplicação compartilham seus experimentos de caos para que seus usuário possam então utilizá-los para aumentar a resiliência de suas aplicações em produção.
+Experimentos Chaos são hospedados/armazenados em <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. É um hub central onde os desenvolvedores da aplicação compartilham seus experimentos de caos para que seus usuários possam então utilizá-los para aumentar a resiliência de suas aplicações em produção.
 
 ![Workflow Litmus](/images/litmus-arch_1.png)
 
@@ -57,7 +57,7 @@ Confira <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" 
 
 ## Coisas a se considerar
 
-Algumas das considerações que precisam ser feitas com o Litmus (como um framework de caos), são amplamente listadas aqui. Vários desses já estão sendo trabalhados como mencionado no [ROADMAP](../ROADMAP.md). Para detalhes ou limitações acerca de experimentos específicos, confira a respectivo [documentação do experimento](https://docs.litmuschaos.io/docs/pod-delete/)
+Algumas das considerações que precisam ser feitas com o Litmus (como um framework de caos), são amplamente listadas aqui. Vários desses já estão sendo trabalhados como mencionado no [ROADMAP](../ROADMAP.md). Para detalhes ou limitações acerca de experimentos específicos, confira a respectiva [documentação do experimento](https://docs.litmuschaos.io/docs/pod-delete/)
 
 - O operador de caos litmus e os seus experimentos rodam como recursos Kubernetes em um cluster. Em casos de ambientes abertos, os recursos próprios e as imagens precisam ser armazenados on premise.
 - Quando tentando utilizar experimentos específicos para uma plataforma (como aqueles para AWS, GCP cloud) os detalhes de acesso são passados através de Kubernetes secrets. Suporte para outros modos de gerenciamento de credenciais com o Litmus ainda está para ser testado/implementado.

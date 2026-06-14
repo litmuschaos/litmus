@@ -51,7 +51,7 @@ sus usuarios puedan utilizarlos para incrementar la resiliencia de la aplicació
 
 ## Empezando con Litmus
 
-Para comenzar, consulte la <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> y en específico la <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">sección de instalación</a> de  <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Iniciar con Litmus</a> page.
+Para comenzar, consulte la <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> y en específico la <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">sección de instalación</a> de  <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Iniciar con Litmus</a> página.
 
 ## Contribuir al Hub de Chaos 
 
