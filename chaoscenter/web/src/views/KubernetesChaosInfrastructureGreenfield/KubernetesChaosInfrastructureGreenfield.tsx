@@ -34,6 +34,8 @@ export default function KubernetesChaosInfrastructureGreenfieldView({
   const { showError, showSuccess } = useToaster();
   const [loading, setLoading] = React.useState<boolean>(false);
     const [selectedTab, setSelectedTab] = React.useState<string>('manifest');
+    const [registeredInfraID, setRegisteredInfraID] = React.useState<string>('');
+    const [registeredToken, setRegisteredToken] = React.useState<string>('');
 
   // Fetch the formatted file name for giving apply command
   const fileName = getFormattedFileName(data.value.name);
@@ -48,10 +50,10 @@ return (
       >
         <Tab
           id="manifest"
-          title="Manifest"
+          title={getString('manifestInstallation')}
           panel={
             <Layout.Vertical spacing="small" padding="medium">
-              <Text>Deploy using kubectl apply command:</Text>
+              <Text>{getString('deployUsingKubectlApplyCommand')}:</Text>
               <Layout.Horizontal flex={{ alignItems: 'center' }} spacing="small">
                 <CodeBlock text={kubectlApplyFile} isCopyButtonEnabled />
                 <Button
@@ -83,12 +85,21 @@ return (
                         }
                       }
                     })
-                      .then((result: connectChaosInfraManifestModeResponse) => {
-                        setLoading(false);
-                        showSuccess(getString('chaosInfrastructureSuccess'));
-                        downloadYamlAsFile(result.registerInfra.manifest, `${fileName}-litmus-chaos-enable.yml`);
-                      })
-                      .catch((err: any) => {
+                    .then(result => {
+                      setLoading(false);
+                      const manifest = result.data?.registerInfra.manifest;
+                      const infraID = result.data?.registerInfra.infraID;
+                      const token = result.data?.registerInfra.token;
+                      if (!manifest) {
+                        showError(getString('error'));
+                        return;
+                      }
+                      if (infraID) setRegisteredInfraID(infraID);
+                      if (token) setRegisteredToken(token);
+                      showSuccess(getString('chaosInfrastructureSuccess'));
+                      downloadYamlAsFile(manifest, `${fileName}-litmus-chaos-enable.yml`);
+                    })
+                      .catch((err: Error) => {
                         showError(err.message);
                       });
                   }}
@@ -101,12 +112,12 @@ return (
         />
         <Tab
           id="helm"
-          title="Helm"
+          title={getString('helmInstallation')}
           panel={
             <Layout.Vertical spacing="small" padding="medium">
               <HelmInstallationCommand
-                infraID={data.value.name}
-                accessKey="temp-key"
+                infraID={registeredInfraID || data.value.name}
+                accessKey={registeredToken}
                 infraName={data.value.name}
                 environmentID={environmentID}
                 infraNamespace={data.value.chaosInfrastructureNamespace}

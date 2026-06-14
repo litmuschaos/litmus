@@ -1,6 +1,8 @@
 import React from 'react';
 import { Layout, Text } from '@harnessio/uicore';
 import CodeBlock from '@components/CodeBlock';
+import { getScope } from '@utils';
+import { FontVariation } from '@harnessio/design-system';
 
 export interface HelmInstallationCommandProps {
   infraID: string;
@@ -18,15 +20,15 @@ export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (
     infraID,
     accessKey,
     infraName,
-    environmentID,
     infraNamespace,
     infraScope,
-    litmusURL
+    litmusURL,
   } = props;
 
+  const { projectID } = getScope();
+
   const frontendURL = litmusURL || window.location.origin;
-  const backendPort = window.location.port || '9002';
-  const backendURL = window.location.protocol + '//' + window.location.hostname + ':' + backendPort;
+  const backendURL = `${window.location.origin}/api`;
 
   const helmRepoCommands = '# Add Litmus Helm repository\nhelm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/\nhelm repo update';
   
@@ -38,7 +40,7 @@ export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (
     '  --set "INFRA_NAME=' + infraName + '" \\\n' +
     '  --set "LITMUS_URL=' + frontendURL + '" \\\n' +
     '  --set "LITMUS_BACKEND_URL=' + backendURL + '" \\\n' +
-    '  --set "LITMUS_PROJECT_ID=' + environmentID + '" \\\n' +
+    '  --set "LITMUS_PROJECT_ID=' + projectID + '" \\\n' +
     '  --set "global.INFRA_MODE=' + infraScope + '"';
 
   const helmCommand = helmRepoCommands + '\n\n' + helmInstallCommand;
@@ -47,14 +49,14 @@ export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (
 
   return (
     <Layout.Vertical spacing="small">
-      <Text font={{ variation: 'body' }}>
+      <Text font={{ variation: FontVariation.BODY1 }}>
         Install the Chaos Infrastructure on your Kubernetes cluster using Helm with the following command:
       </Text>
       
       <CodeBlock text={helmCommand} isCopyButtonEnabled />
 
       <Layout.Vertical spacing="xsmall" margin={{ top: 'medium' }}>
-        <Text font={{ variation: 'body', weight: 'bold' }}>Prerequisites:</Text>
+        <Text font={{ variation: FontVariation.BODY1, weight: 'bold' }}>Prerequisites:</Text>
         <ul style={{ marginLeft: '20px', marginTop: '8px' }}>
           <li>Helm 3.x installed on your system</li>
           <li>kubectl configured with cluster access</li>
@@ -63,7 +65,7 @@ export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (
       </Layout.Vertical>
 
       <Layout.Vertical spacing="xsmall" margin={{ top: 'small' }}>
-        <Text font={{ variation: 'body', weight: 'bold' }}>Verify Installation:</Text>
+        <Text font={{ variation: FontVariation.BODY1, weight: 'bold' }}>Verify Installation:</Text>
         <CodeBlock text={verifyCommand} isCopyButtonEnabled />
       </Layout.Vertical>
     </Layout.Vertical>
