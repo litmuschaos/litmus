@@ -1050,3 +1050,58 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		})
 	}
 }
+
+func TestChaosExperimentHandler_CreateChaosExperiment_NilExperimentID(t *testing.T) {
+	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(""))
+	ctx := context.WithValue(context.Background(), authorization.AuthKey, username)
+	projectID := uuid.New().String()
+	infraID := uuid.New().String()
+	experimentType := dbChaosExperiment.NonCronExperiment
+	experimentName := "test-nil-id-experiment"
+
+	t.Run("Success: nil experimentID generates a new UUID", func(t *testing.T) {
+		mockServices := NewMockServices()
+		request := &model.ChaosExperimentRequest{
+			ExperimentID:   nil,
+			ExperimentName: experimentName,
+			InfraID:        infraID,
+			ExperimentType: &model.AllExperimentType[0],
+		}
+
+		// No MongodbOperator.Get call expected (GetExperiment is skipped when ID is nil)
+		mockServices.MongodbOperator.On("CountDocuments", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+		mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, projectID, mock.Anything).Return(nil).Once()
+		mockServices.ChaosExperimentService.On("ProcessExperimentCreation", mock.Anything, mock.Anything, mock.Anything, projectID, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+
+		got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(ctx, request, projectID, username)
+		if err != nil {
+			t.Errorf("expected no error, got: %v", err)
+		}
+		if got == nil {
+			t.Fatal("expected non-nil response")
+		}
+		if got.ExperimentID == "" {
+			t.Error("expected a generated ExperimentID, got empty string")
+		}
+		assertExpectations(mockServices, t)
+	})
+
+	t.Run("Failure: nil experimentID with duplicate experiment name", func(t *testing.T) {
+		mockServices := NewMockServices()
+		request := &model.ChaosExperimentRequest{
+			ExperimentID:   nil,
+			ExperimentName: experimentName,
+			InfraID:        infraID,
+			ExperimentType: &model.AllExperimentType[0],
+		}
+
+		mockServices.MongodbOperator.On("CountDocuments", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(1), nil).Once()
+
+		_, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(ctx, request, projectID, username)
+		if err == nil {
+			t.Error("expected duplicate name error, got nil")
+		}
+		assertExpectations(mockServices, t)
+	})
+}
