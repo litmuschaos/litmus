@@ -1,0 +1,29 @@
+# defines the deterministic container-kill injection order with inter-pod interval
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # order of container-kill injection
+        # supports: random, alphabetical, reverse
+        - name: POD_TERMINATION_ORDER
+          value: 'alphabetical'
+        - name: SEQUENCE
+          value: 'serial'
+        # optional: seconds to wait between consecutive container-kill injections (serial mode only)
+        - name: INTER_POD_KILL_INTERVAL_SECONDS
+          value: '5'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
