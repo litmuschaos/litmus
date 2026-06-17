@@ -27,6 +27,26 @@ describe('ChaosFaults Component', () => {
               name: 'pod-delete',
               displayName: 'Pod Delete',
               description: 'Deletes Kubernetes pods'
+            },
+            {
+              name: 'container-kill',
+              displayName: 'Container Kill',
+              description: 'Kills a container within a pod'
+            }
+          ]
+        }
+      },
+      {
+        metadata: {
+          name: 'aws'
+        },
+        spec: {
+          displayName: 'AWS',
+          faults: [
+            {
+              name: 'ec2-stop',
+              displayName: 'EC2 Stop',
+              description: 'Stops EC2 instances'
             }
           ]
         }
@@ -36,7 +56,10 @@ describe('ChaosFaults Component', () => {
 
   const mockProps = {
     hubDetails: mockHubDetails,
-    faultCategories: new Map([['Kubernetes', 1]]),
+    faultCategories: new Map([
+      ['Kubernetes', 2],
+      ['AWS', 1]
+    ]),
     searchValue: '',
     loading: {
       listChart: false
@@ -50,26 +73,32 @@ describe('ChaosFaults Component', () => {
       </TestWrapper>
     );
 
-  test('should render fault details', () => {
+  test('should render fault details from multiple charts', () => {
     renderComponent();
 
     expect(screen.getByText('Pod Delete')).toBeInTheDocument();
     expect(screen.getByText('Deletes Kubernetes pods')).toBeInTheDocument();
+
+    expect(screen.getByText('Container Kill')).toBeInTheDocument();
+    expect(screen.getByText('Kills a container within a pod')).toBeInTheDocument();
+
+    expect(screen.getByText('EC2 Stop')).toBeInTheDocument();
+    expect(screen.getByText('Stops EC2 instances')).toBeInTheDocument();
   });
 
-  test('should include chart information in fault links', () => {
+  test('should preserve chart mapping across multiple charts', () => {
     renderComponent();
 
-    const link = screen.getByRole('link', {
-      name: /pod delete/i
-    });
+    const podDeleteLink = screen.getByRole('link', { name: /pod delete/i });
+    const containerKillLink = screen.getByRole('link', { name: /container kill/i });
+    const ec2StopLink = screen.getByRole('link', { name: /ec2 stop/i });
 
-    expect(link).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
+    expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
+    expect(containerKillLink).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
+    expect(ec2StopLink).toHaveAttribute('href', expect.stringContaining('chartName=aws'));
 
-    expect(link).toHaveAttribute('href', expect.stringContaining('hubName=testHub'));
-
-    expect(link).toHaveAttribute('href', expect.stringContaining('isDefault=true'));
-
-    expect(link).toHaveAttribute('href', expect.stringContaining('hub-123'));
+    expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('hubName=testHub'));
+    expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('isDefault=true'));
+    expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('hub-123'));
   });
 });
