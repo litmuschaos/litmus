@@ -4,6 +4,15 @@ import '@testing-library/jest-dom';
 import { TestWrapper } from 'utils/testUtils';
 import ChaosFaults from '../ChaosFaults';
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ hubID: 'hub-123' })
+}));
+
+beforeAll(() => {
+  window.history.pushState({}, 'Chaos Faults', '/chaos-hubs/hub-123/faults?hubName=testHub&isDefault=true');
+});
+
 describe('ChaosFaults Component', () => {
   const mockHubDetails = {
     listChaosFaults: [
@@ -48,7 +57,7 @@ describe('ChaosFaults Component', () => {
     expect(screen.getByText('Deletes Kubernetes pods')).toBeInTheDocument();
   });
 
-  test('should include chartName in fault links', () => {
+  test('should include chart information in fault links', () => {
     renderComponent();
 
     const link = screen.getByRole('link', {
@@ -56,5 +65,11 @@ describe('ChaosFaults Component', () => {
     });
 
     expect(link).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
+
+    expect(link).toHaveAttribute('href', expect.stringContaining('hubName=testHub'));
+
+    expect(link).toHaveAttribute('href', expect.stringContaining('isDefault=true'));
+
+    expect(link).toHaveAttribute('href', expect.stringContaining('hub-123'));
   });
 });
