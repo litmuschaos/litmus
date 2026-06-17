@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ExperimentRunStatus } from '@api/entities';
 import { ChaosInfrastructureStatus } from '@models';
 import StatusBadgeV2, { StatusBadgeEntity } from '../StatusBadgeV2';
@@ -37,7 +38,7 @@ describe('StatusBadgeV2', () => {
       expect(screen.getByText('QUEUED')).toBeInTheDocument();
     });
 
-    test('renders with tooltip prop and shows status text', () => {
+    test('renders with tooltip prop and shows status text', async () => {
       render(
         <StatusBadgeV2
           status={ExperimentRunStatus.COMPLETED}
@@ -47,7 +48,9 @@ describe('StatusBadgeV2', () => {
       );
       expect(screen.getByTestId('status-badge-v2')).toBeInTheDocument();
       expect(screen.getByText('COMPLETED')).toBeInTheDocument();
-      expect(screen.getByText('COMPLETED').closest('[data-testid="status-badge-v2"]')).toBeInTheDocument();
+
+      await userEvent.hover(screen.getByText('COMPLETED'));
+      expect(await screen.findByText('Test tooltip')).toBeInTheDocument();
     });
   });
 
