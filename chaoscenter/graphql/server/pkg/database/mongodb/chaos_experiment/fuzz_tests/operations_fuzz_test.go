@@ -43,8 +43,8 @@ func FuzzInsertChaosExperiment(f *testing.F) {
 		mongodbMockOperator.On("Create", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(opErr).Once()
 
 		err = chaosExperimentOperator.InsertChaosExperiment(context.Background(), targetStruct.experiment)
-		if !shouldErr && err != nil {
-			t.Errorf("InsertChaosExperiment() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("InsertChaosExperiment() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -79,8 +79,8 @@ func FuzzGetExperiment(f *testing.F) {
 		mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(returnResult, opErr).Once()
 
 		_, err = chaosExperimentOperator.GetExperiment(context.Background(), targetStruct.query)
-		if !shouldErr && err != nil {
-			t.Errorf("GetExperiment() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("GetExperiment() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -114,8 +114,8 @@ func FuzzGetExperiments(f *testing.F) {
 		mongodbMockOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(returnCursor, opErr).Once()
 
 		_, err = chaosExperimentOperator.GetExperiments(targetStruct.query)
-		if !shouldErr && err != nil {
-			t.Errorf("GetExperiments() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("GetExperiments() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -136,8 +136,8 @@ func FuzzGetExperimentsByInfraID(f *testing.F) {
 		mongodbMockOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(returnCursor, opErr).Once()
 
 		_, err := chaosExperimentOperator.GetExperimentsByInfraID(infraID)
-		if !shouldErr && err != nil {
-			t.Errorf("GetExperimentsByInfraID() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("GetExperimentsByInfraID() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -171,8 +171,8 @@ func FuzzGetAggregateExperiments(f *testing.F) {
 		mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(returnCursor, opErr).Once()
 
 		_, err = chaosExperimentOperator.GetAggregateExperiments(targetStruct.pipeline)
-		if !shouldErr && err != nil {
-			t.Errorf("GetAggregateExperiments() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("GetAggregateExperiments() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -206,8 +206,8 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 		mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything, mock.Anything).Return(updateResult, opErr).Once()
 
 		err = chaosExperimentOperator.UpdateChaosExperiment(context.Background(), targetStruct.query, targetStruct.update)
-		if !shouldErr && err != nil {
-			t.Errorf("UpdateChaosExperiment() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("UpdateChaosExperiment() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -241,8 +241,8 @@ func FuzzUpdateChaosExperiments(f *testing.F) {
 		mongodbMockOperator.On("UpdateMany", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything, mock.Anything).Return(updateResult, opErr).Once()
 
 		err = chaosExperimentOperator.UpdateChaosExperiments(context.Background(), targetStruct.query, targetStruct.update)
-		if !shouldErr && err != nil {
-			t.Errorf("UpdateChaosExperiments() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("UpdateChaosExperiments() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
@@ -271,8 +271,8 @@ func FuzzCountChaosExperiments(f *testing.F) {
 		mongodbMockOperator.On("CountDocuments", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), opErr).Once()
 
 		_, err = chaosExperimentOperator.CountChaosExperiments(context.Background(), targetStruct.query)
-		if !shouldErr && err != nil {
-			t.Errorf("CountChaosExperiments() unexpected error = %v", err)
+		if (err != nil) != shouldErr {
+			t.Errorf("CountChaosExperiments() error = %v, shouldErr %v", err, shouldErr)
 		}
 	})
 }
