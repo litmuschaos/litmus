@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TestWrapper } from 'utils/testUtils';
 import ChaosFaults from '../ChaosFaults';
@@ -100,5 +100,21 @@ describe('ChaosFaults Component', () => {
     expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('hubName=testHub'));
     expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('isDefault=true'));
     expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('hub-123'));
+  });
+
+  test('should filter faults using mapped chart tags', () => {
+    renderComponent();
+
+    fireEvent.click(screen.getByText('AWS'));
+
+    expect(screen.getByText('EC2 Stop')).toBeInTheDocument();
+    expect(screen.queryByText('Pod Delete')).not.toBeInTheDocument();
+    expect(screen.queryByText('Container Kill')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Kubernetes'));
+
+    expect(screen.getByText('Pod Delete')).toBeInTheDocument();
+    expect(screen.getByText('Container Kill')).toBeInTheDocument();
+    expect(screen.queryByText('EC2 Stop')).not.toBeInTheDocument();
   });
 });
