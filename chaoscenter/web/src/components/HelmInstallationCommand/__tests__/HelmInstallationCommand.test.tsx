@@ -31,7 +31,7 @@ describe('HelmInstallationCommand', () => {
 
   test('renders namespace in helm install command', () => {
     render(<HelmInstallationCommand {...defaultProps} />);
-    expect(screen.getByText(/litmus/i)).toBeInTheDocument();
+    expect(screen.getByText(/--namespace litmus/i)).toBeInTheDocument();
   });
 
   test('renders verify installation command', () => {
