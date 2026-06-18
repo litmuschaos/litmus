@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"html"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
@@ -15,7 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
@@ -24,7 +24,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
@@ -32,7 +32,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
@@ -48,7 +48,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
@@ -56,7 +56,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 

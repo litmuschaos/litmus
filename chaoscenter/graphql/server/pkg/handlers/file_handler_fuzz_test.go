@@ -1,4 +1,4 @@
-package handlers_test
+**package handlers**
 
 import (
 	"net/http"
@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 )
 
 func FuzzFileHandler(f *testing.F) {
@@ -54,7 +53,7 @@ func FuzzFileHandler(f *testing.F) {
 			}
 		}()
 
-		handlers.FileHandler(mockOp)(ctx)
+		FileHandler(mockOp)(ctx)
 
 		if w.Code < 100 || w.Code > 599 {
 			t.Fatalf("unexpected HTTP status code: %d", w.Code)
