@@ -1,8 +1,8 @@
 import React from 'react';
 import { Layout, Text } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 import CodeBlock from '@components/CodeBlock';
 import { getScope } from '@utils';
-import { FontVariation } from '@harnessio/design-system';
 
 export interface HelmInstallationCommandProps {
   infraID: string;
