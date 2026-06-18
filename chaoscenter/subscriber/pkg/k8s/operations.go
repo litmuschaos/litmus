@@ -134,21 +134,20 @@ func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
 	}
 
 	getCM, err := clientset.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), InfraConfigName, metav1.GetOptions{})
-	if k8s_errors.IsNotFound(err) {
-		return false, "", errors.New(InfraConfigName + " configmap not found")
-	} else if getCM.Data["IS_INFRA_CONFIRMED"] == "true" {
+	if err != nil {
+		if k8s_errors.IsNotFound(err) {
+			return false, "", errors.New(InfraConfigName + " configmap not found")
+		}
+		return false, "", err
+	}
+
+	if getCM.Data["IS_INFRA_CONFIRMED"] == "true" {
 		getSecret, err := clientset.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), InfraSecretName, metav1.GetOptions{})
 		if err != nil {
-			return false, "", errors.New(InfraSecretName + " secret not found")
-		}
-
-		if k8s_errors.IsNotFound(err) {
-			return false, "", err
+			return false, "", fmt.Errorf("failed to get %s secret: %w", InfraSecretName, err)
 		}
 
 		return true, string(getSecret.Data["ACCESS_KEY"]), nil
-	} else if err != nil {
-		return false, "", err
 	}
 
 	return false, "", nil
