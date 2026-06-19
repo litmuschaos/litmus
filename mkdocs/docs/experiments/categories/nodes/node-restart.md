@@ -191,7 +191,7 @@
       <tr>
         <td> LIB  </td>
         <td> The chaos lib used to inject the chaos </td>
-        <td> Defaults to </code>litmus</code> supported litmus only </td>
+        <td> Defaults to <code>litmus</code>; supported: litmus only </td>
       </tr>
       <tr>
         <td> STATUS_CHECK_DELAY </td>
