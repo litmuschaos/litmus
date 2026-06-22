@@ -31,7 +31,7 @@ describe('Loader', () => {
     expect(screen.getByText('Fetching experiments...')).toBeInTheDocument();
   });
 
-  test('renders children when loading is false and no noData condition', () => {
+  test('renders children when loading is false and noData is not provided', () => {
     render(
       <TestWrapper>
         <Loader loading={false}>
