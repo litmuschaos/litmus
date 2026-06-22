@@ -60,6 +60,7 @@ describe('Loader', () => {
     );
 
     expect(screen.getByTestId('loader')).toBeInTheDocument();
+    expect(screen.getByText('No data found')).toBeInTheDocument();
     expect(screen.queryByText('Content')).not.toBeInTheDocument();
   });
 
@@ -81,7 +82,7 @@ describe('Loader', () => {
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
 
-  test('applies small spacing class when small prop is true', () => {
+  test('renders spinner and message correctly when small prop is true', () => {
     render(
       <TestWrapper>
         <Loader loading={true} small testId="loader">
@@ -91,5 +92,7 @@ describe('Loader', () => {
     );
 
     expect(screen.getByTestId('loader')).toBeInTheDocument();
+    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.queryByText('Content')).not.toBeInTheDocument();
   });
 });
