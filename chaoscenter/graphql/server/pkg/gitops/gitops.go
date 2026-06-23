@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -21,11 +19,13 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt/v4"
+	log "github.com/sirupsen/logrus"
+	ssh2 "golang.org/x/crypto/ssh"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
-	log "github.com/sirupsen/logrus"
-	ssh2 "golang.org/x/crypto/ssh"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // GitConfig structure for the GitOps settings
@@ -471,6 +471,54 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 
 	c.LatestCommit = headRef.Hash().String()
 	return c.LatestCommit, visited, nil
+}
+
+// GetFileContentFromPreviousCommit returns the content of a file as it existed in the
+// most recent commit that contains it. This is useful for determining the resource kind
+// of a file that has already been deleted from the working tree.
+func (c GitConfig) GetFileContentFromPreviousCommit(filePath string) ([]byte, error) {
+	repo, _, err := c.getRepositoryWorktreeReference()
+	if err != nil {
+		return nil, err
+	}
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return nil, err
+	}
+
+	commitIter, err := repo.Log(&git.LogOptions{
+		From:  headRef.Hash(),
+		Order: git.LogOrderCommitterTime,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get commit iterator: %w", err)
+	}
+	defer commitIter.Close()
+
+	for {
+		commit, err := commitIter.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		f, err := commit.File(filePath)
+		if err != nil {
+			// file not present in this commit, keep looking
+			continue
+		}
+
+		contents, err := f.Contents()
+		if err != nil {
+			return nil, err
+		}
+		return []byte(contents), nil
+	}
+
+	return nil, fmt.Errorf("file %s not found in any commit", filePath)
 }
 
 // GetLatestCommitHash returns the latest commit hash in the local repo for the project directory
