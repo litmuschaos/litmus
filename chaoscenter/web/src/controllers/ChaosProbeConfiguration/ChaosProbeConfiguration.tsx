@@ -104,13 +104,17 @@ export default function ChaosProbeConfigurationController({
   }, [type, probeName, infrastructureType]);
 
   React.useEffect(() => {
+    if (!probeName) {
+      return;
+    }
+
     getProbeYAMLQuery({
       variables: {
         projectID: scope.projectID,
         request: { probeID: probeName, mode: Mode.SoT }
       }
     });
-  }, [probeName]);
+  }, [getProbeYAMLQuery, probeName, scope.projectID]);
 
   const probeData =
     infrastructureType === InfrastructureType.KUBERNETES
