@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -906,53 +905,80 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 		return &model.InfraVersionDetails{}, fmt.Errorf("failed to parse InfraCompatibleVersions config: %w", err)
 	}
 
-	// To find the latest compatible version
-	compatibleMap := make(map[int]string)
+	latestVersion := ""
+	for _, version := range compatibleArray {
+		if latestVersion == "" {
+			latestVersion = version
+			continue
+		}
 
-	// To store the compatible versions in int format
-	var compatibleArrayInt []int
-
-	for _, versionStr := range compatibleArray {
-		versionInt, err := updateVersionFormat(versionStr)
+		comparison, err := compareInfraVersions(version, latestVersion)
 		if err != nil {
 			return &model.InfraVersionDetails{}, err
 		}
 
-		compatibleArrayInt = append(compatibleArrayInt, versionInt)
-		compatibleMap[versionInt] = versionStr
-	}
-
-	// Fetching the latest version
-	latestVersion := fetchLatestVersion(compatibleMap)
-	return &model.InfraVersionDetails{LatestVersion: compatibleMap[latestVersion], CompatibleVersions: compatibleArray}, nil
-}
-
-// fetchLatestVersion returns the latest version available
-func fetchLatestVersion(versions map[int]string) int {
-	var latestVersion int
-	for k := range versions {
-		if k > latestVersion {
-			latestVersion = k
+		if comparison > 0 {
+			latestVersion = version
 		}
 	}
-	return latestVersion
+
+	return &model.InfraVersionDetails{LatestVersion: latestVersion, CompatibleVersions: compatibleArray}, nil
 }
 
-// updateVersionFormat converts string array to int by removing decimal points, 1.0.0 will be returned as 100, 0.1.0 will be returned as 10, 0.0.1 will be returned as 1
-func updateVersionFormat(str string) (int, error) {
-	if str == CIVersion {
+func compareInfraVersions(version, otherVersion string) (int, error) {
+	if version == CIVersion && otherVersion == CIVersion {
 		return 0, nil
 	}
-	var versionInt int
-	versionSlice := strings.Split(str, ".")
-	for i, val := range versionSlice {
-		x, err := strconv.Atoi(val)
-		if err != nil {
-			return -1, err
-		}
-		versionInt += x * int(math.Pow(10, float64(2-i)))
+	if version == CIVersion {
+		return -1, nil
 	}
-	return versionInt, nil
+	if otherVersion == CIVersion {
+		return 1, nil
+	}
+
+	parsedVersion, err := parseInfraVersion(version)
+	if err != nil {
+		return 0, err
+	}
+
+	parsedOtherVersion, err := parseInfraVersion(otherVersion)
+	if err != nil {
+		return 0, err
+	}
+
+	for i := range parsedVersion {
+		if parsedVersion[i] > parsedOtherVersion[i] {
+			return 1, nil
+		}
+		if parsedVersion[i] < parsedOtherVersion[i] {
+			return -1, nil
+		}
+	}
+
+	return 0, nil
+}
+
+func parseInfraVersion(version string) ([3]int, error) {
+	version = strings.TrimSpace(version)
+	if version == CIVersion {
+		return [3]int{}, nil
+	}
+
+	versionParts := strings.Split(version, ".")
+	if len(versionParts) != 3 {
+		return [3]int{}, fmt.Errorf("invalid infra version %q: expected major.minor.patch", version)
+	}
+
+	var parsedVersion [3]int
+	for i, part := range versionParts {
+		versionPart, err := strconv.Atoi(strings.TrimSpace(part))
+		if err != nil {
+			return [3]int{}, fmt.Errorf("invalid infra version %q: %w", version, err)
+		}
+		parsedVersion[i] = versionPart
+	}
+
+	return parsedVersion, nil
 }
 
 // QueryServerVersion is used to fetch the version of the server
