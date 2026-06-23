@@ -4,6 +4,11 @@ import { render, screen } from '@testing-library/react';
 import { TestWrapper } from 'utils/testUtils';
 import { Loader } from '../Loader';
 
+jest.mock('@harnessio/icons', () => ({
+  __esModule: true,
+  Icon: ({ name, size }: any) => <div data-testid="loader-icon" data-icon={name} data-size={size} />
+}));
+
 describe('Loader', () => {
   test('renders spinner and default loading message when loading is true', () => {
     render(
@@ -15,6 +20,8 @@ describe('Loader', () => {
     );
 
     expect(screen.getByTestId('loader')).toBeInTheDocument();
+    expect(screen.getByTestId('loader-icon')).toHaveAttribute('data-icon', 'steps-spinner');
+    expect(screen.getByTestId('loader-icon')).toHaveAttribute('data-size', '32');
     expect(screen.getByText('loading')).toBeInTheDocument();
     expect(screen.queryByText('Content')).not.toBeInTheDocument();
   });
@@ -29,6 +36,8 @@ describe('Loader', () => {
     );
 
     expect(screen.getByText('Fetching experiments...')).toBeInTheDocument();
+    expect(screen.queryByText('loading')).not.toBeInTheDocument();
+    expect(screen.queryByText('Content')).not.toBeInTheDocument();
   });
 
   test('renders children when loading is false and noData is not provided', () => {
@@ -92,6 +101,8 @@ describe('Loader', () => {
     );
 
     expect(screen.getByTestId('loader')).toBeInTheDocument();
+    expect(screen.getByTestId('loader-icon')).toHaveAttribute('data-icon', 'steps-spinner');
+    expect(screen.getByTestId('loader-icon')).toHaveAttribute('data-size', '26');
     expect(screen.getByText('loading')).toBeInTheDocument();
     expect(screen.queryByText('Content')).not.toBeInTheDocument();
   });
