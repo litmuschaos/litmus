@@ -29,7 +29,6 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
   const columns: Column<GroupMember>[] = useMemo(
     () => [
       {
-        accessor: 'group',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Layout.Vertical spacing="xsmall">
             <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.BLACK}>
@@ -43,28 +42,29 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
           </Layout.Vertical>
         ),
         Header: getString('groupName').toUpperCase(),
+        accessor: 'group',
         id: 'group',
         width: '40%'
       },
       {
-        accessor: 'role',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
             {data.role}
           </Text>
         ),
         Header: getString('groupRole').toUpperCase(),
+        accessor: 'role',
         id: 'role',
         width: '30%'
       },
       {
-        accessor: 'assignedAt',
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
           <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
             {new Date(data.assignedAt).toLocaleDateString()}
           </Text>
         ),
         Header: getString('assignedAt').toUpperCase(),
+        accessor: 'assignedAt',
         id: 'assignedAt',
         width: '20%'
       },
@@ -102,8 +102,8 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
             </Layout.Vertical>
           );
         },
-        disableSortBy: true,
         Header: '',
+        disableSortBy: true,
         id: 'threeDotMenu'
       }
     ],
