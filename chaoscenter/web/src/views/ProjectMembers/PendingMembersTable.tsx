@@ -60,7 +60,7 @@ export default function PendingMembersTableView({
         Cell: ({ row: { original: data } }: { row: Row<ProjectMember> }) => {
           const { projectID } = useParams<{ projectID: string }>();
           const { role } = data;
-          const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer'>(role);
+          const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer' | 'Editor'>(role);
           const rolesDropDown: SelectOption[] = [
             {
               label: 'Executor',
@@ -73,6 +73,10 @@ export default function PendingMembersTableView({
             {
               label: 'Owner',
               value: 'Owner'
+            },
+            {
+              label: 'Editor',
+              value: 'Editor'
             }
           ];
 
@@ -103,7 +107,7 @@ export default function PendingMembersTableView({
                 filterable={false}
                 value={memberRole}
                 items={rolesDropDown}
-                onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer')}
+                onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer' | 'Editor')}
               />
               <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '1rem' }}>
                 <Button
