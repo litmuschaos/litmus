@@ -434,6 +434,9 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	}
 
 	exp := expDetails[0]
+	if len(exp.Revision) == 0 {
+		return nil, errors.New("experiment has no revisions")
+	}
 	if len(exp.KubernetesInfraDetails) == 0 {
 		return nil, errors.New("no matching infra found for given expDetails")
 	}
@@ -814,6 +817,9 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 	}
 
 	for _, workflow := range workflows[0].ScheduledExperiments {
+		if len(workflow.Revision) == 0 {
+			continue
+		}
 		var chaosInfrastructure *model.Infra
 
 		if len(workflow.KubernetesInfraDetails) > 0 {

@@ -1227,7 +1227,7 @@ func TestChaosExperimentHandler_ListExperiment_WeightagesFromLatestRevision(t *t
 		mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 
 		resp, err := mockServices.ChaosExperimentHandler.ListExperiment(projectId, model.ListExperimentRequest{
-			Pagination: &model.Pagination{Page: 0},
+			Pagination: &model.Pagination{Page: 0, Limit: 15},
 		})
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
