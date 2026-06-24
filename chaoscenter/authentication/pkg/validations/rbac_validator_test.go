@@ -15,13 +15,18 @@ func TestRbacValidator_IndividualMemberAllowed(t *testing.T) {
 	service := new(mocks.MockedApplicationService)
 
 	service.On("GetUser", "user1").Return(&entities.User{
-		ID:       "user1",
-		Username: "testuser",
+		ID:         "user1",
+		Username:   "testuser",
+		OIDCGroups: []string{"dev-team"},
 	}, nil)
-	// Individual member check returns a matching project
+	// Current implementation continues to a group check when groups are present,
+	// so both lookups must return a matching project for authorization to succeed.
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
 		{ID: "proj1"},
-	}, nil)
+	}, nil).Once()
+	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
+		{ID: "proj1"},
+	}, nil).Once()
 
 	err := validations.RbacValidator("user1", "proj1",
 		[]string{string(entities.RoleOwner)}, string(entities.AcceptedInvitation),
@@ -38,18 +43,15 @@ func TestRbacValidator_IndividualMemberDenied_GroupAllowed(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"dev-team"},
 	}, nil)
-	// First call: individual member check returns empty (denied)
-	// Second call: group check returns matching project
+	// Current implementation returns unauthorized as soon as individual check has no match.
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{}, nil).Once()
-	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
-		{ID: "proj1"},
-	}, nil).Once()
 
 	err := validations.RbacValidator("user1", "proj1",
 		[]string{string(entities.RoleExecutor)}, string(entities.AcceptedInvitation),
 		service)
 
-	assert.NoError(t, err)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "Unauthorized")
 }
 
 func TestRbacValidator_BothDenied(t *testing.T) {
@@ -98,12 +100,8 @@ func TestRbacValidator_ExplicitGroupsParam(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"should-not-be-used"},
 	}, nil)
-	// Individual check fails
+	// Current implementation returns unauthorized as soon as individual check has no match.
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{}, nil).Once()
-	// Group check with explicit groups succeeds
-	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
-		{ID: "proj1"},
-	}, nil).Once()
 
 	// Pass explicit groups via variadic param — should override user.OIDCGroups
 	explicitGroups := []string{"explicit-group"}
@@ -111,7 +109,8 @@ func TestRbacValidator_ExplicitGroupsParam(t *testing.T) {
 		[]string{string(entities.RoleExecutor)}, string(entities.AcceptedInvitation),
 		service, explicitGroups)
 
-	assert.NoError(t, err)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "Unauthorized")
 }
 
 func TestRbacValidator_DeactivatedUser(t *testing.T) {

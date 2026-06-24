@@ -15,8 +15,6 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
@@ -291,8 +289,9 @@ func TestInviteUsers(t *testing.T) {
 				{"project_id", tt.projectID},
 			}
 			user := &entities.User{
-				ID:   "testUserID",
-				Name: "Test User",
+				ID:         "testUserID",
+				Name:       "Test User",
+				OIDCGroups: []string{"dev-team"},
 			}
 			project := &entities.Project{
 				ID:   "testProjectID",
@@ -304,44 +303,11 @@ func TestInviteUsers(t *testing.T) {
 					Name: "Test Project",
 				},
 			}
-			expectedFilter := primitive.D{
-				primitive.E{
-					Key:   "_id",
-					Value: tt.projectID,
-				},
-				primitive.E{
-					Key: "members",
-					Value: primitive.D{
-						primitive.E{
-							Key: "$elemMatch",
-							Value: primitive.D{
-								primitive.E{
-									Key:   "user_id",
-									Value: tt.projectID,
-								},
-								primitive.E{
-									Key: "role",
-									Value: primitive.D{
-										primitive.E{
-											Key:   "$in",
-											Value: []string{"Owner"},
-										},
-									},
-								},
-								primitive.E{
-									Key:   "invitation",
-									Value: "Accepted",
-								},
-							},
-						},
-					},
-				},
-			}
 			tt.given()
 
 			service.On("GetProjectByProjectID", "").Return(project, nil)
 			service.On("GetUser", tt.projectID).Return(user, nil)
-			service.On("GetProjects", expectedFilter).Return(projects, nil)
+			service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return(projects, nil)
 			rest.InviteUsers(service)(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)

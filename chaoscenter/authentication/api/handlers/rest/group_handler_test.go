@@ -39,8 +39,9 @@ func nopCloser(b *bytes.Buffer) nopCloserReader {
 // mockRbacSuccess sets up mocks so that RbacValidator succeeds (user found + project matched)
 func mockRbacSuccess(service *mocks.MockedApplicationService, uid string) {
 	service.On("GetUser", uid).Return(&entities.User{
-		ID:       uid,
-		Username: "testuser",
+		ID:         uid,
+		Username:   "testuser",
+		OIDCGroups: []string{"dev-team"},
 	}, nil)
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
 		{ID: "test-project-id"},
