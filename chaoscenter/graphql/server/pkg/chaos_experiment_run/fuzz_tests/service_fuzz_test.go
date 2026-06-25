@@ -51,7 +51,8 @@ func FuzzProcessExperimentRunStop(f *testing.F) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		targetStruct := &struct {
 			Query           bson.D
-			ExperimentRunID *string
+			ExperimentRunID           string
+			NotifyID        *string
 			Experiment      dbChaosExperiment.ChaosExperimentRequest
 			Username        string
 			ProjectID       string
@@ -63,11 +64,12 @@ func FuzzProcessExperimentRunStop(f *testing.F) {
 		}
 
 		mockServices := NewMockServices()
-		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil).Once()
+		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil)
 		err = mockServices.ChaosExperimentRunService.ProcessExperimentRunStop(
 			context.Background(),
-			targetStruct.Query,
+			bson.D{},
 			targetStruct.ExperimentRunID,
+			targetStruct.NotifyID,
 			targetStruct.Experiment,
 			targetStruct.Username,
 			targetStruct.ProjectID,
@@ -85,7 +87,7 @@ func FuzzProcessCompletedExperimentRun(f *testing.F) {
 		targetStruct := &struct {
 			ExecData chaos_experiment_run.ExecutionData
 			WfID     string
-			RunID    string
+			ExperimentRunID    string
 		}{}
 		err := fuzzConsumer.GenerateStruct(targetStruct)
 		if err != nil {
@@ -102,7 +104,7 @@ func FuzzProcessCompletedExperimentRun(f *testing.F) {
 		_, err = mockServices.ChaosExperimentRunService.ProcessCompletedExperimentRun(
 			targetStruct.ExecData,
 			targetStruct.WfID,
-			targetStruct.RunID,
+			targetStruct.ExperimentRunID,
 		)
 		if err != nil {
 			t.Errorf("ProcessCompletedExperimentRun() error = %v", err)

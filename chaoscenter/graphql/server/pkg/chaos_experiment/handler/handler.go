@@ -1525,7 +1525,6 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 }
 func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData, username string) (bool, error) {
 
-	var experimentRunsID []string
 
 	query := bson.D{
 		{"experiment_id", experimentID},
@@ -1538,6 +1537,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 	}
 
 	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
+	var runsToStop []dbChaosExperimentRun.ChaosExperimentRun
 	if experimentRunID == nil {
 
 		// Fetching all the experiment runs in the experiment
@@ -1549,29 +1549,37 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 			return false, err
 		}
 
+
+
 		for _, runs := range expRuns {
-			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
-				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout) || runs.Phase == string(model.ExperimentRunStatusQueued)) && !runs.Completed {
+				runsToStop = append(runsToStop, runs)
 			}
 		}
 
 		// Check if experiment run count is 0 and if it's not a cron experiment
-		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
-			return false, fmt.Errorf("no running or timeout experiments found")
+		if len(runsToStop) == 0 && experiment.CronSyntax == "" {
+			return false, fmt.Errorf("no running, timeout, or queued experiments found")
 		}
 	} else if *experimentRunID != "" {
-		experimentRunsID = []string{*experimentRunID}
+		runsToStop = append(runsToStop, dbChaosExperimentRun.ChaosExperimentRun{ExperimentRunID: *experimentRunID})
 	}
 
-	for _, runID := range experimentRunsID {
+	for _, run := range runsToStop {
 		// scope the update to the specific run so we don't accidentally touch sibling runs
 		runQuery := bson.D{
 			{"experiment_id", experimentID},
 			{"project_id", projectID},
-			{"experiment_run_id", runID},
 			{"is_removed", false},
 		}
-		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, &runID, experiment, username, projectID, r)
+
+		if run.ExperimentRunID == "" && run.NotifyID != nil {
+			runQuery = append(runQuery, bson.E{Key: "notify_id", Value: *run.NotifyID})
+		} else {
+			runQuery = append(runQuery, bson.E{Key: "experiment_run_id", Value: run.ExperimentRunID})
+		}
+
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, run.ExperimentRunID, run.NotifyID, experiment, username, projectID, r)
 		if err != nil {
 			return false, err
 		}
