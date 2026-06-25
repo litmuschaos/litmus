@@ -203,6 +203,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 			},
 			given: func() {
 				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 			},
 			wantErr: false,
 		},

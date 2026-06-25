@@ -21,6 +21,7 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -91,6 +92,31 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 	if err != nil {
 		return err
 	}
+
+	if experimentRunID != nil {
+		experimentFilter := bson.D{
+			{"experiment_id", experiment.ExperimentID},
+			{"project_id", projectID},
+			{"recent_experiment_run_details.experiment_run_id", *experimentRunID},
+		}
+
+		experimentUpdate := bson.D{
+			{"$set", bson.D{
+				{"recent_experiment_run_details.$.phase", string(model.ExperimentRunStatusStopped)},
+				{"recent_experiment_run_details.$.completed", true},
+				{"recent_experiment_run_details.$.updated_at", time.Now().UnixMilli()},
+				{"recent_experiment_run_details.$.updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
+			}},
+		}
+
+		err = c.chaosExperimentOperator.UpdateChaosExperiment(ctx, experimentFilter, experimentUpdate)
+		if err != nil {
+			logrus.WithError(err).Error("Failed to update experiment collection recent run details")
+		}
+	}
+
 	// Best-effort: notify the agent to clean up in-flight resources. If the infra
 	// is not connected the channel send is a no-op and the DB state is still correct.
 	if r != nil {

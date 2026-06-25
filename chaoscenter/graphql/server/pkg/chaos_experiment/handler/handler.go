@@ -1550,14 +1550,14 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		}
 
 		for _, runs := range expRuns {
-			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout) || runs.Phase == string(model.ExperimentRunStatusQueued)) && !runs.Completed {
 				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
 			}
 		}
 
 		// Check if experiment run count is 0 and if it's not a cron experiment
 		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
-			return false, fmt.Errorf("no running or timeout experiments found")
+			return false, fmt.Errorf("no running, timeout, or queued experiments found")
 		}
 	} else if *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
