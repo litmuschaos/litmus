@@ -9,7 +9,7 @@ import { useLogout, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import ProjectSelectorController from '@controllers/ProjectSelector';
 import NavExpandable from '@components/NavExpandable';
-import { getUserDetails } from '@utils';
+import { useAppStore } from '@context';
 import { PermissionGroup } from '@models';
 import css from './SideNav.module.scss';
 
@@ -62,7 +62,7 @@ export default function SideNav(): ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
   const { forceLogout } = useLogout();
-  const { projectRole } = getUserDetails();
+  const { projectRole } = useAppStore();
   const accountScopedPaths = useRouteWithBaseUrl('account');
   const collapseByDefault = false;
   const [sideNavHovered, setSideNavhovered] = useState<boolean>(false);

@@ -187,3 +187,11 @@ type ProjectIDWithMessage struct {
 	Message   string `json:"message"`
 	ProjectID string `json:"projectID"`
 }
+
+type GroupMember struct {
+	Data entities.GroupMember `json:"data"`
+}
+
+type GroupMembers struct {
+	Data []*entities.GroupMember `json:"data"`
+}

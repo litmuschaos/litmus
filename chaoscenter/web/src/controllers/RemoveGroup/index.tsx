@@ -1,0 +1,1 @@
+export { RemoveGroupController } from './RemoveGroup';
