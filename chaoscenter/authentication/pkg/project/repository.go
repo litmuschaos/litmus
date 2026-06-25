@@ -667,9 +667,13 @@ func (r repository) AddGroupMember(projectID string, groupMember *entities.Group
 	if err != nil {
 		return err
 	}
+	sanitizedDisplayName, err := utils.SanitizeMongoParam(groupMember.DisplayName)
+	if err != nil {
+		return err
+	}
 	sanitizedGroupMember := entities.GroupMember{
 		Group:       sanitizedGroupName,
-		DisplayName: groupMember.DisplayName,
+		DisplayName: sanitizedDisplayName,
 		Role:        entities.MemberRole(sanitizedRole),
 		AssignedAt:  groupMember.AssignedAt,
 	}
