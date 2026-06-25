@@ -13,6 +13,11 @@ import (
 func RbacValidator(uid string, projectID string,
 	requiredRoles []string, invitation string,
 	service services.ApplicationService, groups ...[]string) error {
+	sanitizedProjectID, err := utils.SanitizeMongoParam(projectID)
+	if err != nil {
+		log.Errorf("authgRPC Error (project sanitization): %s", err)
+		return errors.New("auth gRPC - Unauthorized")
+	}
 
 	user, err := service.GetUser(uid)
 	if err != nil {
@@ -26,7 +31,7 @@ func RbacValidator(uid string, projectID string,
 
 	// Check for individual member permission
 	filter := bson.D{
-		{"_id", projectID},
+		{"_id", sanitizedProjectID},
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
 				{"user_id", uid},
@@ -63,7 +68,7 @@ func RbacValidator(uid string, projectID string,
 		}
 
 		groupFilter := bson.D{
-			{"_id", projectID},
+			{"_id", sanitizedProjectID},
 			{"groups", bson.D{
 				{"$elemMatch", bson.D{
 					{"group", bson.D{

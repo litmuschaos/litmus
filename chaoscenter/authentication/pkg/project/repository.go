@@ -632,11 +632,11 @@ func (r repository) ListInvitations(userID string, invitationState entities.Invi
 
 // GetProjectGroupMembers returns all OIDC groups assigned to a project
 func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error) {
-	projectID, err := utils.SanitizeMongoParam(projectID)
+	sanitizedProjectID, err := utils.SanitizeMongoParam(projectID)
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	filter := bson.D{{"_id", sanitizedProjectID}}
 	projection := bson.D{
 		{"_id", 0},
 		{"groups", 1},
@@ -655,19 +655,28 @@ func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupM
 
 // AddGroupMember adds an OIDC group with a role to a project
 func (r repository) AddGroupMember(projectID string, groupMember *entities.GroupMember) error {
-	projectID, err := utils.SanitizeMongoParam(projectID)
+	sanitizedProjectID, err := utils.SanitizeMongoParam(projectID)
 	if err != nil {
 		return err
 	}
-	if _, err := utils.SanitizeMongoParam(groupMember.Group); err != nil {
+	sanitizedGroupName, err := utils.SanitizeMongoParam(groupMember.Group)
+	if err != nil {
 		return err
 	}
-	if _, err := utils.SanitizeMongoParam(string(groupMember.Role)); err != nil {
+	sanitizedRole, err := utils.SanitizeMongoParam(string(groupMember.Role))
+	if err != nil {
 		return err
 	}
-	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	sanitizedGroupMember := entities.GroupMember{
+		Group:       sanitizedGroupName,
+		DisplayName: groupMember.DisplayName,
+		Role:        entities.MemberRole(sanitizedRole),
+		AssignedAt:  groupMember.AssignedAt,
+	}
+
+	query := bson.D{{"_id", sanitizedProjectID}}
 	update := bson.D{{"$push", bson.D{
-		{"groups", groupMember},
+		{"groups", sanitizedGroupMember},
 	}}}
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
@@ -683,19 +692,19 @@ func (r repository) AddGroupMember(projectID string, groupMember *entities.Group
 
 // RemoveGroupMember removes an OIDC group from a project
 func (r repository) RemoveGroupMember(projectID string, groupName string) error {
-	projectID, err := utils.SanitizeMongoParam(projectID)
+	sanitizedProjectID, err := utils.SanitizeMongoParam(projectID)
 	if err != nil {
 		return err
 	}
-	groupName, err = utils.SanitizeMongoParam(groupName)
+	sanitizedGroupName, err := utils.SanitizeMongoParam(groupName)
 	if err != nil {
 		return err
 	}
-	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
+	query := bson.D{{"_id", sanitizedProjectID}}
 	update := bson.D{
 		{"$pull", bson.D{
 			{"groups", bson.D{
-				{"group", bson.D{{"$eq", groupName}}},
+				{"group", sanitizedGroupName},
 			}},
 		}},
 	}
@@ -713,24 +722,26 @@ func (r repository) RemoveGroupMember(projectID string, groupName string) error 
 
 // UpdateGroupMemberRole updates the role of an OIDC group in a project
 func (r repository) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
-	projectID, err := utils.SanitizeMongoParam(projectID)
+	sanitizedProjectID, err := utils.SanitizeMongoParam(projectID)
 	if err != nil {
 		return err
 	}
-	groupName, err = utils.SanitizeMongoParam(groupName)
+	sanitizedGroupName, err := utils.SanitizeMongoParam(groupName)
 	if err != nil {
 		return err
 	}
-	if _, err := utils.SanitizeMongoParam(string(*role)); err != nil {
+	sanitizedRole, err := utils.SanitizeMongoParam(string(*role))
+	if err != nil {
 		return err
 	}
+	sanitizedMemberRole := entities.MemberRole(sanitizedRole)
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.group", bson.D{{"$eq", groupName}}}},
+			bson.D{{"elem.group", sanitizedGroupName}},
 		},
 	})
-	query := bson.D{{"_id", bson.D{{"$eq", projectID}}}}
-	update := bson.D{{"$set", bson.M{"groups.$[elem].role": role}}}
+	query := bson.D{{"_id", sanitizedProjectID}}
+	update := bson.D{{"$set", bson.M{"groups.$[elem].role": sanitizedMemberRole}}}
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
 	if err != nil {
@@ -749,12 +760,11 @@ func (r repository) GetProjectsByGroup(groupNames []string) ([]*entities.Project
 	if err != nil {
 		return nil, err
 	}
-	groupNames = sanitizedNames
 	filter := bson.D{
 		{"groups", bson.D{
 			{"$elemMatch", bson.D{
 				{"group", bson.D{
-					{"$in", groupNames},
+					{"$in", sanitizedNames},
 				}},
 			}},
 		}},

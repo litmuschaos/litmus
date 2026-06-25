@@ -121,6 +121,46 @@ func TestAddGroupToProject(t *testing.T) {
 		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
 	})
 
+	t.Run("Unsafe project ID - rejected", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "owner1")
+		c.Set("role", string(entities.RoleUser))
+
+		input := entities.GroupMemberInput{
+			ProjectID: "proj$bad",
+			Group:     "dev-team",
+			Role:      &executorRole,
+		}
+		setRequestBody(c, input)
+
+		rest.AddGroupToProject(service)(c)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
+		service.AssertNotCalled(t, "GetProjectGroupMembers")
+		service.AssertNotCalled(t, "AddGroupMember")
+	})
+
+	t.Run("Unsafe group name - rejected", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "owner1")
+		c.Set("role", string(entities.RoleUser))
+
+		input := entities.GroupMemberInput{
+			ProjectID: "proj1",
+			Group:     "dev$team",
+			Role:      &executorRole,
+		}
+		setRequestBody(c, input)
+
+		rest.AddGroupToProject(service)(c)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
+		service.AssertNotCalled(t, "GetProjectGroupMembers")
+		service.AssertNotCalled(t, "AddGroupMember")
+	})
+
 	t.Run("Duplicate group - rejected", func(t *testing.T) {
 		service := new(mocks.MockedApplicationService)
 		w := httptest.NewRecorder()
@@ -247,6 +287,21 @@ func TestRemoveGroupFromProject(t *testing.T) {
 		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
 	})
 
+	t.Run("Unsafe group name", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "owner1")
+		c.Set("role", string(entities.RoleUser))
+
+		input := entities.GroupMemberInput{ProjectID: "proj1", Group: "dev$team"}
+		setRequestBody(c, input)
+
+		rest.RemoveGroupFromProject(service)(c)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
+		service.AssertNotCalled(t, "RemoveGroupMember")
+	})
+
 	t.Run("Service error", func(t *testing.T) {
 		service := new(mocks.MockedApplicationService)
 		w := httptest.NewRecorder()
@@ -330,6 +385,21 @@ func TestUpdateGroupRole(t *testing.T) {
 		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
 	})
 
+	t.Run("Unsafe group name", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "owner1")
+		c.Set("role", string(entities.RoleUser))
+
+		input := entities.GroupMemberInput{ProjectID: "proj1", Group: "dev$team", Role: &executorRole}
+		setRequestBody(c, input)
+
+		rest.UpdateGroupRole(service)(c)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
+		service.AssertNotCalled(t, "UpdateGroupMemberRole")
+	})
+
 	t.Run("Service error", func(t *testing.T) {
 		service := new(mocks.MockedApplicationService)
 		w := httptest.NewRecorder()
@@ -394,6 +464,19 @@ func TestGetProjectGroups(t *testing.T) {
 
 		rest.GetProjectGroups(service)(c)
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("Unsafe project ID", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "admin1")
+		c.Set("role", string(entities.RoleAdmin))
+		c.Params = gin.Params{{"project_id", "proj$bad"}}
+
+		rest.GetProjectGroups(service)(c)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrInvalidRequest], w.Code)
+		service.AssertNotCalled(t, "GetProjectGroupMembers")
 	})
 
 	t.Run("Service error", func(t *testing.T) {

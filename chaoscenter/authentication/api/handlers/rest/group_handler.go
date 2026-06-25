@@ -39,6 +39,16 @@ func AddGroupToProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		if _, err := utils.SanitizeMongoParam(input.ProjectID); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if _, err := utils.SanitizeMongoParam(input.Group); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
 
 		// Only project owners can add groups
 		err = validations.RbacValidator(c.MustGet("uid").(string), input.ProjectID,
@@ -118,6 +128,16 @@ func RemoveGroupFromProject(service services.ApplicationService) gin.HandlerFunc
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		if _, err := utils.SanitizeMongoParam(input.ProjectID); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if _, err := utils.SanitizeMongoParam(input.Group); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
 
 		// Only project owners can remove groups
 		err = validations.RbacValidator(c.MustGet("uid").(string), input.ProjectID,
@@ -166,6 +186,16 @@ func UpdateGroupRole(service services.ApplicationService) gin.HandlerFunc {
 		var input entities.GroupMemberInput
 		err := c.BindJSON(&input)
 		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if _, err := utils.SanitizeMongoParam(input.ProjectID); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if _, err := utils.SanitizeMongoParam(input.Group); err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
@@ -220,6 +250,11 @@ func UpdateGroupRole(service services.ApplicationService) gin.HandlerFunc {
 func GetProjectGroups(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
+		if _, err := utils.SanitizeMongoParam(projectID); err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
 
 		// Any accepted member or admin can list groups
 		userRole := c.MustGet("role").(string)
