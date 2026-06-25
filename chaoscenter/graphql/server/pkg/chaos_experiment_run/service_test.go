@@ -240,7 +240,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 	for _, tc := range testcases {
 		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(tc.args.ctx, tc.args.query, &experimentRunID, tc.args.workflow, tc.args.username, projectID, tc.args.r); (err != nil) != tc.wantErr {
+			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(tc.args.ctx, tc.args.query, experimentRunID, nil, tc.args.workflow, tc.args.username, projectID, tc.args.r); (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentRunService.ProcessExperimentRunStop() error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})
