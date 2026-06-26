@@ -1527,6 +1527,10 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		return false, err
 	}
 
+	if experimentRunID != nil && *experimentRunID == "" {
+		experimentRunID = nil
+	}
+
 	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
 	var runsToStop []dbChaosExperimentRun.ChaosExperimentRun
 	if experimentRunID == nil {
