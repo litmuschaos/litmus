@@ -4,17 +4,17 @@ import (
 	"context"
 	"testing"
 
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
+	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
+	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-	"github.com/stretchr/testify/mock"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MockServices struct {
@@ -51,7 +51,7 @@ func FuzzProcessExperimentRunStop(f *testing.F) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		targetStruct := &struct {
 			Query           bson.D
-			ExperimentRunID           string
+			ExperimentRunID string
 			NotifyID        *string
 			Experiment      dbChaosExperiment.ChaosExperimentRequest
 			Username        string
@@ -67,7 +67,7 @@ func FuzzProcessExperimentRunStop(f *testing.F) {
 		mockServices.MongodbOperator.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{}, nil)
 		err = mockServices.ChaosExperimentRunService.ProcessExperimentRunStop(
 			context.Background(),
-			bson.D{},
+			targetStruct.Query,
 			targetStruct.ExperimentRunID,
 			targetStruct.NotifyID,
 			targetStruct.Experiment,
@@ -85,9 +85,9 @@ func FuzzProcessCompletedExperimentRun(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		targetStruct := &struct {
-			ExecData chaos_experiment_run.ExecutionData
-			WfID     string
-			ExperimentRunID    string
+			ExecData        chaos_experiment_run.ExecutionData
+			WfID            string
+			ExperimentRunID string
 		}{}
 		err := fuzzConsumer.GenerateStruct(targetStruct)
 		if err != nil {

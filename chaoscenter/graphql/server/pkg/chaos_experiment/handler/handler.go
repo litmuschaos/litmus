@@ -9,36 +9,28 @@ import (
 	"strconv"
 	"time"
 
-	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
-
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/google/uuid"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
-	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/tidwall/sjson"
-
+	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
+	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
-	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
-	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
-
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentHandler is the handler for chaos experiment
@@ -1525,7 +1517,6 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 }
 func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData, username string) (bool, error) {
 
-
 	query := bson.D{
 		{"experiment_id", experimentID},
 		{"project_id", projectID},
@@ -1548,8 +1539,6 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if err != nil {
 			return false, err
 		}
-
-
 
 		for _, runs := range expRuns {
 			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout) || runs.Phase == string(model.ExperimentRunStatusQueued)) && !runs.Completed {

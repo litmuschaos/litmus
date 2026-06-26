@@ -114,6 +114,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 		err = c.chaosExperimentOperator.UpdateChaosExperiment(ctx, experimentFilter, experimentUpdate)
 		if err != nil {
 			logrus.WithError(err).Error("Failed to update experiment collection recent run details")
+			return fmt.Errorf("failed to update experiment collection recent run details: %w", err)
 		}
 	} else if notifyID != nil {
 		experimentFilter := bson.D{
@@ -136,6 +137,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 		err = c.chaosExperimentOperator.UpdateChaosExperiment(ctx, experimentFilter, experimentUpdate)
 		if err != nil {
 			logrus.WithError(err).Error("Failed to update experiment collection recent run details by notify_id")
+			return fmt.Errorf("failed to update experiment collection recent run details by notify_id: %w", err)
 		}
 	}
 

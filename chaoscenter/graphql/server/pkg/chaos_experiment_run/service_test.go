@@ -157,14 +157,17 @@ func Test_chaosExperimentRunService_ProcessExperimentRunDelete(t *testing.T) {
 
 func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 	type args struct {
-		ctx           context.Context
-		query         bson.D
-		experimentRun dbChaosExperimentRun.ChaosExperimentRun
-		workflow      dbChaosExperiment.ChaosExperimentRequest
-		username      string
-		r             *store.StateData
+		ctx             context.Context
+		query           bson.D
+		experimentRunID string
+		notifyID        *string
+		experimentRun   dbChaosExperimentRun.ChaosExperimentRun
+		workflow        dbChaosExperiment.ChaosExperimentRequest
+		username        string
+		r               *store.StateData
 	}
 	experimentRunID := uuid.New().String()
+	notifyIDStr := uuid.New().String()
 	projectID := uuid.New().String()
 	experimentID := uuid.New().String()
 	infraID := uuid.New().String()
@@ -185,6 +188,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 					{Key: "experiment_run_id", Value: experimentRunID},
 					{Key: "is_removed", Value: false},
 				},
+				experimentRunID: experimentRunID,
 				experimentRun: dbChaosExperimentRun.ChaosExperimentRun{
 					ProjectID:       projectID,
 					ExperimentID:    experimentID,
@@ -217,6 +221,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 					{Key: "experiment_run_id", Value: experimentRunID},
 					{Key: "is_removed", Value: false},
 				},
+				experimentRunID: experimentRunID,
 				experimentRun: dbChaosExperimentRun.ChaosExperimentRun{
 					ProjectID:       projectID,
 					ExperimentID:    experimentID,
@@ -236,11 +241,45 @@ func Test_chaosExperimentRunService_ProcessExperimentRunStop(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "success: queued run stopped using notify_id when experimentRunID is empty",
+			args: args{
+				ctx: context.Background(),
+				query: bson.D{
+					{Key: "experiment_id", Value: experimentID},
+					{Key: "project_id", Value: projectID},
+					{Key: "notify_id", Value: notifyIDStr},
+					{Key: "is_removed", Value: false},
+				},
+				experimentRunID: "",
+				notifyID:        &notifyIDStr,
+				experimentRun: dbChaosExperimentRun.ChaosExperimentRun{
+					ProjectID:       projectID,
+					ExperimentID:    experimentID,
+					ExperimentRunID: "",
+					NotifyID:        &notifyIDStr,
+					InfraID:         infraID,
+					Phase:           "Queued",
+				},
+				workflow: dbChaosExperiment.ChaosExperimentRequest{
+					ProjectID:    projectID,
+					InfraID:      infraID,
+					ExperimentID: experimentID,
+				},
+				username: "test",
+				r:        nil,
+			},
+			given: func() {
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+			},
+			wantErr: false,
+		},
 	}
 	for _, tc := range testcases {
 		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(tc.args.ctx, tc.args.query, experimentRunID, nil, tc.args.workflow, tc.args.username, projectID, tc.args.r); (err != nil) != tc.wantErr {
+			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(tc.args.ctx, tc.args.query, tc.args.experimentRunID, tc.args.notifyID, tc.args.workflow, tc.args.username, projectID, tc.args.r); (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentRunService.ProcessExperimentRunStop() error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})
