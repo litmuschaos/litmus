@@ -1515,7 +1515,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 
 	return true, err
 }
-func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData, username string) (bool, error) {
+func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string, r *store.StateData, username string) (bool, error) {
 
 	query := bson.D{
 		{"experiment_id", experimentID},
@@ -1538,6 +1538,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		// Fetching all the experiment runs in the experiment
 		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
 			{"experiment_id", experimentID},
+			{"project_id", projectID},
 			{"is_removed", false},
 		})
 		if err != nil {
@@ -1554,8 +1555,10 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		if len(runsToStop) == 0 && experiment.CronSyntax == "" {
 			return false, fmt.Errorf("no running, timeout, or queued experiments found")
 		}
-	} else if *experimentRunID != "" {
+	} else if experimentRunID != nil && *experimentRunID != "" {
 		runsToStop = append(runsToStop, dbChaosExperimentRun.ChaosExperimentRun{ExperimentRunID: *experimentRunID})
+	} else if notifyID != nil {
+		runsToStop = append(runsToStop, dbChaosExperimentRun.ChaosExperimentRun{NotifyID: notifyID})
 	}
 
 	for _, run := range runsToStop {
