@@ -1562,10 +1562,12 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 			{"is_removed", false},
 		}
 
-		if run.ExperimentRunID == "" && run.NotifyID != nil {
+		if run.ExperimentRunID != "" {
+			runQuery = append(runQuery, bson.E{Key: "experiment_run_id", Value: run.ExperimentRunID})
+		} else if run.NotifyID != nil {
 			runQuery = append(runQuery, bson.E{Key: "notify_id", Value: *run.NotifyID})
 		} else {
-			runQuery = append(runQuery, bson.E{Key: "experiment_run_id", Value: run.ExperimentRunID})
+			return false, fmt.Errorf("missing experiment_run_id and notify_id for experiment run stop")
 		}
 
 		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, run.ExperimentRunID, run.NotifyID, experiment, username, projectID, r)

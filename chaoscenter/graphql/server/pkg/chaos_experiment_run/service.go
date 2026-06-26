@@ -143,7 +143,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 
 	// Best-effort: notify the agent to clean up in-flight resources. If the infra
 	// is not connected the channel send is a no-op and the DB state is still correct.
-	if r != nil {
+	if r != nil && experimentRunID != "" {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
 			InfraID: experiment.InfraID,
 		}, &username, &experimentRunID, "workflow_run_stop", r)
