@@ -108,12 +108,7 @@ export default function ChaosProbeConfigurationController({
       return;
     }
 
-    getProbeYAMLQuery({
-      variables: {
-        projectID: scope.projectID,
-        request: { probeID: probeName, mode: Mode.SoT }
-      }
-    });
+    getProbeYAMLQuery();
   }, [getProbeYAMLQuery, probeName, scope.projectID]);
 
   const probeData =
