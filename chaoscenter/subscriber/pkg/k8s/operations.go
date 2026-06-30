@@ -132,7 +132,10 @@ func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
 	if err != nil {
 		return false, "", err
 	}
+	return isAgentConfirmedWithClientset(clientset)
+}
 
+func isAgentConfirmedWithClientset(clientset kubernetes.Interface) (bool, string, error) {
 	getCM, err := clientset.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), InfraConfigName, metav1.GetOptions{})
 	if err != nil {
 		if k8s_errors.IsNotFound(err) {
