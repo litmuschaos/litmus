@@ -148,9 +148,9 @@
       </tr>
       <tr>
         <td> CONTENT_ENCODING </td>
-        <td> Encoding type to compress/encodde the response body </td>
+        <td> Encoding type to compress/encode the response body </td>
         <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
-      </td>
+      </tr>
       <tr>
         <td> CONTENT_TYPE </td>
         <td> Content type of the response body </td>

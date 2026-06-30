@@ -162,7 +162,7 @@
         <td> CONTENT_ENCODING </td>
         <td> Encoding type to compress/encodde the response body </td>
         <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
-      </td>
+      </tr>
       <tr>
         <td> CONTENT_TYPE </td>
         <td> Content type of the response body </td>
@@ -342,7 +342,7 @@ spec:
 
 ### Modify Response Body
 
-It defines whether to modify the respone body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
+It defines whether to modify the response body with a pre-defined template to match with the status code value of the http response. It can be tuned via `MODIFY_RESPONSE_BODY` ENV.
 
 Use the following example to tune this:
 
