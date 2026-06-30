@@ -1533,7 +1533,7 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 
 	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
 	var runsToStop []dbChaosExperimentRun.ChaosExperimentRun
-	if experimentRunID == nil {
+	if experimentRunID == nil && notifyID == nil {
 
 		// Fetching all the experiment runs in the experiment
 		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
