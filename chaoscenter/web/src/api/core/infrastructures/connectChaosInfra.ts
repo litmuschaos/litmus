@@ -26,6 +26,8 @@ export interface connectChaosInfraRequest {
 export interface connectChaosInfraManifestModeResponse {
   registerInfra: {
     manifest: string;
+    infraID: string;
+    token: string;
   };
 }
 
@@ -40,6 +42,8 @@ export function connectChaosInfraManifestMode(
       mutation registerInfra($projectID: ID!, $request: RegisterInfraRequest!) {
         registerInfra(projectID: $projectID, request: $request) {
           manifest
+          infraID
+          token
         }
       }
     `,
