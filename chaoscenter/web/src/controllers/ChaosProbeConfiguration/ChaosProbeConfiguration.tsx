@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useToaster } from '@harnessio/uicore';
+import { useToaster, VisualYamlSelectedView } from '@harnessio/uicore';
 import {
   getKubernetesCMDProbeProperties,
   getKubernetesHTTPProbeProperties,
@@ -25,6 +25,11 @@ export default function ChaosProbeConfigurationController({
   const { probeName } = useParams<{ probeName: string }>();
   const { showError } = useToaster();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType;
+  // Same pattern ChaosStudio uses for its Visual/YAML toggle (see viewFilter in
+  // ChaosStudio.tsx) - the mode lives in the URL, not component state, so it
+  // survives refresh/back-nav and both the controller and view can read it
+  // independently without prop drilling.
+  const viewMode = (searchParams.get('view') as VisualYamlSelectedView) ?? VisualYamlSelectedView.VISUAL;
 
   const [
     getKubernetesHTTPProbePropertiesQuery,
@@ -80,36 +85,50 @@ export default function ChaosProbeConfigurationController({
     }
   });
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     if (infrastructureType === InfrastructureType.KUBERNETES) {
       switch (type) {
         case ProbeType.HTTP:
-          return getKubernetesHTTPProbePropertiesQuery({
+          getKubernetesHTTPProbePropertiesQuery({
             variables: { projectID: scope.projectID, probeName: probeName }
           });
+          break;
         case ProbeType.PROM:
-          return getPROMProbePropertiesQuery({
+          getPROMProbePropertiesQuery({
             variables: { projectID: scope.projectID, probeName: probeName }
           });
+          break;
         case ProbeType.K8S:
-          return getK8SProbePropertiesQuery({
+          getK8SProbePropertiesQuery({
             variables: { projectID: scope.projectID, probeName: probeName }
           });
+          break;
         case ProbeType.CMD:
-          return getKubernetesCMDProbePropertiesQuery({
+          getKubernetesCMDProbePropertiesQuery({
             variables: { projectID: scope.projectID, probeName: probeName }
           });
+          break;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, probeName, infrastructureType]);
 
+  // Fetch the probe YAML lazily, only once the user switches to the YAML tab.
+  // getProbeYAMLQuery's variables (projectID/probeID/mode) are already bound
+  // when the hook is created above, so it's safe to call with no arguments.
+  // The hook's default fetchPolicy is 'cache-and-network' (see
+  // api/core/probe/getProbeYAML.ts) with nextFetchPolicy 'cache-first', so the
+  // first call always hits the network and any later call (e.g. toggling back
+  // to the YAML tab) is served from Apollo's cache instead of re-fetching.
+  // scope.projectID isn't referenced in the body (it's baked into the query
+  // above), so it's intentionally left out of the dependency array.
   React.useEffect(() => {
-    if (!probeName) {
+    if (!probeName || viewMode !== VisualYamlSelectedView.YAML) {
       return;
     }
 
     getProbeYAMLQuery();
-  }, [getProbeYAMLQuery, probeName, scope.projectID]);
+  }, [getProbeYAMLQuery, probeName, viewMode]);
 
   const probeData =
     infrastructureType === InfrastructureType.KUBERNETES

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, ButtonVariation, Container, Layout, Text } from '@harnessio/uicore';
+import { Container, Layout, Text, VisualYamlSelectedView, VisualYamlToggle } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { withErrorBoundary } from 'react-error-boundary';
 import Loader from '@components/Loader';
 import { InfrastructureType, Probe, ProbeType } from '@api/entities';
 import { useStrings } from '@strings';
 import { Fallback } from '@errors';
-import { useSearchParams } from '@hooks';
+import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import YAMLBuilder from '@components/YAMLBuilder';
 import ProbeProperties from './ProbeProperties/ProbeProperties';
 import { probeTypeRenderer } from './ChaosProbeType';
@@ -23,8 +23,6 @@ interface ChaosProbeConfigurationViewProps {
   probeYAMLLoading?: boolean;
 }
 
-type ViewMode = 'visual' | 'yaml';
-
 function ChaosProbeConfigurationView({
   loading,
   probeData,
@@ -33,8 +31,13 @@ function ChaosProbeConfigurationView({
 }: ChaosProbeConfigurationViewProps): React.ReactElement {
   const { getString } = useStrings();
   const searchParams = useSearchParams();
+  const updateSearchParams = useUpdateSearchParams();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType;
-  const [viewMode, setViewMode] = React.useState<ViewMode>('visual');
+  // Same URL-backed pattern as ChaosStudio's viewFilter/setViewFilter - keeps
+  // the controller (which needs viewMode to decide when to fetch YAML) and
+  // this view in sync without prop drilling.
+  const viewMode = (searchParams.get('view') as VisualYamlSelectedView) ?? VisualYamlSelectedView.VISUAL;
+  const setViewMode = (view: VisualYamlSelectedView): void => updateSearchParams({ view });
 
   function getProbeProperties(type: ProbeType): React.ReactElement | undefined {
     if (infrastructureType === InfrastructureType.KUBERNETES) {
@@ -75,23 +78,12 @@ function ChaosProbeConfigurationView({
       }}
     >
       {/* View mode toggle */}
-      <Layout.Horizontal spacing="small" padding={{ left: 'large', top: 'medium', bottom: 'xsmall' }}>
-        <Button
-          variation={viewMode === 'visual' ? ButtonVariation.SECONDARY : ButtonVariation.TERTIARY}
-          text={getString('probeVisualView')}
-          onClick={() => setViewMode('visual')}
-          className={viewMode === 'visual' ? css.activeTab : css.tab}
-        />
-        <Button
-          variation={viewMode === 'yaml' ? ButtonVariation.SECONDARY : ButtonVariation.TERTIARY}
-          text={getString('probeYAMLView')}
-          onClick={() => setViewMode('yaml')}
-          className={viewMode === 'yaml' ? css.activeTab : css.tab}
-        />
+      <Layout.Horizontal padding={{ left: 'large', top: 'medium', bottom: 'xsmall' }}>
+        <VisualYamlToggle selectedView={viewMode} onChange={setViewMode} />
       </Layout.Horizontal>
 
       {/* YAML view */}
-      {viewMode === 'yaml' && (
+      {viewMode === VisualYamlSelectedView.YAML && (
         <Loader loading={probeYAMLLoading ?? false} height="fit-content">
           <Container padding={{ left: 'large', right: 'large', bottom: 'large' }}>
             <YAMLBuilder
@@ -107,7 +99,7 @@ function ChaosProbeConfigurationView({
       )}
 
       {/* Visual view */}
-      {viewMode === 'visual' && (
+      {viewMode === VisualYamlSelectedView.VISUAL && (
         <Layout.Horizontal spacing={'medium'} padding={'large'}>
           <Layout.Vertical width={'80%'}>
             <Container
