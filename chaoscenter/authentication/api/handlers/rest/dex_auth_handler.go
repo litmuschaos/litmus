@@ -18,20 +18,20 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
+func oAuthConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 	ctx := oidc.ClientContext(context.Background(), &http.Client{})
-	provider, err := oidc.NewProvider(ctx, utils.DexOIDCIssuer)
+	provider, err := oidc.NewProvider(ctx, utils.OAuthOIDCIssuer)
 	if err != nil {
 		log.Errorf("OAuth Error: Something went wrong with OIDC provider %s", err)
 		return nil, nil, err
 	}
 	return &oauth2.Config{
-		RedirectURL:  utils.DexCallBackURL,
-		ClientID:     utils.DexClientID,
-		ClientSecret: utils.DexClientSecret,
+		RedirectURL:  utils.OAuthCallBackURL,
+		ClientID:     utils.OAuthClientID,
+		ClientSecret: utils.OAuthClientSecret,
 		Scopes:       []string{"openid", "profile", "email"},
 		Endpoint:     provider.Endpoint(),
-	}, provider.Verifier(&oidc.Config{ClientID: utils.DexClientID}), nil
+	}, provider.Verifier(&oidc.Config{ClientID: utils.OAuthClientID}), nil
 }
 
 // DexLogin		godoc
@@ -42,10 +42,10 @@ func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
-//	@Router			/dex/login [get]
+//	@Router			/oauth/login [get]
 //
-// DexLogin handles and redirects to DexServer to proceed with OAuth
-func DexLogin() gin.HandlerFunc {
+// OAuthLogin handles to proceed with OAuth
+func OAuthLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		dexToken, err := utils.GenerateOAuthJWT()
@@ -54,7 +54,7 @@ func DexLogin() gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		config, _, err := oAuthDexConfig()
+		config, _, err := oAuthConfig()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -73,17 +73,17 @@ func DexLogin() gin.HandlerFunc {
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
-//	@Router			/dex/callback [get]
+//	@Router			/oauth/callback [get]
 //
-// DexCallback is the handler that creates/logs in the user from Dex and provides JWT to frontend via a redirect
-func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
+// OAuthCallback handles the callback from OAuth provider and creates a new user if not present in the database
+func OAuthCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
 		validated, err := utils.ValidateOAuthJWT(incomingState)
 		if !validated {
 			c.Redirect(http.StatusTemporaryRedirect, "/")
 		}
-		config, verifier, err := oAuthDexConfig()
+		config, verifier, err := oAuthConfig()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

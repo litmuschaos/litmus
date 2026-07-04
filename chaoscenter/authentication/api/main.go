@@ -188,9 +188,9 @@ func runRestServer(applicationService services.ApplicationService) {
 	app := gin.Default()
 	app.Use(middleware.ValidateCors(config.AllowedOrigins))
 	// Enable dex routes only if passed via environment variables
-	if utils.DexEnabled {
-		routes.DexRouter(app, applicationService)
-	}
+	if utils.OAuthEnabled {
+    routes.OAuthRouter(app, applicationService)
+  }
 	routes.CapabilitiesRouter(app)
 	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)

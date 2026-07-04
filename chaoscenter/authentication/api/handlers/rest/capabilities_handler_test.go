@@ -33,10 +33,9 @@ func TestCapabilities(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			ctx := GetTestGinContext(w)
-			utils.DexEnabled = test.DexEnabled
-
+			utils.OAuthEnabled = test.DexEnabled
 			rest.GetCapabilities()(ctx)
-			capa := response.CapabilitiesResponse{}
+            capa := response.CapabilitiesResponse{}
 			err := json.Unmarshal(w.Body.Bytes(), &capa)
 
 			assert.Nil(t, err)
