@@ -1250,25 +1250,17 @@ func (c *ChaosExperimentHandler) GetLogs(reqID string, pod model.PodLogRequest, 
 			ExternalData: &externalData,
 		},
 	}
-	r.Mutex.Lock()
-	clusterChan, connected := r.ConnectedInfra[pod.InfraID]
-	r.Mutex.Unlock()
-	if connected {
+	if clusterChan, ok := r.ConnectedInfra[pod.InfraID]; ok {
 		clusterChan <- &payload
-	} else {
-		r.Mutex.Lock()
-		reqChan, ok := r.ExperimentLog[reqID]
-		r.Mutex.Unlock()
-		if ok {
-			resp := model.PodLogResponse{
-				PodName:         pod.PodName,
-				ExperimentRunID: pod.ExperimentRunID,
-				PodType:         pod.PodType,
-				Log:             "INFRA ERROR : INFRA NOT CONNECTED",
-			}
-			reqChan <- &resp
-			close(reqChan)
+	} else if reqChan, ok := r.ExperimentLog[reqID]; ok {
+		resp := model.PodLogResponse{
+			PodName:         pod.PodName,
+			ExperimentRunID: pod.ExperimentRunID,
+			PodType:         pod.PodType,
+			Log:             "INFRA ERROR : INFRA NOT CONNECTED",
 		}
+		reqChan <- &resp
+		close(reqChan)
 	}
 }
 
@@ -1286,23 +1278,15 @@ func (c *ChaosExperimentHandler) GetKubeObjData(reqID string, kubeObject model.K
 			ExternalData: &externalData,
 		},
 	}
-	r.Mutex.Lock()
-	clusterChan, connected := r.ConnectedInfra[kubeObject.InfraID]
-	r.Mutex.Unlock()
-	if connected {
+	if clusterChan, ok := r.ConnectedInfra[kubeObject.InfraID]; ok {
 		clusterChan <- &payload
-	} else {
-		r.Mutex.Lock()
-		reqChan, ok := r.KubeObjectData[reqID]
-		r.Mutex.Unlock()
-		if ok {
-			resp := model.KubeObjectResponse{
-				InfraID: kubeObject.InfraID,
-				KubeObj: &model.KubeObject{},
-			}
-			reqChan <- &resp
-			close(reqChan)
+	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
+		resp := model.KubeObjectResponse{
+			InfraID: kubeObject.InfraID,
+			KubeObj: &model.KubeObject{},
 		}
+		reqChan <- &resp
+		close(reqChan)
 	}
 }
 
@@ -1320,23 +1304,15 @@ func (c *ChaosExperimentHandler) GetKubeNamespaceData(reqID string, kubeNamespac
 			ExternalData: &externalData,
 		},
 	}
-	r.Mutex.Lock()
-	clusterChan, connected := r.ConnectedInfra[kubeNamespace.InfraID]
-	r.Mutex.Unlock()
-	if connected {
+	if clusterChan, ok := r.ConnectedInfra[kubeNamespace.InfraID]; ok {
 		clusterChan <- &payload
-	} else {
-		r.Mutex.Lock()
-		reqChan, ok := r.KubeNamespaceData[reqID]
-		r.Mutex.Unlock()
-		if ok {
-			resp := model.KubeNamespaceResponse{
-				InfraID:       kubeNamespace.InfraID,
-				KubeNamespace: []*model.KubeNamespace{},
-			}
-			reqChan <- &resp
-			close(reqChan)
+	} else if reqChan, ok := r.KubeNamespaceData[reqID]; ok {
+		resp := model.KubeNamespaceResponse{
+			InfraID:       kubeNamespace.InfraID,
+			KubeNamespace: []*model.KubeNamespace{},
 		}
+		reqChan <- &resp
+		close(reqChan)
 	}
 }
 
