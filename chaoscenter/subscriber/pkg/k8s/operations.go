@@ -98,7 +98,12 @@ func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, 
 
 func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
 	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-	if err != nil || len(podList.Items) == 0 {
+	if err != nil {
+		logrus.WithError(err).WithField("selector", labelSelector).Warn("failed to list pods for selector")
+		return false
+	}
+	if len(podList.Items) == 0 {
+		logrus.WithField("selector", labelSelector).Warn("no pods found for selector")
 		return false
 	}
 

@@ -184,7 +184,6 @@ func readyPod(name, namespace string, labels map[string]string) *corev1.Pod {
 }
 
 func notRunningPod(name, namespace string, labels map[string]string) *corev1.Pod {
-
 	return &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -201,6 +200,7 @@ func notRunningPod(name, namespace string, labels map[string]string) *corev1.Pod
 		},
 	}
 }
+
 func TestDeploymentHealthy(t *testing.T) {
 	t.Parallel()
 
