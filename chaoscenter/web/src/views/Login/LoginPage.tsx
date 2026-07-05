@@ -76,7 +76,7 @@ export const LoginPageView = ({ handleLogin, loading, capabilities }: LoginPageV
         <Button
           type="submit"
           intent="primary"
-          href="/auth/dex/login"
+          href="/auth/oauth/login"
           loading={loading}
           width="100%"
           margin={{ top: 'xxxlarge' }}

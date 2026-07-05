@@ -34,10 +34,10 @@ func oAuthConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 	}, provider.Verifier(&oidc.Config{ClientID: utils.OAuthClientID}), nil
 }
 
-// DexLogin		godoc
+// OAuthLogin		godoc
 //
-//	@Description	DexRouter creates all the required routes for OAuth purposes. .
-//	@Tags			DexRouter
+//	@Description	OAuthRouter creates all the required routes for OAuth purposes. .
+//	@Tags			OAuthRouter
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
@@ -48,7 +48,7 @@ func oAuthConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 func OAuthLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		dexToken, err := utils.GenerateOAuthJWT()
+		stateToken, err := utils.GenerateOAuthJWT()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -60,15 +60,15 @@ func OAuthLogin() gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		url := config.AuthCodeURL(dexToken)
+		url := config.AuthCodeURL(stateToken)
 		c.Redirect(http.StatusTemporaryRedirect, url)
 	}
 }
 
-// DexCallback		godoc
+// OAuthCallback		godoc
 //
-//	@Description	DexRouter creates all the required routes for OAuth purposes. .
-//	@Tags			DexRouter
+//	@Description	OAuthRouter creates all the required routes for OAuth purposes. .
+//	@Tags			OAuthRouter
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError

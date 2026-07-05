@@ -15,7 +15,7 @@ data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
   VERSION: "ci"
   SKIP_SSL_VERIFY: "false"
-    # Configurations if you are using dex for OAuth
+    # Configurations for OAuth via an OIDC provider (e.g., Dex, Keycloak, Okta)
   OIDC_ISSUER: "http://<Your Domain>:32000"
   OAUTH_ENABLED: "false"
   OAUTH_CALLBACK_URL: "http://<...>/auth/oauth/callback"

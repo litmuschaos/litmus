@@ -15,16 +15,16 @@ import (
 func TestCapabilities(t *testing.T) {
 
 	testcases := []struct {
-		Name       string
-		DexEnabled bool
+		Name         string
+		OAuthEnabled bool
 	}{
 		{
-			Name:       "Dex Enabled",
-			DexEnabled: true,
+			Name:         "OAuth Enabled",
+			OAuthEnabled: true,
 		},
 		{
-			Name:       "Dex Disabled",
-			DexEnabled: false,
+			Name:         "OAuth Disabled",
+			OAuthEnabled: false,
 		},
 	}
 
@@ -33,13 +33,12 @@ func TestCapabilities(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			ctx := GetTestGinContext(w)
-			utils.OAuthEnabled = test.DexEnabled
+			utils.OAuthEnabled = test.OAuthEnabled
 			rest.GetCapabilities()(ctx)
-            capa := response.CapabilitiesResponse{}
+			capa := response.CapabilitiesResponse{}
 			err := json.Unmarshal(w.Body.Bytes(), &capa)
-
 			assert.Nil(t, err)
-			assert.Equal(t, test.DexEnabled, capa.Dex.Enabled)
+			assert.Equal(t, test.OAuthEnabled, capa.Dex.Enabled)
 			assert.Equal(t, http.StatusOK, w.Code)
 		})
 	}
