@@ -36,7 +36,7 @@ func oAuthConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 
 // OAuthLogin		godoc
 //
-//	@Description	OAuthRouter creates all the required routes for OAuth purposes. .
+//	@Description	Initiates OAuth login by redirecting to the configured OIDC provider.
 //	@Tags			OAuthRouter
 //	@Accept			json
 //	@Produce		json
@@ -67,7 +67,7 @@ func OAuthLogin() gin.HandlerFunc {
 
 // OAuthCallback		godoc
 //
-//	@Description	OAuthRouter creates all the required routes for OAuth purposes. .
+//	@Description	Handles the OAuth callback from the configured OIDC provider.
 //	@Tags			OAuthRouter
 //	@Accept			json
 //	@Produce		json
@@ -80,8 +80,9 @@ func OAuthCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
 		validated, err := utils.ValidateOAuthJWT(incomingState)
-		if !validated {
+		if err != nil || !validated {
 			c.Redirect(http.StatusTemporaryRedirect, "/")
+			return
 		}
 		config, verifier, err := oAuthConfig()
 		if err != nil {

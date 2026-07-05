@@ -187,7 +187,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()
 	app.Use(middleware.ValidateCors(config.AllowedOrigins))
-	// Enable dex routes only if passed via environment variables
+	// Enable OAuth routes only if passed via environment variables
 	if utils.OAuthEnabled {
 		routes.OAuthRouter(app, applicationService)
 	}
