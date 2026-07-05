@@ -41,7 +41,7 @@ func oAuthConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		307	{string}	string	"Temporary Redirect"
 //	@Router			/oauth/login [get]
 //
 // OAuthLogin handles to proceed with OAuth
@@ -72,7 +72,7 @@ func OAuthLogin() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		308	{string}	string	"Permanent Redirect"
 //	@Router			/oauth/callback [get]
 //
 // OAuthCallback handles the callback from OAuth provider and creates a new user if not present in the database

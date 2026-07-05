@@ -21,7 +21,7 @@ data:
   OAUTH_CALLBACK_URL: "http://<...>/auth/oauth/callback"
   OAUTH_CLIENT_ID: "LitmusPortalAuthBackend"
   OAUTH_CLIENT_SECRET: "ZXhhbXBsZS1hcHAtc2VjcmV0"
-  OAuthJwtSecret: "litmus-oauth@123"
+  OAUTH_SECRET: "litmus-oauth@123"
 ---
 apiVersion: v1
 kind: ConfigMap
