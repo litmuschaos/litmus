@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,7 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
@@ -24,7 +24,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
@@ -32,18 +32,11 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
-		reqHeader, ok := c.Value("request-header").(http.Header)
-		if !ok {
-			logrus.Error("unable to parse referer header")
-			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte("unable to parse referer header"))
-			return
-		}
-		referrer := reqHeader.Get("Referer")
+		referrer := c.GetHeader("Referer")
 		if referrer == "" {
 			logrus.Error("unable to parse referer header")
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
@@ -55,7 +48,21 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
+			return
+		}
+
+		if referrerURL.Scheme != "http" && referrerURL.Scheme != "https" {
+			logrus.Error("invalid referer scheme")
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
+			c.Writer.Write([]byte("invalid referer scheme"))
+			return
+		}
+
+		if referrerURL.Host == "" {
+			logrus.Error("invalid referer host")
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
+			c.Writer.Write([]byte("invalid referer host"))
 			return
 		}
 
@@ -63,7 +70,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte(html.EscapeString(err.Error())))
 			return
 		}
 
