@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"html"
 	"net/http"
 	"net/url"
 	"strings"
@@ -24,7 +23,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(html.EscapeString(err.Error())))
+			c.Writer.Write([]byte("invalid infrastructure token"))
 			return
 		}
 
@@ -32,7 +31,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(html.EscapeString(err.Error())))
+			c.Writer.Write([]byte("unable to get infrastructure"))
 			return
 		}
 
@@ -48,7 +47,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(html.EscapeString(err.Error())))
+			c.Writer.Write([]byte("invalid referer header"))
 			return
 		}
 
@@ -70,7 +69,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(html.EscapeString(err.Error())))
+			c.Writer.Write([]byte("unable to generate infrastructure manifest"))
 			return
 		}
 
