@@ -173,7 +173,9 @@ func (r *queryResolver) GetInfraDetails(ctx context.Context, infraID string, pro
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetInfraDetails],
 		model.InvitationAccepted.String())
-
+	if err != nil {
+		return nil, err
+	}
 	gcaResponse, err := r.chaosInfrastructureService.GetInfraDetails(ctx, infraID, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
