@@ -1228,7 +1228,9 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
-usernameValidText: Username can only contain letters, digits, underscores, and hyphens
+usernameValidText: >-
+  Username must start with a letter or digit and can only contain letters,
+  digits, and the characters . _ - @ +
 usersNotAvailableMessage: No users available to send invitation
 usersNotAvailableTitle: No users available
 validationError: Validation Error
