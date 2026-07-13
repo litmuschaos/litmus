@@ -901,8 +901,7 @@ probeValidation:
   url: URL is a required field
   value: Comparator value is a required field
   version: Probe version is a required field
-probeVisualView: Visual
-probeYAMLView: YAML
+
 probes: Probes
 probesArePassed: probes are passed
 problems: Problems
