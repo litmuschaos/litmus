@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TestWrapper } from 'utils/testUtils';
 import ChaosFaults from '../ChaosFaults';
@@ -24,14 +24,14 @@ describe('ChaosFaults Component', () => {
           displayName: 'Kubernetes',
           faults: [
             {
-              name: 'pod-delete',
+              description: 'Deletes Kubernetes pods',
               displayName: 'Pod Delete',
-              description: 'Deletes Kubernetes pods'
+              name: 'pod-delete'
             },
             {
-              name: 'container-kill',
+              description: 'Kills a container within a pod',
               displayName: 'Container Kill',
-              description: 'Kills a container within a pod'
+              name: 'container-kill'
             }
           ]
         }
@@ -44,29 +44,29 @@ describe('ChaosFaults Component', () => {
           displayName: 'AWS',
           faults: [
             {
-              name: 'ec2-stop',
+              description: 'Stops EC2 instances',
               displayName: 'EC2 Stop',
-              description: 'Stops EC2 instances'
+              name: 'ec2-stop'
             }
           ]
         }
       }
     ]
-  } as any;
+  } as React.ComponentProps<typeof ChaosFaults>['hubDetails'];
 
-  const mockProps = {
-    hubDetails: mockHubDetails,
+  const mockProps: React.ComponentProps<typeof ChaosFaults> = {
     faultCategories: new Map([
       ['Kubernetes', 2],
       ['AWS', 1]
     ]),
-    searchValue: '',
+    hubDetails: mockHubDetails,
     loading: {
       listChart: false
-    }
+    },
+    searchValue: ''
   };
 
-  const renderComponent = () =>
+  const renderComponent = (): RenderResult =>
     render(
       <TestWrapper>
         <ChaosFaults {...mockProps} />
@@ -89,9 +89,15 @@ describe('ChaosFaults Component', () => {
   test('should preserve chart mapping across multiple charts', () => {
     renderComponent();
 
-    const podDeleteLink = screen.getByRole('link', { name: /pod delete/i });
-    const containerKillLink = screen.getByRole('link', { name: /container kill/i });
-    const ec2StopLink = screen.getByRole('link', { name: /ec2 stop/i });
+    const podDeleteLink = screen.getByRole('link', {
+      name: /pod delete/i
+    });
+    const containerKillLink = screen.getByRole('link', {
+      name: /container kill/i
+    });
+    const ec2StopLink = screen.getByRole('link', {
+      name: /ec2 stop/i
+    });
 
     expect(podDeleteLink).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
     expect(containerKillLink).toHaveAttribute('href', expect.stringContaining('chartName=kubernetes'));
