@@ -8,6 +8,7 @@ export interface CreateChaosHubRequest {
   description?: string;
   repoURL: string;
   repoBranch: string;
+  remoteHub: string;
   isPrivate: boolean;
   authType: AuthType;
   token?: string;
@@ -36,6 +37,7 @@ export function addChaosHub(
           name
           repoURL
           repoBranch
+          remoteHub
           hubType
           isPrivate
         }

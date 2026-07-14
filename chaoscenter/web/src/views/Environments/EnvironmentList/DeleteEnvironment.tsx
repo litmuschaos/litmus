@@ -47,7 +47,7 @@ export default function DeleteEnvironmentView({
                 handleClose();
               })
             }
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
         </ParentComponentErrorWrapper>
         <Button text={getString('cancel')} variation={ButtonVariation.SECONDARY} onClick={handleClose} />

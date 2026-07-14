@@ -39,12 +39,26 @@ export type {
 } from './hooks/useDeclineInvitationMutation';
 export { declineInvitation, useDeclineInvitationMutation } from './hooks/useDeclineInvitationMutation';
 export type {
+  DeleteProjectErrorResponse,
+  DeleteProjectMutationPathParams,
+  DeleteProjectMutationProps,
+  DeleteProjectOkResponse,
+  DeleteProjectProps
+} from './hooks/useDeleteProjectMutation';
+export { deleteProject, useDeleteProjectMutation } from './hooks/useDeleteProjectMutation';
+export type {
   GetApiTokensErrorResponse,
   GetApiTokensOkResponse,
   GetApiTokensProps,
   GetApiTokensQueryPathParams
 } from './hooks/useGetApiTokensQuery';
 export { getApiTokens, useGetApiTokensQuery } from './hooks/useGetApiTokensQuery';
+export type {
+  GetCapabilitiesErrorResponse,
+  GetCapabilitiesOkResponse,
+  GetCapabilitiesProps
+} from './hooks/useGetCapabilitiesQuery';
+export { getCapabilities, useGetCapabilitiesQuery } from './hooks/useGetCapabilitiesQuery';
 export type {
   GetOwnerProjectsErrorResponse,
   GetOwnerProjectsOkResponse,
@@ -117,7 +131,8 @@ export { listInvitations, useListInvitationsQuery } from './hooks/useListInvitat
 export type {
   ListProjectsErrorResponse,
   ListProjectsOkResponse,
-  ListProjectsProps
+  ListProjectsProps,
+  ListProjectsQueryQueryParams
 } from './hooks/useListProjectsQuery';
 export { listProjects, useListProjectsQuery } from './hooks/useListProjectsQuery';
 export type {
@@ -206,6 +221,7 @@ export { useUsersQuery, users } from './hooks/useUsersQuery';
 export type { DeclineInvitationBodyRequestBody } from './requestBodies/DeclineInvitationBodyRequestBody';
 export type { ActionBy } from './schemas/ActionBy';
 export type { ApiToken } from './schemas/ApiToken';
+export type { CapabilitiesResponse } from './schemas/CapabilitiesResponse';
 export type { CreateApiTokenResponse } from './schemas/CreateApiTokenResponse';
 export type { ErrorModel } from './schemas/ErrorModel';
 export type { GetApiTokensResponse } from './schemas/GetApiTokensResponse';
@@ -216,5 +232,9 @@ export type { LogoutResponse } from './schemas/LogoutResponse';
 export type { Project } from './schemas/Project';
 export type { ProjectMember } from './schemas/ProjectMember';
 export type { RemoveApiTokenResponse } from './schemas/RemoveApiTokenResponse';
+export type { ResponseErrBadRequest } from './schemas/ResponseErrBadRequest';
+export type { ResponseErrInvalidCredentials } from './schemas/ResponseErrInvalidCredentials';
+export type { ResponseErrOldPassword } from './schemas/ResponseErrOldPassword';
+export type { ResponseMessageResponse } from './schemas/ResponseMessageResponse';
 export type { User } from './schemas/User';
 export type { Users } from './schemas/Users';

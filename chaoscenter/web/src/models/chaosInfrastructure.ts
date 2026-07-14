@@ -31,6 +31,7 @@ export function getChaosInfrastructureStatus(
 export interface ChaosInfrastructureReferenceFieldProps {
   setFieldValue: FormikHelpers<ExperimentMetadata>['setFieldValue'];
   initialInfrastructureID: string | undefined;
+  initialEnvironmentID: string | undefined;
 }
 
 export enum DeploymentScopeOptions {
@@ -62,6 +63,10 @@ export interface InitialValueProps {
   nodeSelectorValues?: Array<NodeSelector>;
   tolerations: boolean;
   tolerationValues?: Array<Toleration>;
+}
+
+export enum AllEnv {
+  AllEnv = 'All'
 }
 
 export interface DeploymentScopeItem extends CollapsableSelectOptions {
@@ -118,7 +123,7 @@ export const initialValues: InitialValueProps = {
 };
 
 export const kubernetesChaosInfrastructureCRDsEndpoint =
-  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta10/litmus-portal-crds-3.0.0-beta10.yml';
+  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.21.0/litmus-portal-crds.yml';
 
 type InfrastructurePlatformNameType = 'Kubernetes';
 

@@ -28,7 +28,7 @@ function AddHubModal({ listChaosHubRefetch, disabled }: AddHubModalProviderProps
         icon="plus"
         onClick={() => open()}
         disabled={disabled}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.OWNER}
       />
       {isOpen && (
         <Dialog isOpen={isOpen} enforceFocus={false} onClose={() => close()} className={css.modalWithHelpPanel}>

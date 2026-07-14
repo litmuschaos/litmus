@@ -3,6 +3,9 @@ package grpc
 import (
 	"context"
 	"errors"
+	"strconv"
+
+	"google.golang.org/grpc/credentials"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
@@ -13,10 +16,34 @@ import (
 
 // GetAuthGRPCSvcClient returns an RPC client for Authentication service
 func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *grpc.ClientConn) {
-	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithInsecure())
+
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
 	if err != nil {
-		logrus.Fatalf("did not connect: %s", err)
+		logrus.Errorf("unable to parse boolean value %v", err)
 	}
+
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath != "" && utils.Config.TlsKeyPath != "" {
+			// configuring TLS config based on provided certificates & keys
+			conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, false)
+
+			tlsCredential := credentials.NewTLS(conf)
+
+			// Set up a connection to the server.
+			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+":"+utils.Config.LitmusAuthGrpcPort, grpc.WithTransportCredentials(tlsCredential))
+			if err != nil {
+				logrus.Fatalf("did not connect: %v", err)
+			}
+		} else {
+			logrus.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+	} else {
+		conn, err = grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+":"+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithInsecure())
+		if err != nil {
+			logrus.Fatalf("did not connect: %s", err)
+		}
+	}
+
 	return protos.NewAuthRpcServiceClient(conn), conn
 }
 

@@ -17,7 +17,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>container-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml">here</a> 
+    -  Ensure that the <code>container-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/container-kill/fault.yaml">here</a> 
 
 ## Default Validations
 
@@ -31,7 +31,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/container-kill/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -187,6 +186,16 @@
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
         <td>  Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+      </tr>
+      <tr>
+        <td> POD_TERMINATION_ORDER </td>
+        <td> It defines the order in which target pods are selected for container-kill injection </td>
+        <td> Default value: random. Supported: random, alphabetical, reverse </td>
+      </tr>
+      <tr>
+        <td> INTER_POD_KILL_INTERVAL_SECONDS </td>
+        <td> Wait time (in seconds) between consecutive container-kill injections across target pods in serial mode </td>
+        <td> Defaults to 0 (no additional delay). Only effective when SEQUENCE=serial. Additive to CHAOS_INTERVAL. </td>
       </tr>
     </table>
 
@@ -357,6 +366,59 @@ spec:
         # supoorts pumba and litmus
         - name: LIB
           value: 'pumba'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
+### Deterministic Container-Kill Injection
+
+It defines the order in which target pods are selected for container-kill injection when `SEQUENCE` is set to `serial`. It can be tuned via `POD_TERMINATION_ORDER` ENV.
+
+- `random`: Target pods are selected for injection in a random order (default).
+- `alphabetical`: Target pods are selected for injection in ascending alphabetical order of their names.
+- `reverse`: Target pods are selected for injection in descending alphabetical order of their names.
+
+To guarantee a **fixed, named injection sequence** (e.g. always target `session-pod` last), set `TARGET_PODS` to the desired ordered comma-separated list — insertion order is preserved:
+> **Note:** When `TARGET_PODS` is explicitly provided, its comma-separated order takes strict precedence and `POD_TERMINATION_ORDER` is ignored.
+
+```yaml
+- name: TARGET_PODS
+  value: 'worker-pod-1,worker-pod-2,session-pod'
+- name: SEQUENCE
+  value: 'serial'
+```
+
+To add a fixed delay between each injection, combine with `INTER_POD_KILL_INTERVAL_SECONDS`:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/deterministic-container-kill-injection.yaml yaml)
+```yaml
+# defines the deterministic container-kill injection order with inter-pod interval
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: container-kill-sa
+  experiments:
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # order of container-kill injection
+        # supports: random, alphabetical, reverse
+        - name: POD_TERMINATION_ORDER
+          value: 'alphabetical'
+        - name: SEQUENCE
+          value: 'serial'
+        # optional: seconds to wait between consecutive container-kill injections (serial mode only)
+        - name: INTER_POD_KILL_INTERVAL_SECONDS
+          value: '5'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```

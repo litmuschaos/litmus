@@ -31,6 +31,10 @@ type ChaosHub implements ResourceDetails & Audit {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   ID of the project in which the chaos hub is present
   """
   projectID: ID!
@@ -206,6 +210,10 @@ type ChaosHubStatus implements ResourceDetails & Audit {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is available or not.
   """
   isAvailable: Boolean!
@@ -320,6 +328,10 @@ input CreateChaosHubRequest {
   """
   repoBranch: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -382,6 +394,10 @@ input CloningInput {
   """
   repoURL: String!
   """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
+  """
   Bool value indicating whether the hub is private or not.
   """
   isPrivate: Boolean!
@@ -426,6 +442,10 @@ input CreateRemoteChaosHub {
   URL of the git repository
   """
   repoURL: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
 }
 
 
@@ -454,6 +474,10 @@ input UpdateChaosHubRequest {
   Branch of the git repository
   """
   repoBranch: String!
+  """
+  Connected Hub of remote repository
+  """
+  remoteHub: String!
   """
   Bool value indicating whether the hub is private or not.
   """

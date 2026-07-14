@@ -61,6 +61,7 @@ export default function ExperimentVisualBuilderView({
   const [prevNodeIdentifier, setPrevNodeIdentifier] = React.useState<string>('');
   const [isEditMode, setIsEditMode] = React.useState<boolean>(true);
   const [infraDetails, setInfraDetails] = React.useState<InfraDetails | undefined>();
+  const [refreshTrigger, setRefreshTrigger] = React.useState<number>(0);
 
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
   const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
@@ -95,6 +96,10 @@ export default function ExperimentVisualBuilderView({
     if (yamlUploaded) setViewFilter(VisualYamlSelectedView.YAML);
   };
 
+  const triggerRefresh = (): void => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   const handleRemoveFault = (faultName: string): void => {
     experimentHandler?.removeFaultsFromManifest(experimentKey, faultName).then(experiment => {
       const steps = experimentHandler.getFaultsFromExperimentManifest(experiment?.manifest, isEditMode);
@@ -120,8 +125,12 @@ export default function ExperimentVisualBuilderView({
       }
       const steps = experimentHandler.getFaultsFromExperimentManifest(experiment?.manifest, isEditMode);
       setExperimentSteps(steps);
+
+      if (refreshTrigger > 0) {
+        setUnsavedChanges();
+      }
     });
-  }, [isEditMode, experimentKey, experimentHandler]);
+  }, [isEditMode, experimentKey, experimentHandler, refreshTrigger]);
 
   // Initiate DiagramFactory
   const diagram = new DiagramFactory('graph');
@@ -212,6 +221,7 @@ export default function ExperimentVisualBuilderView({
           environmentID={infraDetails?.environmentID}
           faultTuneOperation={tuneFaultDrawerOpen.operation}
           initialServiceIdentifiers={serviceIdentifiers}
+          onStepNameUpdate={triggerRefresh}
         />
       )}
       <ChaosDiagram

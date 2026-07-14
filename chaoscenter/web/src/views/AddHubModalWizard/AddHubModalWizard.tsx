@@ -51,6 +51,7 @@ interface AddHubFormData {
   sshPublicKey?: string;
   sshPrivateKey?: string;
   token?: string;
+  remoteHub: string;
 }
 interface StepData {
   value?: AddHubFormData;
@@ -78,7 +79,8 @@ export const initialValues: AddHubFormData = {
   repoBranch: '',
   repoURL: '',
   isPrivate: false,
-  authType: AuthType.NONE
+  authType: AuthType.NONE,
+  remoteHub: ''
 };
 
 const OverviewStep: React.FC<StepProps<StepData>> = props => {
@@ -94,7 +96,7 @@ const OverviewStep: React.FC<StepProps<StepData>> = props => {
           props.nextStep?.();
         }}
         validationSchema={Yup.object().shape({
-          name: Yup.string().trim().required('Hub Name is a required field')
+          name: Yup.string().trim().required(getString('hubNameRequired'))
         })}
       >
         {formikProps => {
@@ -133,12 +135,12 @@ const OverviewStep: React.FC<StepProps<StepData>> = props => {
 };
 
 const GitConnectionStep: React.FC<
-  StepProps<StepData> & Pick<AddHubModalWizardViewProps, 'addChaosHubMutation'>
+  StepProps<StepData> & Pick<AddHubModalWizardViewProps, 'addChaosHubMutation' | 'loading'>
 > = props => {
   const scope = getScope();
   const currentStep = props.currentStep?.();
   const { getString } = useStrings();
-  const { /*error, loading,*/ addChaosHubMutation, formData, setFormData } = props;
+  const { /*error,*/ loading, addChaosHubMutation, formData, setFormData } = props;
   const [accessType, setAccessType] = React.useState<RepoType>(RepoType.PUBLIC);
   const [sshPublicKey, setPublicSshKey] = React.useState<string>('');
   const { showError, showSuccess } = useToaster();
@@ -160,6 +162,7 @@ const GitConnectionStep: React.FC<
             // name: values.name,
             isPrivate: values.isPrivate,
             repoURL: values.repoURL,
+            remoteHub: values.remoteHub,
             authType: values.authType,
             token: values.token,
             sshPublicKey: values.sshPublicKey,
@@ -174,6 +177,7 @@ const GitConnectionStep: React.FC<
                 description: formData.description,
                 tags: formData.tags,
                 repoURL: values.repoURL,
+                remoteHub: values.remoteHub,
                 authType: values.authType,
                 isPrivate: values.isPrivate,
                 token: values.token,
@@ -187,8 +191,9 @@ const GitConnectionStep: React.FC<
           });
         }}
         validationSchema={Yup.object().shape({
-          repoBranch: Yup.string().trim().required('Hub Branch name is a required field'),
-          repoURL: Yup.string().trim().required('Hub Repo name is a required field')
+          repoBranch: Yup.string().trim().required(getString('hubBranchRequired')),
+          repoURL: Yup.string().trim().required(getString('hubRepoRequired')),
+          remoteHub: Yup.string().trim().required(getString('remoteHubRequired'))
         })}
       >
         {formikProps => {
@@ -231,10 +236,26 @@ const GitConnectionStep: React.FC<
                   placeholder={getString('enterHubRepositoryBranch')}
                 />
 
+                <FormInput.DropDown
+                  name="remoteHub"
+                  label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('remoteHubLabel')}</Text>}
+                  placeholder={getString('remoteHub')}
+                  items={[
+                    { label: 'GitHub', value: 'GitHub' },
+                    { label: 'Bitbucket', value: 'Bitbucket' },
+                    { label: 'Azure Repo', value: 'Azure Repo' },
+                    { label: 'GitLab', value: 'GitLab' },
+                    { label: 'Others', value: 'Others' }
+                  ]}
+                  onChange={item => {
+                    formikProps.setFieldValue('remoteHub', item.value);
+                  }}
+                />
+
                 {formikProps.values.isPrivate && (
                   <RadioButtonGroup
                     name="type"
-                    label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Select Security Key Type</Text>}
+                    label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('securityKeyType')}</Text>}
                     inline={true}
                     selectedValue={formikProps.values.authType}
                     onChange={(e: FormEvent<HTMLInputElement>) => {
@@ -242,11 +263,11 @@ const GitConnectionStep: React.FC<
                     }}
                     options={[
                       {
-                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>SSH</Text>,
+                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('ssh')}</Text>,
                         value: AuthType.SSH
                       },
                       {
-                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>PAT</Text>,
+                        label: <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('pat')}</Text>,
                         value: AuthType.TOKEN
                       }
                     ]}
@@ -257,7 +278,7 @@ const GitConnectionStep: React.FC<
                     name="token"
                     label={
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                        PAT
+                        {getString('pat')}
                       </Text>
                     }
                     placeholder={getString('accessTokenPlaceholder')}
@@ -280,7 +301,7 @@ const GitConnectionStep: React.FC<
                     />
                     <div className={css.textInputContainer}>
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                        SSH Key
+                        {getString('sshKey')}
                       </Text>
                       <TextInput
                         placeholder={getString('sshKey')}
@@ -310,7 +331,7 @@ const GitConnectionStep: React.FC<
               </Layout.Vertical>
               <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
                 <Button
-                  disabled={currentStep === 1}
+                  disabled={currentStep === 1 || loading.addChaosHubMutation}
                   onClick={() => props.previousStep?.()}
                   icon="chevron-left"
                   variation={ButtonVariation.SECONDARY}
@@ -323,7 +344,9 @@ const GitConnectionStep: React.FC<
                   // }}
                   rightIcon="chevron-right"
                   variation={ButtonVariation.PRIMARY}
-                  text={getString('connectHub')}
+                  text={loading.addChaosHubMutation ? <Icon name="loading" size={16} /> : getString('connectHub')}
+                  loading={loading.addChaosHubMutation}
+                  disabled={loading.addChaosHubMutation}
                 />
               </Layout.Horizontal>
             </Form>
@@ -336,7 +359,8 @@ const GitConnectionStep: React.FC<
 
 export default function AddHubModalWizardView({
   hideDarkModal,
-  addChaosHubMutation
+  addChaosHubMutation,
+  loading
 }: AddHubModalWizardViewProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -347,7 +371,8 @@ export default function AddHubModalWizardView({
     repoBranch: '',
     repoURL: '',
     isPrivate: false,
-    authType: AuthType.NONE
+    authType: AuthType.NONE,
+    remoteHub: ''
   });
 
   return (
@@ -366,6 +391,7 @@ export default function AddHubModalWizardView({
           formData={formData}
           setFormData={setFormData}
           addChaosHubMutation={addChaosHubMutation}
+          loading={loading}
         />
       </StepWizard>
     </>

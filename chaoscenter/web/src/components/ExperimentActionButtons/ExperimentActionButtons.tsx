@@ -13,7 +13,13 @@ import { Intent, Position } from '@blueprintjs/core';
 import { useHistory } from 'react-router-dom';
 import { parse } from 'yaml';
 import { useStrings } from '@strings';
-import { listExperiment, runChaosExperiment, stopExperiment, stopExperimentRun } from '@api/core';
+import {
+  listExperiment,
+  runChaosExperiment,
+  stopExperiment,
+  stopExperimentRun,
+  useUpdateCronExperimentStateMutation
+} from '@api/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { PermissionGroup, StudioTabs } from '@models';
@@ -50,8 +56,11 @@ export const RunExperimentButton = ({
   const { showSuccess, showError } = useToaster();
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
-  const [runChaosExperimentMutation] = runChaosExperiment({
+  const runInFlightRef = React.useRef(false);
+
+  const [runChaosExperimentMutation, { loading: runChaosExperimentLoading }] = runChaosExperiment({
     onCompleted: response => {
+      runInFlightRef.current = false;
       showSuccess(getString('reRunSuccessful'));
       refetchExperiments?.();
       const notifyID = response.runChaosExperiment.notifyID;
@@ -65,6 +74,7 @@ export const RunExperimentButton = ({
       }
     },
     onError: err => {
+      runInFlightRef.current = false;
       showError(err.message);
     }
   });
@@ -78,13 +88,15 @@ export const RunExperimentButton = ({
           isDark: true,
           ...tooltipProps
         }}
-        disabled={disabled}
+        disabled={disabled || runChaosExperimentLoading}
         iconProps={{ size: 18 }}
         icon={'play'}
         withoutCurrentColor
         variation={ButtonVariation.ICON}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.Executor}
         onClick={() => {
+          if (disabled || runChaosExperimentLoading || runInFlightRef.current) return;
+          runInFlightRef.current = true;
           runChaosExperimentMutation({
             variables: { projectID: scope.projectID, experimentID: experimentID }
           });
@@ -155,7 +167,7 @@ export const StopExperimentButton = ({
             isDark: true,
             ...tooltipProps
           }}
-          permission={PermissionGroup.EDITOR}
+          permission={PermissionGroup.Executor}
           variation={ButtonVariation.ICON}
           icon={'stop'}
           onClick={openStopExperimentDialog}
@@ -234,7 +246,7 @@ export const StopExperimentRunButton = ({
           }}
           variation={ButtonVariation.ICON}
           icon={'stop'}
-          permission={PermissionGroup.EDITOR}
+          permission={PermissionGroup.Executor}
           onClick={openStopExperimentRunDialog}
         />
       </div>
@@ -265,7 +277,7 @@ export const EditExperimentButton = ({ experimentID, tooltipProps }: ActionButto
             search: `tab=${StudioTabs.BUILDER}`
           });
         }}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.OWNER}
       />
     </div>
   );
@@ -291,7 +303,7 @@ export const CloneExperimentButton = ({ experimentID, tooltipProps }: ActionButt
             pathname: paths.toCloneExperiment({ experimentKey: experimentID })
           });
         }}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.Executor}
       />
     </div>
   );
@@ -346,8 +358,87 @@ export const DownloadExperimentButton = ({
         }}
         variation={ButtonVariation.ICON}
         icon={'import'}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.VIEWER}
       />
+    </div>
+  );
+};
+
+interface EnableDisableCronButtonProps extends ActionButtonProps, Partial<RefetchExperiments> {
+  isCronEnabled: boolean;
+  setIsCronEnabled?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+}
+
+export const EnableDisableCronButton = ({
+  experimentID,
+  tooltipProps,
+  isCronEnabled,
+  setIsCronEnabled,
+  refetchExperiments
+}: EnableDisableCronButtonProps): React.ReactElement => {
+  const scope = getScope();
+  const { getString } = useStrings();
+  const { showSuccess, showError } = useToaster();
+  const {
+    isOpen: isOpenCronEnableDisableDialog,
+    open: openCronEnableDisableDialog,
+    close: closeCronEnableDisableDialog
+  } = useToggleOpen();
+
+  const [updateCronExperimentStateMutation] = useUpdateCronExperimentStateMutation({
+    onCompleted: () => {
+      showSuccess(isCronEnabled ? getString('cronHalted') : getString('cronResumed'));
+      refetchExperiments?.();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const cronEnableDisableDialogProps: ConfirmationDialogProps = {
+    isOpen: isOpenCronEnableDisableDialog,
+    contentText: isCronEnabled ? getString('disableCronDesc') : getString('enableCronDesc'),
+    titleText: isCronEnabled ? `${getString('disableCron')}?` : `${getString('enableCron')}?`,
+    cancelButtonText: getString('cancel'),
+    confirmButtonText: getString('confirm'),
+    intent: Intent.WARNING,
+    onClose: (isConfirmed: boolean) => {
+      if (isConfirmed) {
+        const diable = isCronEnabled ? true : false;
+        setIsCronEnabled?.(!diable);
+        updateCronExperimentStateMutation({
+          variables: {
+            projectID: scope.projectID,
+            experimentID: experimentID,
+            disable: diable
+          }
+        });
+      }
+      closeCronEnableDisableDialog();
+    }
+  };
+
+  const cronEnableDisableDialog = <ConfirmationDialog {...cronEnableDisableDialogProps} />;
+
+  return (
+    <div className={cx(css.actionButtons, css.withBg)}>
+      <div>
+        <RbacButton
+          tooltip={isCronEnabled ? getString('disableCron') : getString('enableCron')}
+          iconProps={{ size: 18 }}
+          withoutCurrentColor
+          intent={isCronEnabled ? 'danger' : 'success'}
+          tooltipProps={{
+            position: Position.TOP,
+            usePortal: true,
+            isDark: true,
+            ...tooltipProps
+          }}
+          variation={ButtonVariation.ICON}
+          icon={'time'}
+          onClick={openCronEnableDisableDialog}
+          permission={PermissionGroup.Executor}
+        />
+      </div>
+      {cronEnableDisableDialog}
     </div>
   );
 };

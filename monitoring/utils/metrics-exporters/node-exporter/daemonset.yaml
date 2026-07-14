@@ -21,7 +21,7 @@ spec:
       name: node-exporter
     spec:
       hostNetwork: true
-      hostPID: true
+      hostPID: false
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:

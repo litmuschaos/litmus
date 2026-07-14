@@ -20,7 +20,7 @@ import { noop, omit } from 'lodash-es';
 import { Divider } from '@blueprintjs/core';
 import { parse } from 'yaml';
 import { Icon } from '@harnessio/icons';
-import { getIcon, getScope } from '@utils';
+import { cleanApolloResponse, getIcon, getScope } from '@utils';
 import { useStrings } from '@strings';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import type {
@@ -136,10 +136,7 @@ const OverviewStep: React.FC<
         }
       }).then(result => {
         if (result.data?.validateUniqueProbe === false) {
-          formikProps.setFieldError(
-            'name',
-            `The name ${formikProps.values.name} is not unique and was already used before, please provide a unique name`
-          );
+          formikProps.setFieldError('name', getString('probeNameNotUnique', { name: formikProps.values.name }));
         } else {
           props.nextStep?.();
         }
@@ -296,7 +293,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
    * @returns {Yup} the yup object which validates the properties according to the nested structure
    */
   const validateProperties = () => {
-    const unitsRegex = /^(\d+)(ns|us|ms|s|m|h)$/;
+    const unitsRegex = /^$|^(\d+)(ns|us|ms|s|m|h)$/;
     /**
      * Objects shared between the 5 probe keys `httpProperties`, `cmdProperties`, `promProperties`,
      * `k8sProperties` and `sloProperties`
@@ -309,19 +306,15 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
       interval: Yup.string()
         .matches(unitsRegex, 'Probe interval should contain values in ns, us, ms, m, s or h only')
         .required(getString(`probeValidation.interval`)),
-      attempt: Yup.number(),
-      probePollingInterval: Yup.string().matches(
-        unitsRegex,
-        'Probe polling interval should contain values in ns, us, ms, m, s or h only'
-      ),
-      initialDelay: Yup.string().matches(
-        unitsRegex,
-        'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only'
-      ),
-      evaluationTimeout: Yup.string().matches(
-        unitsRegex,
-        'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only'
-      )
+      probePollingInterval: Yup.string()
+        .matches(unitsRegex, 'Probe polling interval should contain values in ns, us, ms, m, s or h only')
+        .nullable(),
+      initialDelay: Yup.string()
+        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .nullable(),
+      evaluationTimeout: Yup.string()
+        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .nullable()
     };
 
     if (props.formData.infrastructureType === InfrastructureType.KUBERNETES) {
@@ -348,18 +341,11 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
 
   return (
     <Layout.Vertical height={'100%'} width={400}>
-      <Formik<AddProbeFormData>
-        initialValues={initialValues}
-        onSubmit={() => {
-          validateProperties();
-          props.nextStep?.();
-        }}
-        validationSchema={validateProperties()}
-      >
+      <Formik<AddProbeFormData> initialValues={initialValues} onSubmit={noop} validationSchema={validateProperties()}>
         {formikProps => {
           return (
             <Form style={{ height: '100%' }}>
-              <Layout.Vertical height={'100%'}>
+              <Layout.Vertical height={516} style={{ overflow: 'auto' }} padding={{ left: 'xsmall', right: 'xsmall' }}>
                 <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
                   {getString(`properties`)}
                 </Text>
@@ -373,11 +359,6 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
                   name={`${getType()}.interval`}
                   inputGroup={{ type: 'string' }}
                   label={getString(`interval`)}
-                />
-                <FormInput.Text
-                  name={`${getType()}.retry`}
-                  inputGroup={{ type: 'number' }}
-                  label={getString(`retry`)}
                 />
                 <FormInput.Text
                   name={`${getType()}.attempt`}
@@ -440,10 +421,12 @@ const TuneDetailsStep: React.FC<
   const scope = getScope();
   const { getString } = useStrings();
   // TODO: Add monaco editor for source probe in CMD
-  const cmdComparatorType = React.useRef<string>('int');
-  const promComparatorType = React.useRef<string>('int');
-  const source = React.useRef<string>('');
-  const [isSourceSelected, setIsSourceSelected] = React.useState<boolean>(false);
+  const cmdComparatorType = React.useRef<string>(props.formData.kubernetesCMDProperties?.comparator?.type ?? 'int');
+  const promComparatorType = React.useRef<string>(props.formData.promProperties?.comparator?.type ?? 'int');
+  const source = React.useRef<string>(props.formData.kubernetesCMDProperties?.source ?? '');
+  const [isSourceSelected, setIsSourceSelected] = React.useState<boolean>(
+    props.formData.kubernetesCMDProperties?.source ? true : false
+  );
   const { error, loading, mutation, isEdit, hideDarkModal } = props;
 
   const preventDefault = (e: React.DragEvent<HTMLDivElement>) => {
@@ -528,8 +511,8 @@ const TuneDetailsStep: React.FC<
             ...props.formData,
             kubernetesCMDProperties: {
               ...props.formData.kubernetesCMDProperties,
-              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined,
-              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs)
+              ...(formikProps.values.kubernetesCMDProperties as CmdProbeInputs),
+              source: source.current !== '' ? JSON.stringify(parse(source.current)) : undefined
             } as Probe['kubernetesCMDProperties']
           };
 
@@ -780,8 +763,15 @@ const TuneDetailsStep: React.FC<
         {props.formData.infrastructureType === InfrastructureType.KUBERNETES ? (
           <>
             {/* Probe details for Kubernetes HTTP probe */}
-            <FormInput.Text name="kubernetesHTTPProperties.url" label={'URL'} placeholder={'http://localhost:8080'} />
-            <FormInput.Toggle name="kubernetesHTTPProperties.insecureSkipVerify" label={'Insecure Skip Verify'} />
+            <FormInput.Text
+              name="kubernetesHTTPProperties.url"
+              label={getString('url')}
+              placeholder={'http://localhost:8080'}
+            />
+            <FormInput.Toggle
+              name="kubernetesHTTPProperties.insecureSkipVerify"
+              label={getString('skipCertificateChecks')}
+            />
             <FormInput.Select
               name={'kubernetesHTTPProperties.methodDropdown'}
               value={
@@ -813,7 +803,7 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.get.responseCode"
-                  label={'Response Code'}
+                  label={getString('responseCode')}
                   placeholder={'200'}
                 />
               </>
@@ -821,17 +811,17 @@ const TuneDetailsStep: React.FC<
               <>
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.contentType"
-                  label={'Content Type'}
+                  label={getString('contentType')}
                   placeholder={'Content type for HTTP body data'}
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.body"
-                  label={'Body'}
+                  label={getString('body')}
                   placeholder={'HTTP body for POST request'}
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.bodyPath"
-                  label={'Body Path'}
+                  label={getString('bodyPath')}
                   placeholder={'Contains filePath, which contains HTTP body'}
                 />
                 <FormInput.Select
@@ -845,7 +835,7 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Text
                   name="kubernetesHTTPProperties.method.post.responseCode"
-                  label={'Response Code'}
+                  label={getString('responseCode')}
                   placeholder={'200'}
                 />
               </>
@@ -867,8 +857,9 @@ const TuneDetailsStep: React.FC<
           <>
             <FormInput.TextArea
               name="kubernetesCMDProperties.command"
-              label={'Command'}
+              label={getString('command')}
               placeholder={'Command to be executed'}
+              maxLength={100000} // Increase limit to prevent silent truncation (default is 1024)
             />
 
             <Divider />
@@ -919,13 +910,21 @@ const TuneDetailsStep: React.FC<
               />
               <FormInput.Text
                 name="kubernetesCMDProperties.comparator.value"
-                label={'Value'}
+                label={getString('value')}
                 style={{ width: '50%' }}
                 placeholder={'Relative value for criteria'}
               />
             </Layout.Horizontal>
 
-            <Switch label="Source" checked={isSourceSelected} onChange={() => setIsSourceSelected(prev => !prev)} />
+            <Switch
+              label={getString('source')}
+              checked={isSourceSelected}
+              onChange={event => {
+                setIsSourceSelected(prev => !prev);
+                (event.target as HTMLInputElement).checked &&
+                  window.setTimeout(() => document.getElementById('sourceContainer')?.scrollIntoView(false), 100);
+              }}
+            />
             <Text
               font={{ variation: FontVariation.FORM_INPUT_TEXT }}
               padding={{ top: 'medium', bottom: 'medium' }}
@@ -934,7 +933,7 @@ const TuneDetailsStep: React.FC<
               {getString('sourceModeDesction')}
             </Text>
             {isSourceSelected && (
-              <Container height={200}>
+              <Container id="sourceContainer" height={200}>
                 <div
                   className={css.yamlBuilder}
                   onDragEnter={preventDefault}
@@ -982,17 +981,18 @@ const TuneDetailsStep: React.FC<
       <div>
         <FormInput.Text
           name="promProperties.endpoint"
-          label={'Prometheus endpoint'}
+          label={getString('prometheusEndpoint')}
           placeholder={'http://localhost:8000'}
         />
         <FormInput.TextArea
           name="promProperties.query"
-          label={'Prometheus Query'}
+          label={getString('prometheusQuery')}
           placeholder={'Query to get promethus metrics'}
+          maxLength={100000} // Increase limit to prevent silent truncation (default is 1024)
         />
         <FormInput.Text
           name="promProperties.queryPath"
-          label={'Prometheus Query Path'}
+          label={getString('prometheusQueryPath')}
           placeholder={'FilePath, which contains Prometheus Query'}
         />
         <Divider />
@@ -1002,17 +1002,17 @@ const TuneDetailsStep: React.FC<
           padding={{ top: 'medium', bottom: 'medium' }}
           color={Color.GREY_500}
         >
-          Prometheus Data Comparison
+          {getString('prometheusDataComparison')}
         </Text>
         <FormInput.Select
           name="promProperties.comparator.type"
           label={getString('type')}
           onChange={selected => (promComparatorType.current = selected.value as string)}
-          placeholder="Type of data"
+          placeholder={getString('typeOfData')}
           items={[
-            { label: 'Int', value: 'int' },
-            { label: 'Float', value: 'float' },
-            { label: 'String', value: 'string' }
+            { label: getString('dataTypeInt'), value: 'int' },
+            { label: getString('dataTypeFloat'), value: 'float' },
+            { label: getString('dataTypeString'), value: 'string' }
           ]}
         />
         <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
@@ -1043,7 +1043,7 @@ const TuneDetailsStep: React.FC<
           />
           <FormInput.Text
             name="promProperties.comparator.value"
-            label={'Value'}
+            label={getString('value')}
             style={{ width: '50%' }}
             placeholder={'Relative value for criteria'}
           />
@@ -1051,7 +1051,6 @@ const TuneDetailsStep: React.FC<
       </div>
     );
   };
-
   /**
    * Function to retrieve K8S details
    * @returns K8S details for K8S probes
@@ -1059,20 +1058,31 @@ const TuneDetailsStep: React.FC<
   const k8sRenderer = (): React.ReactElement => {
     return (
       <div>
-        <FormInput.Text name="k8sProperties.group" label={'Kubernetes Resource Group'} placeholder={'Group Name'} />
-        <FormInput.Text name="k8sProperties.version" label={'Version'} placeholder={'v1alpha1'} />
-        <FormInput.Text name="k8sProperties.resource" label={'Resource'} placeholder={'Kind of Resource'} />
+        <FormInput.Text name="k8sProperties.group" label={getString('k8sResourceGroup')} placeholder={'Group Name'} />
+        <FormInput.Text name="k8sProperties.version" label={getString('version')} placeholder={'v1alpha1'} />
+        <FormInput.Text name="k8sProperties.resource" label={getString('resource')} placeholder={'Kind of Resource'} />
         <FormInput.Text
           name="k8sProperties.resourceNames"
-          label={'Resource Names'}
-          placeholder={'Resource Name using comma seperated values'}
+          label={getString('resourceNames')}
+          placeholder={'Resource Name using comma separated values'}
         />
-        <FormInput.Text name="k8sProperties.namespace" label={'Namespace'} placeholder={'Resource Namespace'} />
-        <FormInput.Text name="k8sProperties.fieldSelector" label={'Field Selector'} placeholder={'Field Selector'} />
-        <FormInput.Text name="k8sProperties.labelSelector" label={'Label Selector'} placeholder={'Label Selector'} />
+        <FormInput.Text
+          name="k8sProperties.namespace"
+          label={getString('namespace')}
+          placeholder={'Resource Namespace'}
+        />
+        <FormInput.Text
+          name="k8sProperties.fieldSelector"
+          label={getString('fieldSelector')}
+          placeholder={'Field Selector'}
+        />
+        <FormInput.Text
+          name="k8sProperties.labelSelector"
+          label={getString('labelSelector')}
+          placeholder={'Label Selector'}
+        />
         <FormInput.Select
           name="k8sProperties.operation"
-
           label={getString('operation')}
           usePortal
           placeholder={getString('operation')}
@@ -1169,21 +1179,7 @@ export default function AddProbeModalWizardView({
 
   React.useMemo(() => {
     if (mutation.updateProbeMutation && probeDataWithTypename) {
-      /**
-       * Will remove deeply nested __typename fields efficiently from the payload
-       * Apollo Github Issue: https://github.com/apollographql/apollo-feature-requests/issues/6
-       * */
-      const probeData: Probe = JSON.parse(
-        JSON.stringify(probeDataWithTypename, (name, val) => {
-          if (name === '__typename') {
-            delete val[name];
-          } else if (val === null) {
-            return undefined;
-          } else {
-            return val;
-          }
-        })
-      );
+      const probeData = cleanApolloResponse(probeDataWithTypename) as Probe;
 
       initialValues = {
         name: probeData.name,

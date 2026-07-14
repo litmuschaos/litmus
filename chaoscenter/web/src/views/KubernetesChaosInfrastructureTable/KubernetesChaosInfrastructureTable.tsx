@@ -75,7 +75,7 @@ export function RenderChaosInfrastructureOptions({
         </Text>
         <Container>
           <CodeBlock
-            text={`kubectl delete chaosexperiment chaosengine chaosresult --all -n ${chaosInfrastructureNamespace}`}
+            text={`kubectl delete chaosexperiment,chaosengine,chaosresult --all -n ${chaosInfrastructureNamespace}`}
             isCopyButtonEnabled
           />
         </Container>
@@ -176,7 +176,7 @@ export function RenderChaosInfrastructureOptions({
                   }
                 });
               }}
-              permission={PermissionGroup.EDITOR}
+              permission={PermissionGroup.Executor}
             />
             <MenuDivider />
             <RbacMenuItem
@@ -184,7 +184,7 @@ export function RenderChaosInfrastructureOptions({
               text={getString('disable')}
               className={css.menuItem}
               onClick={openDeleteDialog}
-              permission={PermissionGroup.EDITOR}
+              permission={PermissionGroup.OWNER}
             />
           </Menu>
         }

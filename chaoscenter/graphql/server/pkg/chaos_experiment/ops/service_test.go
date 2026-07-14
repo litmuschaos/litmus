@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"testing"
 
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -19,6 +21,7 @@ import (
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,12 +30,14 @@ import (
 
 var (
 	mongodbMockOperator        = new(dbMocks.MongoOperator)
+	probeOperator              = dbSchemaProbe.NewChaosProbeOperator(mongodbMockOperator)
 	infraOperator              = dbChaosInfra.NewInfrastructureOperator(mongodbMockOperator)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+	probeService               = probe.NewProbeService(probeOperator)
 )
 
-var chaosExperimentRunTestService = NewChaosExperimentService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator)
+var chaosExperimentRunTestService = NewChaosExperimentService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator, probeService)
 
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
@@ -57,6 +62,7 @@ func TestNewChaosExperimentService(t *testing.T) {
 		chaosWorkflowOperator      *dbChaosExperiment.Operator
 		clusterOperator            *dbChaosInfra.Operator
 		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+		probeService               probe.Service
 	}
 	tests := []struct {
 		name string
@@ -69,17 +75,19 @@ func TestNewChaosExperimentService(t *testing.T) {
 				chaosWorkflowOperator:      chaosExperimentOperator,
 				clusterOperator:            infraOperator,
 				chaosExperimentRunOperator: chaosExperimentRunOperator,
+				probeService:               probeService,
 			},
 			want: &chaosExperimentService{
 				chaosExperimentOperator:     chaosExperimentOperator,
 				chaosInfrastructureOperator: infraOperator,
 				chaosExperimentRunOperator:  chaosExperimentRunOperator,
+				probeService:                probeService,
 			},
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := NewChaosExperimentService(tc.args.chaosWorkflowOperator, tc.args.clusterOperator, tc.args.chaosExperimentRunOperator); !reflect.DeepEqual(got, tc.want) {
+			if got := NewChaosExperimentService(tc.args.chaosWorkflowOperator, tc.args.clusterOperator, tc.args.chaosExperimentRunOperator, tc.args.probeService); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("NewChaosExperimentService() = %v, want %v", got, tc.want)
 			}
 		})
@@ -334,7 +342,7 @@ func Test_chaosExperimentService_ProcessExperiment(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.given(tc.experiment)
-			_, _, err := chaosExperimentRunTestService.ProcessExperiment(tc.experiment, projectID, revID)
+			_, _, err := chaosExperimentRunTestService.ProcessExperiment(context.Background(), tc.experiment, projectID, revID)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentService.ProcessExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return

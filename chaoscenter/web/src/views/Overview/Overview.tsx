@@ -1,6 +1,6 @@
-import type { IDialogProps } from '@blueprintjs/core';
+import { IDialogProps } from '@blueprintjs/core';
 import { Color, FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Dialog, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Layout, Text, Dialog } from '@harnessio/uicore';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash-es';
@@ -16,6 +16,7 @@ import { MemoisedExperimentDashboardV2Table } from '@views/ExperimentDashboardV2
 import NewExperimentButton from '@components/NewExperimentButton';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
+import { getUserDetails } from '@utils';
 import TotalChaosHubsCard from './TotalChaosHubsCard';
 import TotalExperimentCard from './TotalExperimentCard';
 import TotalInfrastructureCard from './TotalInfrastructureCard';
@@ -45,7 +46,14 @@ export default function OverviewView({
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
+
   const [isEnableChaosModalOpen, setIsEnableChaosModalOpen] = React.useState(false);
+  const userDetails = getUserDetails();
+
+  React.useEffect(() => {
+    if (infraStats?.totalInfrastructures === 0) setIsEnableChaosModalOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [infraStats?.totalInfrastructures, userDetails?.isInitialLogin]);
 
   useDocumentTitle(getString('overview'));
 
@@ -63,11 +71,6 @@ export default function OverviewView({
     enforceFocus: false,
     onClose: () => setIsEnableChaosModalOpen(false)
   };
-
-  React.useEffect(() => {
-    if (infraStats?.totalInfrastructures === 0) setIsEnableChaosModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [infraStats?.totalInfrastructures]);
 
   return (
     <DefaultLayoutTemplate

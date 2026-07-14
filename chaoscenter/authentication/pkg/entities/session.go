@@ -16,7 +16,8 @@ type ApiTokenInput struct {
 
 // DeleteApiTokenInput struct for storing DeleteApiTokenInput
 type DeleteApiTokenInput struct {
-	Token string `json:"token"`
+	Token  string `json:"token"`
+	UserID string `json:"userID"`
 }
 
 // ApiToken struct for storing API tokens

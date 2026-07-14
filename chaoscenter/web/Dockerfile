@@ -1,16 +1,16 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.8
-RUN microdnf module enable nginx:1.20
-RUN microdnf install nginx
-    
+FROM registry.access.redhat.com/ubi10/nginx-126:10.1
+
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
 COPY ./entrypoint.sh /opt
 
 WORKDIR /opt/chaos
 
-RUN chown 65534:65534 -R /opt/chaos
-RUN chown 65534:65534 -R /var/log/nginx
-RUN chown 65534:65534 -R /etc/nginx
+USER 0
+
+RUN chown 65534:0 -R /opt/chaos && \
+    chown 65534:0 -R /var/log/nginx && \
+    chown 65534:0 -R /etc/nginx
 
 USER 65534
 

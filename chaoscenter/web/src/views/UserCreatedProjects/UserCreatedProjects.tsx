@@ -54,7 +54,7 @@ function MemoizedUserCreatedProjectsTable({
           return (
             data.updatedAt && (
               <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                {getFormattedTime(data.updatedAt * 1000)}
+                {getFormattedTime(data.updatedAt)}
               </Text>
             )
           );

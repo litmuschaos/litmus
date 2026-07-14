@@ -15,7 +15,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>node-drain</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-drain/experiment.yaml">here</a>
+    - Ensure that the <code>node-drain</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/node-drain/fault.yaml">here</a>
     - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node which will be drained) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:
         - Get node names against the applications pods: <code>kubectl get pods -o wide</code>
         - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
@@ -32,7 +32,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-drain/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -153,6 +152,21 @@
         <td> RAMP_TIME </td>
         <td> Period to wait before injection of chaos in sec </td>
         <td> </td>
+      </tr>
+      <tr>
+        <td> STATUS_CHECK_DELAY </td>
+        <td> Time interval (in seconds) between subsequent status checks </td>
+        <td> Defaults to 2 </td>
+      </tr>
+      <tr>
+        <td> STATUS_CHECK_TIMEOUT </td>
+        <td> Maximum time (in seconds) to wait for the application/auxiliary checks to be successful </td>
+        <td> Defaults to 180 </td>
+      </tr>
+      <tr>
+        <td> TERMINATION_GRACE_PERIOD_SECONDS </td>
+        <td> Grace period (in seconds) for the helper pod termination </td>
+        <td> Defaults to 0 </td>
       </tr>
     </table>
 

@@ -4,6 +4,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
 import type { User } from '../schemas/User';
+import type { ResponseErrBadRequest } from '../schemas/ResponseErrBadRequest';
 import { fetcher, FetcherOptions } from 'services/fetcher';
 
 export type CreateUserRequestBody = {
@@ -17,7 +18,7 @@ export type CreateUserRequestBody = {
 
 export type CreateUserOkResponse = User;
 
-export type CreateUserErrorResponse = unknown;
+export type CreateUserErrorResponse = ResponseErrBadRequest;
 
 export interface CreateUserProps extends Omit<FetcherOptions<unknown, CreateUserRequestBody>, 'url'> {
   body: CreateUserRequestBody;

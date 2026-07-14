@@ -6,23 +6,24 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/protocol/packp/capability"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	log "github.com/sirupsen/logrus"
 	ssh2 "golang.org/x/crypto/ssh"
 )
@@ -87,7 +88,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 		LatestCommit:  repoData.LatestCommit,
 		UserName:      repoData.UserName,
 		Password:      repoData.Password,
-		AuthType:      model.AuthType(repoData.AuthType),
+		AuthType:      repoData.AuthType,
 		Token:         repoData.Token,
 		SSHPrivateKey: repoData.SSHPrivateKey,
 	}
@@ -95,7 +96,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 	return gitConfig
 }
 
-// setupGitRepo helps clones and sets up the repo for gitops
+// setupGitRepo helps clones and sets up the repo for GitOps
 func (c GitConfig) setupGitRepo(user GitUser) error {
 	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
 
@@ -113,7 +114,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 
 	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
 	if exists {
-		data, err := ioutil.ReadFile(projectPath + "/.info")
+		data, err := os.ReadFile(projectPath + "/.info")
 		if err != nil {
 			return errors.New("can't read existing git info file " + err.Error())
 		}
@@ -137,7 +138,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(projectPath+"/.info", data, 0644)
+	err = os.WriteFile(projectPath+"/.info", data, 0644)
 	if err != nil {
 		return err
 	}
@@ -174,11 +175,18 @@ func (c GitConfig) GitClone() (*git.Repository, error) {
 // getAuthMethod returns the AuthMethod instance required for the current repo access [read/writes]
 func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 
+	// Azure DevOps requires the 'multi_ack' and 'multi_ack_detailed' capabilities,
+	// which are not fully implemented in the go-git package. By default, these
+	// capabilities are included in 'transport.UnsupportedCapabilities'.
+	transport.UnsupportedCapabilities = []capability.Capability{
+		capability.ThinPack,
+	}
+
 	switch c.AuthType {
 
 	case model.AuthTypeToken:
 		return &http.BasicAuth{
-			Username: "litmus", // this can be anything except an empty string
+			Username: utils.Config.GitUsername, // must be a non-empty string or 'x-token-auth' for Bitbucket
 			Password: *c.Token,
 		}, nil
 
@@ -204,7 +212,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 	}
 }
 
-// UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
+// UnsafeGitPull executes git pull after a hard reset when uncommitted changes are present in repo. Not safe.
 func (c GitConfig) UnsafeGitPull() error {
 	cleanStatus, err := c.GitGetStatus()
 	if err != nil {
@@ -233,7 +241,7 @@ func (c GitConfig) GitGetStatus() (bool, error) {
 	return status.IsClean(), nil
 }
 
-// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
+// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instances for the repo
 func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Worktree, error) {
 	repo, err := git.PlainOpen(c.LocalPath)
 	if err != nil {
@@ -268,7 +276,7 @@ func (c GitConfig) GitHardReset() error {
 
 // GitPull updates the repository in provided Path
 func (c GitConfig) GitPull() error {
-	_, workTree, err := c.getRepositoryWorktreeReference()
+	repo, workTree, err := c.getRepositoryWorktreeReference()
 	if err != nil {
 		return err
 	}
@@ -276,15 +284,27 @@ func (c GitConfig) GitPull() error {
 	if err != nil {
 		return err
 	}
-	err = workTree.Pull(&git.PullOptions{
-		Auth:          auth,
-		RemoteName:    c.RemoteName,
-		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
-		SingleBranch:  true,
+	err = repo.Fetch(&git.FetchOptions{
+		Auth:       auth,
+		RemoteName: c.RemoteName,
+		Force:      true,
 	})
-	if err != nil && err != git.NoErrAlreadyUpToDate {
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return err
 	}
+	remoteRefName := plumbing.NewRemoteReferenceName(c.RemoteName, c.Branch)
+	remoteRef, err := repo.Reference(remoteRefName, true)
+	if err != nil {
+		return err
+	}
+	err = workTree.Reset(&git.ResetOptions{
+		Mode:   git.HardReset,
+		Commit: remoteRef.Hash(),
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -325,7 +345,7 @@ func (c GitConfig) GitPush() error {
 		Auth:       auth,
 		Progress:   nil,
 	})
-	if err == git.NoErrAlreadyUpToDate {
+	if errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return nil
 	}
 	return err
@@ -366,57 +386,90 @@ func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (
 func (c GitConfig) GetChanges() (string, map[string]int, error) {
 	path := ProjectDataPath + "/" + c.ProjectID + "/"
 
-	r, _, err := c.getRepositoryWorktreeReference()
+	repo, _, err := c.getRepositoryWorktreeReference()
 	if err != nil {
 		return "", nil, err
 	}
-	var knownCommit *object.Commit = nil
-	if c.LatestCommit != "" {
-		knownCommit, err = r.CommitObject(plumbing.NewHash(c.LatestCommit))
-		if err != nil {
-			return "", nil, err
-		}
+
+	prevKnownHash := c.LatestCommit
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return "", nil, err
 	}
+
 	visited := map[string]int{}
 
-	commitIter, err := r.Log(&git.LogOptions{
-		PathFilter: func(file string) bool {
-			if (strings.HasSuffix(path, "/") && strings.HasPrefix(file, path)) || (path == file) {
-				visited[file] += 1
-				return true
-			}
-			return false
-		},
+	commitIter, err := repo.Log(&git.LogOptions{
+		From:  headRef.Hash(),
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return "", nil, errors.New("failed to get commit Iterator :" + err.Error())
+		return "", nil, fmt.Errorf("failed to get commit iterator: %w", err)
 	}
 
-	commit, err := commitIter.Next()
-	if err != nil && err != io.EOF {
-		return "", nil, err
-	}
-	if commit != nil {
-		c.LatestCommit = commit.Hash.String()
-	}
-
-	for err != io.EOF && commit != nil {
-		if knownCommit != nil {
-			ancestor, er := commit.IsAncestor(knownCommit)
-			if er != nil {
-				return "", nil, er
-			}
-			if knownCommit.Hash == commit.Hash || ancestor {
-				break
-			}
+	for {
+		commit, err := commitIter.Next()
+		if err == io.EOF {
+			break
 		}
-		commit, err = commitIter.Next()
-		if err != nil && err != io.EOF {
+		if err != nil {
 			return "", nil, err
 		}
+
+		// stop when we reach previously known commit
+		if prevKnownHash != "" && commit.Hash.String() == prevKnownHash {
+			break
+		}
+
+		// Initial commit
+		if commit.NumParents() == 0 {
+			files, err := commit.Files()
+			if err != nil {
+				return "", nil, err
+			}
+			err = files.ForEach(func(f *object.File) error {
+				if strings.HasPrefix(f.Name, path) {
+					visited[f.Name]++
+				}
+				return nil
+			})
+			if err != nil {
+				return "", nil, err
+			}
+			continue
+		}
+
+		parent, err := commit.Parent(0)
+		if err != nil {
+			return "", nil, err
+		}
+
+		patch, err := parent.Patch(commit)
+		if err != nil {
+			return "", nil, err
+		}
+
+		for _, fp := range patch.FilePatches() {
+			from, to := fp.Files()
+
+			if from != nil {
+				filePath := from.Path()
+				if strings.HasPrefix(filePath, path) {
+					visited[filePath]++
+				}
+			}
+
+			if to != nil {
+				filePath := to.Path()
+				if strings.HasPrefix(filePath, path) {
+					visited[filePath]++
+				}
+			}
+		}
 	}
 
+	c.LatestCommit = headRef.Hash().String()
 	return c.LatestCommit, visited, nil
 }
 
@@ -445,7 +498,7 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 	return commit.Hash.String(), nil
 }
 
-// SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
+// SetupGitOps clones and sets up the repo for git ops and returns the LatestCommit
 func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 	err := gitConfig.setupGitRepo(user)
 	if err != nil {

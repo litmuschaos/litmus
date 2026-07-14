@@ -111,9 +111,12 @@ func main() {
 		if err != nil {
 			logrus.Fatalf("failed to parse custom tls cert %v", err)
 		}
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(cert)
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: caCertPool}
+		rootCerts, err := x509.SystemCertPool()
+		if err != nil {
+			logrus.Fatalf("Failed to read system cert pool %v", err)
+		}
+		rootCerts.AppendCertsFromPEM(cert)
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: rootCerts}
 	}
 
 	var (

@@ -3,31 +3,55 @@ import React from 'react';
 import { listChaosInfra } from '@api/core';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
-import type { ChaosInfrastructureReferenceFieldProps } from '@models';
+import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
 import type { InfrastructureDetails } from '@views/ChaosInfrastructureReferenceField/ChaosInfrastructureReferenceField';
+import { listEnvironment } from '@api/core/environments';
 
 function KubernetesChaosInfrastructureReferenceFieldController({
   setFieldValue,
-  initialInfrastructureID
+  initialInfrastructureID,
+  initialEnvironmentID
 }: ChaosInfrastructureReferenceFieldProps): React.ReactElement {
   const scope = getScope();
   const { showError } = useToaster();
   const [searchInfrastructure, setSearchInfrastructure] = React.useState<string>('');
-
   const [page, setPage] = React.useState<number>(0);
-  const limit = 8;
+  const [limit, setLimit] = React.useState<number>(5);
+  const [envID, setEnvID] = React.useState<string>(AllEnv.AllEnv);
+  const [initialAllInfrastructureLength, setInitialAllInfrastructureLength] = React.useState<number>(0);
 
   const { data: listChaosInfraData, loading: listChaosInfraLoading } = listChaosInfra({
     ...scope,
-    filter: { name: searchInfrastructure, isActive: true },
+    environmentIDs: envID === AllEnv.AllEnv ? undefined : [envID],
+    filter: { name: searchInfrastructure },
     pagination: { page, limit },
     options: { onError: error => showError(error.message) }
   });
+
+  const { data: listEnvironmentData } = listEnvironment({
+    ...scope,
+    options: {
+      onError: err => showError(err.message)
+    }
+  });
+
+  const environmentList = listEnvironmentData?.listEnvironments?.environments;
+
+  React.useEffect(() => {
+    if (envID === AllEnv.AllEnv) {
+      setInitialAllInfrastructureLength(listChaosInfraData?.listInfras.totalNoOfInfras || 0);
+    }
+  }, [listChaosInfraData]);
+
+  const preSelectedEnvironment = listEnvironmentData?.listEnvironments?.environments?.find(
+    ({ environmentID }) => environmentID === initialEnvironmentID
+  );
 
   // TODO: replace with get API as this becomes empty during edit
   const preSelectedInfrastructure = listChaosInfraData?.listInfras.infras.find(
     ({ infraID }) => infraID === initialInfrastructureID
   );
+
   const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure && {
     id: preSelectedInfrastructure?.infraID,
     name: preSelectedInfrastructure?.name,
@@ -37,6 +61,16 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     noOfExperimentsRuns: preSelectedInfrastructure?.noOfExperimentRuns,
     environmentID: preSelectedInfrastructure?.environmentID
   };
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [envID]);
+
+  React.useEffect(() => {
+    if (preSelectedEnvironment) {
+      setEnvID(preSelectedEnvironment?.environmentID);
+    }
+  }, [preSelectedEnvironment, setFieldValue]);
 
   React.useEffect(() => {
     if (preSelectedInfrastructure) {
@@ -69,7 +103,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
         pageSize={limit}
         pageCount={Math.ceil(totalNoOfInfras / limit)}
         pageIndex={page}
-        gotoPage={pageNumber => setPage(pageNumber)}
+        gotoPage={setPage}
+        showPagination={true}
+        pageSizeOptions={[5, 10, 15]}
+        onPageSizeChange={setLimit}
       />
     );
   };
@@ -87,6 +124,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
       }}
       searchInfrastructure={searchInfrastructure}
       setSearchInfrastructure={setSearchInfrastructure}
+      allInfrastructureLength={initialAllInfrastructureLength}
+      environmentList={environmentList}
+      envID={envID}
+      setEnvID={setEnvID}
       loading={{
         listChaosInfra: listChaosInfraLoading
       }}

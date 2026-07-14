@@ -34,6 +34,7 @@ export function listChaosHub({
           id
           repoURL
           repoBranch
+          remoteHub
           authType
           isAvailable
           totalFaults

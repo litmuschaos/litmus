@@ -23,5 +23,10 @@ export const gvrData = [
     group: 'argoproj.io',
     version: 'v1alpha1',
     resource: 'rollout'
+  },
+  {
+    group: 'batch',
+    version: 'v1',
+    resource: 'job'
   }
 ];

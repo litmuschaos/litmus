@@ -1,4 +1,4 @@
-import { Button, ButtonVariation, Layout, TableV2, Text, useToaster, useToggleOpen } from '@harnessio/uicore';
+import { Button, ButtonVariation, Layout, TableV2, Text, useToggleOpen } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import Loader from '@components/Loader';
 import { getFormattedTime, killEvent } from '@utils';
 import DeleteApiTokenController from '@controllers/DeleteApiToken';
 import CreateNewTokenController from '@controllers/CreateNewToken';
+import CopyButton from '@components/CopyButton';
 import css from './ApiTokens.module.scss';
 
 interface ApiTokensViewProps {
@@ -27,7 +28,6 @@ interface MemoizedApiTokensTableProps extends Omit<ApiTokensViewProps, 'apiToken
 
 function MemoizedApiTokensTable({ apiTokens, apiTokensRefetch }: MemoizedApiTokensTableProps): React.ReactElement {
   const { getString } = useStrings();
-  const { showSuccess } = useToaster();
 
   const columns: Column<ApiToken>[] = React.useMemo(() => {
     return [
@@ -60,18 +60,7 @@ function MemoizedApiTokensTable({ apiTokens, apiTokensRefetch }: MemoizedApiToke
         id: 'accessToken',
         Header: getString('value'),
         Cell: ({ row: { original: data } }: { row: Row<ApiToken> }) => {
-          return (
-            data.token && (
-              <Icon
-                name="code-copy"
-                size={20}
-                onClick={() => {
-                  navigator.clipboard.writeText(data.token || '');
-                  showSuccess(getString('copiedToClipboard'));
-                }}
-              />
-            )
-          );
+          return data.token && <CopyButton stringToCopy={data.token} />;
         }
       },
       {
@@ -145,7 +134,7 @@ export default function ApiTokensView(props: ApiTokensViewProps): React.ReactEle
         small
         loading={getApiTokensQueryLoading}
         noData={{
-          when: () => !apiTokens.length,
+          when: () => apiTokens?.length === 0,
           message: getString('noApiTokensFound')
         }}
       >

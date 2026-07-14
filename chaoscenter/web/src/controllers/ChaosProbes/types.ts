@@ -9,5 +9,5 @@ export interface ChaosProbesTableProps {
 }
 
 export interface RefetchProbes {
-  refetchProbes: GqlAPIQueryResponse<ListProbeResponse, ListProbeRequest>['refetch'];
+  refetchProbes?: GqlAPIQueryResponse<ListProbeResponse, ListProbeRequest>['refetch'];
 }

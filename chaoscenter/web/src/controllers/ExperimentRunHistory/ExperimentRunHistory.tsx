@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom';
 import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { listExperimentRunForHistory } from '@api/core';
-import { getScope, getColorBasedOnResilienceScore } from '@utils';
+import { getScope, getColorBasedOnResilienceScore, cronEnabled } from '@utils';
 import ExperimentRunHistoryView from '@views/ExperimentRunHistory';
 import { useStrings } from '@strings';
-import type { ExperimentRun } from '@api/entities';
+import { ExperimentRun, ExperimentType } from '@api/entities';
 import type { ColumnData } from '@components/ColumnChart/ColumnChart.types';
 import {
   initialExperimentRunFilterState,
@@ -119,11 +119,11 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
   const experimentName = experimentRunsWithExecutionData?.[0]?.experimentName;
   const experimentPhase = experimentRunsWithExecutionData?.[0]?.phase;
   const experimentType = experimentRunsWithExecutionData?.[0]?.experimentType;
+  const experimentManifest = experimentRunsWithExecutionData?.[0]?.experimentManifest;
 
   React.useEffect(() => {
     if (experimentName) setExperimentNamePersistent(experimentName);
-  }, [experimentName]),
-    [experimentName];
+  }, [experimentName]);
 
   const experimentRunsTableData: ExperimentRunHistoryTableProps | undefined = experimentRunsWithExecutionData && {
     content: generateExperimentRunTableContent(experimentRunsWithExecutionData),
@@ -149,11 +149,17 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
 
   const areFiltersSet = !(isEqual(state, initialExperimentRunFilterState) && page === 0);
 
+  const parsedManifest = experimentManifest && JSON.parse(experimentManifest);
+
+  const isCronEnabled =
+    experimentRunsWithExecutionData && experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
+
   const rightSideBarV2 = (
     <RightSideBarV2
       refetchExperimentRuns={refetchExperimentRuns}
       experimentID={experimentID}
       phase={experimentPhase}
+      isCronEnabled={isCronEnabled}
       experimentType={experimentType}
     />
   );

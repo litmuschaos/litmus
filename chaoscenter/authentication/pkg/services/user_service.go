@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 )
 
@@ -17,6 +19,7 @@ type userService interface {
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
+	UpdateUserByQuery(filter bson.D, updateQuery bson.D) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
@@ -65,6 +68,11 @@ func (a applicationService) CreateUser(user *entities.User) (*entities.User, err
 // UpdateUser updates user details in the database
 func (a applicationService) UpdateUser(user *entities.UserDetails) error {
 	return a.userRepository.UpdateUser(user)
+}
+
+// UpdateUserByQuery updates user details in the database
+func (a applicationService) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	return a.userRepository.UpdateUserByQuery(filter, updateQuery)
 }
 
 // IsAdministrator verifies if the passed user is an administrator

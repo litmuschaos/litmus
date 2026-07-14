@@ -1,4 +1,0 @@
-apiVersion: litmuschaos.io/v1alpha1
-kind: Unknown
-metadata:
-  name: wrong

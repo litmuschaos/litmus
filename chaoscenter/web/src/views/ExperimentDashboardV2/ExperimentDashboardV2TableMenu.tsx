@@ -33,7 +33,9 @@ export const MenuCell = ({
     onError: error => showError(error.message)
   });
 
-  const lastExperimentRunStatus = data.recentExecutions[0]?.experimentRunStatus;
+  const isDeleteButtonEnabled = !data.recentExecutions.some(
+    execution => execution?.experimentRunStatus === ExperimentRunStatus.RUNNING
+  );
 
   // <!-- confirmation dialog boxes -->
   const confirmationDialogProps = {
@@ -68,9 +70,9 @@ export const MenuCell = ({
                 search: `tab=${StudioTabs.BUILDER}`
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
-          {/* */}
+          {/* <!-- clone experiment button --> */}
           <RbacMenuItem
             icon={'copy-alt'}
             text={getString('cloneExperiment')}
@@ -79,7 +81,7 @@ export const MenuCell = ({
                 pathname: paths.toCloneExperiment({ experimentKey: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.Executor}
           />
           {/* <!-- view executions button --> */}
           <RbacMenuItem
@@ -91,7 +93,7 @@ export const MenuCell = ({
                 pathname: paths.toExperimentRunHistory({ experimentID: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.VIEWER}
           />
           {/* <!-- download manifest button --> */}
           <RbacMenuItem
@@ -100,7 +102,7 @@ export const MenuCell = ({
             onClick={() => {
               downloadYamlAsFile(yamlStringify(parse(data.experimentManifest)), `${data.experimentName}.yml`);
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.VIEWER}
           />
           <MenuDivider />
           {/* <!-- delete experiment button --> */}
@@ -108,11 +110,8 @@ export const MenuCell = ({
             icon="main-trash"
             text={getString('deleteExperiment')}
             onClick={openDeleteDialog}
-            disabled={
-              lastExperimentRunStatus === ExperimentRunStatus.RUNNING ||
-              lastExperimentRunStatus === ExperimentRunStatus.QUEUED
-            }
-            permission={PermissionGroup.EDITOR}
+            disabled={isDeleteButtonEnabled == false}
+            permission={PermissionGroup.OWNER}
           />
         </Menu>
       </Popover>

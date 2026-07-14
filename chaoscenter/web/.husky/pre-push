@@ -1,36 +1,36 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+"$(dirname "$0")/_/husky.sh"
 
-declare MATCH_PATH='chaoscenter/web/'
+MATCH_PATH='chaoscenter/web/'
 
-declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "ON_BRANCH ⟶ $BRANCH"
 
-declare REMOTE_EXISTS=$(git ls-remote --heads origin $BRANCH | wc -l)
+REMOTE_EXISTS=$(git ls-remote --heads origin "$BRANCH" | wc -l)
 
-declare CHECK_AGAINST_COMMIT
+CHECK_AGAINST_COMMIT=""
 
-if [[ $REMOTE_EXISTS -gt 0 ]]
+if [ "$REMOTE_EXISTS" -gt 0 ];
   then
     # remote exists, compare changes from last pushed commit
-    declare LAST_PUSHED_COMMIT_ID=$(git rev-parse --short @{push})
+    LAST_PUSHED_COMMIT_ID=$(git rev-parse --short @{push})
     echo "LAST_PUSHED_COMMIT ⟶ $LAST_PUSHED_COMMIT_ID"
-    CHECK_AGAINST_COMMIT=$LAST_PUSHED_COMMIT_ID
+    CHECK_AGAINST_COMMIT="$LAST_PUSHED_COMMIT_ID"
   else
     # remote doesn't exists, compare changes from branched off commit
-    declare BRANCHED_COMMIT_ID=$(git rev-parse --short $(git merge-base main $BRANCH))
+    BRANCHED_COMMIT_ID=$(git rev-parse --short "$(git merge-base main "$BRANCH")")
     echo "BRANCHED_COMMIT_ID ⟶ $BRANCHED_COMMIT_ID"
-    CHECK_AGAINST_COMMIT=$BRANCHED_COMMIT_ID
+    CHECK_AGAINST_COMMIT="$BRANCHED_COMMIT_ID"
 fi
 
-declare CHAOS_UI_FILE_CHANGES=$(git diff --name-only -r --stat --oneline $CHECK_AGAINST_COMMIT HEAD | grep $MATCH_PATH -c)
+CHAOS_UI_FILE_CHANGES=$(git diff --name-only -r --stat --oneline "$CHECK_AGAINST_COMMIT" HEAD | grep "$MATCH_PATH" -c)
 
 echo "CHAOS_UI_FILE_CHANGES ⟶ $CHAOS_UI_FILE_CHANGES"
 
-if [[ $CHAOS_UI_FILE_CHANGES -gt 0 ]]
+if [ "$CHAOS_UI_FILE_CHANGES" -gt 0 ];
   then
-    cd ./chaoscenter/web && yarn test:silent --changedSince=$CHECK_AGAINST_COMMIT
+    cd ./chaoscenter/web && yarn test:silent --changedSince="$CHECK_AGAINST_COMMIT"
   else
     echo "Skipping husky pre-push hook in $MATCH_PATH folder"
 fi

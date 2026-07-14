@@ -69,7 +69,7 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
           validationSchema={Yup.object().shape({
             name: Yup.string()
               .trim()
-              .matches(/^[a-zA-Z ]*$/, getString('nameVaidText'))
+              .matches(/^[a-zA-Z ]*$/, getString('nameValidText'))
               .required(getString('nameIsRequired')),
             email: Yup.string().trim().email(getString('invalidEmailText')).required(getString('emailIsRequired'))
           })}
@@ -94,9 +94,10 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={updateDetailsMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
                       loading={updateDetailsMutationLoading}
-                      disabled={isUserDetailsUpdated(formikProps.values)}
+                      disabled={updateDetailsMutationLoading || isUserDetailsUpdated(formikProps.values)}
+                      style={{ minWidth: '90px' }}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}

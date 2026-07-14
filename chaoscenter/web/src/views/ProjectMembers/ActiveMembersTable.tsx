@@ -30,21 +30,21 @@ export default function ActiveMembersTableView({
   const envColumns: Column<ProjectMember>[] = useMemo(
     () => [
       {
-        Header: 'MEMBERS',
+        Header: getString('members').toUpperCase(),
         id: 'username',
         width: '40%',
         accessor: 'username',
         Cell: MemberName
       },
       {
-        Header: 'EMAIL',
+        Header: getString('email').toUpperCase(),
         id: 'email',
         accessor: 'email',
         width: '30%',
         Cell: MemberEmail
       },
       {
-        Header: 'PERMISSIONS',
+        Header: getString('permissions').toUpperCase(),
         id: 'role',
         accessor: 'role',
         width: '30%',
@@ -57,15 +57,10 @@ export default function ActiveMembersTableView({
         Cell: ({ row: { original: data } }: { row: Row<ProjectMember> }) => {
           const { open: openDeleteModal, isOpen: isDeleteModalOpen, close: hideDeleteModal } = useToggleOpen();
           // const { open: openEditModal, isOpen: isEditOpen, close: hideEditModal } = useToggleOpen();
-
+          if (data.role === 'Owner') return <></>;
           return (
             <Layout.Vertical flex={{ justifyContent: 'center', alignItems: 'flex-end' }} onClick={killEvent}>
-              <Popover
-                className={Classes.DARK}
-                position={Position.LEFT}
-                interactionKind={PopoverInteractionKind.HOVER}
-                disabled={data.role === 'Owner'}
-              >
+              <Popover className={Classes.DARK} position={Position.LEFT} interactionKind={PopoverInteractionKind.HOVER}>
                 <Button variation={ButtonVariation.ICON} icon="Options" />
                 <Menu style={{ backgroundColor: 'unset' }}>
                   {/* <RbacMenuItem icon="edit" text="Edit Role" onClick={openEditModal} permission={PermissionGroup.OWNER} /> */}
@@ -103,7 +98,9 @@ export default function ActiveMembersTableView({
   );
   return (
     <Layout.Vertical height={'100%'} padding="medium">
-      <Text font={{ variation: FontVariation.H6 }}>Total Members: {activeMembers?.length ?? 0}</Text>
+      <Text font={{ variation: FontVariation.H6 }}>
+        {getString('totalMembers')}: {activeMembers?.length ?? 0}
+      </Text>
       <Loader
         loading={isLoading}
         noData={{

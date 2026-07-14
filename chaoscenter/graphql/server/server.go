@@ -1,37 +1,49 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
-	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
-	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-
+	"context"
+	"fmt"
 	"net"
 	"net/http"
+	"regexp"
 	"runtime"
+	"strconv"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
-	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
+	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -44,7 +56,29 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
+func validateVersion(mongoOperator mongodb.MongoOperator) error {
+	currentVersion := utils.Config.Version
+	dbVersion, err := config.GetConfig(context.Background(), mongoOperator, "version")
+	if err != nil {
+		return fmt.Errorf("failed to get version from db, error = %w", err)
+	}
+	if dbVersion == nil {
+		err := config.CreateConfig(
+			context.Background(), mongoOperator,
+			&config.ServerConfig{Key: "version", Value: currentVersion},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to insert current version in db, error = %w", err)
+		}
+		return nil
+	}
+	// This check will be added back once DB upgrader job becomes functional
+	// if dbVersion.Value.(string) != currentVersion {
+	// 	return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	// }
+	return nil
 }
 
 func setupGin() *gin.Engine {
@@ -52,12 +86,8 @@ func setupGin() *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-	}))
-
+	router.Use(middleware.ValidateCors())
+	router.Use(metrics.MetricsMiddleware())
 	return router
 }
 
@@ -72,9 +102,24 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
-	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+	if err := validateVersion(mongodbOperator); err != nil {
+		log.Fatal(err)
+	}
+
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
+	if err != nil {
+		log.Errorf("unable to parse boolean value %v", err)
+	}
+
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
+			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+	} else {
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
 	srv.AddTransport(transport.POST{})
@@ -83,17 +128,64 @@ func main() {
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
-				return true
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					origin = r.Host
+				}
+				for _, allowedOrigin := range utils.Config.AllowedOrigins {
+					match, err := regexp.MatchString(allowedOrigin, origin)
+					if err == nil && match {
+						return true
+					}
+				}
+				return false
 			},
 		},
 	})
 
-	// to be removed in production
-	srv.Use(extension.Introspection{})
+	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
+	if err != nil {
+		log.Errorf("unable to parse boolean value %v", err)
+	}
+	if enableIntrospection {
+		srv.Use(extension.Introspection{})
+	}
+
+	// GraphQL operation tracking middleware
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		oc := graphql.GetOperationContext(ctx)
+		operationType := "query"
+		if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+			operationType = "mutation"
+		}
+		operationName := oc.OperationName
+		if operationName == "" {
+			operationName = "anonymous"
+		}
+
+		// Store operation details in context for HTTP middleware to use
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationNameKey, operationName)
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationTypeKey, operationType)
+
+		return next(ctx)
+	})
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).SyncDefaultChaosHubs()
+
+	// go routine for syncing gitops
+	chaosInfraOperator := dbChaosInfra.NewInfrastructureOperator(mongodbOperator)
+	chaosExperimentOperator := chaos_experiment.NewChaosExperimentOperator(mongodbOperator)
+	chaosExperimentRunOperator := chaos_experiment_run.NewChaosExperimentRunOperator(mongodbOperator)
+	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
+	probeOperator := dbSchemaProbe.NewChaosProbeOperator(mongodbOperator)
+
+	probeService := probe.NewProbeService(probeOperator)
+	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+
+	go gitOpsService.GitOpsSyncHandler(false)
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
@@ -107,13 +199,33 @@ func main() {
 
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
-	router.GET("/readiness", handlers.ReadinessHandler())
+	router.GET("/readiness", handlers.ReadinessHandler(mongodbOperator))
 
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
+	go startMetricsServer()
 
-	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
-	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	if enableHTTPSConnection {
+		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
+			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
+		}
+
+		log.Infof("graphql server running at https://localhost:%s", utils.Config.RestPort)
+		// configuring TLS config based on provided certificates & keys
+		conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+		server := http.Server{
+			Addr:      ":" + utils.Config.RestPort,
+			Handler:   router,
+			TLSConfig: conf,
+		}
+		if err := server.ListenAndServeTLS("", ""); err != nil {
+			log.Fatalf("Failure to start litmus-portal graphql REST server due to %v", err)
+		}
+	} else {
+		log.Infof("graphql server running at http://localhost:%s", utils.Config.RestPort)
+		log.Fatal(http.ListenAndServe(":"+utils.Config.RestPort, router))
+	}
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
@@ -131,4 +243,44 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 
 	log.Infof("GRPC server listening on %v", lis.Addr())
 	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
+
+	lis, err := net.Listen("tcp", ":"+utils.Config.GrpcPort)
+	if err != nil {
+		log.Fatal("failed to listen: %w", err)
+	}
+
+	// configuring TLS config based on provided certificates & keys
+	conf := utils.GetTlsConfig(utils.Config.TlsCertPath, utils.Config.TlsKeyPath, true)
+
+	// create tls credentials
+	tlsCredentials := credentials.NewTLS(conf)
+
+	// create grpc server with tls credential
+	grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
+
+	// Register services
+
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
+
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startMetricsServer starts a separate HTTP server for Prometheus metrics
+func startMetricsServer() {
+	metricsRouter := gin.New()
+	metricsRouter.Use(gin.Recovery())
+	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	metricsPort := utils.Config.MetricsPort
+	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+
+	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
+		log.Fatalf("Failed to start metrics server: %v", err)
+	}
+
 }

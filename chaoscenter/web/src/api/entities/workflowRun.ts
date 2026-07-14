@@ -14,7 +14,7 @@ export interface ChaosData {
   engineContext: string;
   engineUID: string;
   faultName: string;
-  faultPod: string;
+  experimentPod: string;
   faultStatus: string;
   faultVerdict: string;
   failStep: string;

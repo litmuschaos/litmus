@@ -46,7 +46,7 @@ func (g *GitOpsService) GetGitOpsDetails(ctx context.Context, projectID string) 
 
 // UpsertWorkflowToGit provides a mock function with given fields: ctx, experiment
 func (g *GitOpsService) UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
-	args := g.Called(ctx, experiment)
+	args := g.Called(ctx, projectID, experiment)
 	return args.Error(0)
 }
 

@@ -11,6 +11,10 @@ type KubeObjData struct {
 	Data      []ObjectData `json:"data"`
 }
 
+type KubeNamespace struct {
+	Name string `json:"Name"`
+}
+
 type ObjectData struct {
 	Name                    string            `json:"name"`
 	UID                     types.UID         `json:"uid"`

@@ -72,4 +72,4 @@ spec:
               memory: "500Mi"
               cpu: "225m"
               ephemeral-storage: "1Gi"
-      serviceAccountName: argo
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}

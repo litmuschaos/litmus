@@ -40,7 +40,7 @@ export default function CustomStepLogController({
       podName: podName,
       podNamespace: namespace ?? '',
       podType: nodeType ?? '',
-      expPod: chaosData?.faultPod,
+      expPod: chaosData?.experimentPod,
       runnerPod: chaosData?.runnerPod,
       chaosNamespace: chaosData?.namespace
     }
@@ -63,7 +63,27 @@ export default function CustomStepLogController({
     <SimpleLogViewer
       loading={loading}
       data={
-        podLogs && podLogs?.getPodLog ? podLogs.getPodLog.log : error ? error.message : getString('logErrorMessage')
+        podLogs && podLogs?.getPodLog
+          ? (() => {
+              try {
+                return Object.entries(JSON.parse(podLogs.getPodLog.log))
+                  .map(([key, value]) => {
+                    if (typeof value === 'object' && value !== null) {
+                      // Flatten chaosLogs inner object
+                      return `${key}:\n${Object.entries(value)
+                        .map(([k, v]) => `  ${k}: ${v}`)
+                        .join('\n')}`;
+                    }
+                    return `${key}: ${value}`;
+                  })
+                  .join('\n');
+              } catch (e) {
+                return podLogs.getPodLog.log;
+              }
+            })()
+          : error
+          ? error.message
+          : getString('logErrorMessage')
       }
     />
   );

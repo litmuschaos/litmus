@@ -14,8 +14,12 @@ import type { ListChaosHubRequest, ListChaosHubResponse, SyncChaosHubRequest, Sy
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import NoFilteredData from '@components/NoFilteredData';
+import GitHub from '@images/Github.svg';
+import Azure from '@images/Azure.svg';
+import Gitlab from '@images/Gitlab.svg';
 import enterpriseHubLogo from '../../images/enterpriseHub.svg';
 import privateHubLogo from '../../images/privateHub.svg';
+import Bitbucket from '../../images/Bitbucket.svg';
 import { AddHubModalProvider } from './AddHubModal';
 import css from './ChaosHubs.module.scss';
 
@@ -47,6 +51,25 @@ function ConnectionStatus({ isConnected }: { isConnected: boolean }): React.Reac
     </div>
   );
 }
+
+const RemoteHubImage = ({ remoteHubName }: { remoteHubName: string }): React.ReactElement => {
+  const hubSvg = () => {
+    switch (remoteHubName) {
+      case 'GitHub':
+        return <img src={GitHub} height={27.38} width={29} alt="GitHub" />;
+      case 'Azure Repo':
+        return <img src={Azure} height={27.38} width={29} alt="Azure-Repo" />;
+      case 'Bitbucket':
+        return <img src={Bitbucket} height={27.38} width={29} alt="Bitbucket" />;
+      case 'GitLab':
+        return <img src={Gitlab} height={27.38} width={29} alt="Gitlab" />;
+      default:
+        return <img src={privateHubLogo} height={27.38} width={29} alt="Private Hub" />;
+    }
+  };
+
+  return hubSvg();
+};
 
 export const ChaosHubsView: React.FC<ChaosHubParams> = ({
   chaosHubs,
@@ -132,7 +155,7 @@ export const ChaosHubsView: React.FC<ChaosHubParams> = ({
                       {chaosHub.isDefault ? (
                         <img src={enterpriseHubLogo} height={26.85} width={29} alt="Enterprise Hub" />
                       ) : (
-                        <img src={privateHubLogo} height={27.38} width={29} alt="Private Hub" />
+                        <RemoteHubImage remoteHubName={chaosHub.remoteHub} />
                       )}
                       <Text
                         font={{ size: 'medium', weight: 'semi-bold' }}

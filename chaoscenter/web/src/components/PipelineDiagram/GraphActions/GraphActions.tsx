@@ -1,6 +1,7 @@
 import React from 'react';
 import { ButtonVariation, ButtonGroup, Button, Layout } from '@harnessio/uicore';
 import cx from 'classnames';
+import { useStrings } from '@strings';
 import { ZOOM_INC_DEC_LEVEL } from './constants';
 import css from './GraphActions.module.scss';
 
@@ -18,25 +19,31 @@ function GraphActions({
   resetGraphState,
   graphActionsLayout
 }: GraphActionProps): React.ReactElement {
+  const { getString } = useStrings();
   const renderButtons = (): React.ReactElement => (
     <>
       <ButtonGroup>
         <Button
           variation={ButtonVariation.TERTIARY}
           icon="canvas-position"
-          tooltip="Zoom to Fit"
+          tooltip={getString('zoomToFit')}
           onClick={handleScaleToFit}
         />
       </ButtonGroup>
       <ButtonGroup>
-        <Button variation={ButtonVariation.TERTIARY} icon="canvas-selector" tooltip="Reset" onClick={resetGraphState} />
+        <Button
+          variation={ButtonVariation.TERTIARY}
+          icon="canvas-selector"
+          tooltip={getString('reset')}
+          onClick={resetGraphState}
+        />
       </ButtonGroup>
       <span className={graphActionsLayout === 'vertical' ? css.verticalButtons : ''}>
         <ButtonGroup>
           <Button
             variation={ButtonVariation.TERTIARY}
             icon="zoom-in"
-            tooltip="Zoom In"
+            tooltip={getString('zoomIn')}
             onClick={e => {
               e.stopPropagation();
               Number(graphScale.toFixed(1)) < 2 && setGraphScale(graphScale + ZOOM_INC_DEC_LEVEL);
@@ -45,7 +52,7 @@ function GraphActions({
           <Button
             variation={ButtonVariation.TERTIARY}
             icon="zoom-out"
-            tooltip="Zoom Out"
+            tooltip={getString('zoomOut')}
             onClick={e => {
               e.stopPropagation();
               Number(graphScale.toFixed(1)) > 0.3 && setGraphScale(graphScale - ZOOM_INC_DEC_LEVEL);

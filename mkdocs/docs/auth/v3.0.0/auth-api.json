@@ -4,10 +4,28 @@
   "schemes": ["https", "http"],
   "info": {
     "title": "Litmus Portal Authentication API",
-    "version": "2.7.0",
+    "version": "3.0.0",
     "description": "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:\n <li>Update Profile</li>\n <li>Change Password</li>\n <li>Reset Password</li>\n <li>Create new users etc.</li>\n"
   },
   "paths": {
+    "/capabilities": {
+      "get": {
+        "description": "Returns capabilities that can be leveraged by frontend services to toggle certain features.",
+        "operationId": "getCapabilities",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["CapabilitiesRouter"],
+        "summary": "Get capabilities of Auth Server.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CapabilitiesResponse"
+            }
+          }
+        }
+      }
+    },
     "/status": {
       "get": {
         "description": "This API is used to check the status of the server.",
@@ -43,7 +61,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA",
+                "access_token": "",
                 "expires_in": 86400,
                 "type": "Bearer"
               }
@@ -100,7 +118,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "message":"successfully logged out"
+                "message": "successfully logged out"
               }
             },
             "schema": {
@@ -137,7 +155,7 @@
                   {
                     "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
                     "name": "test-api-token",
-                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "token": "ACCESS_TOKEN",
                     "expires_at": 1627040198,
                     "created_at": 1627040098
                   }
@@ -182,8 +200,8 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "accessToken": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
-                "type":        "Bearer"
+                "accessToken": "",
+                "type": "Bearer"
               }
             },
             "schema": {
@@ -275,7 +293,7 @@
                 }
               },
               "example": {
-                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+                "token": "ACCESS_TOKEN"
               }
             }
           }
@@ -651,6 +669,15 @@
               "properties": {
                 "projectName": {
                   "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "example": {
@@ -783,7 +810,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "data": [
+                "projects": [
                   {
                     "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
                     "Name": "my project",
@@ -800,23 +827,76 @@
                     "UpdatedAt": "1627040799",
                     "RemovedAt": ""
                   }
-                ]
+                ],
+                "totalNumberOfProjects": 1
               }
             },
             "schema": {
               "type": "object",
               "properties": {
                 "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Project"
+                  "type": "object",
+                  "properties": {
+                    "projects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Project"
+                      }
+                    },
+                    "totalNumberOfProjects": {
+                      "type": "integer"
+                    }
                   }
                 }
               }
             }
           }
         },
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "sortField",
+            "required": false,
+            "description": "field for sorting the data",
+            "in": "query",
+            "type": "string",
+            "enum": ["name", "time"]
+          },
+          {
+            "name": "sortAscending",
+            "required": false,
+            "description": "field order for sorting the data",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "createdByMe",
+            "required": false,
+            "description": "filter option for self created projects.",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "projectName",
+            "required": false,
+            "description": "filter on the basis of projects name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "description": "page number for pagination.",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "description": "page limit for pagination.",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
         "produces": ["application/json"]
       }
     },
@@ -950,7 +1030,7 @@
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["Owner", "Editor", "Viewer"]
+                  "enum": ["Owner", "Executor", "Viewer"]
                 }
               },
               "example": {
@@ -1272,7 +1352,7 @@
                     "username": "john",
                     "email": "john@gmail.com",
                     "name": "john doe",
-                    "role": "Editor",
+                    "role": "Executor",
                     "invitation": "Accepted",
                     "joinedAt": 1690245328
                   }
@@ -1312,6 +1392,46 @@
         "produces": ["application/json"]
       }
     },
+    "/delete_project/{project_id}": {
+      "post": {
+        "description": "This API is used to delete project, which helps owners to delete their projects.",
+        "operationId": "deleteProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "message": "Successfully deleted project."
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project to delete",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"],
+        "tags": ["ProjectRouter"],
+        "consumes": ["application/json"]
+      }
+    },
     "/invite_users/{project_id}": {
       "get": {
         "description": "This API is used to fetch users who can be invited",
@@ -1346,6 +1466,19 @@
     }
   },
   "definitions": {
+    "CapabilitiesResponse": {
+      "type": "object",
+      "properties": {
+        "dex": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
     "ErrorModel": {
       "type": "object",
       "properties": {
@@ -1390,9 +1523,7 @@
     },
     "LogoutResponse": {
       "type": "object",
-      "required": [
-        "message"
-      ],
+      "required": ["message"],
       "properties": {
         "message": {
           "type": "string"
@@ -1401,9 +1532,7 @@
     },
     "GetApiTokensResponse": {
       "type": "object",
-      "required": [
-        "apiTokens"
-      ],
+      "required": ["apiTokens"],
       "properties": {
         "apiTokens": {
           "type": "array",
@@ -1445,12 +1574,12 @@
       }
     },
     "RemoveApiTokenResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          }
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
+      }
     },
     "ActionBy": {
       "type": "object",
@@ -1526,7 +1655,7 @@
         },
         "role": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "invitation": {
           "type": "string",
@@ -1554,7 +1683,7 @@
         },
         "invitationRole": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": ["Owner", "Executor", "Viewer"]
         },
         "projectOwner": {
           "$ref": "#/definitions/ProjectMember"
@@ -1586,6 +1715,15 @@
         "projectID": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "state": {
           "type": "string"
         },
@@ -1614,6 +1752,20 @@
           }
         }
       ]
+    },
+    "ListProjectResponse": {
+      "type": "object",
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Project"
+          }
+        },
+        "totalNumberOfProjects": {
+          "type": "integer"
+        }
+      }
     }
   }
 }

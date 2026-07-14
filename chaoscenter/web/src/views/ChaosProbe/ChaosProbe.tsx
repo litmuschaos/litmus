@@ -11,6 +11,7 @@ import Loader from '@components/Loader';
 import ChaosProbeConfigurationController from '@controllers/ChaosProbeConfiguration';
 import ChaosProbeExecutionHistoryController from '@controllers/ChaosProbeExecutionHistory';
 import { ProbeTabs } from '@models';
+import { RefetchGetProbes } from '@controllers/ChaosProbe/types';
 import ChaosProbeHeader from './ChaosProbeHeader';
 import css from './ChaosProbe.module.scss';
 
@@ -19,7 +20,11 @@ interface ChaosProbeViewProps {
   probeData: Probe | undefined;
 }
 
-function ChaosProbeView({ loading, probeData }: ChaosProbeViewProps): React.ReactElement {
+function ChaosProbeView({
+  loading,
+  probeData,
+  refetchProbes
+}: ChaosProbeViewProps & RefetchGetProbes): React.ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
   const searchParams = useSearchParams();
@@ -80,10 +85,12 @@ function ChaosProbeView({ loading, probeData }: ChaosProbeViewProps): React.Reac
           probeData={{
             name: probeName,
             type: probeData.type,
-            description: probeData.description ?? ''
+            description: probeData.description ?? '',
+            infrastructureType: probeData.infrastructureType
           }}
           createdAt={probeData.createdAt ?? ''}
           updatedAt={probeData.updatedAt ?? ''}
+          refetchProbes={refetchProbes}
         >
           <Layout.Vertical width={'100%'} background={Color.PRIMARY_BG} height="calc(100vh - 80px)">
             <Page.SubHeader className={css.subHeader}>{subHeader}</Page.SubHeader>

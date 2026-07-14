@@ -29,12 +29,10 @@ func (r repository) RevokeToken(token *entities.RevokedToken) error {
 func (r repository) IsTokenRevoked(encodedToken string) bool {
 	var result = entities.RevokedToken{}
 	err := r.Collection.FindOne(context.TODO(), bson.M{
-		"token": encodedToken,
+		"token": bson.M{"$eq": encodedToken},
 	}).Decode(&result)
-	if err != nil {
-		return false
-	}
-	return true
+
+	return err == nil
 }
 
 // NewRevokedTokenRepo creates a new instance of this repository

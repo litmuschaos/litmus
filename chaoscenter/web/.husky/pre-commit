@@ -1,25 +1,45 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+"$(dirname "$0")/_/husky.sh"
 
-declare MATCH_PATH='chaoscenter/web/'
+MATCH_PATH='chaoscenter/web/'
+STRINGS_FILE="chaoscenter/web/strings/strings.en.yaml"
 
-declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
+check_and_delete_unused_strings() {
+TEMP_FILE=$(mktemp)
+grep -rEo '\b[a-zA-Z0-9_]+\b' chaoscenter/web/**/*.js > "$TEMP_FILE"
+UNUSED_STRINGS=$(grep -v '^#' "$STRINGS_FILE" | grep -vFf "$TEMP_FILE" | grep -oE '^[a-zA-Z0-9_]+')
+rm "$TEMP_FILE"
 
-if [[ "$BRANCH" == "main" ]]; then
-  echo "\033[0;31;1mYou can't commit directly to main branch\033[0m"
+    if [ -n "$UNUSED_STRINGS" ]; then
+        echo "Unused strings found: $UNUSED_STRINGS"
+        for UNUSED_STRING in $UNUSED_STRINGS; do
+            sed -i "/$UNUSED_STRING:/d" "$STRINGS_FILE"
+        done
+        echo "Unused strings deleted from $STRINGS_FILE"
+    else
+        echo "No unused strings found in $STRINGS_FILE"
+    fi
+}
+
+check_and_delete_unused_strings
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" = "master" ]; then
+  echo "\033[0;31;1mYou can't commit directly to master branch\033[0m"
   exit 1
 fi
 
-if [[ "$BRANCH" =~ ^release\/.* ]]; then
+if expr "$BRANCH" : 'release\/.*' >/dev/null; then
   echo "\033[0;31;1mYou cannot commit directly to release branch\033[0m"
-    exit 1
+  exit 1
 fi
 
-declare LITMUS_UI_FILE_CHANGES=$(git diff --name-only --cached | grep $MATCH_PATH -c)
+LITMUS_UI_FILE_CHANGES=$(git diff --name-only --cached | grep "$MATCH_PATH" -c)
 
 echo "\033[0;93mLITMUS_UI_FILE_CHANGES\033[0m ⟶ $LITMUS_UI_FILE_CHANGES"
 
-if [[ $LITMUS_UI_FILE_CHANGES -gt 0 ]]
+if [ "$LITMUS_UI_FILE_CHANGES" -gt 0 ];
   then 
     cd ./chaoscenter/web && yarn lint-staged
   else

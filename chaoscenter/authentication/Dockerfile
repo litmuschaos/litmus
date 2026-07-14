@@ -1,5 +1,5 @@
 # BUILD STAGE
-FROM golang:1.20 AS builder
+FROM golang:1.25 AS builder
 
 ARG TARGETOS=linux
 ARG TARGETARCH
@@ -14,14 +14,22 @@ RUN go env
 
 RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
 
-# Packaging stage
-# Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
-# The base image is non-root (have litmus user) with default litmus directory.
-FROM litmuschaos/infra-alpine
+# PACKAGING STAGE
+# Use RedHat UBI minimal image as base
+FROM registry.access.redhat.com/ubi10/ubi-minimal:10.1
 
 LABEL maintainer="LitmusChaos"
 
-COPY --from=builder /output/server /litmus
+ENV APP_DIR="/litmus"
+
+# Ensure base packages (including libxslt) are patched
+RUN microdnf -y update && microdnf clean all
+
+COPY --from=builder /output/server $APP_DIR/
+RUN chown 65534:0 $APP_DIR/server && chmod 755 $APP_DIR/server
+
+WORKDIR $APP_DIR
+USER 65534
 
 CMD ["./server"]
 

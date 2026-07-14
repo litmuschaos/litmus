@@ -97,7 +97,7 @@ export const ChaosHubMenuView: React.FC<ChaosHubMenuViewProps> = ({
                   hubID.current = chaosHub.id;
                   syncChaosHubMutation({ variables: { projectID: scope.projectID, id: chaosHub.id } });
                 }}
-                permission={PermissionGroup.EDITOR}
+                permission={PermissionGroup.Executor}
               />
             )}
             <ParentComponentErrorWrapper>
@@ -125,7 +125,7 @@ export const ChaosHubMenuView: React.FC<ChaosHubMenuViewProps> = ({
                     setSelectedHubDetails(chaosHub);
                     setEditHubModal(true);
                   }}
-                  permission={PermissionGroup.EDITOR}
+                  permission={PermissionGroup.OWNER}
                 />
               </ParentComponentErrorWrapper>
             )}
@@ -139,7 +139,7 @@ export const ChaosHubMenuView: React.FC<ChaosHubMenuViewProps> = ({
                   onClick={() => {
                     deleteChaosHubMutation({ variables: { projectID: scope.projectID, hubID: chaosHub.id } });
                   }}
-                  permission={PermissionGroup.EDITOR}
+                  permission={PermissionGroup.OWNER}
                 />
               </ParentComponentErrorWrapper>
             )}

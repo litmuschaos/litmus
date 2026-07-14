@@ -69,7 +69,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			logrus.WithError(err).Fatal("Failed to read message")
+			logrus.WithError(err).Panic("Failed to read message")
 		}
 
 		var r types.RawData
@@ -87,6 +87,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 		}
 		if r.Payload.Errors != nil {
 			logrus.Error("Error response from the server : ", string(message))
+			panicWhen("ALREADY CONNECTED", message)
 			continue
 		}
 
@@ -94,6 +95,12 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 		if err != nil {
 			logrus.WithError(err).Error("Error on processing request")
 		}
+	}
+}
+
+func panicWhen(errorMessage string, message []byte) {
+	if strings.Contains(string(message), errorMessage) {
+		logrus.Panic("Server error: ", errorMessage)
 	}
 }
 
@@ -111,6 +118,21 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 		err = req.subscriberK8s.SendKubeObjects(infraData, KubeObjRequest)
 		if err != nil {
 			return errors.New("error getting kubernetes object data: " + err.Error())
+		}
+	}
+	if strings.Index("kubenamespace kubenamespaces", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+		KubeNamespaceRequest := types.KubeNamespaceRequest{
+			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,
+		}
+
+		err := json.Unmarshal([]byte(r.Payload.Data.InfraConnect.Action.ExternalData), &KubeNamespaceRequest)
+		if err != nil {
+			return errors.New("failed to json unmarshal: " + err.Error())
+		}
+
+		err = req.subscriberK8s.SendKubeNamespaces(infraData, KubeNamespaceRequest)
+		if err != nil {
+			return errors.New("error getting kubernetes namespace data: " + err.Error())
 		}
 	}
 	if strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType) == "logs" {

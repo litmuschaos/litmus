@@ -62,6 +62,7 @@ export function listExperimentRunForHistory({
             updatedBy {
               username
             }
+            experimentManifest
             updatedAt
             resiliencyScore
             phase

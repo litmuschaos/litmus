@@ -4,6 +4,7 @@ import { useUpdatePasswordMutation } from '@api/auth';
 import AccountPasswordChangeView from '@views/AccountPasswordChange';
 import { useLogout } from '@hooks';
 import { useStrings } from '@strings';
+import { setUserDetails } from '@utils';
 
 interface AccountPasswordChangeViewProps {
   handleClose: () => void;
@@ -11,15 +12,16 @@ interface AccountPasswordChangeViewProps {
 }
 
 export default function AccountPasswordChangeController(props: AccountPasswordChangeViewProps): React.ReactElement {
+  const { handleClose, username } = props;
   const { showSuccess } = useToaster();
   const { getString } = useStrings();
   const { forceLogout } = useLogout();
-  const { handleClose, username } = props;
 
   const { mutate: updatePasswordMutation, isLoading } = useUpdatePasswordMutation(
     {},
     {
       onSuccess: data => {
+        setUserDetails({ isInitialLogin: false });
         showSuccess(`${data.message}, ${getString('loginToContinue')}`);
         forceLogout();
       }

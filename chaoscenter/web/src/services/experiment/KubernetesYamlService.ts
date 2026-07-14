@@ -1,6 +1,5 @@
 import { parse } from 'yaml';
-import type { EnvVar } from 'argo-ui/src/models/kubernetes';
-import { ChaosObjectStoreNameMap, ChaosObjectStoresPrimaryKeys, Experiment } from '@db';
+import { ChaosObjectStoreNameMap, ChaosObjectStoresPrimaryKeys, Experiment, ImageRegistry } from '@db';
 import {
   ChaosEngine,
   ChaosExperiment,
@@ -19,6 +18,7 @@ import {
 import { yamlStringify } from '@utils';
 import { Weightages, InfrastructureType, ProbeObj } from '@api/entities';
 import type { PipelineGraphState } from '@components/PipelineDiagram/types';
+import { EnvVar } from 'models/k8s';
 import ExperimentFactory from './ExperimentFactory';
 import { ExperimentYamlService, GetFaultTunablesOperation, PreProcessChaosExperiment } from './ExperimentYamlService';
 
@@ -37,7 +37,6 @@ export class KubernetesYamlService extends ExperimentYamlService {
 
       experiment.unsavedChanges = true;
       const [templates, steps] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
-
       // Add to steps in entry template
       if (parallelNodeIdentifier !== '') {
         steps?.map(step => {
@@ -64,6 +63,12 @@ export class KubernetesYamlService extends ExperimentYamlService {
       const installTemplateArtifacts = templates?.filter(template => template.name === 'install-chaos-faults')[0].inputs
         ?.artifacts;
 
+      if (faultCR?.spec?.definition) {
+        faultCR.spec.definition.image = updateContainerImage(
+          faultCR?.spec?.definition?.image,
+          experiment.imageRegistry
+        );
+      }
       // Add faults in install-chaos-faults template
       installTemplateArtifacts?.push({
         name: faultName,
@@ -96,7 +101,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: updateContainerImage(`docker.io/litmuschaos/litmus-checker:2.11.0`, experiment.imageRegistry),
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -193,6 +198,13 @@ export class KubernetesYamlService extends ExperimentYamlService {
         if (template.name === 'install-chaos-faults') {
           template.inputs?.artifacts?.map(artifact => {
             if (artifact.name === faultName) {
+              if (faultCR?.spec?.definition) {
+                faultCR.spec.definition.image = updateContainerImage(
+                  faultCR?.spec?.definition?.image,
+                  experiment.imageRegistry
+                );
+              }
+
               artifact.raw = {
                 data: yamlStringify(faultCR)
               };
@@ -230,7 +242,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
+          image: updateContainerImage(`docker.io/litmuschaos/litmus-checker:2.11.0`, experiment.imageRegistry),
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -274,6 +286,33 @@ export class KubernetesYamlService extends ExperimentYamlService {
     }
   }
 
+  async updateFaultStepName(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    faultName: string,
+    stepName: string
+  ): Promise<void> {
+    try {
+      const tx = (await this.db).transaction(ChaosObjectStoreNameMap.EXPERIMENTS, 'readwrite');
+      const store = tx.objectStore(ChaosObjectStoreNameMap.EXPERIMENTS);
+      const experiment = await store.get(key);
+      if (!experiment) return;
+
+      experiment.unsavedChanges = true;
+      const [, steps] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      steps?.forEach(step => {
+        step.forEach(s => {
+          if (s.template === faultName) s.name = stepName;
+        });
+      });
+
+      await store.put({ ...experiment }, key);
+      await tx.done;
+    } catch (_) {
+      this.handleIDBFailure();
+    }
+  }
+
   async updateNodeSelector(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
     nodeSelector: {
@@ -297,11 +336,58 @@ export class KubernetesYamlService extends ExperimentYamlService {
         delete spec?.nodeSelector;
       }
 
+      const [templates] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      templates?.map(template => {
+        if (template.inputs?.artifacts?.[0]?.raw?.data) {
+          const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+          if (chaosEngineCR.kind === 'ChaosEngine') {
+            const updatedEngineCR = this.updateNodeSelectorInChaosEngine(chaosEngineCR, nodeSelector, remove);
+            template.inputs.artifacts[0].raw.data = yamlStringify(updatedEngineCR);
+          }
+        }
+      });
+
       await store.put({ ...experiment }, key);
       await tx.done;
     } catch (_) {
       this.handleIDBFailure();
     }
+  }
+
+  private updateNodeSelectorInChaosEngine(
+    manifest: ChaosEngine | undefined,
+    nodeSelector: {
+      key: string;
+      value: string;
+    },
+    remove: boolean
+  ): ChaosEngine | undefined {
+    if (!manifest?.spec) return;
+
+    if (remove) {
+      if (manifest.spec?.components?.runner?.nodeSelector) {
+        delete manifest.spec?.components?.runner?.nodeSelector;
+      }
+      if (manifest.spec?.experiments[0].spec.components?.nodeSelector) {
+        delete manifest.spec.experiments[0].spec.components?.nodeSelector;
+      }
+      return manifest;
+    }
+
+    manifest.spec.components = {
+      ...manifest.spec.components,
+      runner: {
+        ...manifest.spec.components?.runner,
+        nodeSelector: { [nodeSelector.key]: nodeSelector.value }
+      }
+    };
+    manifest.spec.experiments[0].spec.components = {
+      ...manifest.spec.experiments[0].spec.components,
+      nodeSelector: { [nodeSelector.key]: nodeSelector.value }
+    };
+
+    return manifest;
   }
 
   async updateToleration(
@@ -316,26 +402,68 @@ export class KubernetesYamlService extends ExperimentYamlService {
       if (!experiment) return;
 
       experiment.unsavedChanges = true;
-      const [, , spec] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+      const [templates, , spec] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      toleration = {
+        effect: toleration.effect ? toleration.effect : 'NoExecute',
+        key: toleration.key ?? '',
+        operator: toleration.operator ? toleration.operator : 'Equal',
+        value: toleration.value ?? ''
+      };
 
       if (spec && !remove) {
-        spec.tolerations = [
-          {
-            effect: toleration.effect ? toleration.effect : 'NoExecute',
-            key: toleration.key ?? '',
-            operator: toleration.operator ? toleration.operator : 'Equal',
-            value: toleration.value ?? ''
-          }
-        ];
+        spec.tolerations = [toleration];
       } else {
         delete spec?.tolerations;
       }
+
+      templates?.map(template => {
+        if (template.inputs?.artifacts?.[0]?.raw?.data) {
+          const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+          if (chaosEngineCR.kind === 'ChaosEngine') {
+            const updatedEngineCR = this.updateTolerationInChaosEngine(chaosEngineCR, toleration, remove);
+            template.inputs.artifacts[0].raw.data = yamlStringify(updatedEngineCR);
+          }
+        }
+      });
 
       await store.put({ ...experiment }, key);
       await tx.done;
     } catch (_) {
       this.handleIDBFailure();
     }
+  }
+
+  private updateTolerationInChaosEngine(
+    manifest: ChaosEngine | undefined,
+    tolerations: WorkflowToleration,
+    remove: boolean
+  ): ChaosEngine | undefined {
+    if (!manifest?.spec) return;
+
+    if (remove) {
+      if (manifest.spec?.components?.runner?.tolerations) {
+        delete manifest.spec?.components?.runner?.tolerations;
+      }
+      if (manifest.spec?.experiments[0].spec.components?.tolerations) {
+        delete manifest.spec?.experiments[0].spec.components?.tolerations;
+      }
+      return manifest;
+    }
+
+    manifest.spec.components = {
+      ...manifest.spec.components,
+      runner: {
+        ...manifest.spec.components?.runner,
+        tolerations: tolerations
+      }
+    };
+    manifest.spec.experiments[0].spec.components = {
+      ...manifest.spec.experiments[0].spec.components,
+      tolerations: tolerations
+    };
+
+    return manifest;
   }
 
   async convertToNonCronExperiment(key: ChaosObjectStoresPrimaryKeys['experiments']): Promise<void> {
@@ -680,7 +808,16 @@ export class KubernetesYamlService extends ExperimentYamlService {
       faultName
     };
 
-    const [templates] = this.getTemplatesAndSteps(manifest);
+    const [templates, steps] = this.getTemplatesAndSteps(manifest);
+
+    // Get step name from workflow steps
+    steps?.forEach(step => {
+      step.forEach(s => {
+        if (s.template === faultName) {
+          faultData.stepName = s.name;
+        }
+      });
+    });
 
     // Get install-chaos-faults template artifacts
     const installTemplateArtifacts = templates?.filter(template => template.name === 'install-chaos-faults')[0].inputs
@@ -837,25 +974,29 @@ export class KubernetesYamlService extends ExperimentYamlService {
   }
 
   updateFaultTunablesInFaultData(
-    faultData: FaultData | undefined,
-    faultTunables: FaultTunables | undefined
-  ): FaultData | undefined {
-    const chaosEngine = faultData?.engineCR;
-    if (!chaosEngine || !faultTunables) return faultData;
+  faultData: FaultData | undefined,
+  faultTunables: FaultTunables | undefined
+): FaultData | undefined {
+  const chaosEngine = faultData?.engineCR;
+  if (!chaosEngine || !faultTunables) return faultData;
 
-    const envs: EnvVar[] = Object.entries(faultTunables).map(([envName, faultTunable]) => {
-      return {
-        name: envName,
-        value: faultTunable.value?.toString(),
-        valueFrom: faultTunable.valueFrom
-      };
-    });
+  const envs: EnvVar[] = Object.entries(faultTunables).map(([envName, faultTunable]) => {
+    return {
+      name: envName,
+      value: faultTunable.value?.toString(),
+      valueFrom: faultTunable.valueFrom
+    };
+  });
 
-    if (chaosEngine.spec?.experiments?.[0].spec.components?.env)
-      chaosEngine.spec.experiments[0].spec.components.env = envs;
-
-    return faultData;
+  if (chaosEngine.spec?.experiments?.[0].spec.components) {
+    chaosEngine.spec.experiments[0].spec.components = {
+      ...chaosEngine.spec.experiments[0].spec.components,
+      env: envs
+    };
   }
+
+  return faultData;
+}
 
   async preProcessChaosEngineAndExperimentManifest(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
@@ -1032,6 +1173,18 @@ export class KubernetesYamlService extends ExperimentYamlService {
       this.handleIDBFailure();
     }
   }
+}
+
+function updateContainerImage(image: string, registry: ImageRegistry | undefined): string {
+  // Extract image name + tag from original image
+  // Example: docker.io/litmuschaos/litmus-checker:2.11.0
+  const parts = image.split('/');
+  const lastPart = parts[parts.length - 1]; // litmus-checker:2.11.0
+
+  // Build new image
+  const newImage = `${registry?.repo}/${lastPart}`;
+
+  return newImage;
 }
 
 const kubernetesYamlService = new KubernetesYamlService();

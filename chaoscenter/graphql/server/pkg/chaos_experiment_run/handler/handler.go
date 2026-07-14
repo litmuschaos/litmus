@@ -11,10 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+
+	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -39,9 +43,9 @@ import (
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
-	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-
 	"github.com/google/uuid"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentRunHandler is the handler for chaos experiment
@@ -51,6 +55,7 @@ type ChaosExperimentRunHandler struct {
 	gitOpsService              gitops.Service
 	chaosExperimentOperator    *dbChaosExperiment.Operator
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	probeService               probe.Service
 	mongodbOperator            mongodb.MongoOperator
 }
 
@@ -61,6 +66,7 @@ func NewChaosExperimentRunHandler(
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
+	probeService probe.Service,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentRunHandler {
 	return &ChaosExperimentRunHandler{
@@ -69,6 +75,7 @@ func NewChaosExperimentRunHandler(
 		gitOpsService:              gitOpsService,
 		chaosExperimentOperator:    chaosExperimentOperator,
 		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		probeService:               probeService,
 		mongodbOperator:            mongodbOperator,
 	}
 }
@@ -87,7 +94,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			{
 				"$match", bson.D{
 					{"experiment_run_id", experimentRunID},
-					{"project_id", projectID},
+					{"project_id", bson.D{{"$eq", projectID}}},
 					{"is_removed", false},
 				},
 			},
@@ -99,8 +106,8 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 		matchIdentifiersStage := bson.D{
 			{
 				"$match", bson.D{
-					{"notify_id", notifyID},
-					{"project_id", projectID},
+					{"notify_id", bson.D{{"$eq", notifyID}}},
+					{"project_id", bson.D{{"$eq", projectID}}},
 					{"is_removed", false},
 				},
 			},
@@ -275,7 +282,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			"$match", bson.D{{
 				"$and", bson.A{
 					bson.D{
-						{"project_id", projectID},
+						{"project_id", bson.D{{"$eq", projectID}}},
 					},
 				},
 			}},
@@ -413,16 +420,28 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 
 		// Filtering based on date range
 		if request.Filter.DateRange != nil {
-			endDate := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			endDate := time.Now().UnixMilli()
 			if request.Filter.DateRange.EndDate != nil {
-				endDate = *request.Filter.DateRange.EndDate
+				parsedEndDate, err := strconv.ParseInt(*request.Filter.DateRange.EndDate, 10, 64)
+				if err != nil {
+					return nil, errors.New("unable to parse end date")
+				}
+
+				endDate = parsedEndDate
 			}
+
+			// Note: StartDate cannot be passed in blank, must be "0"
+			startDate, err := strconv.ParseInt(request.Filter.DateRange.StartDate, 10, 64)
+			if err != nil {
+				return nil, errors.New("unable to parse start date")
+			}
+
 			filterWfRunDateStage := bson.D{
 				{
 					"$match",
 					bson.D{{"updated_at", bson.D{
 						{"$lte", endDate},
-						{"$gte", request.Filter.DateRange.StartDate},
+						{"$gte", startDate},
 					}}},
 				},
 			}
@@ -776,7 +795,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 
 	executionData := types.ExecutionData{
 		Name:         workflowManifest.Name,
-		Phase:        "Queued",
+		Phase:        string(model.ExperimentRunStatusQueued),
 		ExperimentID: workflow.ExperimentID,
 	}
 
@@ -786,13 +805,17 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil, err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 	var (
 		wc      = writeconcern.New(writeconcern.WMajority())
 		rc      = readconcern.Snapshot()
 		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 	)
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	session, err := mongodb.MgoClient.StartSession()
 	if err != nil {
@@ -855,7 +878,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		err = c.chaosExperimentRunOperator.CreateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
 			InfraID:      workflow.InfraID,
 			ExperimentID: workflow.ExperimentID,
-			Phase:        "Queued",
+			Phase:        string(model.ExperimentRunStatusQueued),
 			RevisionID:   workflow.Revision[0].RevisionID,
 			ProjectID:    projectID,
 			Audit: mongodb.Audit{
@@ -876,6 +899,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			RunSequence:     workflow.TotalExperimentRuns + 1,
 			Probes:          probes,
 		})
+
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")
 			return err
@@ -897,7 +921,9 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	session.EndSession(ctx)
-
+	// Track experiment run creation and status after successful transaction
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusQueued), workflow.InfraID).Set(0)
 	// Convert updated manifest to string
 	manifestString, err := json.Marshal(workflowManifest)
 	if err != nil {
@@ -905,7 +931,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	// Generate Probe in the manifest
-	workflowManifest, err = probe.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
+	workflowManifest, err = c.probeService.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
 	}
@@ -938,7 +964,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return workflow.Revision[i].UpdatedAt > workflow.Revision[j].UpdatedAt
 	})
 
-	cronExperimentManifest, err := probe.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
+	cronExperimentManifest, err := c.probeService.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
 	if err != nil {
 		return errors.New("failed to unmarshal experiment manifest")
 	}
@@ -994,6 +1020,9 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return err
+	}
 
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
@@ -1003,6 +1032,10 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		}, &username, nil, "create", r)
 	}
 
+	// Track cron experiment run as started
+	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusRunning), workflow.InfraID).Set(1)
+	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
+
 	return nil
 }
 
@@ -1011,7 +1044,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 		}},
 	}
 
@@ -1037,31 +1070,31 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 
 	var res []dbChaosExperiment.AggregatedExperimentRunStats
 
-	if err = experimentRunCursor.All(context.Background(), &res); err != nil || len(res) == 0 {
+	if err = experimentRunCursor.All(context.Background(), &res); err != nil {
 		return nil, err
 	}
 
-	resMap := map[string]int{
-		"Completed":  0,
-		"Stopped":    0,
-		"Running":    0,
-		"Terminated": 0,
-		"Error":      0,
+	resMap := map[model.ExperimentRunStatus]int{
+		model.ExperimentRunStatusCompleted:  0,
+		model.ExperimentRunStatusStopped:    0,
+		model.ExperimentRunStatusRunning:    0,
+		model.ExperimentRunStatusTerminated: 0,
+		model.ExperimentRunStatusError:      0,
 	}
 
 	totalExperimentRuns := 0
 	for _, phase := range res {
-		resMap[phase.Id] = phase.Count
+		resMap[model.ExperimentRunStatus(phase.Id)] = phase.Count
 		totalExperimentRuns = totalExperimentRuns + phase.Count
 	}
 
 	return &model.GetExperimentRunStatsResponse{
 		TotalExperimentRuns:           totalExperimentRuns,
-		TotalCompletedExperimentRuns:  resMap["Completed"],
-		TotalTerminatedExperimentRuns: resMap["Terminated"],
-		TotalRunningExperimentRuns:    resMap["Running"],
-		TotalStoppedExperimentRuns:    resMap["Stopped"],
-		TotalErroredExperimentRuns:    resMap["Error"],
+		TotalCompletedExperimentRuns:  resMap[model.ExperimentRunStatusCompleted],
+		TotalTerminatedExperimentRuns: resMap[model.ExperimentRunStatusTerminated],
+		TotalRunningExperimentRuns:    resMap[model.ExperimentRunStatusRunning],
+		TotalStoppedExperimentRuns:    resMap[model.ExperimentRunStatusStopped],
+		TotalErroredExperimentRuns:    resMap[model.ExperimentRunStatusError],
 	}, nil
 }
 
@@ -1090,7 +1123,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 	logrus.WithFields(logFields).Info("new workflow event received")
 
 	expType := experiment.ExperimentType
-	probes, err := probe.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
+	probes, err := probeUtils.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
 	if err != nil {
 		return "", fmt.Errorf("unable to parse probes %v", err.Error())
 	}
@@ -1125,7 +1158,16 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			logrus.WithFields(logFields).Errorf("failed to process completed workflow run %v", err)
 			return "", err
 		}
-
+		// Track experiment run duration
+		experimentRun, runErr := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
+			{"experiment_run_id", event.ExperimentRunID},
+			{"experiment_id", event.ExperimentID},
+		})
+		if runErr == nil && experimentRun.CreatedAt > 0 {
+			duration := float64(time.Now().UnixMilli()-experimentRun.CreatedAt) / 1000.0 // Convert to seconds
+			metrics.ExperimentRunDuration.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, experiment.InfraID).Observe(duration)
+			metrics.ExperimentStatus.WithLabelValues(experiment.ProjectID, event.ExperimentID, experimentRun.ExperimentName, executionData.Phase, experiment.InfraID).Set(0)
+		}
 	}
 
 	//TODO check for mongo transaction
@@ -1213,7 +1255,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.WithError(err).Error("Failed to update experiment collection")
 				return err
 			}
 		} else if experimentRunCount > 0 {
@@ -1248,7 +1290,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 			err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 			if err != nil {
-				logrus.Error("Failed to update experiment collection")
+				logrus.WithError(err).Error("Failed to update experiment collection")
 				return err
 			}
 		}

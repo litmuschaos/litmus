@@ -72,7 +72,7 @@ func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.S
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			workflowObj := obj.(*v1alpha1.Workflow)
-			workflow, err := ev.WorkflowEventHandler(workflowObj, "ADD", startTime)
+			workflow, err := ev.WorkflowEventHandler(nil, workflowObj, "ADD", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -81,9 +81,10 @@ func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.S
 			stream <- workflow
 
 		},
-		UpdateFunc: func(oldObj, obj interface{}) {
-			workflowObj := obj.(*v1alpha1.Workflow)
-			workflow, err := ev.WorkflowEventHandler(workflowObj, "UPDATE", startTime)
+		UpdateFunc: func(oldState, newState interface{}) {
+			oldObj := oldState.(*v1alpha1.Workflow)
+			workflowObj := newState.(*v1alpha1.Workflow)
+			workflow, err := ev.WorkflowEventHandler(oldObj, workflowObj, "UPDATE", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -97,7 +98,7 @@ func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.S
 }
 
 // WorkflowEventHandler is responsible for extracting the required data from the event and streaming
-func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
+func (ev *subscriberEvents) WorkflowEventHandler(oldObj, workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
 			"uid":         string(workflowObj.ObjectMeta.UID),
@@ -124,7 +125,7 @@ func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow,
 	nodes := make(map[string]types.Node)
 	logrus.Info("Workflow RUN_ID: ", workflowObj.UID, " and event type: ", eventType)
 
-	for _, nodeStatus := range workflowObj.Status.Nodes {
+	for i, nodeStatus := range workflowObj.Status.Nodes {
 
 		var (
 			nodeType                  = string(nodeStatus.Type)
@@ -150,9 +151,18 @@ func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow,
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
+
 		if nodeType == "ChaosEngine" && cd != nil {
+			// Set default phase from chaos data
 			details.Phase = cd.ExperimentStatus
+			// Override to "Running" if transitioning from Pending (only applicable for UPDATE events where oldObj is not nil)
+			if oldObj != nil {
+				if oldNodeStatus, ok := oldObj.Status.Nodes[i]; ok && oldNodeStatus.Phase == "Pending" && nodeStatus.Phase == "Running" {
+					details.Phase = "Running"
+				}
+			}
 		}
+
 		nodes[nodeStatus.ID] = details
 	}
 
@@ -222,7 +232,11 @@ func (ev *subscriberEvents) SendWorkflowUpdates(infraData map[string]string, eve
 	// Setting up the experiment status
 	// based on different probes results
 	// present in the experiment
-	event.Phase = getExperimentStatus(event)
+	status, err := getExperimentStatus(event)
+	if err != nil {
+		logrus.WithError(err)
+	}
+	event.Phase = status
 
 	eventMap[event.UID] = event
 
@@ -276,7 +290,7 @@ func updateWorkflowStatus(status v1alpha1.WorkflowPhase) string {
 
 // getExperimentStatus is used to fetch the final experiment status
 // based on the fault/probe status
-func getExperimentStatus(experiment types.WorkflowEvent) string {
+func getExperimentStatus(experiment types.WorkflowEvent) (string, error) {
 	var (
 		errorCount                     = 0
 		completedWithProbeFailureCount = 0
@@ -287,8 +301,12 @@ func getExperimentStatus(experiment types.WorkflowEvent) string {
 	// we will fetch the data based on the different
 	// node statuses(which are coming from the probe status
 	// of these faults)
+	if status == "" {
+		return "", errors.New("status is invalid")
+	}
+
 	if status == "Stopped" || experiment.FinishedAt == "" {
-		return status
+		return status, nil
 	}
 
 	for _, node := range experiment.Nodes {
@@ -313,6 +331,5 @@ func getExperimentStatus(experiment types.WorkflowEvent) string {
 	} else if completedWithProbeFailureCount > 0 {
 		status = string(types.FaultCompletedWithProbeFailure)
 	}
-
-	return status
+	return status, nil
 }

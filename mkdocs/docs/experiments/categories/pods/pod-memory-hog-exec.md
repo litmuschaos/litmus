@@ -19,7 +19,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-memory-hog-exec</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-memory-exec/experiment.yaml">here</a> 
+    - Ensure that the <code>pod-memory-hog-exec</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/pod-cpu-memory-exec/fault.yaml">here</a> 
     
 ## Default Validations
 
@@ -33,7 +33,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog-exec/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -156,7 +155,7 @@
       <tr>
         <td> CHAOS_KILL_COMMAND </td>
         <td> The command to kill the chaos process </td>
-        <td> Defaults to <code>kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
+        <td> Defaults to <code>kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep "[dd] if=/dev/zero" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
       </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
@@ -246,7 +245,7 @@ spec:
       components:
         env:
         # command to kill the dd process
-        # alternative command: "kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')"
+        # alternative command: "kill -9 $(ps afx | grep "[dd] if=/dev/zero" | awk '{print $1}' | tr '\n' ' ')"
         - name: CHAOS_KILL_COMMAND
           value: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
         - name: TOTAL_CHAOS_DURATION

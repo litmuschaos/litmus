@@ -6,16 +6,30 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import type { Project } from '../schemas/Project';
 import { fetcher, FetcherOptions } from 'services/fetcher';
 
+export interface ListProjectsQueryQueryParams {
+  sortField?: 'name' | 'time';
+  sortAscending?: boolean;
+  createdByMe?: boolean;
+  projectName?: string;
+  page?: number;
+  limit?: number;
+}
+
 export type ListProjectsOkResponse = {
-  data?: Project[];
+  data?: {
+    projects?: Project[];
+    totalNumberOfProjects?: number;
+  };
 };
 
 export type ListProjectsErrorResponse = unknown;
 
-export interface ListProjectsProps extends Omit<FetcherOptions<unknown, unknown>, 'url'> {}
+export interface ListProjectsProps extends Omit<FetcherOptions<ListProjectsQueryQueryParams, unknown>, 'url'> {
+  queryParams: ListProjectsQueryQueryParams;
+}
 
 export function listProjects(props: ListProjectsProps): Promise<ListProjectsOkResponse> {
-  return fetcher<ListProjectsOkResponse, unknown, unknown>({
+  return fetcher<ListProjectsOkResponse, ListProjectsQueryQueryParams, unknown>({
     url: `/auth/list_projects`,
     method: 'GET',
     ...props
@@ -31,7 +45,7 @@ export function useListProjectsQuery(
   options?: Omit<UseQueryOptions<ListProjectsOkResponse, ListProjectsErrorResponse>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery<ListProjectsOkResponse, ListProjectsErrorResponse>(
-    ['listProjects'],
+    ['listProjects', props.queryParams],
     ({ signal }) => listProjects({ ...props, signal }),
     options
   );

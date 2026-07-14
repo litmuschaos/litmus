@@ -14,7 +14,7 @@ export default function APITokensController(props: APITokensControllerProps): Re
   const { accountID } = getUserDetails();
 
   const {
-    data: apiTokensData,
+    data: apiTokenData,
     isLoading: apiTokensLoading,
     refetch: apiTokensRefetch
   } = useGetApiTokensQuery(
@@ -24,14 +24,14 @@ export default function APITokensController(props: APITokensControllerProps): Re
         showError(error.error);
       },
       onSuccess: data => {
-        setApiTokensCount(data.apiTokens.length);
+        setApiTokensCount(data?.apiTokens?.length ?? 0);
       }
     }
   );
 
   return (
     <ApiTokensView
-      apiTokensData={apiTokensData}
+      apiTokensData={apiTokenData}
       apiTokensRefetch={apiTokensRefetch}
       getApiTokensQueryLoading={apiTokensLoading}
     />

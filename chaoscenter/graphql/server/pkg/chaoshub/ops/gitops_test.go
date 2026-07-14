@@ -2,18 +2,17 @@ package chaoshubops_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 	"time"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,7 +24,7 @@ var (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
@@ -49,7 +48,7 @@ func TestGetClonePath(t *testing.T) {
 	// when
 	path := chaosHubOps.GetClonePath(chaosHubConfig)
 	// then
-	assert.Equal(t, "/tmp/version/"+projectID+"/test", path)
+	assert.Equal(t, "/tmp/"+projectID+"/test", path)
 }
 
 // TestGitConfigConstruct is used to test the GitConfigConstruct function

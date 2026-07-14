@@ -34,7 +34,7 @@ export default function ChaosFaultController(): React.ReactElement {
             variables: {
               projectID: scope.projectID,
               hubID: hubID,
-              experiments: experiments.length ? experiments : []
+              experiments: experiments?.length ? experiments : []
             }
           });
         }

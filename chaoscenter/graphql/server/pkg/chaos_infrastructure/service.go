@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +16,6 @@ import (
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
@@ -23,6 +23,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,33 +41,35 @@ type Service interface {
 	RegisterInfra(c context.Context, projectID string, input model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(request model.InfraIdentity, r store.StateData) (*model.ConfirmInfraRegistrationResponse, error)
 	VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra.ChaosInfra, error)
-	//NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (string, error)
 	DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error)
 	ListInfras(projectID string, request *model.ListInfraRequest) (*model.ListInfraResponse, error)
 	GetInfraDetails(ctx context.Context, infraID string, projectID string) (*model.Infra, error)
 	SendInfraEvent(eventType, eventName, description string, infra model.Infra, r store.StateData)
-	GetManifest(token string) ([]byte, int, error)
-	GetManifestWithInfraID(infraID string, accessKey string) ([]byte, error)
+	GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error)
 	GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error)
 	GetInfraStats(ctx context.Context, projectID string) (*model.GetInfraStatsResponse, error)
 	GetVersionDetails() (*model.InfraVersionDetails, error)
 	QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
 	PodLog(request model.PodLog, r store.StateData) (string, error)
+	KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error)
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
+	RecordInfraMetrics(ctx context.Context)
 }
 
 type infraService struct {
-	infraOperator *dbChaosInfra.Operator
-	envOperator   *dbEnvironments.Operator
+	infraOperator   *dbChaosInfra.Operator
+	envOperator     *dbEnvironments.Operator
+	mongodbOperator mongodb.MongoOperator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator, mongodbOperator mongodb.MongoOperator) Service {
 	return &infraService{
-		infraOperator: infraOperator,
-		envOperator:   envOperator,
+		infraOperator:   infraOperator,
+		envOperator:     envOperator,
+		mongodbOperator: mongodbOperator,
 	}
 }
 
@@ -76,7 +79,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	infraDetails, err := in.infraOperator.GetInfras(c, bson.D{
 		{"infra_name", input.Name},
 		{"is_removed", false},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 	})
 	if err != nil {
 		return nil, err
@@ -84,6 +87,11 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 
 	if infraDetails != nil || len(infraDetails) > 0 {
 		return nil, errors.New("infra already exists in this project with the same name")
+	}
+
+	// Check if EnvironmentID is valid
+	if _, err := in.envOperator.GetEnvironmentDetails(c, input.EnvironmentID, projectID); err != nil {
+		return nil, errors.New("Invalid EnvironmentID")
 	}
 
 	if (*input.InfraNsExists && input.InfraNamespace == nil) || (*input.InfraNsExists && *input.InfraNamespace == "") {
@@ -94,8 +102,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		infraID     = uuid.New().String()
 		currentTime = time.Now()
 	)
+
 	tkn := c.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	token, err := InfraCreateJWT(infraID)
 	if err != nil {
@@ -169,7 +181,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	}
 
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", input.EnvironmentID},
 	}
 	update := bson.D{
@@ -182,7 +194,22 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, err
 	}
 
-	manifestYaml, err := GetK8sInfraYaml(newInfra)
+	reqHeader, ok := c.Value("request-header").(http.Header)
+	if !ok {
+		return nil, fmt.Errorf("unable to parse request header")
+	}
+
+	referrer := reqHeader.Get("Referer")
+	if referrer == "" {
+		return nil, fmt.Errorf("unable to parse referer header")
+	}
+
+	referrerURL, err := url.Parse(referrer)
+	if err != nil {
+		return nil, err
+	}
+
+	manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
 	if err != nil {
 		return nil, err
 	}
@@ -199,9 +226,13 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+
 	query := bson.D{
 		{"infra_id", infraId},
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"is_removed", false},
 	}
 
@@ -224,8 +255,9 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 	if err != nil {
 		return "", err
 	}
+
 	envQuery := bson.D{
-		{"project_id", projectID},
+		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
 	}
 	updateQuery := bson.D{
@@ -280,14 +312,17 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	var pipeline mongo.Pipeline
 
 	// Match with identifiers and infra ID
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"infra_id", infraID},
-			{"project_id", projectID},
+			{"infra_id", bson.D{{"$eq", infraID}}},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -378,8 +413,8 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 				Username: username,
 			},
 		}
-		lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 		if len(infra.ExperimentDetails) > 0 {
+			lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 			infraResponse.NoOfExperimentRuns = &infra.ExperimentDetails[0].TotalRuns
 			infraResponse.LastExperimentTimestamp = &lastRun
 			infraResponse.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
@@ -442,7 +477,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -664,6 +699,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 
 		newInfra := model.Infra{
 			InfraID:          infra.InfraID,
+			ProjectID:        infra.ProjectID,
 			Name:             infra.Name,
 			EnvironmentID:    infra.EnvironmentID,
 			Description:      &description,
@@ -778,7 +814,7 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", projectID},
+			{"project_id", bson.D{{"$eq", projectID}}},
 			{"is_removed", false},
 		}},
 	}
@@ -866,7 +902,9 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 	compatibleVersions := utils.Config.InfraCompatibleVersions
 
 	var compatibleArray []string
-	_ = json.Unmarshal([]byte(compatibleVersions), &compatibleArray)
+	if err := json.Unmarshal([]byte(compatibleVersions), &compatibleArray); err != nil {
+		return &model.InfraVersionDetails{}, fmt.Errorf("failed to parse InfraCompatibleVersions config: %w", err)
+	}
 
 	// To find the latest compatible version
 	compatibleMap := make(map[int]string)
@@ -902,6 +940,9 @@ func fetchLatestVersion(versions map[int]string) int {
 
 // updateVersionFormat converts string array to int by removing decimal points, 1.0.0 will be returned as 100, 0.1.0 will be returned as 10, 0.0.1 will be returned as 1
 func updateVersionFormat(str string) (int, error) {
+	if str == CIVersion {
+		return 0, nil
+	}
 	var versionInt int
 	versionSlice := strings.Split(str, ".")
 	for i, val := range versionSlice {
@@ -916,13 +957,20 @@ func updateVersionFormat(str string) (int, error) {
 
 // QueryServerVersion is used to fetch the version of the server
 func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
+	dbVersion, err := config.GetConfig(ctx, in.mongodbOperator, "version")
 	if err != nil {
 		return nil, err
 	}
+	if dbVersion == nil {
+		return nil, errors.New("server version config not found")
+	}
+	versionStr, ok := dbVersion.Value.(string)
+	if !ok {
+		return nil, errors.New("server version config has unexpected type")
+	}
 	return &model.ServerVersionResponse{
 		Key:   dbVersion.Key,
-		Value: dbVersion.Value.(string),
+		Value: versionStr,
 	}, nil
 }
 
@@ -933,7 +981,10 @@ func (in *infraService) PodLog(request model.PodLog, r store.StateData) (string,
 		log.Print("ERROR", err)
 		return "", err
 	}
-	if reqChan, ok := r.ExperimentLog[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.ExperimentLog[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		resp := model.PodLogResponse{
 			PodName:         request.PodName,
 			ExperimentRunID: request.ExperimentRunID,
@@ -954,8 +1005,11 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
-		var kubeObjData []*model.KubeObject
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeObjectData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
+		var kubeObjData *model.KubeObject
 		err = json.Unmarshal([]byte(request.KubeObj), &kubeObjData)
 		if err != nil {
 			return "", fmt.Errorf("failed to unmarshal kubeObj data %w", err)
@@ -964,6 +1018,34 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		resp := model.KubeObjectResponse{
 			InfraID: request.InfraID.InfraID,
 			KubeObj: kubeObjData,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "KubeData sent successfully", nil
+	}
+	return "KubeData sent successfully", nil
+}
+
+// KubeNamespace receives Kubernetes Namespace data from subscriber
+func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
+	_, err := in.VerifyInfra(*request.InfraID)
+	if err != nil {
+		log.Print("Error", err)
+		return "", err
+	}
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeNamespaceData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
+		var kubeNamespaceData []*model.KubeNamespace
+		err = json.Unmarshal([]byte(request.KubeNamespace), &kubeNamespaceData)
+		if err != nil {
+			return "", fmt.Errorf("failed to unmarshal kubeNamespace data %w", err)
+		}
+
+		resp := model.KubeNamespaceResponse{
+			InfraID:       request.InfraID.InfraID,
+			KubeNamespace: kubeNamespaceData,
 		}
 		reqChan <- &resp
 		close(reqChan)
@@ -982,12 +1064,18 @@ func (in *infraService) SendInfraEvent(eventType, eventName, description string,
 		Infra:       &infra,
 	}
 	r.Mutex.Lock()
-	if r.InfraEventPublish != nil {
-		for _, observer := range r.InfraEventPublish[infra.ProjectID] {
-			observer <- &newEvent
+	observers := make([]chan *model.InfraEventResponse, len(r.InfraEventPublish[infra.ProjectID]))
+	copy(observers, r.InfraEventPublish[infra.ProjectID])
+	r.Mutex.Unlock()
+
+	for _, observer := range observers {
+		// Use non-blocking send to prevent deadlock if channel buffer is full
+		select {
+		case observer <- &newEvent:
+		default:
+			// Channel full or no receiver, skip to prevent blocking
 		}
 	}
-	r.Mutex.Unlock()
 }
 
 // ConfirmInfraRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
@@ -1003,7 +1091,10 @@ func (in *infraService) ConfirmInfraRegistration(request model.InfraIdentity, r 
 	}
 
 	if infra.AccessKey == request.AccessKey {
-		newKey := utils.RandomString(32)
+		newKey, err := utils.GenerateAccessKey(32)
+		if err != nil {
+			return &model.ConfirmInfraRegistrationResponse{IsInfraConfirmed: false}, err
+		}
 		time := time.Now().UnixMilli()
 		query := bson.D{{"infra_id", request.InfraID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_infra_confirmed", true}, {"updated_at", time}}}}
@@ -1038,8 +1129,8 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 	} else {
 		splitCPVersion := strings.Split(currentVersion, ".")
 		splitSubVersion := strings.Split(identity.Version, ".")
-		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] || splitSubVersion[1] != splitCPVersion[1] {
-			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.%v.x got %v)", splitCPVersion[0], splitCPVersion[1], identity.Version)
+		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] {
+			return nil, fmt.Errorf("ERROR: infra VERSION MISMATCH (need %v.x.x got %v)", splitCPVersion[0], identity.Version)
 		}
 	}
 	infra, err := in.infraOperator.GetInfra(identity.InfraID)
@@ -1047,62 +1138,13 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 		return nil, err
 	}
 	if !(infra.AccessKey == identity.AccessKey && infra.IsRegistered) {
-		return nil, fmt.Errorf("ERROR:  infra_ID MISMATCH")
+		return nil, fmt.Errorf("ERROR:  accessID MISMATCH")
 	}
 	return &infra, nil
 }
 
-func (in *infraService) GetManifest(token string) ([]byte, int, error) {
-	infraID, err := InfraValidateJWT(token)
-	if err != nil {
-		return nil, http.StatusNotFound, err
-	}
-
-	reqinfra, err := in.infraOperator.GetInfra(infraID)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var configurations SubscriberConfigurations
-	configurations.ServerEndpoint, err = GetEndpoint(reqinfra.InfraType)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-	}
-
-	if scope == NamespaceScope {
-		configurations.TLSCert = utils.Config.TlsCertB64
-	}
-
-	if !reqinfra.IsRegistered {
-		var respData []byte
-		if reqinfra.InfraScope == "cluster" {
-
-			respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
-		} else if reqinfra.InfraScope == "namespace" {
-			respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
-		} else {
-			logrus.Error("INFRA_SCOPE env is empty!")
-		}
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-
-		return respData, http.StatusOK, nil
-	} else {
-		return []byte("infra is already registered"), http.StatusConflict, nil
-	}
-}
-
 // GetManifestWithInfraID returns manifest for a given infra
-func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string) ([]byte, error) {
+func (in *infraService) GetManifestWithInfraID(host string, infraID string, accessKey string) ([]byte, error) {
 	reqinfra, err := in.infraOperator.GetInfra(infraID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the infra %v", err)
@@ -1114,22 +1156,12 @@ func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string)
 	}
 
 	var configurations SubscriberConfigurations
-	configurations.ServerEndpoint, err = GetEndpoint(reqinfra.InfraType)
+	configurations.ServerEndpoint, err = GetEndpoint(host)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the server endpoint %v", err)
 	}
 
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
-		}
-	}
-
-	if scope == NamespaceScope {
-		configurations.TLSCert = utils.Config.TlsCertB64
-	}
+	configurations.TLSCert = utils.Config.TlsCertB64
 
 	var respData []byte
 	if reqinfra.InfraScope == ClusterScope {
@@ -1155,4 +1187,35 @@ func (c *infraService) UpdateInfra(query bson.D, update bson.D) error {
 // GetDBInfra returns cluster details for a given clusterID
 func (c *infraService) GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error) {
 	return c.infraOperator.GetInfra(infraID)
+}
+
+// RecordInfraMetrics queries the DB periodically and sets the infra agent gauges
+func (in *infraService) RecordInfraMetrics(ctx context.Context) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			infras, err := in.infraOperator.GetInfras(ctx, bson.D{{"is_removed", false}})
+			if err != nil {
+				continue
+			}
+			projectCounts := make(map[string][2]int) // [connected, total]
+			for _, infra := range infras {
+				counts := projectCounts[infra.ProjectID]
+				counts[1]++ // total
+				if infra.IsActive {
+					counts[0]++ // connected
+				}
+				projectCounts[infra.ProjectID] = counts
+			}
+			for projectID, counts := range projectCounts {
+				metrics.ConnectedAgents.WithLabelValues(projectID).Set(float64(counts[0]))
+				metrics.DisconnectedAgents.WithLabelValues(projectID).Set(float64(counts[1] - counts[0]))
+				metrics.TotalAgents.WithLabelValues(projectID).Set(float64(counts[1]))
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }

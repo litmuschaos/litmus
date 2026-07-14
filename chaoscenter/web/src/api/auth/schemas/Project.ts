@@ -7,11 +7,13 @@ import type { ProjectMember } from '../schemas/ProjectMember';
 export interface Project {
   createAt?: number;
   createdBy?: ActionBy;
+  description?: string;
   isRemoved?: boolean;
   members: ProjectMember[];
   name: string;
   projectID: string;
   state?: string;
+  tags?: string[];
   updatedAt?: number;
   updatedBy?: ActionBy;
 }

@@ -8,6 +8,7 @@ interface EditChaosHubRequest {
   tags: string[];
   description?: string;
   repoURL: string;
+  remoteHub: string;
   repoBranch: string;
   isPrivate: boolean;
   authType: AuthType;
@@ -37,6 +38,7 @@ export function updateChaosHub(
           name
           repoURL
           repoBranch
+          remoteHub
         }
       }
     `,

@@ -30,7 +30,7 @@ export default function InputSlider({ initialValue, name, onChange }: InputSlide
         <div className={css.rangeSliderCont}>
           <input
             data-testid={getString('rangeSliderInput')}
-            type={getString("range")}
+            type={getString('range')}
             name={name}
             value={value}
             min={0}

@@ -59,11 +59,11 @@ export default function CreateEnvironment({
   const environmentTypes = [
     {
       _cardName: EnvironmentType.NON_PROD,
-      name: 'Pre-Production'
+      name: getString('preProduction')
     },
     {
       _cardName: EnvironmentType.PROD,
-      name: 'Production'
+      name: getString('production')
     }
   ];
 
@@ -114,7 +114,7 @@ export default function CreateEnvironment({
               <Form style={{ height: '100%' }}>
                 <Layout.Vertical height={'100%'}>
                   <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'small' }}>
-                    {editable ? 'Edit Environment' : 'New Environment'}
+                    {editable ? getString('editEnvironment') : getString('newEnvironment')}
                   </Text>
                   <Text color={Color.GREY_700} margin={{ bottom: 'large' }}>
                     {getString('environmentDescription')}
@@ -124,9 +124,9 @@ export default function CreateEnvironment({
                       inputName="name"
                       idName="id"
                       isIdentifierEditable={editable ? false : true}
-                      inputLabel="Environment Name"
+                      inputLabel={getString('environmentName')}
                       inputGroupProps={{
-                        placeholder: 'Environment Name',
+                        placeholder: getString('environmentName'),
                         className: css.maxWidthFormInput
                       }}
                     />

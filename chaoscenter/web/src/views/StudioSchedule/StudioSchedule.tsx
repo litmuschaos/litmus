@@ -86,7 +86,7 @@ export default function StudioScheduleView({ mode }: StudioScheduleViewProps): R
               <Form className={css.formContainer}>
                 <RadioButtonGroup
                   name="type"
-                  label={<Text font={{ variation: FontVariation.CARD_TITLE }}>Select Schedule</Text>}
+                  label={<Text font={{ variation: FontVariation.CARD_TITLE }}>{getString('selectSchedule')}</Text>}
                   inline={false}
                   selectedValue={formikProps.values.type}
                   onChange={(e: FormEvent<HTMLInputElement>) => {
@@ -130,7 +130,7 @@ export default function StudioScheduleView({ mode }: StudioScheduleViewProps): R
                       return updateSearchParams({ tab: StudioTabs.BUILDER });
                     }}
                   />
-                  <Button type="submit" intent="primary" text={getString('setSchedule')}/>
+                  <Button type="submit" intent="primary" text={getString('setSchedule')} />
                 </Layout.Horizontal>
               </Form>
             );

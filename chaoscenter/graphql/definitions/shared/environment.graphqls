@@ -50,11 +50,11 @@ input EnvironmentFilterInput {
     """
     Type name of environment
     """
-    type: String
+    type: EnvironmentType
     """
     Tags of an environment
     """
-    tags: [EnvironmentType]
+    tags: [String!]
 }
 enum EnvironmentSortingField {
     NAME

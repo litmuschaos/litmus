@@ -17,7 +17,7 @@ import { isEqual } from 'lodash-es';
 import type { ExperimentMetadata } from '@db';
 import { useStrings } from '@strings';
 import FormErrorListener from '@components/FormErrorListener';
-import { useUpdateSearchParams } from '@hooks';
+import { useUpdateSearchParams, useImageRegistry } from '@hooks';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import { ChaosInfrastructureReferenceFieldProps, StudioErrorState, StudioTabs } from '@models';
 import experimentYamlService from 'services/experiment';
@@ -52,6 +52,8 @@ export default function StudioOverviewView({
 
   const [currentExperiment, setCurrentExperiment] = React.useState<ExperimentMetadata | undefined>();
 
+  const { imageRegistry, loading: imageRegistryLoading } = useImageRegistry();
+
   React.useEffect(() => {
     experimentHandler?.getExperiment(experimentKey).then(experiment => {
       delete experiment?.manifest;
@@ -85,6 +87,8 @@ export default function StudioOverviewView({
           })
         })}
         onSubmit={values => {
+          values.imageRegistry = imageRegistry;
+
           if (values.chaosInfrastructure.namespace === undefined) {
             delete values.chaosInfrastructure.namespace;
           }
@@ -128,6 +132,7 @@ export default function StudioOverviewView({
                       <Layout.Vertical background={Color.WHITE} padding="medium" spacing="large">
                         {getChaosInfrastructureReferenceField({
                           initialInfrastructureID: formikProps.values.chaosInfrastructure.id,
+                          initialEnvironmentID: formikProps.values.chaosInfrastructure.environmentID,
                           setFieldValue: formikProps.setFieldValue
                         })}
                         <ErrorMessage name="chaosInfrastructure.id">
@@ -143,7 +148,13 @@ export default function StudioOverviewView({
                       text={getString('cancel')}
                       onClick={openDiscardDialog}
                     />
-                    <Button type="submit" intent="primary" text={getString('next')} rightIcon="chevron-right" />
+                    <Button
+                      type="submit"
+                      intent="primary"
+                      text={getString('next')}
+                      rightIcon="chevron-right"
+                      disabled={imageRegistryLoading}
+                    />
                   </Layout.Horizontal>
                 </Form>
               </Layout.Vertical>

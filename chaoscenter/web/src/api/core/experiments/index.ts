@@ -6,3 +6,4 @@ export * from './updateChaosWorkflow';
 export * from './stopWorkflow';
 export * from './deleteChaosWorkflow';
 export * from './saveChaosExperiment';
+export * from './updateCronExperimentState';

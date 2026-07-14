@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
@@ -28,16 +31,18 @@ import (
 	"github.com/google/uuid"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/api/litmuschaos/v1alpha1"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 type Service interface {
-	ProcessExperiment(workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error)
+	ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error)
 	ProcessExperimentCreation(ctx context.Context, input *model.ChaosExperimentRequest, username string, projectID string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, r *store.StateData) error
 	ProcessExperimentUpdate(workflow *model.ChaosExperimentRequest, username string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, updateRevision bool, projectID string, r *store.StateData) error
 	ProcessExperimentDelete(query bson.D, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
+	UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest v1alpha1.CronWorkflow, experiment dbChaosExperiment.ChaosExperimentRequest) (v1alpha1.CronWorkflow, []string, error)
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
@@ -45,19 +50,21 @@ type chaosExperimentService struct {
 	chaosExperimentOperator     *dbChaosExperiment.Operator
 	chaosInfrastructureOperator *dbChaosInfra.Operator
 	chaosExperimentRunOperator  *dbChaosExperimentRun.Operator
+	probeService                probe.Service
 }
 
 // NewChaosExperimentService returns a new instance of the chaos workflow service
-func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator) Service {
+func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator, probeService probe.Service) Service {
 	return &chaosExperimentService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
 		chaosInfrastructureOperator: clusterOperator,
 		chaosExperimentRunOperator:  chaosExperimentRunOperator,
+		probeService:                probeService,
 	}
 }
 
 // ProcessExperiment takes the workflow and processes it as required
-func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error) {
+func (c *chaosExperimentService) ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error) {
 	// security check for chaos_infra access
 	infra, err := c.chaosInfrastructureOperator.GetInfra(workflow.InfraID)
 	if err != nil {
@@ -102,7 +109,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	switch strings.ToLower(objMeta.GetKind()) {
 	case "workflow":
 		{
-			err = processExperimentManifest(workflow, weights, revID)
+			err = c.processExperimentManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -110,7 +117,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "cronworkflow":
 		{
 			wfType = dbChaosExperiment.CronExperiment
-			err = processCronExperimentManifest(workflow, weights, revID)
+			err = c.processCronExperimentManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -118,7 +125,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosengine":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = processChaosEngineManifest(workflow, weights, revID)
+			err = c.processChaosEngineManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -127,7 +134,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosschedule":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = processChaosScheduleManifest(workflow, weights, revID)
+			err = c.processChaosScheduleManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -256,7 +263,8 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 		query = bson.D{
 			{"experiment_id", workflow.ExperimentID},
 			{"project_id", projectID},
-			{"revision.revision_id", revisionID}}
+			{"revision.revision_id", revisionID},
+		}
 		update = bson.D{
 			{"$set", bson.D{
 				{"updated_at", time.Now().UnixMilli()},
@@ -276,10 +284,10 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 
 	err = json.Unmarshal([]byte(workflow.ExperimentManifest), &workflowObj)
 	if err != nil {
-		return errors.New("failed to unmarshal workflow manifest1")
+		return errors.New("failed to unmarshal workflow manifest")
 	}
 
-	if /* strings.ToLower(workflowObj.GetKind()) == "cronworkflow" */ r != nil {
+	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, workflow, &username, nil, "update", r)
 	}
 	return nil
@@ -346,7 +354,8 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 
 	return nil
 }
-func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+
+func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest v1alpha1.Workflow
@@ -401,6 +410,42 @@ func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights m
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
 					}
 
+					// Check if probeRef annotation is present in chaosengine, if not then create new probes
+					if _, ok := meta.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+						// Check if probes are specified in chaosengine
+						if meta.Spec.Experiments[0].Spec.Probe != nil {
+							type probeRef struct {
+								Name string `json:"name"`
+								Mode string `json:"mode"`
+							}
+							probeRefs := []probeRef{}
+							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
+								// Generate new probes for the experiment
+								probe, err := probeUtils.ProbeInputsToProbeRequestConverter(p)
+								if err != nil {
+									return err
+								}
+								result, err := c.probeService.AddProbe(ctx, probe, projectID)
+								if err != nil {
+									return err
+								}
+								// If probes are created then update the probeRef annotation in chaosengine
+								probeRefs = append(probeRefs, probeRef{
+									Name: result.Name,
+									Mode: p.Mode,
+								})
+							}
+							probeRefBytes, _ := json.Marshal(probeRefs)
+							rawYaml, err := probeUtils.InsertProbeRefAnnotation(artifact[0].Raw.Data, string(probeRefBytes))
+							if err != nil {
+								return err
+							}
+							artifact[0].Raw.Data = rawYaml
+						} else {
+							return errors.New("no probes specified in chaosengine - " + meta.Name)
+						}
+					}
+
 					if val, ok := weights[exprname]; ok {
 						workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
 							"weight": strconv.Itoa(val),
@@ -439,7 +484,7 @@ func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights m
 	return nil
 }
 
-func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights             []*model.WeightagesInput
 		cronExperimentManifest v1alpha1.CronWorkflow
@@ -448,6 +493,10 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 	err := json.Unmarshal([]byte(workflow.ExperimentManifest), &cronExperimentManifest)
 	if err != nil {
 		return errors.New("failed to unmarshal workflow manifest")
+	}
+
+	if strings.TrimSpace(cronExperimentManifest.Spec.Schedule) == "" {
+		return errors.New("failed to process cron workflow, cron syntax not provided in manifest")
 	}
 
 	if cronExperimentManifest.Labels == nil {
@@ -519,6 +568,41 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
 					}
+					// Check if probeRef annotation is present in chaosengine, if not then create new probes
+					if _, ok := meta.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+						// Check if probes are specified in chaosengine
+						if meta.Spec.Experiments[0].Spec.Probe != nil {
+							type probeRef struct {
+								Name string `json:"name"`
+								Mode string `json:"mode"`
+							}
+							probeRefs := []probeRef{}
+							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
+								// Generate new probes for the experiment
+								probe, err := probeUtils.ProbeInputsToProbeRequestConverter(p)
+								if err != nil {
+									return err
+								}
+								result, err := c.probeService.AddProbe(ctx, probe, projectID)
+								if err != nil {
+									return err
+								}
+								// If probes are created then update the probeRef annotation in chaosengine
+								probeRefs = append(probeRefs, probeRef{
+									Name: result.Name,
+									Mode: p.Mode,
+								})
+							}
+							probeRefBytes, _ := json.Marshal(probeRefs)
+							rawYaml, err := probeUtils.InsertProbeRefAnnotation(artifact[0].Raw.Data, string(probeRefBytes))
+							if err != nil {
+								return err
+							}
+							artifact[0].Raw.Data = rawYaml
+						} else {
+							return errors.New("no probes specified in chaosengine - " + meta.Name)
+						}
+					}
 					if val, ok := weights[exprname]; ok {
 						cronExperimentManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
 							"weight": strconv.Itoa(val),
@@ -557,7 +641,7 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 	return nil
 }
 
-func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processChaosEngineManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest chaosTypes.ChaosEngine
@@ -589,6 +673,41 @@ func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights 
 	if len(exprName) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
+	// Check if probeRef annotation is present in chaosengine, if not then create new probes
+	if _, ok := workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+		// Check if probes are specified in chaosengine
+		if workflowManifest.Spec.Experiments[0].Spec.Probe != nil {
+			type probeRef struct {
+				Name string `json:"name"`
+				Mode string `json:"mode"`
+			}
+			probeRefs := []probeRef{}
+			for _, p := range workflowManifest.Spec.Experiments[0].Spec.Probe {
+				// Generate new probes for the experiment
+				probe, err := probeUtils.ProbeInputsToProbeRequestConverter(p)
+				if err != nil {
+					return err
+				}
+				result, err := c.probeService.AddProbe(ctx, probe, projectID)
+				if err != nil {
+					return err
+				}
+				// If probes are created then update the probeRef annotation in chaosengine
+				probeRefs = append(probeRefs, probeRef{
+					Name: result.Name,
+					Mode: p.Mode,
+				})
+			}
+			probeRefBytes, _ := json.Marshal(probeRefs)
+			if workflowManifest.GetObjectMeta().GetAnnotations() == nil {
+				workflowManifest.GetObjectMeta().SetAnnotations(map[string]string{})
+			}
+			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+		} else {
+			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
+		}
+	}
+
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
 	} else if val, ok := workflowManifest.Labels["weight"]; ok {
@@ -617,7 +736,7 @@ func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights 
 	return nil
 }
 
-func processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processChaosScheduleManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest scheduleTypes.ChaosSchedule
@@ -648,6 +767,40 @@ func processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weight
 	if len(exprName) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
+	// Check if probeRef annotation is present in chaosengine, if not then create new probes
+	if _, ok := workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+		// Check if probes are specified in chaosengine
+		if workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe != nil {
+			type probeRef struct {
+				Name string `json:"name"`
+				Mode string `json:"mode"`
+			}
+			probeRefs := []probeRef{}
+			for _, p := range workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe {
+				// Generate new probes for the experiment
+				probe, err := probeUtils.ProbeInputsToProbeRequestConverter(p)
+				if err != nil {
+					return err
+				}
+				result, err := c.probeService.AddProbe(ctx, probe, projectID)
+				if err != nil {
+					return err
+				}
+				// If probes are created then update the probeRef annotation in chaosengine
+				probeRefs = append(probeRefs, probeRef{
+					Name: result.Name,
+					Mode: p.Mode,
+				})
+			}
+			probeRefBytes, _ := json.Marshal(probeRefs)
+			if workflowManifest.GetObjectMeta().GetAnnotations() == nil {
+				workflowManifest.GetObjectMeta().SetAnnotations(map[string]string{})
+			}
+			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+		} else {
+			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
+		}
+	}
 
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
@@ -675,4 +828,70 @@ func processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weight
 
 	workflow.ExperimentManifest = string(out)
 	return nil
+}
+
+func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest v1alpha1.CronWorkflow, experiment dbChaosExperiment.ChaosExperimentRequest) (v1alpha1.CronWorkflow, []string, error) {
+	var (
+		faults []string
+	)
+	for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
+		artifact := template.Inputs.Artifacts
+		if len(artifact) > 0 {
+			if artifact[0].Raw == nil {
+				continue
+			}
+			data := artifact[0].Raw.Data
+			if len(data) > 0 {
+				var meta chaosTypes.ChaosEngine
+				annotation := make(map[string]string)
+				err := yaml.Unmarshal([]byte(data), &meta)
+				if err != nil {
+					return cronWorkflowManifest, faults, errors.New("failed to unmarshal chaosengine")
+				}
+				if strings.ToLower(meta.Kind) == "chaosengine" {
+					faults = append(faults, meta.GenerateName)
+					if meta.Annotations != nil {
+						annotation = meta.Annotations
+					}
+
+					var annotationArray []string
+					for _, key := range annotation {
+
+						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
+						err := json.Unmarshal([]byte(key), &manifestAnnotation)
+						if err != nil {
+							return cronWorkflowManifest, faults, errors.New("failed to unmarshal experiment annotation object")
+						}
+						for _, annotationKey := range manifestAnnotation {
+							annotationArray = append(annotationArray, annotationKey.Name)
+						}
+					}
+
+					meta.Annotations = annotation
+
+					if meta.Labels == nil {
+						meta.Labels = map[string]string{
+							"infra_id":        experiment.InfraID,
+							"step_pod_name":   "{{pod.name}}",
+							"workflow_run_id": "{{workflow.uid}}",
+						}
+					} else {
+						meta.Labels["infra_id"] = experiment.InfraID
+						meta.Labels["step_pod_name"] = "{{pod.name}}"
+						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
+					}
+
+					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
+					}
+					res, err := yaml.Marshal(&meta)
+					if err != nil {
+						return cronWorkflowManifest, faults, errors.New("failed to marshal chaosengine")
+					}
+					cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Inputs.Artifacts[0].Raw.Data = string(res)
+				}
+			}
+		}
+	}
+	return cronWorkflowManifest, faults, nil
 }

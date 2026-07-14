@@ -9,6 +9,7 @@ export type ExperimentManifest = KubernetesExperimentManifest;
 
 export interface FaultData {
   faultName: string;
+  stepName?: string;
   probes?: ProbeObj[] | ProbeAttributes[];
   faultCR?: ChaosExperiment;
   engineCR?: ChaosEngine;

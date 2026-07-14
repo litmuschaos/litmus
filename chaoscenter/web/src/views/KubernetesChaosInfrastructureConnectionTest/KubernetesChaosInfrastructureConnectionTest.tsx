@@ -57,7 +57,7 @@ function KubernetesChaosInfrastructureConnectionTestView({
           });
         }}
         icon={displayIcon ? icon : undefined}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.Executor}
         variation={ButtonVariation.SECONDARY}
       />
     </ParentComponentErrorWrapper>

@@ -10,7 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,
@@ -20,6 +20,11 @@ func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}
 	claims := token.Claims.(jwt.MapClaims)
+
+	if claims["uid"] == nil {
+		return &protos.ValidationResponse{Error: "token is invalid", IsValid: false}, err
+	}
+
 	uid := claims["uid"].(string)
 	err = validations.RbacValidator(uid, inputRequest.ProjectId,
 		inputRequest.RequiredRoles, inputRequest.Invitation, s.ApplicationService)

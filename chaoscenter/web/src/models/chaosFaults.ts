@@ -1,5 +1,4 @@
-import type * as kubernetes from 'argo-ui/src/models/kubernetes';
-import type { ConfigMap, HostFile, PolicyRule, Secret } from './k8s';
+import type * as kubernetes from './k8s';
 
 // ChaosExperiment is the Schema for the chaosexperiments API
 export interface ChaosExperiment {
@@ -35,7 +34,7 @@ export interface FaultDef {
   //Scope specifies the service account scope (& thereby blast radius) of the experiment
   scope: string;
   // List of Permission needed for a service account to execute experiment
-  permissions: PolicyRule[];
+  permissions: kubernetes.PolicyRule[];
   // List of ENV vars passed to executor pod
   env?: kubernetes.EnvVar[];
   // Defines command to invoke experiment
@@ -43,11 +42,11 @@ export interface FaultDef {
   // Defines arguments to runner's entrypoint command
   args: string[];
   // ConfigMaps contains a list of ConfigMaps
-  configMaps?: ConfigMap[];
+  configMaps?: kubernetes.ConfigMap[];
   // Secrets contains a list of Secrets
-  secrets?: Secret[];
+  secrets?: kubernetes.Secret[];
   // HostFileVolume defines the host directory/file to be mounted
-  hostFileVolumes?: HostFile;
+  hostFileVolumes?: kubernetes.HostFile;
   // Annotations that needs to be provided in the pod for pod that is getting created
   experimentAnnotations: { [key: string]: string };
   // SecurityContext holds security configuration that will be applied to a container

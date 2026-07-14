@@ -1,3 +1,4 @@
+// TODO: Unused, to be removed
 import React from 'react';
 import * as Yup from 'yup';
 import { FontVariation, Color } from '@harnessio/design-system';
@@ -31,7 +32,6 @@ export const ProbePropertiesStep: React.FC<StepProps<StepData>> = props => {
           ? '1000ms'
           : '5s',
         interval: formData.runProperties?.interval ?? '2s',
-        retry: formData.runProperties?.retry ?? 1,
         probePollingInterval: formData.runProperties?.probePollingInterval ?? '2s',
         initialDelay: formData.runProperties?.initialDelay ?? '3s',
         stopOnFailure: formData.runProperties?.stopOnFailure ?? false,
@@ -46,7 +46,6 @@ export const ProbePropertiesStep: React.FC<StepProps<StepData>> = props => {
       }}
       validationSchema={Yup.object().shape({
         probeTimeout: getValidation('Timeout'),
-        retry: getValidation('Retry'),
         interval: getValidation('Interval'),
         probePollingInterval: getValidation('Polling Interval'),
         initialDelay: getValidation('Initial Delay'),
@@ -66,41 +65,34 @@ export const ProbePropertiesStep: React.FC<StepProps<StepData>> = props => {
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="probeTimeout"
-                      label={formData.type == 'httpProbe' ? 'Probe Timeout (ms)' : 'Probe Timeout (sec)'}
+                      label={formData.type == 'httpProbe' ? getString('probeTimeoutMs') : getString('probeTimeoutSec')}
                       placeholder={String(formData.runProperties?.probeTimeout)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_timeout' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
-                      name="retry"
-                      label="Retry (times)"
-                      placeholder={String(formData.runProperties?.retry)}
-                      tooltipProps={{ dataTooltipId: 'chaos_probe_retry' }}
-                    />
-                    <FormInput.Text
-                      inputGroup={{ type: 'number' }}
                       name="interval"
-                      label="Interval (sec)"
+                      label={getString('intervalSec')}
                       placeholder={String(formData.runProperties?.interval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_interval' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="probePollingInterval"
-                      label="Polling Interval (sec)"
+                      label={getString('pollingIntervalSec')}
                       placeholder={String(formData.runProperties?.probePollingInterval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_polling_interval' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="initialDelay"
-                      label="Initial Delay (sec)"
+                      label={getString('initialDelaySec')}
                       placeholder={String(formData.runProperties?.initialDelay)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_initial_delay' }}
                     />
                     <FormInput.CheckBox
                       name="stopOnFailure"
-                      label="Stop on Failure"
+                      label={getString('stopOnFailure')}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_stop_failure' }}
                     />
                   </Container>

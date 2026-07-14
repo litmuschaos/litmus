@@ -98,6 +98,7 @@ nav:
             - Pod Network Duplication: experiments/categories/pods/pod-network-duplication.md
             - Pod Network Latency: experiments/categories/pods/pod-network-latency.md
             - Pod Network Loss: experiments/categories/pods/pod-network-loss.md
+            - Pod Network Rate Limit: experiments/categories/pods/pod-network-rate-limit.md
             - Pod Network Partition: experiments/categories/pods/pod-network-partition.md
             - Pod HTTP Latency: experiments/categories/pods/pod-http-latency.md
             - Pod HTTP Reset Peer: experiments/categories/pods/pod-http-reset-peer.md
@@ -120,11 +121,13 @@ nav:
             - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
             - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
             - Spring Boot Faults: experiments/categories/spring-boot/spring-boot-faults.md
+        - Load:
+            - k6 Load Generator: experiments/categories/load/k6-loadgen.md
       - Cloud Infrastructure:
         - AWS: 
             - EC2:
-              - EC2 Terminate By ID: experiments/categories/aws/ec2-terminate-by-id.md
-              - EC2 Terminate By Tag: experiments/categories/aws/ec2-terminate-by-tag.md
+              - EC2 Stop By ID: experiments/categories/aws/ec2-stop-by-id.md
+              - EC2 Stop By Tag: experiments/categories/aws/ec2-stop-by-tag.md
             - EBS:
               - EBS Loss By ID: experiments/categories/aws/ebs-loss-by-id.md
               - EBS Loss By Tag: experiments/categories/aws/ebs-loss-by-tag.md

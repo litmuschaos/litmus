@@ -71,6 +71,8 @@ spec:
                 kind: ChaosEngine
 
                 metadata:
+                  annotations:
+                    probeRef: '[{"name":"http-probe"}]'
                   namespace: "{{workflow.parameters.adminModeNamespace}}"
                   labels:
                     workflow_run_id: "{{workflow.uid}}"

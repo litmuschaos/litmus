@@ -30,7 +30,7 @@ export default function AddProbeModalWizardController({
     { loading: addKubernetesHTTPProbeMutationLoading, error: addKubernetesHTTPProbeMutationError }
   ] = addKubernetesHTTPProbe({
     onCompleted: () => {
-      refetchProbes();
+      refetchProbes?.();
     },
     onError: err => showError(err.message)
   });
@@ -40,14 +40,14 @@ export default function AddProbeModalWizardController({
     { loading: addKubernetesCMDProbeMutationLoading, error: addKubernetesCMDProbeMutationError }
   ] = addKubernetesCMDProbe({
     onCompleted: () => {
-      refetchProbes();
+      refetchProbes?.();
     },
     onError: err => showError(err.message)
   });
 
   const [addK8SProbeMutation, { loading: addK8SProbeMutationLoading, error: addK8SProbeMutationError }] = addK8SProbe({
     onCompleted: () => {
-      refetchProbes();
+      refetchProbes?.();
     },
     onError: err => showError(err.message)
   });
@@ -55,7 +55,7 @@ export default function AddProbeModalWizardController({
   const [addPROMProbeMutation, { loading: addPROMProbeMutationLoading, error: addPROMProbeMutationError }] =
     addPROMProbe({
       onCompleted: () => {
-        refetchProbes();
+        refetchProbes?.();
       },
       onError: err => showError(err.message)
     });

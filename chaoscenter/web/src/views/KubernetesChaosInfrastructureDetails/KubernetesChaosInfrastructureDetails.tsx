@@ -202,7 +202,7 @@ export default function KubernetesChaosInfrastructureDetailsView({
                   <RbacButton
                     noStyling
                     className={css.rbacDelete}
-                    permission={PermissionGroup.EDITOR}
+                    permission={PermissionGroup.OWNER}
                     onClick={openDeleteDialog}
                   >
                     <Icon name="main-trash" color={Color.RED_700} size={32} />

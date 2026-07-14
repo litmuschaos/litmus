@@ -52,7 +52,11 @@ export function DeploymentScope({
   return (
     <FormikCollapsableSelect<DeploymentScopeItem>
       name="deploymentScope"
-      items={isInfraPresent ? deploymentScopeDataNs : deploymentScopeData}
+      items={
+        isInfraPresent || deploymentScope === DeploymentScopeOptions.NAMESPACE
+          ? deploymentScopeDataNs
+          : deploymentScopeData
+      }
       selected={deploymentScopeData[deploymentScopeData.findIndex(card => card.type === deploymentScope)]}
       onChange={onChange}
       type={CollapsableSelectType.CardView}

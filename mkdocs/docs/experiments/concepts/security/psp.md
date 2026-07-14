@@ -88,7 +88,6 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
 - Subscribe to the created PSP in the experiment RBAC (or in the [admin-mode](https://v1-docs.litmuschaos.io/docs/admin-mode/#prepare-rbac-manifest) rbac, as applicable).
   For example, the pod-delete experiment rbac instrumented with the PSP is shown below:
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac-psp.yaml yaml) 
     ```yaml
     ---
     apiVersion: v1

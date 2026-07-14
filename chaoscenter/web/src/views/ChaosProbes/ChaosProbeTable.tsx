@@ -9,16 +9,24 @@ import { getIcon, timeDifferenceForDate } from '@utils';
 import { useStrings } from '@strings';
 import { useRouteWithBaseUrl } from '@hooks';
 import CopyButton from '@components/CopyButton';
-import type { Probe } from '@api/entities';
+import type { InfrastructureType, Probe } from '@api/entities';
 import type { ChaosProbesTableProps, RefetchProbes } from '@controllers/ChaosProbes';
 import { ProbeTabs } from '@models';
 import { MenuCell } from './ChaosProbesTableMenu';
+import { UpdateProbeModal } from './UpdateProbeModal';
 import css from './ChaosProbes.module.scss';
+
+export interface EditProbeData {
+  name: string;
+  infrastructureType: InfrastructureType;
+}
 
 const ChaosProbeTable = ({ content, refetchProbes }: ChaosProbesTableProps & RefetchProbes): React.ReactElement => {
   const { getString } = useStrings();
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
+  const [editProbe, setEditProbe] = React.useState<EditProbeData | undefined>();
+
   const columns: Column<Partial<Probe>>[] = React.useMemo(() => {
     return [
       {
@@ -116,7 +124,9 @@ const ChaosProbeTable = ({ content, refetchProbes }: ChaosProbesTableProps & Ref
       {
         Header: '',
         id: 'threeDotMenu',
-        Cell: ({ row }: { row: Row<Probe> }) => <MenuCell row={row} refetchProbes={refetchProbes} />,
+        Cell: ({ row }: { row: Row<Probe> }) => (
+          <MenuCell row={row} refetchProbes={refetchProbes} setEditProbe={setEditProbe} />
+        ),
         disableSortBy: true
       }
     ];
@@ -124,19 +134,30 @@ const ChaosProbeTable = ({ content, refetchProbes }: ChaosProbesTableProps & Ref
   }, []);
 
   return (
-    <TableV2<Partial<Probe>>
-      className={css.table}
-      columns={columns}
-      data={content}
-      sortable
-      onRowClick={rowDetails =>
-        rowDetails.name &&
-        history.push({
-          pathname: paths.toChaosProbe({ probeName: rowDetails.name }),
-          search: `probeName=${rowDetails.name}&tab=${ProbeTabs.EXECUTION_RESULTS}&infrastructureType=${rowDetails.infrastructureType}`
-        })
-      }
-    />
+    <>
+      <TableV2<Partial<Probe>>
+        className={css.table}
+        columns={columns}
+        data={content}
+        sortable
+        onRowClick={rowDetails =>
+          rowDetails.name &&
+          history.push({
+            pathname: paths.toChaosProbe({ probeName: rowDetails.name }),
+            search: `probeName=${rowDetails.name}&tab=${ProbeTabs.EXECUTION_RESULTS}&infrastructureType=${rowDetails.infrastructureType}`
+          })
+        }
+      />
+      {editProbe && (
+        <UpdateProbeModal
+          refetchProbes={refetchProbes}
+          isOpen={!!editProbe.name}
+          hideDarkModal={() => setEditProbe(undefined)}
+          probeName={editProbe.name}
+          infrastructureType={editProbe.infrastructureType}
+        />
+      )}
+    </>
   );
 };
 

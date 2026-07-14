@@ -48,15 +48,16 @@ const MemberPermission = ({ row: { original: data } }: MemberRow): React.ReactEl
 
 const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React.ReactElement => {
   const { role } = data;
+  const { getString } = useStrings();
   const [memberRole, setMemberRole] = React.useState<string>(role);
   const rolesDropDown: SelectOption[] = [
     {
-      label: 'Editor',
-      value: 'Editor'
+      label: 'Executor',
+      value: 'Executor'
     },
     {
-      label: 'Viewer',
-      value: 'Viewer'
+      label: getString('viewer'),
+      value: getString('viewer')
     }
   ];
   return <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />;
@@ -66,11 +67,11 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
   const { projectID } = useParams<{ projectID: string }>();
   const { getString } = useStrings();
   const { role } = data;
-  const [memberRole, setMemberRole] = React.useState<'Editor' | 'Owner' | 'Viewer'>(role);
+  const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer'>(role);
   const rolesDropDown: SelectOption[] = [
     {
-      label: 'Editor',
-      value: 'Editor'
+      label: 'Executor',
+      value: 'Executor'
     },
     {
       label: 'Viewer',
@@ -103,7 +104,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
         <DropDown
           value={memberRole}
           items={rolesDropDown}
-          onChange={option => setMemberRole(option.label as 'Editor' | 'Owner' | 'Viewer')}
+          onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer')}
         />
       </Layout.Horizontal>
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="medium">

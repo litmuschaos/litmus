@@ -44,7 +44,7 @@ Chaos experiments on sock-shop app with grafana dashboard to monitor it.
 - Install the chaos experiments in admin(litmus) namespace
 
   ```
-  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.6.1?file=charts/generic/experiments.yaml -n litmus
+  kubectl apply -f https://hub.litmuschaos.io/api/chaos/1.6.1?file=faults/generic/experiments.yaml -n litmus
   ```
 
 - Install the chaos experiment metrics exporter and chaos event exporter
