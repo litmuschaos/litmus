@@ -1,0 +1,239 @@
+.subHeader {
+  display: flex;
+}
+
+.pageBody {
+  height: calc(100% - 144px);
+  display: flex;
+  justify-content: start;
+  background: var(--primary-bg) !important;
+  padding-top: var(--spacing-xlarge);
+  flex-direction: column;
+  gap: var(--spacing-medium);
+  align-items: center;
+
+  .noRepositoryText {
+    font-size: 20px !important;
+    font-weight: bold !important;
+    line-height: 28px !important;
+    color: var(--grey-600) !important;
+  }
+
+  .noRepositorySubText {
+    font-size: 16px !important;
+    font-weight: normal !important;
+    line-height: 24px !important;
+    color: var(--grey-600) !important;
+  }
+}
+
+.table {
+  width: 90%;
+
+  :global {
+    .ReactTable--row {
+      cursor: pointer;
+    }
+
+    .ReactTable--header {
+      .ReactTable--cell {
+        text-align: left;
+      }
+    }
+  }
+}
+
+.editServiceModal {
+  width: 320px;
+}
+
+.environmentType {
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  padding: var(--spacing-2) var(--spacing-3) !important;
+  background-color: var(--teal-50) !important;
+  color: var(--teal-700) !important;
+  font-weight: bold !important;
+  letter-spacing: 0.2px;
+  line-height: var(--font-size-normal) !important;
+  white-space: nowrap !important;
+  border: none;
+  border-radius: var(--spacing-10);
+
+  &.production {
+    background-color: var(--purple-50) !important;
+    color: var(--purple-700) !important;
+  }
+}
+
+.dialogStyles {
+  padding-top: 36px !important;
+  position: relative;
+  width: 687px;
+
+  > div[class*='bp3-dialog-header'] {
+    margin: 0px 0px 6px !important;
+    width: 330px;
+  }
+  > div[class*='StyledProps--padding-none'] {
+    overflow: inherit;
+  }
+}
+
+.dialog {
+  :global(.OverlaySpinner--overlaySpinner) {
+    height: 100% !important;
+  }
+
+  :global(.FormikForm--main) {
+    height: 100%;
+
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      height: 100%;
+      flex-direction: column;
+    }
+  }
+}
+
+.repositoryCard {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-content: center;
+  width: 90%;
+}
+
+.tagSuccess {
+  background-color: var(--green-200) !important;
+  border: none !important;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  :global(.bp3-icon) {
+    color: var(--green-700);
+
+    svg {
+      height: 12px;
+      width: 12px;
+    }
+  }
+
+  :global(.bp3-text-overflow-ellipsis) {
+    color: var(--green-700);
+  }
+}
+
+.tagError {
+  background-color: var(--red-200) !important;
+  border: none !important;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  :global(.bp3-icon) {
+    color: var(--orange-700);
+    margin-right: 4px;
+
+    svg {
+      height: 12px;
+      width: 12px;
+    }
+  }
+
+  :global(.bp3-text-overflow-ellipsis) {
+    color: var(--orange-700);
+  }
+}
+
+.name {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  text-align: left;
+}
+
+.sourceDestinationWrapper {
+  width: 90% !important;
+}
+
+.wrapper {
+  width: 80%;
+
+  .name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+  }
+
+  span {
+    white-space: nowrap !important;
+  }
+}
+
+.actionCell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.applicationStatus {
+  display: flex;
+  gap: 8px;
+}
+
+.applicationIcon {
+  height: 30px;
+}
+
+.source,
+.destination {
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  flex: 1;
+  text-align: left;
+}
+
+.content {
+  flex: 4;
+  text-align: left;
+  color: var(--grey-450);
+}
+
+.agentName {
+  text-align: left;
+  text-transform: capitalize;
+  color: var(--grey-800);
+}
+
+.tags {
+  margin-top: var(--spacing-small);
+}
+
+.tagsPopover {
+  p {
+    color: var(--grey-600);
+  }
+}
+
+.statusText {
+  width: fit-content !important;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+}

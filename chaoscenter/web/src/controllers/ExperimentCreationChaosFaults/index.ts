@@ -1,0 +1,3 @@
+import ExperimentCreationChaosFaultsController from './ExperimentCreationChaosFaults';
+
+export default ExperimentCreationChaosFaultsController;

@@ -1,0 +1,70 @@
+syntax = "proto3";
+package protos;
+option go_package = "./protos";
+
+
+// The validation function that checks if the user has the required permission over the project
+message ValidationRequest{
+  string jwt = 1;
+  string projectId = 2;
+  repeated string requiredRoles = 3;
+  string invitation = 4 ;
+}
+
+// The validation response that will contain the results of the validation request
+message ValidationResponse{
+  string error = 1;
+  bool isValid = 2;
+}
+
+// GetProjectByIdRequest is the message struct for requesting project details by ID
+message GetProjectByIdRequest {
+  string projectID = 1;
+}
+
+//ProjectMembers is the message struct that holds the details about the project members
+message ProjectMembers {
+  string uid = 1;
+  string userName = 2;
+  string role = 3;
+  string email = 4;
+  string invitation = 5;
+  string joinedAt = 6;
+
+}
+
+// GetProjectByIdRequest is the message struct for response of project details by ID
+message GetProjectByIdResponse{
+  string id = 1;
+  string uid = 2;
+  string name = 3;
+  repeated ProjectMembers members = 4;
+  string state = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  string removedAt = 8;
+}
+
+// GetUserByIdRequest is the message struct for requesting user details by ID
+message GetUserByIdRequest {
+  string userID = 1;
+}
+
+// GetUserByIdResponse is the message struct for response of user details by ID
+message GetUserByIdResponse{
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string role=4;
+  string name = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  string deactivatedAt=8;
+}
+
+// Service definition for the authentication RPC Service
+service authRpcService{
+  rpc ValidateRequest(ValidationRequest) returns (ValidationResponse) {}
+  rpc GetProjectById (GetProjectByIdRequest) returns (GetProjectByIdResponse) {}
+  rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse) {}
+}

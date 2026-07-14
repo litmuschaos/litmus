@@ -21,4 +21,4 @@ spec:
         - name: EPHEMERAL_STORAGE_MEBIBYTES
           value: '256' #in MiBi
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

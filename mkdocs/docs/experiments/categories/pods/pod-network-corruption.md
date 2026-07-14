@@ -16,7 +16,7 @@
 ??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.16
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a>
+    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/pod-network-corruption/fault.yaml">here</a>
 
 ## Default Validations
 
@@ -30,7 +30,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-corruption/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -330,6 +329,45 @@ spec:
           value: '60'
 ```
 
+### Blacklist Source and Destination Ports
+
+By default, the network experiments disrupt traffic for all the source and destination ports. The specific ports can be blacklisted via `SOURCE_PORTS` and `DESTINATION_PORTS` ENV.
+
+- `SOURCE_PORTS`: Provide the comma separated source ports preceded by `!`, that you'd like to blacklist from the chaos.
+- `DESTINATION_PORTS`: Provide the comma separated destination ports preceded by `!` , that you'd like to blacklist from the chaos.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-network-corruption/blacklist-source-and-destination-ports.yaml yaml)
+```yaml
+# blacklist the source and destination ports
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-corruption-sa
+  experiments:
+  - name: pod-network-corruption
+    spec:
+      components:
+        env:
+        # it will blacklist 80 and 8080 source ports
+        - name: SOURCE_PORTS
+          value: '!80,8080'
+        # it will blacklist 8080 and 9000 destination ports
+        - name: DESTINATION_PORTS
+          value: '!8080,9000'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
 ### Network Interface
 
 The defined name of the ethernet interface, which is considered for shaping traffic. It can be tuned via `NETWORK_INTERFACE` ENV. Its default value is `eth0`.
@@ -400,7 +438,7 @@ spec:
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library

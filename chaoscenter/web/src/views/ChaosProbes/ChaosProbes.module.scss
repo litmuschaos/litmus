@@ -1,0 +1,132 @@
+.table {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+  }
+
+  :global {
+    .bp3-transition-container {
+      top: -80px !important;
+      left: 5px !important;
+    }
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
+    }
+  }
+}
+
+.noProbes {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    margin-bottom: 20px;
+    height: 250px;
+    width: auto;
+  }
+
+  .title {
+    width: 60%;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--grey-600);
+  }
+
+  .subtitle {
+    padding: 10px;
+    text-align: center;
+    width: 70%;
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--grey-600);
+  }
+
+  .button {
+    margin-top: 20px;
+  }
+}
+
+.modalWithHelpPanel {
+  :global {
+    .FloatingContainer--floatingContainer {
+      transform: scale(0.85);
+      position: absolute !important;
+      right: 20px !important;
+      bottom: 20px !important;
+    }
+  }
+}
+
+.recentExecutionHeader {
+  position: relative;
+}
+
+.latestExecutionText {
+  position: absolute;
+  text-transform: lowercase;
+  top: -16px;
+  p {
+    white-space: nowrap !important;
+  }
+}
+
+.id {
+  max-width: 96px;
+  color: var(--grey-600) !important;
+  background: var(--grey-100) !important;
+  border-radius: 8px;
+  padding-left: 4px !important;
+}
+
+.expName {
+  font-size: 14px !important;
+  cursor: pointer;
+}
+
+.menuItem {
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100%;
+  color: var(--white) !important;
+  text-decoration: none !important;
+}
+
+.cardMenu {
+  :global {
+    .Card--dots {
+      top: -15px !important;
+    }
+
+    .Button--button[class*='bp3-button']:not(.Button--variation).Button--iconOnly:not([disabled]),
+    .Button--button[class*='bp3-button']:not([class*='bp3-intent-']):not(.Button--variation).Button--iconOnly:not([disabled]) {
+      color: var(--grey-800);
+    }
+  }
+}
+
+.crossIcon {
+  position: absolute;
+  right: var(--spacing-small);
+  top: var(--spacing-small);
+}

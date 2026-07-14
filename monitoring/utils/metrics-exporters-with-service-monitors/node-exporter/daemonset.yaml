@@ -71,7 +71,7 @@ spec:
               cpu: 10m
               memory: 20Mi
       hostNetwork: true
-      hostPID: true
+      hostPID: false
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:

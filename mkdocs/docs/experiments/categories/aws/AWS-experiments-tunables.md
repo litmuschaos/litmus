@@ -31,10 +31,10 @@ spec:
         - name: REGION
           value: '<region for instances>'
         # tag of the ec2 instance
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -64,10 +64,10 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: REGION
           value: '<region for instances>'
-        - name: INSTANCE_TAG
+        - name: EC2_INSTANCE_TAG
           value: 'key:value'
         
 ```

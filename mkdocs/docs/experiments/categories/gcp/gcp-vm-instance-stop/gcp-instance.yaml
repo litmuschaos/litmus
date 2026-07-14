@@ -23,4 +23,4 @@ spec:
         - name: GCP_PROJECT_ID
           value: 'project-id'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

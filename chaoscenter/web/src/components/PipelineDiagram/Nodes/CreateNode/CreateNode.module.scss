@@ -1,0 +1,41 @@
+/* stylelint-disable color-no-hex */
+.createNode {
+  height: 40px;
+  width: 90px;
+  background: var(--white);
+  border: 2px dashed var(--grey-400);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+  box-shadow: -1px 4px 7px 0 rgba(135, 149, 159, 0.27);
+  pointer-events: all;
+
+  &:hover {
+    box-shadow: 0px 8px 16px 0px #60617029;
+  }
+
+  &.selected {
+    border-color: var(--primary-7) !important;
+  }
+
+  &.disabled {
+    background-color: var(--grey-200);
+    cursor: not-allowed;
+  }
+
+  [data-name*='node-name'] {
+    word-break: break-word;
+  }
+
+  &.stepAddIcon {
+    height: 64px;
+    width: 64px;
+  }
+  &.stageAddIcon {
+    height: 40px !important;
+    width: 90px !important;
+  }
+}

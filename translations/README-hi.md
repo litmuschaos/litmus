@@ -74,7 +74,7 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 लिटमस कैओस सीएनसीएफ परियोजनाओं का हिस्सा है।
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## समुदाय
 
@@ -95,5 +95,5 @@
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  सीएनसीएफ लैंडस्केप <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+  सीएनसीएफ लैंडस्केप <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>

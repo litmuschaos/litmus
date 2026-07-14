@@ -1,0 +1,73 @@
+.centerContainer {
+  height: calc(100vh - 124px);
+}
+
+.listContainer {
+  gap: 1rem;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 56px);
+}
+
+.tagCard {
+  box-shadow: 0px 2px 4px 0px #60617029, 0px 0px 1px 0px #28293d0a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.activeTag {
+  border: 1px solid var(--primary-7);
+}
+
+.gap-1 {
+  gap: 0.25rem;
+
+  .tagText {
+    font-weight: 600;
+    font-size: 12px !important;
+    line-height: 14px !important;
+    color: var(--grey-1000);
+    padding-left: 0.5rem;
+    max-width: 120px;
+  }
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.tagsCont {
+  gap: 1rem;
+  overflow: auto;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+
+  img {
+    width: 200px;
+  }
+}
+
+.rounded {
+  border-radius: 999px;
+}
+.paginationContainer {
+  padding-top: 8px;
+  overflow: hidden;
+  padding-bottom: 8px !important;
+  & span,
+  p {
+    font-size: 12px !important;
+  }
+  :global {
+    .bp3-transition-container {
+      top: -115px !important;
+      left: 5px !important;
+    }
+  }
+}

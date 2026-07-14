@@ -1,0 +1,33 @@
+spectaql:
+  targetDir: ./mkdocs/docs/graphql/v3.10.x
+  logoFile: ./mkdocs/docs/graphql/logo.png
+  faviconFile: ./mkdocs/docs/graphql/logo.png
+  displayAllServers: true
+  themeDir: ./mkdocs/docs/graphql/v3.10.x/custom-theme
+
+introspection:
+  removeTrailingPeriodFromDescriptions: false
+  schemaFile: ./chaoscenter/graphql/definitions/shared/*.graphqls
+  queryNameStrategy: capitalizeFirst
+  fieldExpansionDepth: 2
+
+  spectaqlDirective:
+    enable: true
+
+extensions:
+  graphqlScalarExamples: true
+
+info:
+  title: ChaosCenter API Documentation
+  description: Litmus Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+
+  x-introItems:
+    - title: Common Error Response
+      file: ./mkdocs/docs/graphql/v3.10.x/error_response_guide.md
+
+servers:
+  - url: http://localhost:8080
+    description: Dev
+  - url: http://localhost:8080/query
+    description: Prod
+    production: true

@@ -28,7 +28,7 @@ spec:
         - name: TARGET_NODE
           value: 'node01'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Multiple Nodes
@@ -59,7 +59,7 @@ spec:
         - name: TARGET_NODES
           value: 'node01,node02'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Nodes With Labels
@@ -90,7 +90,7 @@ spec:
         - name: NODE_LABEL
           value: 'key=value'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Node Affected Percentage
@@ -125,5 +125,5 @@ spec:
         - name: NODE_LABEL
           value: 'key=value'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

@@ -24,4 +24,4 @@ spec:
           value: 'my-project-4513'
         
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

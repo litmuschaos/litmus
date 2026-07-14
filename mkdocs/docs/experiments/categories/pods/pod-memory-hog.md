@@ -18,7 +18,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-memory-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-memory/experiment.yaml">here</a> 
+    - Ensure that the <code>pod-memory-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/pod-cpu-memory/fault.yaml">here</a> 
     
 ## Default Validations
 
@@ -32,7 +32,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-memory-hog/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -162,10 +161,10 @@
         <td> Comma separated list of application pod name subjected to pod memory hog chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
       </tr>
-      <tr>
+      <tr> 
         <td> TARGET_CONTAINER </td>
-        <td> Name of the target container under chaos.</td>
-        <td> If not provided, it will select the first container of the target pod</td>
+        <td> Comma separated names of the container(s) under chaos for target pod(s). </td>
+        <td> If not provided, it will select the first container of the target pod. To target all the containers, provide <code>all<code> value. </td>
       </tr>   
       <tr>
         <td> CONTAINER_RUNTIME  </td>

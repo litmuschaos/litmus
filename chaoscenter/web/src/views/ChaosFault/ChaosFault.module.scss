@@ -1,0 +1,23 @@
+.fullHeight {
+  height: calc(var(--page-min-height) - 96px);
+  overflow: auto;
+}
+
+.card {
+  box-shadow: 0px 0.5px 2px 0px #60617029, 0px 0px 1px 0px #28293d14;
+  border-radius: 4px;
+  min-height: 320px;
+}
+
+.container {
+  padding: 7px 0 !important;
+}
+
+.marginTopSmall {
+  margin-top: 0.5rem;
+}
+
+.minimalPadding {
+  padding: 2px 0 !important;
+  margin-right: var(--spacing-medium) !important;
+}

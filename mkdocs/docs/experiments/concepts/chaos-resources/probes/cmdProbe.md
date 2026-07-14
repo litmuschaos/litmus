@@ -617,6 +617,29 @@ In source mode, the command execution is carried out from within a new pod whose
     <table>
     <tr>
     <th>Field</th>
+    <td><code>.tolerations</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the tolerations for the probe pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []corev1.Tolerations</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.tolerations</code> Flag to hold the Tolerations for the probe pod</td>
+    </tr>
+    </table>
+    
+    <table>
+    <tr>
+    <th>Field</th>
     <td><code>.volumes</code></td>
     </tr>
     <tr>

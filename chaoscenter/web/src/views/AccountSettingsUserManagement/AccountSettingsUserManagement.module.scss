@@ -1,0 +1,53 @@
+.subHeader {
+  box-shadow: 0px 2px 4px 0px #60617029, 0px 0px 1px 0px #28293d0a;
+}
+.tableMainContainer {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    overflow-y: scroll;
+    min-height: auto !important;
+    max-height: calc(100% - 45.28px);
+  }
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1.875rem 1fr 1fr 1fr 1fr 0.7fr;
+  }
+}
+
+.status {
+  align-items: center;
+  display: flex;
+  align-content: center;
+  padding-right: var(--spacing-xsmall) !important;
+
+  > svg {
+    margin: auto;
+  }
+
+  /* for increased specificity */
+  &.red-status:global(.bp3-icon) {
+    color: var(--red-500) !important;
+  }
+
+  /* for increased specificity */
+  &.green-status:global(.bp3-icon) {
+    color: var(--green-500) !important;
+  }
+}
+
+.nameChangeDialog {
+  padding-bottom: 0 !important;
+}

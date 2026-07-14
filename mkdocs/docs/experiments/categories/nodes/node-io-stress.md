@@ -17,7 +17,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>node-io-stress</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-io-stress/experiment.yaml">here</a> 
+    - Ensure that the <code>node-io-stress</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/node-io-stress/fault.yaml">here</a> 
     
 ## Default Validations
 
@@ -31,7 +31,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-io-stress/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -189,6 +188,21 @@
         <td> It defines sequence of chaos execution for multiple target pods </td>
         <td> Default value: parallel. Supported: serial, parallel </td>
       </tr>
+      <tr>
+        <td> STATUS_CHECK_DELAY </td>
+        <td> Time interval (in seconds) between subsequent status checks </td>
+        <td> Defaults to 2 </td>
+      </tr>
+      <tr>
+        <td> STATUS_CHECK_TIMEOUT </td>
+        <td> Maximum time (in seconds) to wait for the application/auxiliary checks to be successful </td>
+        <td> Defaults to 180 </td>
+      </tr>
+      <tr>
+        <td> TERMINATION_GRACE_PERIOD_SECONDS </td>
+        <td> Grace period (in seconds) for the helper pod termination </td>
+        <td> Defaults to 0 </td>
+      </tr>
     </table>
 
 ## Experiment Examples
@@ -225,7 +239,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
           value: '10' # in percentage
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Filesystem Utilization Bytes
@@ -257,7 +271,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_BYTES
           value: '500' # in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Limit CPU Utilization
@@ -286,7 +300,7 @@ spec:
         - name: CPU
           value: '1' 
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers For Stress
@@ -318,5 +332,5 @@ spec:
         - name: VM_WORKERS
           value: '1'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
