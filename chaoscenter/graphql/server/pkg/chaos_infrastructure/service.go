@@ -413,8 +413,8 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 				Username: username,
 			},
 		}
-		lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 		if len(infra.ExperimentDetails) > 0 {
+			lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 			infraResponse.NoOfExperimentRuns = &infra.ExperimentDetails[0].TotalRuns
 			infraResponse.LastExperimentTimestamp = &lastRun
 			infraResponse.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
