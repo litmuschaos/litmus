@@ -45,11 +45,11 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
 
     allowedHostPaths:
         # substitutes this path with an appropriate socket path
-        # ex: '/var/run/docker.sock', '/run/containerd/containerd.sock', '/run/crio/crio.sock'
-        - pathPrefix: "/var/run/docker.sock"
+        # ex: '/run/containerd/containerd.sock', '/run/containerd/containerd.sock', '/run/crio/crio.sock'
+        - pathPrefix: "/run/containerd/containerd.sock"
         # substitutes this path with an appropriate container path
         # ex: '/var/lib/docker/containers', '/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io', '/var/lib/containers/storage/overlay/'
-        - pathPrefix: "/var/lib/docker/containers"
+        - pathPrefix: "/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io"
 
     allowedCapabilities:
         # NET_ADMIN & SYS_ADMIN: used in network chaos experiments to perform
@@ -88,7 +88,6 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
 - Subscribe to the created PSP in the experiment RBAC (or in the [admin-mode](https://v1-docs.litmuschaos.io/docs/admin-mode/#prepare-rbac-manifest) rbac, as applicable).
   For example, the pod-delete experiment rbac instrumented with the PSP is shown below:
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-delete/rbac-psp.yaml yaml) 
     ```yaml
     ---
     apiVersion: v1

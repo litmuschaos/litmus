@@ -1,0 +1,340 @@
+/* stylelint-disable color-no-hex */
+
+@keyframes shine {
+  0% {
+    transform: var(--node-running-transform-start, translate3d(-100%, -100%, 0));
+  }
+
+  100% {
+    transform: var(--node-running-transform-end, translate3d(100%, 100%, 0));
+  }
+}
+
+.defaultNode {
+  --pipeline-selected-node: linear-gradient(123.92deg, var(--primary-6) 32.53%, #0778fc 112.21%);
+  --execution-pipeline-selected-running-bg: linear-gradient(
+    to top left,
+    transparent 33%,
+    rgba(100, 100, 100, 0.1) 50%,
+    transparent 66%
+  );
+  --pipeline-studio-bg: linear-gradient(90deg, var(--pipeline-bg) 9px, transparent 1%) center,
+    linear-gradient(var(--pipeline-bg) 9px, transparent 1%) center, var(--pipeline-bg-dot);
+
+  --execution-pipeline-selected-running-bg-selected: linear-gradient(
+    to top left,
+    transparent 33%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 66%
+  );
+  display: block;
+  width: fit-content;
+  height: fit-content;
+  cursor: default;
+  position: relative;
+  margin-bottom: 55px;
+
+  &.marginBottom {
+    margin-bottom: 20px;
+  }
+
+  &.draggable {
+    cursor: move;
+  }
+
+  .defaultCard {
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+    background-color: var(--white);
+    border-radius: 8px;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0px 2px 4px 0px #60617029;
+
+    &.selected {
+      border-color: var(--diagram-selected) !important;
+      background: var(--pipeline-selected-node) !important;
+      border-width: 2px;
+      &.failed {
+        background: var(--execution-pipeline-color-red) !important;
+        border: solid 2px var(--execution-pipeline-color-red) !important;
+      }
+    }
+    &.failed {
+      border: solid 2px var(--execution-pipeline-color-red) !important;
+    }
+    &.skipped {
+      background: var(--grey-200) !important;
+      border: solid 2px var(--grey-300) !important;
+    }
+    &.not-started {
+      border: solid 2px var(--execution-pipeline-color-dark-grey);
+    }
+  }
+  &:hover .closeNode {
+    opacity: 1;
+    pointer-events: initial;
+  }
+  &:hover {
+    .defaultCard {
+      box-shadow: 0px 8px 16px 0px #60617029;
+    }
+  }
+
+  .codeIcon {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+  }
+  .templateIcon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+  .tertiaryIcon {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: var(--pipeline-barrier-yellow) !important;
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    padding: 1px !important;
+  }
+
+  .inComplete {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+  }
+
+  .template {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+
+  .conditional {
+    position: absolute;
+    top: -10px;
+    left: 5px;
+    color: var(--white) !important;
+
+    svg {
+      path,
+      circle {
+        fill: currentColor !important;
+      }
+      rect {
+        // TODO: Replace color once it is available in UIKit
+
+        stroke: #f79400 !important;
+      }
+    }
+  }
+
+  .iconGroup {
+    display: inline;
+    :global(.bp3-icon) {
+      padding: var(--spacing-small);
+    }
+  }
+
+  .closeNode {
+    --icon-padding: 0 !important;
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    left: -15px;
+    background-color: var(--primary-7) !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
+    height: 14px !important;
+    padding: 0 !important;
+    align-items: center;
+    z-index: 100;
+    cursor: pointer;
+    &::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 0;
+      left: 0;
+    }
+    :global {
+      span.bp3-icon {
+        color: var(--white) !important;
+      }
+    }
+  }
+}
+.addNode {
+  visibility: hidden;
+  &.visible {
+    visibility: visible;
+  }
+  &.stepAddNode {
+    width: 64px;
+    height: 64px;
+    margin-top: 48px;
+  }
+  &.stepGroupAddIcon {
+    width: 84px !important;
+    height: 84px !important;
+  }
+  &.stageAddNode {
+    width: 90px;
+    height: 40px;
+    margin-top: 48px;
+  }
+}
+
+:global {
+  .bp3-popover-content p {
+    white-space: break-spaces !important;
+  }
+}
+
+.addNodeIcon {
+  height: 20px;
+  position: absolute;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  opacity: 0;
+  border-radius: 50%;
+  padding: 2px;
+  &.stepAddIcon {
+    top: 22px; // half the height of node
+  }
+  &.stageAddIcon {
+    top: 10px; // half the height of node
+  }
+  &:hover,
+  &.show {
+    opacity: 1;
+    cursor: pointer;
+    border-radius: 50%;
+    background: var(--primary-7);
+  }
+  &.left {
+    left: -40px;
+  }
+  &.stepGroupLeft {
+    left: -60px;
+    &.stepGroupLeftAddLink {
+      left: -35px !important;
+    }
+  }
+  &.right {
+    right: -20px;
+  }
+}
+
+.markerStart {
+  width: 20px;
+  position: absolute;
+  left: -14px;
+  z-index: 99;
+  &.stepMarkerLeft {
+    left: -10px !important;
+    top: 22px !important;
+  }
+}
+
+.stepMarker {
+  top: 21px;
+}
+
+.markerEnd {
+  width: 20px;
+  position: absolute;
+  right: -14px;
+  z-index: 99;
+  &.stepMarkerRight {
+    right: -9px !important;
+    top: 22px !important;
+  }
+}
+
+.secondaryIcon {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+.running-node {
+  position: relative;
+
+  :global(.execution-running-animation) {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    position: absolute;
+    &::before {
+      content: ' ';
+      display: block;
+      width: 200%;
+      height: 200%;
+      background-image: var(--execution-pipeline-selected-running-bg) !important;
+      animation: shine 2s infinite;
+      will-change: transform;
+    }
+  }
+  &.selected :global(.execution-running-animation) {
+    &::before {
+      background-image: var(--execution-pipeline-selected-running-bg-selected) !important;
+    }
+  }
+}
+
+.nodeNameText {
+  cursor: pointer;
+  line-height: 1.5;
+  overflow-wrap: normal;
+  position: absolute;
+
+  left: -50%;
+  height: 48px;
+  overflow: hidden;
+  &.stageName {
+    left: -25%;
+  }
+  p {
+    word-break: break-word !important;
+  }
+}
+
+.primaryIcon {
+  &:global(.bp3-icon) {
+    svg {
+      path {
+        fill: currentColor !important;
+      }
+    }
+  }
+}
+
+.render-popover {
+  min-width: 140px;
+  z-index: 3 !important;
+}
+
+.divider {
+  height: 0.78px;
+  border: 0;
+  background: #f3f3fa;
+  color: #f3f3fa;
+  opacity: 0.5;
+}

@@ -21,4 +21,4 @@ spec:
         - name: SIGNAL
           value: 'SIGKILL'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

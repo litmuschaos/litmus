@@ -22,4 +22,4 @@ spec:
         - name: FILESYSTEM_UTILIZATION_BYTES
           value: '1' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

@@ -1,0 +1,58 @@
+.fullHeight {
+  height: calc(100vh - 96px);
+  overflow: auto;
+}
+
+.card {
+  box-shadow: 0px 0.5px 2px 0px #60617029, 0px 0px 1px 0px #28293d14;
+  border-radius: 4px;
+  padding: 10px 24px !important;
+
+  .title {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .subtitle {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0.1176px;
+    color: var(--grey-700);
+  }
+}
+
+.faultCard {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.faultIcon {
+  height: 80px;
+}
+
+.faultDetails {
+  width: auto;
+  padding: 2px 10px;
+
+  .desc {
+    margin-top: 10px;
+  }
+}
+
+.previewContainer {
+  margin-top: 0.5rem;
+  height: 250px;
+  width: 100%;
+  background-color: #bdcade10;
+  border: 1px solid #bdcade60;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.yamlContainer {
+  margin-top: 0.5rem;
+}

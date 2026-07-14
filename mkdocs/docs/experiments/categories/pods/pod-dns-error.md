@@ -16,7 +16,7 @@
 ??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.16
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-error/experiment.yaml">here</a>
+    -  Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/pod-dns-error/fault.yaml">here</a>
 
 ## Default Validations
 
@@ -30,7 +30,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-dns-error/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -138,7 +137,7 @@
       </tr>
       <tr>
         <td> TARGET_HOSTNAMES </td>
-        <td> List of the target hostnames or keywords eg. '["litmuschaos","chaosnative.com"]'</td>
+        <td> List of the target hostnames or keywords eg. '["litmuschaos"]'</td>
         <td> If not provided, all hostnames/domains will be targeted</td>
       </tr>
       <tr>
@@ -154,12 +153,12 @@
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td> Defaults to docker, supported values: docker</td>
+        <td> Defaults to containerd, supported values: docker</td>
       </tr>
       <tr>
         <td> SOCKET_PATH </td>
         <td> Path of the docker socket file </td>
-        <td> Defaults to <code>/var/run/docker.sock</code> </td>
+        <td> Defaults to <code>/run/containerd/containerd.sock</code> </td>
       </tr>
       <tr>
         <td> LIB </td>
@@ -219,7 +218,7 @@ spec:
         ## comma separated list of host names
         ## if not provided, all hostnames/domains will be targeted
         - name: TARGET_HOSTNAMES
-          value: '["litmuschaos","chaosnative.com"]'
+          value: '["litmuschaos"]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
@@ -262,7 +261,7 @@ spec:
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path.
 
 - `CONTAINER_RUNTIME`: It supports `docker` runtime only.
-- `SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`).
+- `SOCKET_PATH`: It contains path of docker socket file by default(`/run/containerd/containerd.sock`).
 
 Use the following example to tune this:
 
@@ -289,10 +288,10 @@ spec:
         # runtime for the container
         # supports docker
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
+          value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

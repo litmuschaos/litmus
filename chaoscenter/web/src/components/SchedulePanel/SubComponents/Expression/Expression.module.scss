@@ -1,0 +1,26 @@
+.expression {
+  width: 100%;
+  .field {
+    border: 1px solid var(--bp3-intent-color, var(--grey-300)) !important;
+    padding-left: var(--spacing-small) !important;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    background-color: rgba(220, 238, 255, 0.5) !important;
+    p {
+      color: var(--grey-800) !important;
+    }
+  }
+
+  .label {
+    margin-top: var(--spacing-large) !important;
+    margin-bottom: var(--spacing-small) !important;
+    color: var(--grey-800) !important;
+    font-size: 14px !important;
+  }
+  .errorField {
+    background-color: var(--red-300) !important;
+    border: 1px solid var(--red-400) !important;
+  }
+}

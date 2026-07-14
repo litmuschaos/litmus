@@ -1,0 +1,229 @@
+.main {
+  /* stylelint-disable  color-no-hex */
+  --modules-container-bg: #0a2c54;
+  --modules-container-border: #2a578c;
+  --main-nav-bg: var(--primary-9);
+  --all-modules-btn-bg: var(--modules-container-bg);
+  --main-nav-width: 88px;
+  /* stylelint-enable  color-no-hex */
+
+  background: var(--theme-light-nav-panel-bg);
+  box-shadow: var(--panel-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 16;
+  width: 88px;
+  height: 100%;
+  min-height: 100vh;
+
+  /* sticky positioning */
+  position: sticky;
+  bottom: 0;
+  align-self: flex-end;
+
+  .navList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .modulesContainer {
+      overflow-y: scroll;
+      background: var(--modules-container-bg);
+      border-bottom: 1px solid var(--modules-container-border);
+      border-top: 1px solid var(--modules-container-border);
+    }
+  }
+
+  .darkBackground {
+    background-color: #0a2c54;
+  }
+
+  .navItem {
+    display: block;
+
+    &:hover {
+      background: rgba(0, 146, 228, 0.7);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .modulesContainerNavItem {
+    background-color: #0a2c54;
+  }
+
+  .navLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    padding: 16px 0 20px 0;
+    position: relative;
+    overflow: hidden;
+    flex-flow: column;
+
+    :global {
+      .bp3-icon {
+        opacity: 0.6;
+      }
+    }
+
+    &:hover {
+      text-decoration: none;
+      background: var(--primary-9);
+
+      :global {
+        .bp3-icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    &.active {
+      :global {
+        .bp3-icon {
+          opacity: 1;
+        }
+      }
+      background: var(--primary-9);
+    }
+  }
+
+  .allModulesButton {
+    border: 1px solid var(--modules-container-border);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    background-color: var(--all-modules-btn-bg);
+    color: var(--grey-300);
+    padding: 6px 10px;
+    cursor: pointer;
+
+    & svg path {
+      fill: var(--grey-300);
+    }
+
+    &:hover {
+      box-shadow: none;
+      border-color: var(--primary-4);
+      color: var(--primary-4);
+
+      & svg path {
+        fill: var(--primary-4);
+      }
+    }
+
+    &.allModulesOpen {
+      width: 88px;
+      height: 72px;
+      border: none;
+      border-radius: 0;
+
+      & svg path {
+        fill: var(--white);
+      }
+    }
+  }
+
+  .userLink {
+    height: 60px;
+    padding: 0px;
+    border-bottom: none !important;
+    &::after {
+      content: none !important;
+    }
+  }
+
+  .moduleLink {
+    padding: 0px;
+    border-bottom: none !important;
+    &::after {
+      content: none !important;
+    }
+  }
+
+  .logOutButton {
+    cursor: pointer;
+  }
+
+  .userName {
+    overflow-wrap: anywhere;
+    padding: var(--spacing-none) var(--spacing-xsmall) !important;
+  }
+
+  .settings {
+    height: 80px;
+    border-bottom: none !important;
+    &::after {
+      content: none !important;
+    }
+  }
+
+  .hoverText {
+    opacity: 0.65;
+    text-transform: uppercase;
+  }
+
+  .hoverNavLink:hover .hoverText,
+  .hoverNavLink.active .hoverText {
+    opacity: 1;
+  }
+
+  .text {
+    font-size: 11px !important;
+  }
+}
+
+.modules {
+  overflow: scroll;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+}
+.border {
+  border-top: 1px solid var(--light-shadow-color);
+}
+
+.chevron {
+  width: 100%;
+  height: 32px;
+  background: var(--primary-9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.45);
+  &.top {
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.45);
+  }
+
+  &.disabledContainer {
+    box-shadow: none;
+  }
+
+  .disabled {
+    opacity: 0.2;
+    width: 28px;
+    height: 2px;
+    background-color: var(--primary-1);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  & svg path {
+    opacity: 0.2;
+    fill: var(--primary-1) !important;
+  }
+
+  &:hover {
+    & svg path {
+      opacity: 0.8;
+      fill: var(--primary-6) !important;
+    }
+  }
+}

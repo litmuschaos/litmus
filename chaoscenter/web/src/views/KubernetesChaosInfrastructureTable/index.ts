@@ -1,0 +1,3 @@
+import KubernetesChaosInfrastructureTableView from './KubernetesChaosInfrastructureTable';
+
+export default KubernetesChaosInfrastructureTableView;

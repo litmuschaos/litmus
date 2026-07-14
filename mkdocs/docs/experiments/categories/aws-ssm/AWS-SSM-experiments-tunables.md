@@ -32,7 +32,7 @@ spec:
         - name: REGION
           value: '<region of the EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Memory Percentage
@@ -67,7 +67,7 @@ spec:
         - name: REGION
           value: '<region of the EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### SSM Docs
@@ -111,7 +111,7 @@ spec:
         - name: REGION
           value: '<region of the EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers Count
@@ -146,7 +146,7 @@ spec:
         - name: REGION
           value: '<region of the EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -176,7 +176,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: CPU_CORE
           value: '1'
         - name: EC2_INSTANCE_ID

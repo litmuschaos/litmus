@@ -1,0 +1,54 @@
+/* stylelint-disable color-no-hex */
+.marker {
+  --pipeline-blue-color: #25a6f7;
+  stroke: var(--pipeline-blue-color);
+  stroke-width: 1px;
+  fill: var(--white);
+}
+.stageNode {
+  height: 40px;
+}
+
+.stepNode {
+  height: 64px;
+}
+
+.nodeStart {
+  border: 1px solid var(--grey-300);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: var(--grey-100);
+  cursor: pointer;
+  position: relative;
+  .icon {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+  }
+}
+
+.defaultNode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+}
+
+.markerStartNode {
+  width: 20px;
+  height: 24px;
+  position: relative;
+  top: 4px;
+  right: -18px;
+  z-index: 99;
+}
+
+.markerEndNode {
+  width: 20px;
+  height: 24px;
+  position: relative;
+  top: 4px;
+  left: -10px;
+  z-index: 99;
+}

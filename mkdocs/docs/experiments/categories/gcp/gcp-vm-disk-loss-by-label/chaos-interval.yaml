@@ -15,7 +15,7 @@ spec:
           value: '15'
         
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         
         - name: DISK_VOLUME_LABEL
           value: 'disk:target-disk'

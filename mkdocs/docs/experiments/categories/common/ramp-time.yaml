@@ -20,4 +20,4 @@ spec:
         - name: RAMP_TIME
           value: '10' # in seconds
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

@@ -1,0 +1,16 @@
+domain: litmuschaos.io
+layout:
+- go.kubebuilder.io/v3
+projectName: event-tracker
+repo: github.com/litmuschaos/litmus/chaoscenter/event-tracker
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: litmuschaos.io
+  group: eventtracker
+  kind: EventTrackerPolicy
+  path: github.com/litmuschaos/litmus/chaoscenter/event-tracker/api/v1
+  version: v1
+version: "3"

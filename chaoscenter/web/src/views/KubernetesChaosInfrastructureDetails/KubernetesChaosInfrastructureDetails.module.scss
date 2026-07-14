@@ -1,0 +1,27 @@
+.horizontalRule {
+  width: 100%;
+  border: 1px solid var(--grey-300);
+  margin-bottom: 32px !important;
+}
+
+.scopeText {
+  margin-left: 4px !important;
+}
+
+.tabs {
+  flex-grow: 1;
+  :global(.bp3-tab-panel) {
+    margin-top: 0;
+    height: calc(100vh - 139.52px);
+  }
+}
+
+.rbacDelete {
+  gap: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  outline: none;
+}

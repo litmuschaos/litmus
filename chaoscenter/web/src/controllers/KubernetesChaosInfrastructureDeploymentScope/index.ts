@@ -1,0 +1,3 @@
+import KubernetesChaosInfrastructureDeploymentScopeController from './KubernetesChaosInfrastructureDeploymentScope';
+
+export default KubernetesChaosInfrastructureDeploymentScopeController;

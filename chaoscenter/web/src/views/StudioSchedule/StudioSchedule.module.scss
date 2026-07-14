@@ -1,0 +1,45 @@
+.mainContainer {
+  min-height: calc(100% - 118px);
+  height: 100%;
+  :global {
+    .bp3-tab-list {
+      box-shadow: unset !important;
+    }
+    .bp3-tab {
+      min-width: 120px !important;
+    }
+    .bp3-tab-panel {
+      width: unset !important;
+      height: auto !important;
+      margin-top: var(--spacing-xlarge) !important;
+    }
+    #bp3-tab-title_Wizard_Custom {
+      display: none !important;
+    }
+  }
+}
+
+.formContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.radioButton {
+  :global {
+    .RadioButton--radio {
+      height: auto;
+      width: 900px;
+      background: var(--white) !important;
+      box-shadow: 0px 0px 2px rgba(40, 41, 61, 0.04), 0px 4px 8px rgba(96, 97, 112, 0.16);
+      border-radius: 4px;
+      padding: 1.5rem 1.5rem !important;
+      margin-bottom: 1rem;
+    }
+    .RadioButton--radioIcon {
+      margin-top: 2px;
+    }
+  }
+}

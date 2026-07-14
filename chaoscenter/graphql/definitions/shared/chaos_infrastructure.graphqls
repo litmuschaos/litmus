@@ -1,0 +1,736 @@
+directive @authorized on FIELD_DEFINITION
+
+"""
+UpdateStatus represents if infra needs to be updated
+"""
+enum UpdateStatus {
+  AVAILABLE
+  MANDATORY
+  NOT_REQUIRED
+}
+
+"""
+Defines the details for a infra
+"""
+type Infra implements ResourceDetails & Audit {
+  projectID: ID!
+  """
+  ID of the infra
+  """
+  infraID: ID!
+  """
+  Name of the infra
+  """
+  name: String!
+  """
+  Description of the infra
+  """
+  description: String
+  """
+  Tags of the infra
+  """
+  tags: [String!]
+  """
+  Environment ID for the infra
+  """
+  environmentID: String!
+  """
+  Infra Platform Name eg. GKE,AWS, Others
+  """
+  platformName: String!
+  """
+  Boolean value indicating if chaos infrastructure is active or not
+  """
+  isActive: Boolean!
+  """
+  Boolean value indicating if chaos infrastructure is confirmed or not
+  """
+  isInfraConfirmed: Boolean!
+  """
+  Boolean value indicating if chaos infrastructure is removed or not
+  """
+  isRemoved: Boolean!
+  """
+  Timestamp when the infra was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the infra was created
+  """
+  createdAt: String!
+  """
+  Number of schedules created in the infra
+  """
+  noOfExperiments: Int
+  """
+  Number of experiments run in the infra
+  """
+  noOfExperimentRuns: Int
+  """
+  Token used to verify and retrieve the infra manifest
+  """
+  token: String!
+  """
+  Namespace where the infra is being installed
+  """
+  infraNamespace: String
+  """
+  Name of service account used by infra
+  """
+  serviceAccount: String
+  """
+  Scope of the infra : ns or cluster
+  """
+  infraScope: String!
+  """
+  Bool value indicating whether infra ns used already exists on infra or not
+  """
+  infraNsExists: Boolean
+  """
+  Bool value indicating whether service account used already exists on infra or not
+  """
+  infraSaExists: Boolean
+  """
+  Timestamp of the last experiment run in the infra
+  """
+  lastExperimentTimestamp: String
+  """
+  Timestamp when the infra got connected
+  """
+  startTime: String!
+  """
+  Version of the infra
+  """
+  version: String!
+  """
+  User who created the infra
+  """
+  createdBy: UserDetails
+  """
+  User who has updated the infra
+  """
+  updatedBy: UserDetails
+  """
+  Type of the infrastructure
+  """
+  infraType: InfrastructureType
+  """
+  update status of infra
+  """
+  updateStatus: UpdateStatus!
+}
+
+enum InfrastructureType {
+  Kubernetes
+}
+
+"""
+Defines the details for the new infra being connected
+"""
+input RegisterInfraRequest {
+  """
+  Name of the infra
+  """
+  name: String!
+  """
+  Environment ID for the infra
+  """
+  environmentID: String!
+  """
+  Type of Infra : internal/external
+  """
+  infrastructureType: InfrastructureType!
+  """
+  Description of the infra
+  """
+  description: String
+  """
+  Infra Platform Name eg. GKE,AWS, Others
+  """
+  platformName: String!
+  """
+  Namespace where the infra is being installed
+  """
+  infraNamespace: String
+  """
+  Name of service account used by infra
+  """
+  serviceAccount: String
+  """
+  Scope of the infra : ns or infra
+  """
+  infraScope: String!
+  """
+  Bool value indicating whether infra ns used already exists on infra or not
+  """
+  infraNsExists: Boolean
+  """
+  Bool value indicating whether service account used already exists on infra or not
+  """
+  infraSaExists: Boolean
+  """
+  Bool value indicating whether infra will skip ssl checks or not
+  """
+  skipSsl: Boolean
+  """
+  Node selectors used by infra
+  """
+  nodeSelector: String
+  """
+  Node tolerations used by infra
+  """
+  tolerations: [Toleration]
+  """
+  Tags of the infra
+  """
+  tags: [String!]
+}
+
+input Toleration {
+  tolerationSeconds: Int
+  key: String
+  operator: String
+  effect: String
+  value: String
+}
+
+type InfraEventResponse {
+  eventID: ID!
+  eventType: String!
+  eventName: String!
+  description: String!
+  infra: Infra!
+}
+
+type ActionPayload {
+  requestID: String!
+  requestType: String!
+  k8sManifest: String!
+  namespace: String!
+  externalData: String
+  username: String
+}
+
+type InfraActionResponse {
+  projectID: String!
+  action: ActionPayload!
+}
+
+input NewInfraEventRequest {
+  eventName: String!
+  description: String!
+  infraID: String!
+  accessKey: String!
+}
+
+type ConfirmInfraRegistrationResponse {
+  isInfraConfirmed: Boolean!
+  newAccessKey: String
+  infraID: String
+}
+
+"""
+Response received for registering a new infra
+"""
+type RegisterInfraResponse {
+  """
+  Token used to verify and retrieve the infra manifest
+  """
+  token: String!
+  """
+  Unique ID for the newly registered infra
+  """
+  infraID: String!
+  """
+  Infra name as sent in request
+  """
+  name: String!
+  """
+  Infra Manifest
+  """
+  manifest: String!
+}
+
+"""
+Defines the response received for querying querying the pod logs
+"""
+type PodLogResponse {
+  """
+  ID of the experiment run which is to be queried
+  """
+  experimentRunID: ID!
+  """
+  Name of the pod for which logs are queried
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+input InfraIdentity {
+  infraID: String!
+  accessKey: String!
+  version: String!
+}
+
+"""
+Defines the details for fetching the pod logs
+"""
+input PodLogRequest {
+  """
+  ID of the cluster
+  """
+  infraID: ID!
+  """
+  ID of a experiment run
+  """
+  experimentRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Namespace where the pod is running
+  """
+  podNamespace: String!
+  """
+  Type of the pod: chaosEngine or not pod
+  """
+  podType: String!
+  """
+  Name of the experiment pod fetched from execution data
+  """
+  expPod: String
+  """
+  Name of the runner pod fetched from execution data
+  """
+  runnerPod: String
+  """
+  Namespace where the experiment is executing
+  """
+  chaosNamespace: String
+}
+
+"""
+Response received for querying pod logs
+"""
+input PodLog {
+  """
+  ID of the cluster
+  """
+  infraID: InfraIdentity!
+  """
+  Unique request ID of a particular node which is being queried
+  """
+  requestID: ID!
+  """
+  ID of a experiment run
+  """
+  experimentRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Response received for querying Kubernetes Object
+"""
+type KubeObjectResponse {
+  """
+  ID of the infra in which the Kubernetes object is present
+  """
+  infraID: ID!
+  """
+  Type of the Kubernetes object
+  """
+  kubeObj: KubeObject!
+}
+
+"""
+KubeObject consists of the available resources in a namespace
+"""
+type KubeObject {
+  """
+  Namespace of the resource
+  """
+  namespace: String!
+  """
+  Details of the resource
+  """
+  data: [ObjectData]!
+}
+
+type ObjectData {
+  """
+  Labels present in the resource
+  """
+  labels: [String!]
+  """
+  Name of the resource
+  """
+  name: String!
+}
+
+input Workload {
+  name: String!
+  kind: String!
+  namespace: String!
+}
+
+"""
+Defines details for fetching Kubernetes object data
+"""
+input KubeObjectRequest {
+  """
+  ID of the infra in which the Kubernetes object is present
+  """
+  infraID: ID!
+  """
+  GVR Request
+  """
+  kubeObjRequest: KubeGVRRequest
+  """
+  Namespace in which the Kubernetes object is present
+  """
+  namespace: String!
+  objectType: String!
+  workloads: [Workload]
+}
+
+"""
+Defines details for fetching Kubernetes namespace data
+"""
+input KubeNamespaceRequest {
+  """
+  ID of the infra
+  """
+  infraID: ID!
+}
+
+"""
+Define name in the infra (not really useful at the moment but maybe we will need other field later)
+"""
+type KubeNamespace{
+  """
+  Name of the namespace
+  """
+  name: String!
+}
+
+
+
+input KubeGVRRequest {
+  group: String!
+  version: String!
+  resource: String!
+}
+
+"""
+Response received for querying Kubernetes Namespaces
+"""
+type KubeNamespaceResponse {
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: ID!
+  """
+  List of the Kubernetes namespace
+  """
+  kubeNamespace: [KubeNamespace]!
+}
+
+"""
+Defines the details of Kubernetes namespace
+"""
+input KubeNamespaceData {
+  """
+  Unique request ID for fetching Kubernetes namespace details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
+}
+
+
+"""
+Defines the details of Kubernetes object
+"""
+input KubeObjectData {
+  """
+  Unique request ID for fetching Kubernetes object details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes object is present
+  """
+  infraID: InfraIdentity!
+  """
+  Type of the Kubernetes object
+  """
+  kubeObj: String!
+}
+
+"""
+Defines filter options for infras
+"""
+input InfraFilterInput {
+  """
+  Name of the infra
+  """
+  name: String
+  """
+  ID of the infra
+  """
+  infraID: String
+  """
+  ID of the infra
+  """
+  description: String
+  """
+  Platform name of infra
+  """
+  platformName: String
+  """
+  Scope of infra
+  """
+  infraScope: INFRA_SCOPE
+  """
+  Status of infra
+  """
+  isActive: Boolean
+  """
+  Tags of an infra
+  """
+  tags: [String]
+}
+
+enum INFRA_SCOPE {
+  namespace
+  cluster
+}
+
+"""
+Defines the details for a infra
+"""
+input ListInfraRequest {
+  """
+  Array of infra IDs for which details will be fetched
+  """
+  infraIDs: [ID!]
+  """
+  Environment ID
+  """
+  environmentIDs: [ID!]
+  """
+  Details for fetching paginated data
+  """
+  pagination: Pagination
+  """
+  Details for fetching filtered data
+  """
+  filter: InfraFilterInput
+}
+
+"""
+Defines the details for a infras with total infras count
+"""
+type ListInfraResponse {
+  """
+  Total number of infras
+  """
+  totalNoOfInfras: Int!
+  """
+  Details related to the infras
+  """
+  infras: [Infra]!
+}
+
+type GetInfraStatsResponse {
+  """
+  Total number of infrastructures
+  """
+  totalInfrastructures: Int!
+  """
+  Total number of active infrastructures
+  """
+  totalActiveInfrastructure: Int!
+  """
+  Total number of inactive infrastructures
+  """
+  totalInactiveInfrastructures: Int!
+  """
+  Total number of confirmed infrastructures
+  """
+  totalConfirmedInfrastructure: Int!
+  """
+  Total number of non confirmed infrastructures
+  """
+  totalNonConfirmedInfrastructures: Int!
+}
+
+"""
+InfraVersionDetails returns the details of compatible infra versions and the latest infra version supported
+"""
+type InfraVersionDetails {
+  """
+  Latest infra version supported
+  """
+  latestVersion: String!
+  """
+  List of all infra versions supported
+  """
+  compatibleVersions: [String!]!
+}
+
+"""
+Response received for fetching GQL server version
+"""
+type ServerVersionResponse {
+  """
+  Returns server version key
+  """
+  key: String!
+  """
+  Returns server version value
+  """
+  value: String!
+}
+
+extend type Query {
+  # INFRA OPERATIONS
+  """
+  Returns infra with a particular infraID in the project
+  """
+  getInfra(projectID: ID!, infraID: String!): Infra! @authorized
+
+  """
+  Returns infras with a particular infra type in the project
+  """
+  listInfras(projectID: ID!, request: ListInfraRequest): ListInfraResponse!
+    @authorized
+
+  """
+  Returns infra details based on identifiers
+  """
+  getInfraDetails(infraID: ID!, projectID: ID!): Infra! @authorized
+
+  """
+  Returns the manifest for a given infraID
+  """
+  getInfraManifest(infraID: ID!, upgrade: Boolean!, projectID: ID!): String!
+    @authorized
+
+  """
+  Query to get experiment stats
+  """
+  getInfraStats(projectID: ID!): GetInfraStatsResponse! @authorized
+
+  """
+  Query to get the latest version of infra available
+  """
+  getVersionDetails(projectID: ID!): InfraVersionDetails! @authorized
+  """
+  Returns version of gql server
+  """
+  getServerVersion: ServerVersionResponse!
+}
+
+extend type Mutation {
+  """
+  Connect a new infra for a user in a specified project
+  """
+  registerInfra(
+    projectID: ID!
+    request: RegisterInfraRequest!
+  ): RegisterInfraResponse!
+
+  """
+  Confirms the subscriber's registration with the control plane
+  """
+  # authorized directive not required
+  confirmInfraRegistration(
+    request: InfraIdentity!
+  ): ConfirmInfraRegistrationResponse!
+  """
+  Disconnects an infra and deletes its configuration from the control plane
+  """
+  deleteInfra(projectID: ID!, infraID: String!): String! @authorized
+
+  """
+  Fetches manifest details
+  """
+  getManifestWithInfraID(
+    projectID: ID!
+    infraID: String!
+    accessKey: String!
+  ): String!
+
+  """
+  Receives pod logs for experiments from infra
+  """
+  # authorized directive not required
+  podLog(request: PodLog!): String!
+
+  """
+  Receives kubernetes object data from subscriber
+  """
+  # authorized directive not required
+  kubeObj(request: KubeObjectData!): String!
+
+  """
+  Receives kubernetes namespace data from subscriber
+  """
+  # authorized directive not required
+  kubeNamespace(request: KubeNamespaceData!): String!
+}
+
+type Subscription {
+  # INFRA OPERATIONS
+  """
+  Listens infra events from the graphql server
+  """
+  getInfraEvents(projectID: String!): InfraEventResponse! @authorized
+
+  """
+  Listens infra operation request from the graphql server
+  """
+  # authorized directive not required
+  infraConnect(request: InfraIdentity!): InfraActionResponse!
+
+  """
+  Returns experiment logs from the pods
+  """
+  getPodLog(request: PodLogRequest!): PodLogResponse!
+
+  # K8S OPERATIONS
+  """
+  Returns a kubernetes object given an input
+  """
+  getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+
+  """
+  Returns a kubernetes namespaces given an input
+  """
+  getKubeNamespace(request: KubeNamespaceRequest!): KubeNamespaceResponse!
+}

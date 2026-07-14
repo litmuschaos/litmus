@@ -1,0 +1,16 @@
+.dailyTab {
+  padding: var(--spacing-xsmall) var(--spacing-xlarge) 0 35px;
+
+  [class*='bp3-menu'] {
+    overflow-x: hidden !important;
+    min-width: 100px;
+  }
+
+  [class*='Select'] {
+    width: 100px;
+  }
+
+  [data-name='expressionBreakdown'] {
+    padding: var(--spacing-large) 0 var(--spacing-large) !important;
+  }
+}

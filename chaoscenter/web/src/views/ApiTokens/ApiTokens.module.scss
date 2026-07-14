@@ -1,0 +1,28 @@
+.tableMainContainer {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 2fr 0.7fr;
+  }
+}
+
+.nameChangeDialog {
+  padding-bottom: 0 !important;
+}

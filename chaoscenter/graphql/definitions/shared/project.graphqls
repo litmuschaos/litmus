@@ -1,0 +1,10 @@
+enum Invitation {
+  Accepted
+  Pending
+}
+
+enum MemberRole {
+  Owner
+  Executor
+  Viewer
+}

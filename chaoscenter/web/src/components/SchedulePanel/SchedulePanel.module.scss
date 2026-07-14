@@ -1,0 +1,136 @@
+.schedulePanelContainer {
+  min-width: 800px;
+  > [class*='bp3-tabs'][class*='Tabs'] {
+    margin-top: 0 !important;
+  }
+
+  .formContentTitle {
+    font-weight: bold !important;
+    font-size: medium !important;
+    color: var(--grey-800) !important;
+    margin-bottom: var(--spacing-4) !important;
+  }
+
+  .formContent {
+    background-color: var(--white) !important;
+    padding: var(--spacing-4) var(--spacing-large) var(--spacing-large) var(--spacing-large) !important;
+    box-shadow: 0px 0px 1px rgb(40 41 61 / 8%), 0px 0.5px 2px rgb(96 97 112 / 16%);
+    margin-bottom: var(--spacing-xlarge);
+  }
+
+  .heading {
+    margin: 0;
+    padding-bottom: var(--spacing-xsmall);
+  }
+
+  > [class*='bp3-tabs'] [class*='bp3-tab-indicator-wrapper'] {
+    width: 105px !important;
+  }
+
+  > [class*='bp3-tabs'] [class*='bp3-tab'] {
+    min-width: 105px !important;
+  }
+
+  .date {
+    width: 216px;
+    input {
+      border: 1px solid var(--bp3-intent-color, var(--grey-300));
+    }
+  }
+
+  .timePopover {
+    [class*='bp3-popover-content'] {
+      max-height: 300px;
+      overflow-y: scroll;
+    }
+  }
+
+  .timezone {
+    padding-top: var(--spacing-medium);
+    > span div button {
+      width: 281px;
+      height: 38px;
+      background-color: var(--white);
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      border: 1px solid var(--bp3-intent-color, var(--grey-300));
+      border-radius: 5px;
+      margin-top: 6px;
+      &:hover {
+        background-color: rgba(220, 238, 255, 0.5);
+      }
+    }
+
+    [class*='bp3-text-muted'] {
+      color: var(--grey-400);
+    }
+
+    [class*='bp3-popover-content'] {
+      width: 281px;
+    }
+  }
+
+  .recurrence {
+    width: 216px;
+    [class*='bp3-menu'],
+    [class*='bp3-popover-content'] {
+      width: 216px;
+      overflow: hidden;
+    }
+  }
+
+  .repeatEveryNumber {
+    height: 38px;
+    input {
+      width: 40px;
+    }
+  }
+
+  .repeatEveryOption {
+    width: 110px;
+    margin: 0;
+
+    [class*='bp3-menu'],
+    [class*='bp3-popover-content'] {
+      width: 110px;
+      min-width: 110px;
+      overflow: hidden;
+    }
+  }
+
+  div.repeatOnContainer {
+    margin-top: var(--spacing-large) !important;
+
+    p {
+      margin-bottom: var(--spacing-xsmall);
+    }
+  }
+
+  [id*='Custom'] {
+    padding: 0 var(--spacing-xlarge);
+    margin-top: var(--spacing-xlarge);
+
+    input {
+      width: 300px;
+    }
+
+    [class*='bp3-label'] {
+      color: var(--grey-800);
+      font-size: 14px !important;
+      margin-bottom: var(--spacing-small) !important;
+    }
+  }
+
+  [class*='TimeSelect'] {
+    font-size: 14px !important;
+  }
+
+  [id*='Daily'] {
+    margin-left: -10px;
+  }
+
+  [class*='bp3-tab-panel'] [class*='bp3-form-group'] label[for='expression'] {
+    color: var(--grey-800) !important;
+    font-size: 14px !important;
+  }
+}

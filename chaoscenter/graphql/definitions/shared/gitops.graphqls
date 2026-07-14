@@ -1,0 +1,122 @@
+
+"""
+Defines the SSHKey details
+"""
+type SSHKey {
+    """
+    Public SSH key authenticating into git repository
+    """
+    publicKey: String!
+    """
+    Private SSH key authenticating into git repository
+    """
+    privateKey: String!
+}
+
+"""
+Details of setting a Git repository
+"""
+input GitConfig {
+    """
+    Git branch where the chaos charts will be pushed and synced
+    """
+    branch: String!
+    """
+    URL of the Git repository
+    """
+    repoURL: String!
+    """
+    Type of authentication used: 	BASIC, SSH,	TOKEN
+    """
+    authType: AuthType!
+    """
+    Token used for private repository
+    """
+    token: String
+    """
+    Git username
+    """
+    userName: String
+    """
+    Git password
+    """
+    password: String
+    """
+    Private SSH key authenticating into git repository
+    """
+    sshPrivateKey: String
+}
+
+"""
+Response received after configuring GitOps
+"""
+type GitConfigResponse {
+    """
+    Bool value indicating whether GitOps is enabled or not
+    """
+    enabled: Boolean!
+    """
+    ID of the project where GitOps is configured
+    """
+    projectID: String!
+    """
+    Git branch where the chaos charts will be pushed and synced
+    """
+    branch: String
+    """
+    URL of the Git repository
+    """
+    repoURL: String
+    """
+    Type of authentication used: 	BASIC, SSH,	TOKEN
+    """
+    authType: AuthType
+    """
+    Token used for private repository
+    """
+    token: String
+    """
+    Git username
+    """
+    userName: String
+    """
+    Git password
+    """
+    password: String
+    """
+    Private SSH key authenticating into git repository
+    """
+    sshPrivateKey: String
+}
+
+extend type Query {
+    # GIT-OPS OPERATIONS
+    """
+    Returns the git configuration for gitops
+    """
+    getGitOpsDetails(projectID: ID!): GitConfigResponse! @authorized
+}
+
+extend type Mutation {
+    # GIT-OPS OPERATIONS
+    """
+    Sends workflow run request(single run workflow only) to agent on gitops notification
+    """
+    # authorized directive not required
+    gitopsNotifier(clusterInfo: InfraIdentity!, experimentID: ID!): String!
+
+    """
+    Enables gitops settings in the project
+    """
+    enableGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
+
+    """
+    Disables gitops settings in the project
+    """
+    disableGitOps(projectID: ID!): Boolean! @authorized
+
+    """
+    Updates gitops settings in the project
+    """
+    updateGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
+}

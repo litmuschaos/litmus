@@ -1,0 +1,107 @@
+.main {
+  background-color: var(--white);
+  border: 1px solid var(--grey-250);
+  border-radius: 5px;
+}
+
+.borderWithPluginsPanel {
+  background-color: var(--white);
+  border-right: 3px solid var(--grey-100);
+}
+
+.filePath {
+  font-weight: bolder;
+  font-size: var(--font-size-normal);
+  color: var(--black);
+}
+
+.flexCenter {
+  display: flex;
+  align-items: center;
+}
+
+.entityTag {
+  background: var(--grey-200) !important;
+  color: var(--grey-500);
+}
+
+.editor {
+  padding-bottom: 0;
+}
+
+.layout {
+  width: 100% !important;
+}
+
+.validationStatus {
+  padding-right: var(--spacing-large);
+  z-index: 1;
+}
+
+.invalidYaml {
+  color: var(--red-600);
+  font-weight: bold;
+}
+
+.header {
+  height: 50px;
+}
+
+.validationIcon {
+  svg path {
+    fill: var(--red-600);
+  }
+}
+
+.darkBg {
+  background-color: var(--grey-600);
+}
+
+.lightBg {
+  color: var(--grey-100);
+}
+
+.errorSummary {
+  padding: var(--spacing-medium) var(--spacing-large);
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.details {
+  padding: var(--spacing-small) !important;
+}
+
+.summaryPopover {
+  svg {
+    path {
+      fill: var(--black) !important;
+    }
+  }
+}
+
+.item {
+  padding: var(--spacing-xsmall) var(--spacing-small);
+  font-size: small;
+}
+
+.errorList {
+  padding: 0 var(--spacing-large);
+  margin: 0;
+}
+
+.splitPanel {
+  position: relative !important;
+  border-radius: 10px;
+}
+
+.pluginDecorator {
+  background: var(--primary-1);
+}
+
+.resizeIcon {
+  cursor: pointer;
+}
+
+.headerBorder {
+  border-bottom: 1px solid var(--grey-100);
+}

@@ -21,4 +21,4 @@ spec:
         - name: SEQUENCE
           value: 'parallel'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

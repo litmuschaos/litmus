@@ -215,6 +215,23 @@ While Chaos Experiments under the Generic category offer the ability to induce c
   </tr>
 </table>
 
+### Load Chaos
+
+Load chaos contains different chaos experiments to test the app/platform service availability. It will install all the experiments which can be used to inject load into the services like VMs, Pods and so on.
+
+<table style="width: 100%;">
+  <tr>
+    <th>Experiment Name</th>
+    <th>Description</th>
+    <th>User Guide</th>
+  </tr>
+  <tr>
+    <td>k6 Load Generator</td>
+    <td>Generate load using single js script</td>
+    <td><a href="/litmus/experiments/categories/load/k6-loadgen">k6-loadgen</a></td>
+  </tr>
+</table>
+
 <hr/>
 
 ##  Cloud Infrastructure
@@ -232,14 +249,14 @@ Following Platform Chaos experiments are available:
     <th>User Guide</th>
   </tr>
   <tr>
-    <td>EC2 Terminate By ID</td>
-    <td>Terminate the ec2 instance matched by instance id</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-id">ec2-terminate-by-id</a></td>
+    <td>EC2 Stop By ID</td>
+    <td>Stop the EC2 instance matched by instance id</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-id">ec2-stop-by-id</a></td>
   </tr>
   <tr>
-    <td>EC2 Terminate By Tag</td>
-    <td>Terminate the ec2 instance matched by instance tag</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-tag">ec2-terminate-by-tag</a></td>
+    <td>EC2 Stop By Tag</td>
+    <td>Stop the EC2 instance matched by instance tag</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-tag">ec2-stop-by-tag</a></td>
   </tr>
   <tr>
     <td>EBS Loss By ID</td>
@@ -250,6 +267,16 @@ Following Platform Chaos experiments are available:
     <td>EBS Loss By Tag</td>
     <td>Detach the EBS volume matched by volume tag</td>
     <td><a href="/litmus/experiments/categories/aws/ebs-loss-by-tag">ebs-loss-by-tag</a></td>
+  </tr>
+  <tr>
+    <td>AWS SSM Chaos By ID</td>
+    <td>Disrupt the state of infrastructure resources by ID</td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-id">aws-ssm-chaos-by-id</a></td>
+  </tr>
+  <tr>
+    <td>AWS SSM Chaos By Tag</td>
+    <td>Disrupt the state of infrastructure resources by tags</td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag">aws-ssm-chaos-by-tag</a></td>
   </tr>
 </table>
 
@@ -270,6 +297,16 @@ Following Platform Chaos experiments are available:
     <td>GCP VM Disk Loss</td>
     <td>Detach the gcp disk</td>
     <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss">gcp-vm-disk-loss</a></td>
+  </tr>
+  <tr>
+    <td>GCP VM Instance Stop By Label</td>
+    <td>Stop the GCP VM instance by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-instance-stop-by-label">gcp-vm-instance-stop-by-label</a></td>
+  </tr>
+  <tr>
+    <td>GCP VM Disk Loss By Label</td>
+    <td>Detach the GCP disk by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss-by-label">gcp-vm-disk-loss-by-label</a></td>
   </tr>
 </table>
 

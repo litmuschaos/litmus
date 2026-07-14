@@ -188,7 +188,7 @@ Yes, you can provide service B details inside `DESTINATION_IPS` or `DESTINATION_
 
 The `NETWORK_INTERFACE` is the interface name inside the pod/container that needs to be targeted. You can find it by execing into the target pod and checking the available interfaces. You can try `ip link`, `iwconfig` , `ifconfig` depending on the tools installed in the pod either of those could work.
 
-The `SOCKET_PATH` by default takes the docker socket path. If you are using something else like containerd, crio or have a different socket path by any chance you can specify it. This is required to communicate with the container runtime of your cluster. 
+The `SOCKET_PATH` by default takes the containerd socket path. If you are using something else like docker, crio or have a different socket path by any chance you can specify it. This is required to communicate with the container runtime of your cluster. 
 In addition to this if container-runtime is different then provide the name of container runtime inside `CONTAINER_RUNTIME` ENV. It supports `docker`, `containerd`, and `crio` runtimes.    
 
 ### What are the different ways to target the pods and nodes for chaos?
