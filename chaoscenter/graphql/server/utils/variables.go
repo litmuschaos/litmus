@@ -20,6 +20,7 @@ type Configuration struct {
 	ContainerRuntimeExecutor    string   `required:"true" split_words:"true"`
 	WorkflowHelperImageVersion  string   `required:"true" split_words:"true"`
 	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
+	ChaosGraphQLEndpoint        string   `split_words:"true" default:"http://chaos-litmus-server-service:9002"`
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string   `split_words:"true" default:"3030"`
@@ -47,6 +48,7 @@ type Configuration struct {
 	TlsKeyPath                  string   `split_words:"true"`
 	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
+	MetricsPort                 string   `envconfig:"METRICS_PORT" default:"8889"`
 }
 
 var Config Configuration

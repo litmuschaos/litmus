@@ -23,6 +23,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -61,18 +62,21 @@ type Service interface {
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
+	RecordInfraMetrics(ctx context.Context)
 }
 
 type infraService struct {
-	infraOperator *dbChaosInfra.Operator
-	envOperator   *dbEnvironments.Operator
+	infraOperator   *dbChaosInfra.Operator
+	envOperator     *dbEnvironments.Operator
+	mongodbOperator mongodb.MongoOperator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator, mongodbOperator mongodb.MongoOperator) Service {
 	return &infraService{
-		infraOperator: infraOperator,
-		envOperator:   envOperator,
+		infraOperator:   infraOperator,
+		envOperator:     envOperator,
+		mongodbOperator: mongodbOperator,
 	}
 }
 
@@ -275,6 +279,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 	if err != nil {
 		return "", err
 	}
+
 	envQuery := bson.D{
 		{"project_id", bson.D{{"$eq", projectID}}},
 		{"environment_id", infra.EnvironmentID},
@@ -432,8 +437,8 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 				Username: username,
 			},
 		}
-		lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 		if len(infra.ExperimentDetails) > 0 {
+			lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 			infraResponse.NoOfExperimentRuns = &infra.ExperimentDetails[0].TotalRuns
 			infraResponse.LastExperimentTimestamp = &lastRun
 			infraResponse.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
@@ -921,7 +926,9 @@ func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) 
 	compatibleVersions := utils.Config.InfraCompatibleVersions
 
 	var compatibleArray []string
-	_ = json.Unmarshal([]byte(compatibleVersions), &compatibleArray)
+	if err := json.Unmarshal([]byte(compatibleVersions), &compatibleArray); err != nil {
+		return &model.InfraVersionDetails{}, fmt.Errorf("failed to parse InfraCompatibleVersions config: %w", err)
+	}
 
 	// To find the latest compatible version
 	compatibleMap := make(map[int]string)
@@ -974,7 +981,7 @@ func updateVersionFormat(str string) (int, error) {
 
 // QueryServerVersion is used to fetch the version of the server
 func (in *infraService) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
+	dbVersion, err := config.GetConfig(ctx, in.mongodbOperator, "version")
 	if err != nil {
 		return nil, err
 	}
@@ -998,7 +1005,10 @@ func (in *infraService) PodLog(request model.PodLog, r store.StateData) (string,
 		log.Print("ERROR", err)
 		return "", err
 	}
-	if reqChan, ok := r.ExperimentLog[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.ExperimentLog[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		resp := model.PodLogResponse{
 			PodName:         request.PodName,
 			ExperimentRunID: request.ExperimentRunID,
@@ -1019,7 +1029,10 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeObjectData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		var kubeObjData *model.KubeObject
 		err = json.Unmarshal([]byte(request.KubeObj), &kubeObjData)
 		if err != nil {
@@ -1044,7 +1057,10 @@ func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.S
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeNamespaceData[request.RequestID]; ok {
+	r.Mutex.Lock()
+	reqChan, ok := r.KubeNamespaceData[request.RequestID]
+	r.Mutex.Unlock()
+	if ok {
 		var kubeNamespaceData []*model.KubeNamespace
 		err = json.Unmarshal([]byte(request.KubeNamespace), &kubeNamespaceData)
 		if err != nil {
@@ -1072,12 +1088,18 @@ func (in *infraService) SendInfraEvent(eventType, eventName, description string,
 		Infra:       &infra,
 	}
 	r.Mutex.Lock()
-	if r.InfraEventPublish != nil {
-		for _, observer := range r.InfraEventPublish[infra.ProjectID] {
-			observer <- &newEvent
+	observers := make([]chan *model.InfraEventResponse, len(r.InfraEventPublish[infra.ProjectID]))
+	copy(observers, r.InfraEventPublish[infra.ProjectID])
+	r.Mutex.Unlock()
+
+	for _, observer := range observers {
+		// Use non-blocking send to prevent deadlock if channel buffer is full
+		select {
+		case observer <- &newEvent:
+		default:
+			// Channel full or no receiver, skip to prevent blocking
 		}
 	}
-	r.Mutex.Unlock()
 }
 
 // ConfirmInfraRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
@@ -1189,4 +1211,35 @@ func (c *infraService) UpdateInfra(query bson.D, update bson.D) error {
 // GetDBInfra returns cluster details for a given clusterID
 func (c *infraService) GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error) {
 	return c.infraOperator.GetInfra(infraID)
+}
+
+// RecordInfraMetrics queries the DB periodically and sets the infra agent gauges
+func (in *infraService) RecordInfraMetrics(ctx context.Context) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			infras, err := in.infraOperator.GetInfras(ctx, bson.D{{"is_removed", false}})
+			if err != nil {
+				continue
+			}
+			projectCounts := make(map[string][2]int) // [connected, total]
+			for _, infra := range infras {
+				counts := projectCounts[infra.ProjectID]
+				counts[1]++ // total
+				if infra.IsActive {
+					counts[0]++ // connected
+				}
+				projectCounts[infra.ProjectID] = counts
+			}
+			for projectID, counts := range projectCounts {
+				metrics.ConnectedAgents.WithLabelValues(projectID).Set(float64(counts[0]))
+				metrics.DisconnectedAgents.WithLabelValues(projectID).Set(float64(counts[1] - counts[0]))
+				metrics.TotalAgents.WithLabelValues(projectID).Set(float64(counts[1]))
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }
