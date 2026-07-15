@@ -70,7 +70,7 @@ export const MenuCell = ({
                 search: `tab=${StudioTabs.BUILDER}`
               });
             }}
-            permission={PermissionGroup.OWNER}
+            permission={PermissionGroup.EDITOR}
           />
           {/* <!-- clone experiment button --> */}
           <RbacMenuItem
@@ -111,7 +111,7 @@ export const MenuCell = ({
             text={getString('deleteExperiment')}
             onClick={openDeleteDialog}
             disabled={isDeleteButtonEnabled == false}
-            permission={PermissionGroup.OWNER}
+            permission={PermissionGroup.EDITOR}
           />
         </Menu>
       </Popover>
