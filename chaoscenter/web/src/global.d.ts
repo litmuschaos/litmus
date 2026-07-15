@@ -34,9 +34,14 @@ declare module '*.gif' {
   export default value;
 }
 
+declare module '*.module.scss' {
+  const css: { [key: string]: string };
+  export default css;
+}
+
 declare module '*.scss' {
-  const value: Record<string, string>;
-  export default value;
+  const css: string;
+  export default css;
 }
 
 declare type Optional<T, K extends keyof T = keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
