@@ -48,7 +48,7 @@ export function getPropsBasedOnExperimentRunFaultStatus(status: Status): StatusP
     case ExperimentRunFaultStatus.COMPLETED_WITH_PROBE_FAILURE:
     case ExperimentRunFaultStatus.COMPLETED_WITH_ERROR: // <!-- needed for backwards compatibility -->
       return {
-        iconName: 'error',
+        iconName: 'warning-sign',
         color: Color.ORANGE_500
       };
     case ExperimentRunFaultStatus.ERROR:
@@ -93,7 +93,7 @@ export function getPropsBasedOnExperimentRunStatus(status: Status): StatusProps 
     case ExperimentRunStatus.COMPLETED_WITH_PROBE_FAILURE:
     case ExperimentRunStatus.COMPLETED_WITH_ERROR: // <!-- needed for backwards compatibility -->
       return {
-        iconName: 'error',
+        iconName: 'warning-sign',
         color: Color.ORANGE_500,
         bgColor: `var(--orange-100)`
       };
