@@ -246,7 +246,7 @@ spec:
                   engineState: active
                   appinfo:
                     appns: otel-demo
-                    applabel: app.kubernetes.io/component=cart
+                    applabel: app.kubernetes.io/component=cartservice
                     appkind: deployment
                   chaosServiceAccount: litmus-admin
                   experiments:

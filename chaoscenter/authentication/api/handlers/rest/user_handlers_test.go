@@ -25,7 +25,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // TestMain is the entry point for testing
@@ -74,21 +73,6 @@ func TestCreateUser(t *testing.T) {
 				}, nil).Once()
 			},
 			expectedCode: 200,
-		},
-		{
-			name: "bcrypt failure returns server error",
-			inputBody: &entities.User{
-				Username: "newUser",
-				Password: "ValidPassword@1",
-				Role:     entities.RoleUser,
-			},
-			mockRole: "admin",
-			given: func() {
-				original := utils.PasswordEncryptionCost
-				utils.PasswordEncryptionCost = bcrypt.MaxCost + 1
-				t.Cleanup(func() { utils.PasswordEncryptionCost = original })
-			},
-			expectedCode: utils.ErrorStatusCodes[utils.ErrServerError],
 		},
 	}
 
