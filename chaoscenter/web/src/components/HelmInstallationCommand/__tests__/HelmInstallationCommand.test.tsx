@@ -1,16 +1,15 @@
-import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { HelmInstallationCommand } from '../HelmInstallationCommand';
 
 const defaultProps = {
-  infraID: 'test-infra-id',
   accessKey: 'test-access-key',
-  infraName: 'test-infra',
   environmentID: 'test-env-id',
+  infraID: 'test-infra-id',
+  infraName: 'test-infra',
   infraNamespace: 'litmus',
   infraScope: 'cluster' as const,
-  platformName: 'Kubernetes'
+  platformName: 'Kubernetes',
 };
 
 describe('HelmInstallationCommand', () => {
