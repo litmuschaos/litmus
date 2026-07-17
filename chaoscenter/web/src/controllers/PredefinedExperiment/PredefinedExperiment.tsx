@@ -1,9 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useToaster } from '@harnessio/uicore';
-import { listPredefinedExperiment } from '@api/core';
+import { getPredefinedExperiment } from '@api/core';
 import { getScope } from '@utils';
-import type { PredefinedExperiment } from '@api/entities';
 import PredefinedExperimentView from '@views/PredefinedExperiment';
 import { useSearchParams } from '@hooks';
 import Loader from '@components/Loader';
@@ -16,26 +15,33 @@ export default function PredefinedExperimentController(): React.ReactElement {
   const searchParams = useSearchParams();
   const chartName = searchParams.get('chartName');
 
-  // TODO: use get API
-  const { data: predefinedExperiments, loading: listPredefinedExperimentLoading } = listPredefinedExperiment({
+  const [
+    getPredefinedExperimentQuery,
+    { data: predefinedExperiment, loading: getPredefinedExperimentLoading }
+  ] = getPredefinedExperiment({
     ...scope,
-    hubID: hubID,
+    hubID: hubID as string,
+    experiments: [experimentName as string],
     options: {
       onError: error => showError(error.message),
       nextFetchPolicy: 'cache-first'
     }
   });
 
+  React.useEffect(() => {
+    if (hubID && experimentName) {
+      getPredefinedExperimentQuery();
+    }
+  }, [hubID, experimentName, getPredefinedExperimentQuery]);
+
   return (
-    <Loader loading={listPredefinedExperimentLoading} height={'100vh'}>
+    <Loader loading={getPredefinedExperimentLoading} height={'100vh'}>
       <PredefinedExperimentView
-        predefinedExperimentDetails={predefinedExperiments?.listPredefinedExperiments.find(
-          (experiment: PredefinedExperiment) => experiment.experimentName === experimentName
-        )}
+        predefinedExperimentDetails={predefinedExperiment?.getPredefinedExperiment?.[0]}
         // TODO: remove search param as prop
         chartName={chartName as string}
         loading={{
-          listPredefinedExperiment: listPredefinedExperimentLoading
+          listPredefinedExperiment: getPredefinedExperimentLoading
         }}
       />
     </Loader>
