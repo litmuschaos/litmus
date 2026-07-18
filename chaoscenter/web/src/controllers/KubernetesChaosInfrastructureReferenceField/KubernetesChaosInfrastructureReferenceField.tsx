@@ -1,6 +1,6 @@
 import { Pagination, useToaster } from '@harnessio/uicore';
 import React from 'react';
-import { listChaosInfra } from '@api/core';
+import { listChaosInfra, getInfraDetails } from '@api/core';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
 import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
@@ -28,6 +28,15 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     options: { onError: error => showError(error.message) }
   });
 
+  const { data: getInfraDetailsData, loading: getInfraDetailsLoading } = getInfraDetails({
+    ...scope,
+    infraID: initialInfrastructureID ?? '',
+    options: {
+      skip: !initialInfrastructureID,
+      onError: error => showError(error.message)
+    }
+  });
+
   const { data: listEnvironmentData } = listEnvironment({
     ...scope,
     options: {
@@ -47,10 +56,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     ({ environmentID }) => environmentID === initialEnvironmentID
   );
 
-  // TODO: replace with get API as this becomes empty during edit
-  const preSelectedInfrastructure = listChaosInfraData?.listInfras.infras.find(
-    ({ infraID }) => infraID === initialInfrastructureID
-  );
+  // Use exact get API results if present (to handle pagination during edit), fallback to list search
+  const preSelectedInfrastructure =
+    getInfraDetailsData?.getInfraDetails ??
+    listChaosInfraData?.listInfras.infras.find(({ infraID }) => infraID === initialInfrastructureID);
 
   const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure && {
     id: preSelectedInfrastructure?.infraID,
@@ -129,7 +138,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
       envID={envID}
       setEnvID={setEnvID}
       loading={{
-        listChaosInfra: listChaosInfraLoading
+        listChaosInfra: listChaosInfraLoading || getInfraDetailsLoading
       }}
       pagination={<PaginationComponent />}
     />
