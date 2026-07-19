@@ -1,6 +1,6 @@
 import { Pagination, useToaster } from '@harnessio/uicore';
 import React from 'react';
-import { listChaosInfra } from '@api/core';
+import { getInfraDetails, listChaosInfra } from '@api/core';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
 import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
@@ -35,6 +35,15 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     }
   });
 
+  const { data: specificInfraData, loading: specificInfraLoading } = getInfraDetails({
+    ...scope,
+    infraID: initialInfrastructureID as string,
+    options: {
+      skip: !initialInfrastructureID,
+      onError: error => showError(error.message)
+    }
+  });
+
   const environmentList = listEnvironmentData?.listEnvironments?.environments;
 
   React.useEffect(() => {
@@ -47,10 +56,10 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     ({ environmentID }) => environmentID === initialEnvironmentID
   );
 
-  // TODO: replace with get API as this becomes empty during edit
-  const preSelectedInfrastructure = listChaosInfraData?.listInfras.infras.find(
-    ({ infraID }) => infraID === initialInfrastructureID
-  );
+  // replace with get API as this becomes empty during edit
+  const preSelectedInfrastructure =
+    listChaosInfraData?.listInfras.infras.find(({ infraID }) => infraID === initialInfrastructureID) ||
+    specificInfraData?.getInfraDetails;
 
   const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure && {
     id: preSelectedInfrastructure?.infraID,
@@ -129,7 +138,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
       envID={envID}
       setEnvID={setEnvID}
       loading={{
-        listChaosInfra: listChaosInfraLoading
+        listChaosInfra: listChaosInfraLoading || specificInfraLoading
       }}
       pagination={<PaginationComponent />}
     />
