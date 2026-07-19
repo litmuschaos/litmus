@@ -151,6 +151,10 @@ func main() {
 		srv.Use(extension.Introspection{})
 	}
 
+	// Add GraphQL complexity limit (Security patch for #5562)
+	// Limits the maximum complexity of queries to prevent DoS attacks
+	srv.Use(extension.FixedComplexityLimit(150))
+
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 		oc := graphql.GetOperationContext(ctx)
