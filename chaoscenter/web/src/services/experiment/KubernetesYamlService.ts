@@ -455,12 +455,12 @@ export class KubernetesYamlService extends ExperimentYamlService {
       ...manifest.spec.components,
       runner: {
         ...manifest.spec.components?.runner,
-        tolerations: tolerations
+        tolerations: [...(manifest.spec.components?.runner?.tolerations || []), tolerations]
       }
     };
     manifest.spec.experiments[0].spec.components = {
       ...manifest.spec.experiments[0].spec.components,
-      tolerations: tolerations
+      tolerations: [...(manifest.spec.experiments[0].spec.components?.tolerations || []), tolerations]
     };
 
     return manifest;
