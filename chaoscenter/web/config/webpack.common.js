@@ -11,6 +11,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const CONTEXT = process.cwd();
 
+// Configure PUBLIC_URL with proper normalization
+const rawPublicUrl = process.env.PUBLIC_URL || '/';
+// Ensure it starts with '/' if not already
+const withLeadingSlash = rawPublicUrl.startsWith('/') ? rawPublicUrl : `/${rawPublicUrl}`;
+// Remove all trailing slashes except for root '/'
+const publicUrl = withLeadingSlash.replace(/\/+$/, '') || '/';
+// publicPath should have trailing slash for webpack asset resolution
+const publicPath = publicUrl === '/' ? '/' : `${publicUrl}/`;
+
 module.exports = {
   target: 'web',
   context: CONTEXT,
@@ -19,7 +28,7 @@ module.exports = {
     children: false
   },
   output: {
-    publicPath: '/',
+    publicPath: publicPath,
     path: path.resolve(CONTEXT, 'dist/'),
     pathinfo: false
   },
@@ -127,7 +136,8 @@ module.exports = {
   },
   plugins: [
     new DefinePlugin({
-      'process.env': '{}' // required for @blueprintjs/core
+      'process.env': '{}', // required for @blueprintjs/core
+      'process.env.PUBLIC_URL': JSON.stringify(publicUrl)
     }),
     new GenerateStringTypesPlugin({
       input: 'src/strings/strings.en.yaml',

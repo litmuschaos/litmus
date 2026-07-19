@@ -2,6 +2,7 @@ FROM registry.access.redhat.com/ubi10/nginx-126:10.1
 
 COPY dist /opt/chaos
 COPY nginx/nginx.conf /etc/nginx/
+COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY ./entrypoint.sh /opt
 
 WORKDIR /opt/chaos
