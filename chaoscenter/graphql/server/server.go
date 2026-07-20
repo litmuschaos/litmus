@@ -150,6 +150,7 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
+	srv.Use(extension.FixedComplexityLimit(utils.Config.GqlQueryComplexityLimit))
 
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {

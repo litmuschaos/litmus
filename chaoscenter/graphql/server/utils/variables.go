@@ -48,6 +48,7 @@ type Configuration struct {
 	TlsKeyPath                  string   `split_words:"true"`
 	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
+	GqlQueryComplexityLimit     int      `split_words:"true" default:"2000"`
 	MetricsPort                 string   `envconfig:"METRICS_PORT" default:"8889"`
 }
 
