@@ -426,6 +426,9 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	}
 
 	exp := expDetails[0]
+	if len(exp.Revision) == 0 {
+		return nil, errors.New("experiment has no revisions")
+	}
 	if len(exp.KubernetesInfraDetails) == 0 {
 		return nil, errors.New("no matching infra found for given expDetails")
 	}
@@ -455,7 +458,7 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 	}
 
 	var weightages []*model.Weightages
-	if exp.Revision[0].Weightages != nil {
+	if len(exp.Revision) > 0 && exp.Revision[len(exp.Revision)-1].Weightages != nil {
 		// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
 		for _, v := range exp.Revision[len(exp.Revision)-1].Weightages {
 			weightages = append(weightages, &model.Weightages{
@@ -806,6 +809,9 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 	}
 
 	for _, workflow := range workflows[0].ScheduledExperiments {
+		if len(workflow.Revision) == 0 {
+			continue
+		}
 		var chaosInfrastructure *model.Infra
 
 		if len(workflow.KubernetesInfraDetails) > 0 {
@@ -831,7 +837,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		}
 
 		var weightages []*model.Weightages
-		if workflow.Revision[0].Weightages != nil {
+		if len(workflow.Revision) > 0 && workflow.Revision[len(workflow.Revision)-1].Weightages != nil {
 			// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
 			for _, v := range workflow.Revision[len(workflow.Revision)-1].Weightages {
 				weightages = append(weightages, &model.Weightages{
