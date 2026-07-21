@@ -17,6 +17,7 @@ jobs:
       graphql-server: ${{ steps.filter.outputs.graphql-server }}
       authentication: ${{ steps.filter.outputs.authentication }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
+      subscriber-image: ${{ steps.filter.outputs.subscriber-image }}
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
       dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
@@ -24,6 +25,7 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          predicate-quantifier: 'every'
           filters: |
             frontend:
               - 'chaoscenter/web/**'
@@ -33,6 +35,10 @@ jobs:
               - 'chaoscenter/authentication/**'
             subscriber:
               - 'chaoscenter/subscriber/**'
+            subscriber-image:
+              - 'chaoscenter/subscriber/**'
+              - '!chaoscenter/subscriber/**/*_test.go'
+              - '!chaoscenter/subscriber/**/testdata/**'
             event-tracker:
               - 'chaoscenter/event-tracker/**'
             dex-server:
@@ -185,7 +191,7 @@ jobs:
       - backend-checks
       - changes
       # - backend-unit-tests
-    if: ${{ needs.changes.outputs.subscriber == 'true' }}
+    if: ${{ needs.changes.outputs.subscriber-image == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
