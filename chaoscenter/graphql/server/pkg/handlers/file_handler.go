@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,7 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FileHandler dynamically generates the manifest file and sends it as a response
 func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
@@ -24,7 +24,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte("invalid infrastructure token"))
 			return
 		}
 
@@ -32,42 +32,54 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte("unable to get infrastructure"))
 			return
 		}
 
-		reqHeader, ok := c.Value("request-header").(http.Header)
-		if !ok {
-			logrus.Error("unable to parse referer header")
-			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte("unable to parse referer header"))
-			return
-		}
-		referrer := reqHeader.Get("Referer")
-		if referrer == "" {
-			logrus.Error("unable to parse referer header")
-			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte("unable to parse referer header"))
-			return
-		}
-
-		referrerURL, err := url.Parse(referrer)
+		host, err := parseReferer(c.GetHeader("Referer"))
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte("invalid referer header"))
 			return
 		}
 
-		response, err := chaos_infrastructure.GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infra)
+		response, err := chaos_infrastructure.GetK8sInfraYaml(host, infra)
 		if err != nil {
 			logrus.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-			c.Writer.Write([]byte(err.Error()))
+			c.Writer.Write([]byte("unable to generate infrastructure manifest"))
 			return
 		}
 
-		utils.WriteHeaders(&c.Writer, http.StatusOK)
+		c.Header("Content-Type", "application/yaml; charset=utf-8")
+		c.Header("Content-Disposition", `attachment; filename="litmus-infrastructure.yaml"`)
+		c.Header("X-Content-Type-Options", "nosniff")
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Writer.WriteHeader(http.StatusOK)
 		c.Writer.Write(response)
 	}
+}
+
+func parseReferer(referrer string) (string, error) {
+	if referrer == "" {
+		return "", fmt.Errorf("unable to parse referer header")
+	}
+
+	referrerURL, err := url.ParseRequestURI(referrer)
+	if err != nil {
+		return "", fmt.Errorf("invalid referer header: %w", err)
+	}
+
+	if referrerURL.Scheme != "http" && referrerURL.Scheme != "https" {
+		return "", fmt.Errorf("invalid referer scheme")
+	}
+
+	if referrerURL.Host == "" || referrerURL.User != nil {
+		return "", fmt.Errorf("invalid referer host")
+	}
+
+	// The endpoint is embedded in the generated manifest and returned to the
+	// caller. Escape the user-provided authority before it reaches the response.
+	return fmt.Sprintf("%s://%s", referrerURL.Scheme, html.EscapeString(referrerURL.Host)), nil
 }
