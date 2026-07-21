@@ -54,6 +54,7 @@ const ChaosProbeConfigurationView = ({
   }
 };
 
+
   const getProbeDetails = (type: ProbeType): React.ReactElement | undefined => {
   if (infrastructureType === InfrastructureType.KUBERNETES) {
     switch (type) {
