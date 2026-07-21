@@ -23,12 +23,12 @@ interface ChaosProbeConfigurationViewProps {
   probeYAMLLoading?: boolean;
 }
 
-function ChaosProbeConfigurationView({
+const ChaosProbeConfigurationView = ({
   loading,
   probeData,
   probeYAML,
-  probeYAMLLoading
-}: ChaosProbeConfigurationViewProps): React.ReactElement {
+  probeYAMLLoading,
+}: ChaosProbeConfigurationViewProps): React.ReactElement => {
   const { getString } = useStrings();
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
@@ -39,35 +39,35 @@ function ChaosProbeConfigurationView({
   const viewMode = (searchParams.get('view') as VisualYamlSelectedView) ?? VisualYamlSelectedView.VISUAL;
   const setViewMode = (view: VisualYamlSelectedView): void => updateSearchParams({ view });
 
-  function getProbeProperties(type: ProbeType): React.ReactElement | undefined {
-    if (infrastructureType === InfrastructureType.KUBERNETES) {
-      switch (type) {
-        case ProbeType.HTTP:
-          return <ProbeProperties kubernetesHTTPProperties={probeData?.kubernetesHTTPProperties} />;
-        case ProbeType.CMD:
-          return <ProbeProperties kubernetesCMDProperties={probeData?.kubernetesCMDProperties} />;
-        case ProbeType.PROM:
-          return <ProbeProperties promProperties={probeData?.promProperties} />;
-        case ProbeType.K8S:
-          return <ProbeProperties k8sProperties={probeData?.k8sProperties} />;
-      }
+  const getProbeProperties = (type: ProbeType): React.ReactElement | undefined => {
+  if (infrastructureType === InfrastructureType.KUBERNETES) {
+    switch (type) {
+      case ProbeType.HTTP:
+        return <ProbeProperties kubernetesHTTPProperties={probeData?.kubernetesHTTPProperties} />;
+      case ProbeType.CMD:
+        return <ProbeProperties kubernetesCMDProperties={probeData?.kubernetesCMDProperties} />;
+      case ProbeType.PROM:
+        return <ProbeProperties promProperties={probeData?.promProperties} />;
+      case ProbeType.K8S:
+        return <ProbeProperties k8sProperties={probeData?.k8sProperties} />;
     }
   }
+};
 
-  function getProbeDetails(type: ProbeType): React.ReactElement | undefined {
-    if (infrastructureType === InfrastructureType.KUBERNETES) {
-      switch (type) {
-        case ProbeType.HTTP:
-          return <HTTPProbeDetails kubernetesHTTPProperties={probeData?.kubernetesHTTPProperties} />;
-        case ProbeType.CMD:
-          return <CMDProbeDetails kubernetesCMDProperties={probeData?.kubernetesCMDProperties} />;
-        case ProbeType.PROM:
-          return <PROMProbeDetails promProperties={probeData?.promProperties} />;
-        case ProbeType.K8S:
-          return <K8SProbeDetails k8sProperties={probeData?.k8sProperties} />;
-      }
+  const getProbeDetails = (type: ProbeType): React.ReactElement | undefined => {
+  if (infrastructureType === InfrastructureType.KUBERNETES) {
+    switch (type) {
+      case ProbeType.HTTP:
+        return <HTTPProbeDetails kubernetesHTTPProperties={probeData?.kubernetesHTTPProperties} />;
+      case ProbeType.CMD:
+        return <CMDProbeDetails kubernetesCMDProperties={probeData?.kubernetesCMDProperties} />;
+      case ProbeType.PROM:
+        return <PROMProbeDetails promProperties={probeData?.promProperties} />;
+      case ProbeType.K8S:
+        return <K8SProbeDetails k8sProperties={probeData?.k8sProperties} />;
     }
   }
+};
 
   return (
     <Loader
@@ -195,6 +195,6 @@ function ChaosProbeConfigurationView({
       )}
     </Loader>
   );
-}
+};
 
 export default withErrorBoundary(ChaosProbeConfigurationView, { FallbackComponent: Fallback });
