@@ -57,7 +57,7 @@ export function getInfraDetails({
 
   return {
     data,
-    loading: loading || !data,
+    loading,
     ...rest
   };
 }

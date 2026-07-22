@@ -17,7 +17,7 @@ export default function PredefinedExperimentController(): React.ReactElement {
 
   const [
     getPredefinedExperimentQuery,
-    { data: predefinedExperiment, loading: getPredefinedExperimentLoading }
+    { data: predefinedExperiment, loading: getPredefinedExperimentLoading, called: getPredefinedExperimentCalled }
   ] = getPredefinedExperiment({
     ...scope,
     hubID: hubID as string,
@@ -35,13 +35,13 @@ export default function PredefinedExperimentController(): React.ReactElement {
   }, [hubID, experimentName, getPredefinedExperimentQuery]);
 
   return (
-    <Loader loading={getPredefinedExperimentLoading} height={'100vh'}>
+    <Loader loading={getPredefinedExperimentLoading || !getPredefinedExperimentCalled} height={'100vh'}>
       <PredefinedExperimentView
         predefinedExperimentDetails={predefinedExperiment?.getPredefinedExperiment?.[0]}
         // TODO: remove search param as prop
         chartName={chartName as string}
         loading={{
-          listPredefinedExperiment: getPredefinedExperimentLoading
+          listPredefinedExperiment: getPredefinedExperimentLoading || !getPredefinedExperimentCalled
         }}
       />
     </Loader>
