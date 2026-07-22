@@ -4,3 +4,4 @@ export * from './testKubernetesChaosInfrastructureConnection';
 export * from './getVersionDetails';
 export * from './listKubernetesChaosInfrastructure';
 export * from './getKubeObject';
+export * from './getInfraDetails';
