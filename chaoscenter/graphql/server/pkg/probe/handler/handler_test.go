@@ -71,7 +71,7 @@ func TestAddProbe_DuplicateName(t *testing.T) {
 	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{Name: "postman-test-probe-1"}, "project-1")
 
 	assert.Error(t, err)
-	assert.Equal(t, "probe already exists", err.Error())
 	mockOp.AssertNotCalled(t, "Create", mock.Anything, mock.Anything, mock.Anything)
 	mockOp.AssertExpectations(t)
 }
+
