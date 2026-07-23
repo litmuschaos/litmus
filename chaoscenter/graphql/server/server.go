@@ -150,7 +150,12 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
-	srv.Use(extension.FixedComplexityLimit(utils.Config.GqlQueryComplexityLimit))
+	limit := utils.Config.GQLQueryComplexityLimit
+    if limit > 0 {
+       srv.Use(extension.FixedComplexityLimit(limit))
+    } else {
+       log.Warnf("GQL_QUERY_COMPLEXITY_LIMIT is set to %d which is invalid; skipping complexity limiting", limit)
+    }
 
 	// GraphQL operation tracking middleware
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
