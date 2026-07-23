@@ -11,6 +11,7 @@ import (
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func newProbeServiceWithMock(mockOp *dbMocks.MongoOperator) Service {

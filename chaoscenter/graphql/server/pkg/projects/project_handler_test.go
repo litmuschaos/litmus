@@ -19,12 +19,10 @@ func TestProjectInitializer_Success(t *testing.T) {
 		Return(nil).Once()
 
 	proj := dbSchemaProject.Project{
-		ID: "test-project-id",
-		Audit: mongodb.Audit{
-			CreatedBy: mongodb.UserDetailResponse{Username: "test-user"},
-			UpdatedBy: mongodb.UserDetailResponse{Username: "test-user"},
-		},
-	}
+    ID:        "test-project-id",
+    CreatedBy: mongodb.UserDetailResponse{Username: "test-user"},
+    UpdatedBy: mongodb.UserDetailResponse{Username: "test-user"},
+    }
 
 	err := ProjectInitializer(context.Background(), proj, "admin", mockOp)
 
@@ -40,12 +38,10 @@ func TestProjectInitializer_DBError(t *testing.T) {
 		Return(dbErr).Once()
 
 	proj := dbSchemaProject.Project{
-		ID: "test-project-id",
-		Audit: mongodb.Audit{
-			CreatedBy: mongodb.UserDetailResponse{Username: "test-user"},
-			UpdatedBy: mongodb.UserDetailResponse{Username: "test-user"},
-		},
-	}
+    ID:        "test-project-id",
+    CreatedBy: mongodb.UserDetailResponse{Username: "test-user"},
+    UpdatedBy: mongodb.UserDetailResponse{Username: "test-user"},
+    }
 
 	err := ProjectInitializer(context.Background(), proj, "admin", mockOp)
 
