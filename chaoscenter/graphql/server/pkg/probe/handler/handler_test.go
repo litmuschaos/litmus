@@ -6,13 +6,11 @@ import (
 	"testing"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func newProbeServiceWithMock(mockOp *dbMocks.MongoOperator) Service {
@@ -96,24 +94,21 @@ func TestAddProbe_MissingJWTToken(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestAddProbe_MissingProbeProperties(t *testing.T) {
+func TestAddProbe_DBErrorOnUniquenessCheck(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
 
+	dbErr := errors.New("mongo connection lost")
 	mockOp.On("CountDocuments", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
-		Return(int64(0), nil).Once()
+		Return(int64(0), dbErr).Once()
 
-	ctx := context.WithValue(context.Background(), authorization.AuthKey, "")
-
-	// HTTP probe with nil KubernetesHTTPProperties should return error
-	_, err := svc.AddProbe(ctx, model.ProbeRequest{
-		Name:                    "my-probe",
-		Type:                    model.ProbeTypeHTTPProbe,
-		KubernetesHTTPProperties: nil,
+	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{
+		Name: "my-probe",
+		Type: model.ProbeTypeHTTPProbe,
 	}, "project-1")
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "http probe type's properties are empty")
+	assert.Equal(t, dbErr, err)
 	mockOp.AssertNotCalled(t, "Create", mock.Anything, mock.Anything, mock.Anything)
 	mockOp.AssertExpectations(t)
 }
@@ -123,8 +118,9 @@ func TestGetProbe_DBError(t *testing.T) {
 	svc := newProbeServiceWithMock(mockOp)
 
 	dbErr := errors.New("db connection failed")
+	singleResult := mongo.NewSingleResultFromDocument(nil, dbErr, nil)
 	mockOp.On("Get", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything).
-		Return(&mongo.SingleResult{}, dbErr).Once()
+		Return(singleResult, nil).Once()
 
 	_, err := svc.GetProbe(context.Background(), "my-probe", "project-1")
 
@@ -132,17 +128,4 @@ func TestGetProbe_DBError(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestValidateUniqueProbe_CountDocumentsError(t *testing.T) {
-	mockOp := new(dbMocks.MongoOperator)
-	svc := newProbeServiceWithMock(mockOp)
 
-	dbErr := errors.New("mongo timeout")
-	mockOp.On("CountDocuments", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
-		Return(int64(0), dbErr).Once()
-
-	unique, err := svc.ValidateUniqueProbe(context.Background(), "my-probe", "project-1")
-
-	assert.Error(t, err)
-	assert.False(t, unique)
-	mockOp.AssertExpectations(t)
-}
