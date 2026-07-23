@@ -126,6 +126,7 @@ func TestGetProbe_DBError(t *testing.T) {
 	_, err := svc.GetProbe(context.Background(), "my-probe", "project-1")
 
 	assert.Error(t, err)
+	assert.Equal(t, dbErr, err)
 	mockOp.AssertExpectations(t)
 }
 
