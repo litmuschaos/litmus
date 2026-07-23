@@ -56,6 +56,26 @@ func Error(logFields logrus.Fields, message string) error {
 	return errors.New(message)
 }
 
+// gitOpsUser is the sentinel value placed into the context by GitOps background sync
+// operations that do not have a real JWT. It is used as the audited username for
+// probes created/updated/deleted by GitOps.
+const gitOpsUser = "git-ops"
+
+// getUsernameFromContext extracts the username from the context. If the authorization
+// key contains the gitOpsUser sentinel (placed there by gitops.gitOpsContext), the
+// sentinel is returned directly, bypassing JWT parsing. This allows the GitOps
+// background sync to create/update/delete probes without a real JWT token.
+func getUsernameFromContext(ctx context.Context) (string, error) {
+	tkn, ok := ctx.Value(authorization.AuthKey).(string)
+	if !ok {
+		return "", errors.New("JWT token not found")
+	}
+	if tkn == gitOpsUser {
+		return gitOpsUser, nil
+	}
+	return authorization.GetUsername(tkn)
+}
+
 // AddProbe - Create a new Probe
 func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
 	isUnique, err := p.ValidateUniqueProbe(ctx, probe.Name, projectID)
@@ -69,12 +89,7 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	var (
 		currTime = time.Now().UnixMilli()
 	)
-	tkn, ok := ctx.Value(authorization.AuthKey).(string)
-	if !ok {
-		return nil, errors.New("JWT token not found")
-	}
-
-	username, err := authorization.GetUsername(tkn)
+	username, err := getUsernameFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +161,7 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 
 // UpdateProbe - Update a new Probe
 func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := getUsernameFromContext(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -501,8 +515,10 @@ func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID str
 	if err != nil {
 		return false, err
 	}
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := getUsernameFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
 
 	Time := time.Now().UnixMilli()
 

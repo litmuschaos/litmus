@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ResilienceProbe
+metadata:
+  name: pod-status-check
+  description: "CMD probe to verify pod status"
+  tags:
+    - kubernetes
+    - pod-check
+spec:
+  type: cmdProbe
+  infrastructureType: Kubernetes
+  properties:
+    probeTimeout: "10s"
+    interval: "5s"
+    attempt: 2
+    retry: 1
+    probePollingInterval: "2s"
+    initialDelay: "5s"
+    evaluationTimeout: "15s"
+    stopOnFailure: true
+    command: "kubectl get pods -n default -l app=my-app --field-selector=status.phase=Running --no-headers | wc -l"
+    comparator:
+      type: "int"
+      criteria: ">="
+      value: "3"
