@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -474,8 +475,17 @@ func (c *chaosHubService) ListChaosFaults(ctx context.Context, hubID string, pro
 	return ChartsData, nil
 }
 
+// isHubPathElement reports whether a request supplied path element stays inside
+// the hub directory it gets joined to.
+func isHubPathElement(elem string) bool {
+	return elem != "" && filepath.IsLocal(elem)
+}
+
 // GetChaosFault is used for getting details of chartserviceversion.yaml.
 func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.ExperimentRequest, projectID string) (*model.FaultDetails, error) {
+	if !isHubPathElement(request.Category) || !isHubPathElement(request.ExperimentName) {
+		return nil, errors.New("invalid fault category or name")
+	}
 	chaosHub, err := c.getChaosHubDetails(ctx, request.HubID, projectID)
 	if err != nil {
 		return nil, err
@@ -819,6 +829,9 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 		isExist            = true
 		preDefinedWorkflow = &model.PredefinedExperimentList{}
 	)
+	if !isHubPathElement(experiment) {
+		return preDefinedWorkflow
+	}
 	_, err := os.Stat(path)
 	if err != nil {
 		isExist = false
