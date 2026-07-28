@@ -4,14 +4,17 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -308,4 +311,84 @@ func TestGetProject(t *testing.T) {
 		assert.Equal(t, 200, w.Code)
 	})
 
+}
+
+func memberRbacFilter(projectID, uid string, roles []string, invitation string) primitive.D {
+	return primitive.D{
+		primitive.E{Key: "_id", Value: projectID},
+		primitive.E{Key: "members", Value: primitive.D{
+			primitive.E{Key: "$elemMatch", Value: primitive.D{
+				primitive.E{Key: "user_id", Value: uid},
+				primitive.E{Key: "role", Value: primitive.D{
+					primitive.E{Key: "$in", Value: roles},
+				}},
+				primitive.E{Key: "invitation", Value: invitation},
+			}},
+		}},
+	}
+}
+
+func TestInvitationHandlersActOnTheCaller(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	const (
+		projectID = "testProjectID"
+		callerUID = "callerUID"
+		victimUID = "ownerUID"
+	)
+
+	tests := []struct {
+		name               string
+		handler            func(services.ApplicationService) gin.HandlerFunc
+		roles              []string
+		invitation         string
+		expectedInvitation entities.Invitation
+	}{
+		{
+			name:               "accept_invitation",
+			handler:            rest.AcceptInvitation,
+			roles:              []string{"Owner", "Viewer", "Executor"},
+			invitation:         string(entities.PendingInvitation),
+			expectedInvitation: entities.AcceptedInvitation,
+		},
+		{
+			name:               "decline_invitation",
+			handler:            rest.DeclineInvitation,
+			roles:              []string{"Owner", "Viewer", "Executor"},
+			invitation:         string(entities.PendingInvitation),
+			expectedInvitation: entities.DeclinedInvitation,
+		},
+		{
+			name:               "leave_project",
+			handler:            rest.LeaveProject,
+			roles:              []string{"Owner", "Viewer", "Executor"},
+			invitation:         string(entities.AcceptedInvitation),
+			expectedInvitation: entities.ExitedProject,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			service := new(mocks.MockedApplicationService)
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request, _ = http.NewRequest(http.MethodPost, "/",
+				strings.NewReader(`{"projectID":"`+projectID+`","userID":"`+victimUID+`"}`))
+			c.Request.Header.Set("Content-Type", "application/json")
+			c.Set("uid", callerUID)
+
+			service.On("GetUser", callerUID).Return(&entities.User{ID: callerUID}, nil)
+			service.On("GetProjects", memberRbacFilter(projectID, callerUID, tt.roles, tt.invitation)).
+				Return([]*entities.Project{{ID: projectID}}, nil)
+			service.On("UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
+
+			tt.handler(service)(c)
+
+			assert.Equal(t, http.StatusOK, w.Code)
+			service.AssertCalled(t, "UpdateInvite", projectID, callerUID, tt.expectedInvitation,
+				(*entities.MemberRole)(nil))
+			service.AssertNotCalled(t, "UpdateInvite", projectID, victimUID, tt.expectedInvitation,
+				(*entities.MemberRole)(nil))
+		})
+	}
 }
