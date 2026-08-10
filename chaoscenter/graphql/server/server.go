@@ -150,7 +150,7 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
-	limit := utils.Config.GQLQueryComplexityLimit
+	limit := utils.Config.GqlQueryComplexityLimit
 	if limit > 0 {
 		srv.Use(extension.FixedComplexityLimit(limit))
 	} else if limit < 0 {
