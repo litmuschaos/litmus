@@ -8,11 +8,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDexLogin(t *testing.T) {
+func TestOAuthLogin(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 
-	rest.DexLogin()(ctx)
+	rest.OAuthLogin()(ctx)
 
 	assert.Equal(t, 500, w.Code)
 }
