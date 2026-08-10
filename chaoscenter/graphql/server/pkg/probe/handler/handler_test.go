@@ -129,5 +129,3 @@ func TestGetProbe_DBError(t *testing.T) {
 	assert.Equal(t, dbErr, err)
 	mockOp.AssertExpectations(t)
 }
-
-
