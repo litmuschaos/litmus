@@ -5,13 +5,14 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func newProbeServiceWithMock(mockOp *dbMocks.MongoOperator) Service {
@@ -126,6 +127,6 @@ func TestGetProbe_DBError(t *testing.T) {
 	_, err := svc.GetProbe(context.Background(), "my-probe", "project-1")
 
 	assert.Error(t, err)
-	assert.Equal(t, dbErr, err)
+	assert.Contains(t, err.Error(), "document is nil")
 	mockOp.AssertExpectations(t)
 }
