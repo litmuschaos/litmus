@@ -24,14 +24,14 @@ describe('ChaosFaults Component', () => {
           displayName: 'Kubernetes',
           faults: [
             {
-              description: 'Deletes Kubernetes pods',
+              name: 'pod-delete',
               displayName: 'Pod Delete',
-              name: 'pod-delete'
+              description: 'Deletes Kubernetes pods'
             },
             {
-              description: 'Kills a container within a pod',
+              name: 'container-kill',
               displayName: 'Container Kill',
-              name: 'container-kill'
+              description: 'Kills a container within a pod'
             }
           ]
         }
@@ -44,9 +44,9 @@ describe('ChaosFaults Component', () => {
           displayName: 'AWS',
           faults: [
             {
-              description: 'Stops EC2 instances',
+              name: 'ec2-stop',
               displayName: 'EC2 Stop',
-              name: 'ec2-stop'
+              description: 'Stops EC2 instances'
             }
           ]
         }
@@ -55,15 +55,15 @@ describe('ChaosFaults Component', () => {
   } as React.ComponentProps<typeof ChaosFaults>['hubDetails'];
 
   const mockProps: React.ComponentProps<typeof ChaosFaults> = {
+    hubDetails: mockHubDetails,
     faultCategories: new Map([
       ['Kubernetes', 2],
       ['AWS', 1]
     ]),
-    hubDetails: mockHubDetails,
+    searchValue: '',
     loading: {
       listChart: false
-    },
-    searchValue: ''
+    }
   };
 
   const renderComponent = (): RenderResult =>
