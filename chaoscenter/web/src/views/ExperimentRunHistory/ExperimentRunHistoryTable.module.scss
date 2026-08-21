@@ -8,7 +8,7 @@
   div[class*='TableV2--row TableV2--card'] {
     border-radius: 6px !important;
     &:hover {
-      background-color: white !important;
+      background-color: var(--white) !important;
     }
   }
 
@@ -104,6 +104,6 @@
   display: grid;
   grid-template-columns: 55px 60px 60px 55px;
   .partition {
-    border-right: 1.5px solid #00000033;
+    border-right: 1.5px solid var(--grey-200);
   }
 }

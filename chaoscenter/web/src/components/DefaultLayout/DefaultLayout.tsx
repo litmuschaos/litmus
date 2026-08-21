@@ -6,6 +6,7 @@ import cx from 'classnames';
 import MainNav from '@components/MainNav';
 import SideNav from '@components/SideNav';
 import LitmusBreadCrumbs from '@components/LitmusBreadCrumbs';
+import ThemeToggle from '@components/ThemeToggle/ThemeToggle';
 import css from './DefaultLayout.module.scss';
 
 export interface DefaultLayoutTemplateProps {
@@ -38,6 +39,16 @@ export default function DefaultLayoutTemplate({
   hideSideNav
 }: React.PropsWithChildren<DefaultLayoutTemplateProps>): React.ReactElement {
   const breadCrumb = <LitmusBreadCrumbs links={breadcrumbs} />;
+
+  const toolbar = headerToolbar ? (
+    <Layout.Horizontal spacing="small" flex={{ alignItems: 'center' }}>
+      {headerToolbar}
+      <ThemeToggle />
+    </Layout.Horizontal>
+  ) : (
+    <ThemeToggle />
+  );
+
   return (
     <Container className={css.test} flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
       <Container flex className={css.leftSideBar}>
@@ -48,7 +59,7 @@ export default function DefaultLayoutTemplate({
         <Page.Header
           size={subTitle ? 'large' : 'medium'}
           breadcrumbs={breadCrumb}
-          toolbar={headerToolbar}
+          toolbar={toolbar}
           title={
             <span data-testid="header">
               <Layout.Horizontal spacing="small">

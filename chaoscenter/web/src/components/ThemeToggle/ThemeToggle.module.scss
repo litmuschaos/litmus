@@ -1,0 +1,46 @@
+/* stylelint-disable color-no-hex */
+
+.themeToggle {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--grey-300);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  transition: background 90ms ease-in-out, border-color 90ms ease-in-out;
+  width: 32px;
+
+  &::before {
+    color: var(--grey-600);
+    content: '☾';
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--grey-100);
+    border-color: var(--grey-400);
+    outline: none;
+  }
+
+  // In dark mode: flip the icon to a sun, lighten the border/hover
+  :global(#react-root[data-theme='dark']) & {
+    border-color: #4d476d;
+
+    &::before {
+      color: #f4f2fb;
+      content: '☀';
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+}
