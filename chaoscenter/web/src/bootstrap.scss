@@ -51,6 +51,7 @@ body {
   --layout-card-background: var(--white);
   --layout-text-color: var(--grey-700);
   --layout-border-color: var(--grey-200);
+
   background-color: var(--layout-page-background);
   color: var(--layout-text-color);
 }
@@ -63,9 +64,8 @@ body {
   --layout-page-background: #17151f;
   --layout-page-header-background: #211f33;
   --layout-card-background: #242136;
-  --layout-text-color: #ffffff;
+  --layout-text-color: #fff;
   --layout-border-color: #4d476d;
-
   --grey-0: #17151f !important;
   --grey-50: #1e1c30 !important;
   --grey-100: #242136 !important;
@@ -76,20 +76,17 @@ body {
   --grey-400: #c4bfdd !important;
   --grey-450: #cdc8e2 !important;
   --grey-500: #d8d4ea !important;
-  --grey-600: #ffffff !important;
-  --grey-700: #ffffff !important;
-  --grey-800: #ffffff !important;
-  --grey-900: #ffffff !important;
-  --grey-1000: #ffffff !important;
-
+  --grey-600: #fff !important;
+  --grey-700: #fff !important;
+  --grey-800: #fff !important;
+  --grey-900: #fff !important;
+  --grey-1000: #fff !important;
   --white: #242136 !important;
   --black: #f4f2fb !important;
   --black-100: rgba(244, 242, 251, 0.08) !important;
-
   --primary-bg: #17151f !important;
   --primary-1: #1e1c30 !important;
   --primary-2: #242136 !important;
-
   --panel-shadow: 0 2px 12px rgba(0, 0, 0, 0.45) !important;
 }
 
@@ -307,7 +304,7 @@ body:has(#react-root[data-theme='dark']) {
 
 #react-root[data-theme='dark'] [class*='Button--variation-primary'] {
   background-color: #5b44ba !important;
-  color: #ffffff !important;
+  color: #fff !important;
   border-color: #5b44ba !important;
 }
 
