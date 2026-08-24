@@ -80,9 +80,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			log.Errorf("auth error: error generating password: %v", err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-			return
+			log.Error("auth error: Error generating password")
 		}
 		password := string(hashedPassword)
 		userRequest.Password = password

@@ -230,7 +230,7 @@ spec:
                 spec:
                   appinfo:
                     appns: otel-demo
-                    applabel: app.kubernetes.io/component=recommendation
+                    applabel: app.kubernetes.io/component=recommendationservice
                     appkind: deployment
                   engineState: active
                   chaosServiceAccount: litmus-admin

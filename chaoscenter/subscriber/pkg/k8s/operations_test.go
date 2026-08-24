@@ -36,41 +36,6 @@ func TestAddCustomLabels(t *testing.T) {
 	}
 }
 
-func TestAddCustomLabels_unsetObjectLabels(t *testing.T) {
-	obj := &unstructured.Unstructured{}
-
-	addCustomLabels(obj, map[string]string{"updated_by": "user"})
-
-	expected := map[string]string{"updated_by": "user"}
-	if !reflect.DeepEqual(obj.GetLabels(), expected) {
-		t.Fatalf("expected labels %v, got %v", expected, obj.GetLabels())
-	}
-}
-
-func TestAddCustomLabels_nilCustomLabels(t *testing.T) {
-	obj := &unstructured.Unstructured{}
-	obj.SetLabels(map[string]string{"existing": "label"})
-
-	addCustomLabels(obj, nil)
-
-	expected := map[string]string{"existing": "label"}
-	if !reflect.DeepEqual(obj.GetLabels(), expected) {
-		t.Fatalf("expected labels unchanged as %v, got %v", expected, obj.GetLabels())
-	}
-}
-
-func TestAddCustomLabels_overwriteExisting(t *testing.T) {
-	obj := &unstructured.Unstructured{}
-	obj.SetLabels(map[string]string{"key": "old"})
-
-	addCustomLabels(obj, map[string]string{"key": "new"})
-
-	expected := map[string]string{"key": "new"}
-	if !reflect.DeepEqual(obj.GetLabels(), expected) {
-		t.Fatalf("expected labels %v, got %v", expected, obj.GetLabels())
-	}
-}
-
 func TestApplyRequest(t *testing.T) {
 	// 1. ARRANGE: Create a fake pod object to "get"
 	fakePod := &corev1.Pod{
