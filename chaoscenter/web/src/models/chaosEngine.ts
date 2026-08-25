@@ -103,7 +103,7 @@ export interface RunnerInfo {
   // Secrets for runner pod
   secrets?: kubernetes.Secret[];
   // Tolerations for runner pod
-  tolerations?: kubernetes.Toleration;
+  tolerations?: kubernetes.Toleration[];
   // Resource requirements for the runner pod
   resources?: kubernetes.ResourceRequirements;
 }
@@ -341,7 +341,7 @@ export interface FaultComponents {
   nodeSelector?: { [key: string]: string };
   statusCheckTimeouts?: StatusCheckTimeout;
   resources?: kubernetes.ResourceRequirements;
-  tolerations?: kubernetes.Toleration;
+  tolerations?: kubernetes.Toleration[];
 }
 
 // StatusCheckTimeout contains Delay and timeouts for the status checks
