@@ -71,7 +71,13 @@ func parseReferer(referrer string) (string, error) {
 		return "", fmt.Errorf("invalid referer header: %w", err)
 	}
 
-	if referrerURL.Scheme != "http" && referrerURL.Scheme != "https" {
+	var scheme string
+	switch referrerURL.Scheme {
+	case "http":
+		scheme = "http"
+	case "https":
+		scheme = "https"
+	default:
 		return "", fmt.Errorf("invalid referer scheme")
 	}
 
@@ -80,6 +86,8 @@ func parseReferer(referrer string) (string, error) {
 	}
 
 	// The endpoint is embedded in the generated manifest and returned to the
-	// caller. Escape the user-provided authority before it reaches the response.
-	return fmt.Sprintf("%s://%s", referrerURL.Scheme, html.EscapeString(referrerURL.Host)), nil
+	// caller. Reconstruct the scheme from trusted constants and escape the
+	// user-provided authority before it reaches the response.
+	safeHost := html.EscapeString(referrerURL.Host)
+	return scheme + "://" + safeHost, nil
 }

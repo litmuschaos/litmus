@@ -84,6 +84,11 @@ func TestParseReferer(t *testing.T) {
 			want:     "https://example.com",
 		},
 		{
+			name:     "keeps an http origin and removes the path",
+			referrer: "http://localhost:3000/dashboard",
+			want:     "http://localhost:3000",
+		},
+		{
 			name:      "rejects an empty header",
 			referrer:  "",
 			wantError: true,
