@@ -5371,17 +5371,17 @@
 <span class="w">  </span><span class="nt">schedule</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">repeat</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
-<span class="w">         </span><span class="c1">#format should be like &quot;10m&quot; or &quot;2h&quot; accordingly for minutes or hours</span>
-<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2m&quot;</span><span class="w">  </span>
+<span class="w">         </span><span class="c1">#format should be like "10m" or "2h" accordingly for minutes or hours</span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"> </span><span class="s">"2m"</span><span class="w">  </span>
 <span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">'active'</span>
 <span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span>
-<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span>
-<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span>
-<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">'default'</span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">'app=nginx'</span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">'deployment'</span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">'true'</span>
 <span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">'delete'</span>
 <span class="w">    </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
@@ -5389,15 +5389,15 @@
 <span class="w">            </span><span class="nt">env</span><span class="p">:</span>
 <span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">'30'</span>
 
 <span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">'10'</span>
 
-<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
+<span class="w">              </span><span class="c1"># pod failures without '--force' &amp; default terminationGracePeriodSeconds</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">'false'</span>
 </code></pre></div>
 
 

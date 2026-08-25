@@ -5301,8 +5301,8 @@ allowPrivilegedContainer:<span class="w"> </span><span class="nb">true</span>
 <span class="c1"># network operations (running tc command in network ns of target container). </span>
 <span class="c1"># SYS_ADMIN: used in stress chaos experiment to perform cgroup operations.</span>
 allowedCapabilities:
--<span class="w"> </span><span class="s1">&#39;NET_ADMIN&#39;</span>
--<span class="w"> </span><span class="s1">&#39;SYS_ADMIN&#39;</span>
+-<span class="w"> </span><span class="s1">'NET_ADMIN'</span>
+-<span class="w"> </span><span class="s1">'SYS_ADMIN'</span>
 defaultAddCapabilities:<span class="w"> </span>null
 fsGroup:
 <span class="w">  </span>type:<span class="w"> </span>MustRunAs
@@ -5339,7 +5339,7 @@ securitycontextconstraints.security.openshift.io/litmus-scc<span class="w"> </sp
 </code></pre></div>
 <p>Now to associate the new service account with the SCC, run the given command</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>oc<span class="w"> </span>adm<span class="w"> </span>policy<span class="w"> </span>add-scc-to-user<span class="w"> </span>litmus-scc<span class="w"> </span>-z<span class="w"> </span>litmus-admin<span class="w"> </span>--as<span class="w"> </span>system:admin<span class="w"> </span>-n<span class="w"> </span>litmus
-clusterrole.rbac.authorization.k8s.io/system:openshift:scc:litmus-scc<span class="w"> </span>added:<span class="w"> </span><span class="s2">&quot;litmus-admin&quot;</span>
+clusterrole.rbac.authorization.k8s.io/system:openshift:scc:litmus-scc<span class="w"> </span>added:<span class="w"> </span><span class="s2">"litmus-admin"</span>
 </code></pre></div>
 <p>The <code>-z</code> option indicates to apply the command to the service account in the current project.<br>
 To <code>add-scc-to-user</code> add the name of SCC.<br>

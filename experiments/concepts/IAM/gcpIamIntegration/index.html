@@ -5618,8 +5618,8 @@ Replace the following:</p>
 <li>
 <p>Please ensure that this service account has all the roles requisite for interacting with the Compute Engine resources including VM Instances and Persistent Disks according to the GCP experiments that you're willing to run. You can grant additional roles using the following command:
 <div class="highlight"><pre><span></span><code>gcloud projects add-iam-policy-binding PROJECT_ID \
-    --member &quot;serviceAccount:GSA_NAME@GSA_PROJECT.iam.gserviceaccount.com&quot; \
-    --role &quot;ROLE_NAME&quot;
+    --member "serviceAccount:GSA_NAME@GSA_PROJECT.iam.gserviceaccount.com" \
+    --role "ROLE_NAME"
 </code></pre></div>
 Replace the following:</p>
 </li>
@@ -5633,7 +5633,7 @@ Replace the following:</p>
 <p>Allow the Kubernetes service account to be used for the GCP experiments to impersonate the GCP IAM service account by adding an <a href="https://cloud.google.com/sdk/gcloud/reference/iam/service-accounts/add-iam-policy-binding">IAM policy binding</a> between the two service accounts. This binding allows the Kubernetes service account to act as the IAM service account.
 <div class="highlight"><pre><span></span><code>gcloud iam service-accounts add-iam-policy-binding GSA_NAME@GSA_PROJECT.iam.gserviceaccount.com \
     --role roles/iam.workloadIdentityUser \
-    --member &quot;serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME]&quot;
+    --member "serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME]"
 </code></pre></div>
 Replace the following:</p>
 </li>
@@ -5658,7 +5658,7 @@ Replace the following:</p>
 </ol>
 <h3 id="step-3-update-chaosengine-manifest">STEP 3: Update ChaosEngine Manifest<a class="headerlink" href="#step-3-update-chaosengine-manifest" title="Permanent link">&para;</a></h3>
 <p>Add the following value to the ChaosEngine manifest field <code>.spec.experiments[].spec.components.nodeSelector</code> to schedule the experiment pod on nodes that use Workload Identity.
-<div class="highlight"><pre><span></span><code>iam.gke.io/gke-metadata-server-enabled: &quot;true&quot;
+<div class="highlight"><pre><span></span><code>iam.gke.io/gke-metadata-server-enabled: "true"
 </code></pre></div></p>
 <h3 id="step-4-update-chaosexperiment-manifest">STEP 4: Update ChaosExperiment Manifest<a class="headerlink" href="#step-4-update-chaosexperiment-manifest" title="Permanent link">&para;</a></h3>
 <p>Remove <code>cloud-secret</code> at <code>.spec.definition.secrets</code> in the ChaosExperiment manifest as we are not using a secret to provide our GCP Service Account credentials.</p>
@@ -5670,7 +5670,7 @@ Replace the following:</p>
 <li>To revoke access to the GCP IAM service account, use the following command:
 <div class="highlight"><pre><span></span><code>gcloud iam service-accounts remove-iam-policy-binding GSA_NAME@GSA_PROJECT.iam.gserviceaccount.com \
     --role roles/iam.workloadIdentityUser \
-    --member &quot;serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME]&quot;
+    --member "serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME]"
 </code></pre></div>
 Replace the following:</li>
 <li><strong>PROJECT_ID</strong>: the project ID of the GKE cluster.</li>

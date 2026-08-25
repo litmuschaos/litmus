@@ -5567,7 +5567,7 @@ gcloud compute firewall-rules create test-node-port --allow tcp:port
 If this firewall rule is set up, it may be accessible on nodeIp:port where nodeIp is the external IP address of your node.</p>
 <h3 id="i-forgot-my-litmus-portal-password-how-can-i-reset-my-credentials">I forgot my Litmus portal password. How can I reset my credentials?<a class="headerlink" href="#i-forgot-my-litmus-portal-password-how-can-i-reset-my-credentials" title="Permanent link">&para;</a></h3>
 <p>You can reset by running the followin command:
-<div class="highlight"><pre><span></span><code>kubectl exec -it mongo-0 -n litmus -- mongo -u admin -p 1234 &lt;&lt;&lt; $&#39;use auth\ndb.usercredentials.update({username:&quot;admin&quot;},{$set:{password:&quot;$2a$15$sNuQl9y/Ok92N19UORcro.3wulEyFi0FfJrnN/akOQe3uxTZAzQ0C&quot;}})\nexit\n&#39;
+<div class="highlight"><pre><span></span><code>kubectl exec -it mongo-0 -n litmus -- mongo -u admin -p 1234 &lt;&lt;&lt; $'use auth\ndb.usercredentials.update({username:"admin"},{$set:{password:"$2a$15$sNuQl9y/Ok92N19UORcro.3wulEyFi0FfJrnN/akOQe3uxTZAzQ0C"}})\nexit\n'
 </code></pre></div>
 Make sure to update the namespace and mongo pod name according to your setup,the rest should remain the same. This command will update the password to litmus.</p>
 <h3 id="while-uninstalling-litmus-portal-using-helm-some-components-like-subscriber-exporter-event-workflows-etc-are-not-removed">While Uninstalling Litmus portal using helm, some components like subscriber, exporter, event, workflows, etc, are not removed.<a class="headerlink" href="#while-uninstalling-litmus-portal-using-helm-some-components-like-subscriber-exporter-event-workflows-etc-are-not-removed" title="Permanent link">&para;</a></h3>

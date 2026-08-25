@@ -5859,7 +5859,7 @@
 <li>
 <p>The annotationCheck is set to <code>true</code> in the ChaosEngine spec, but the application deployment (AUT) has not 
   been annotated for chaos. If so, please add it using the following command: 
-    <div class="highlight"><pre><span></span><code><span class="go">kubectl annotate &lt;deploy-type&gt;/&lt;application_name&gt; litmuschaos.io/chaos=&quot;true&quot;</span>
+    <div class="highlight"><pre><span></span><code><span class="go">kubectl annotate &lt;deploy-type&gt;/&lt;application_name&gt; litmuschaos.io/chaos="true"</span>
 </code></pre></div></p>
 </li>
 <li>
@@ -6059,13 +6059,13 @@ spec:
     runner:
       # annotation for the chaos-runner
       runnerAnnotations:
-        sidecar.istio.io/inject: &quot;false&quot;
-  engineState: &quot;active&quot;
-  annotationCheck: &quot;false&quot;
+        sidecar.istio.io/inject: "false"
+  engineState: "active"
+  annotationCheck: "false"
   appinfo:
-    appns: &quot;default&quot;
-    applabel: &quot;app=nginx&quot;
-    appkind: &quot;deployment&quot;
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
   - name: container-kill
@@ -6073,10 +6073,10 @@ spec:
       components:
         #annotations for the experiment pod 
         experimentAnnotations:
-          sidecar.istio.io/inject: &quot;false&quot;
+          sidecar.istio.io/inject: "false"
         env:
         - name: TOTAL_CHAOS_DURATION
-          value: &#39;60&#39;
+          value: '60'
 </code></pre></div>
 </details>
 

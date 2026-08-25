@@ -6401,22 +6401,22 @@ The idea of this exp is to simulate issues within your pod-network OR microservi
 <p>Here are some simple CRUD ops against chaosresources you could construct with curl (I have used kubectl proxy, one could use an auth token instead)- just for illustration purposes.</p>
 <h4 id="create-chaosengine">Create ChaosEngine:<a class="headerlink" href="#create-chaosengine" title="Permanent link">&para;</a></h4>
 <p>For example, assume this is the <a href="https://gist.github.com/ksatchit/7426f2c24a48e3aedbe79b5547d817b3">engine spec</a></p>
-<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines -XPOST -H &#39;Content-Type: application/json&#39; -d@pod-delete-chaosengine-trigger.json</span>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines -XPOST -H 'Content-Type: application/json' -d@pod-delete-chaosengine-trigger.json</span>
 </code></pre></div>
 <h4 id="read-chaosengine-status">Read ChaosEngine status:<a class="headerlink" href="#read-chaosengine-status" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos | jq &#39;.status.engineStatus, .status.experiments[].verdict&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos | jq '.status.engineStatus, .status.experiments[].verdict'</span>
 </code></pre></div>
 <h4 id="update-chaosengine-spec">Update ChaosEngine Spec:<a class="headerlink" href="#update-chaosengine-spec" title="Permanent link">&para;</a></h4>
 <p>(say, this is the patch: <a href="https://gist.github.com/ksatchit/be54955a1f4231314797f25361ac488d">https://gist.github.com/ksatchit/be54955a1f4231314797f25361ac488d</a>)</p>
-<div class="highlight"><pre><span></span><code><span class="go">curl --header &quot;Content-Type: application/json-patch+json&quot; --request PATCH --data &#39;[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/engineState&quot;, &quot;value&quot;: &quot;stop&quot;}]&#39; http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos</span>
+<div class="highlight"><pre><span></span><code><span class="go">curl --header "Content-Type: application/json-patch+json" --request PATCH --data '[{"op": "replace", "path": "/spec/engineState", "value": "stop"}]' http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos</span>
 </code></pre></div>
 <h4 id="delete-the-chaosengine-resource">Delete the ChaosEngine resource:<a class="headerlink" href="#delete-the-chaosengine-resource" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><span class="go">curl -X DELETE localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/nginx-chaos \</span>
-<span class="go">-d &#39;{&quot;kind&quot;:&quot;DeleteOptions&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;propagationPolicy&quot;:&quot;Foreground&quot;}&#39; \</span>
-<span class="go">-H &quot;Content-Type: application/json&quot;</span>
+<span class="go">-d '{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Foreground"}' \</span>
+<span class="go">-H "Content-Type: application/json"</span>
 </code></pre></div>
 <h4 id="similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use">Similarly, to check the results/verdict of the experiment from ChaosResult, you could use:<a class="headerlink" href="#similarly-to-check-the-resultsverdict-of-the-experiment-from-chaosresult-you-could-use" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosresults/nginx-chaos-pod-delete | jq &#39;.status.experimentStatus.verdict, .status.experimentStatus.probeSuccessPercentage&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="go">curl -s http://localhost:8001/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosresults/nginx-chaos-pod-delete | jq '.status.experimentStatus.verdict, .status.experimentStatus.probeSuccessPercentage'</span>
 </code></pre></div>
 <h3 id="kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments">Kubernetes by default has built-in features like replicaset/deployment to prevent service unavailability (continuous curl from the httpProbe on litmus should not fail) in case of container kill, pod delete and OOM due to pod-memory-hog then why do we need CPU, IO and network related chaos experiments?<a class="headerlink" href="#kubernetes-by-default-has-built-in-features-like-replicasetdeployment-to-prevent-service-unavailability-continuous-curl-from-the-httpprobe-on-litmus-should-not-fail-in-case-of-container-kill-pod-delete-and-oom-due-to-pod-memory-hog-then-why-do-we-need-cpu-io-and-network-related-chaos-experiments" title="Permanent link">&para;</a></h3>
 <p>There are some scenarios that can still occur despite whatever availability aids K8s provides. For example, take disk usage or CPU hogs -- problems you would generally refer to as "Noisy Neighbour"  problems.
@@ -6506,16 +6506,16 @@ template:
     serviceAccountName: litmus
     containers:
         - name: chaos-operator
-        # &#39;latest&#39; tag corresponds to the latest released image
+        # 'latest' tag corresponds to the latest released image
         image: litmuschaos/chaos-operator:latest
         command:
         - chaos-operator
         imagePullPolicy: Always
         env:
             - name: CUSTOM_ANNOTATION
-            value: &quot;mayadata.io/chaos&quot;
+            value: "mayadata.io/chaos"
             - name: CHAOS_RUNNER_IMAGE
-            value: &quot;litmuschaos/chaos-runner:latest&quot;
+            value: "litmuschaos/chaos-runner:latest"
             - name: WATCH_NAMESPACE
             value: 
             - name: POD_NAME
@@ -6523,7 +6523,7 @@ template:
                 fieldRef:
                 fieldPath: metadata.name
             - name: OPERATOR_NAME
-          value: &quot;chaos-operator&quot;
+          value: "chaos-operator"
 </code></pre></div>
 </details>
 <h3 id="is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace">Is it mandatory for the chaosengine and chaos experiment resources to exist in the same namespace?<a class="headerlink" href="#is-it-mandatory-for-the-chaosengine-and-chaos-experiment-resources-to-exist-in-the-same-namespace" title="Permanent link">&para;</a></h3>
@@ -6546,12 +6546,12 @@ To view the chaos logs itself (details of experiment chaos injection, applicatio
 <code>Note:</code> Efforts are underway to add more events around chaos injection in subsequent releases.</p>
 <h3 id="how-to-stop-or-abort-a-chaos-experiment">How to stop or abort a chaos experiment?<a class="headerlink" href="#how-to-stop-or-abort-a-chaos-experiment" title="Permanent link">&para;</a></h3>
 <p>A chaos experiment can be stopped/aborted inflight by patching the .spec.engineState property of the chaosengine to stop . This will delete all the chaos resources associated with the engine/experiment at once.
-<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch &#39;{&quot;spec&quot;:{&quot;engineState&quot;:&quot;stop&quot;}}&#39;
+<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch '{"spec":{"engineState":"stop"}}'
 </code></pre></div>
 The same effect will be caused by deleting the respective chaosengine resource.</p>
 <h3 id="can-a-chaos-experiment-be-resumed-once-stopped-or-aborted">Can a chaos experiment be resumed once stopped or aborted?<a class="headerlink" href="#can-a-chaos-experiment-be-resumed-once-stopped-or-aborted" title="Permanent link">&para;</a></h3>
 <p>Once stopped/aborted, patching the chaosengine .spec.engineState with active causes the experiment to be re-executed. Another way is to re-apply the ChaosEngine YAML, this will delete all stale chaos resources, and restart ChaosEngine lifecycle. However, support is yet to be added for saving state and resuming an in-flight experiment (i.e., execute pending iterations etc.,)
-<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch &#39;{&quot;spec&quot;:{&quot;engineState&quot;:&quot;active&quot;}}&#39;
+<div class="highlight"><pre><span></span><code>kubectl patch chaosengine &lt;chaosengine-name&gt; -n &lt;namespace&gt; --type merge --patch '{"spec":{"engineState":"active"}}'
 </code></pre></div></p>
 <h3 id="how-to-restart-chaosengine-after-graceful-completion">How to restart chaosengine after graceful completion?<a class="headerlink" href="#how-to-restart-chaosengine-after-graceful-completion" title="Permanent link">&para;</a></h3>
 <p>To restart chaosengine, check the .spec.engineState, which should be equal to stop, which means your chaosengine has gracefully completed, or forcefully aborted. In this case, restart is quite easy, as you can re-apply the chaosengine YAML to restart it. This will remove all stale chaos resources linked to this chaosengine, and restart its own lifecycle.</p>
@@ -6561,7 +6561,7 @@ The same effect will be caused by deleting the respective chaosengine resource.<
 <p>By default, the installation count of chaos-operator &amp; run count of a given chaos experiment is collected as part of general analytics to gauge user adoption &amp; chaos trends. However, if you wish to inhibit this, please use the following ENV setting on the chaos-operator deployment:
 <div class="highlight"><pre><span></span><code>env: 
   name: ANALYTICS
-  value: &#39;FALSE&#39;
+  value: 'FALSE'
 </code></pre></div></p>
 <h3 id="what-to-choose-between-minchaosinterval-and-instancecount">What to choose between minChaosInterval and instanceCount?<a class="headerlink" href="#what-to-choose-between-minchaosinterval-and-instancecount" title="Permanent link">&para;</a></h3>
 <p>Only one should be chosen ideally between minChaosInterval and instanceCount. However if both are specified minChaosInterval will be given priority. minChaosInterval specifies the minimum interval that should be present between the launch of 2 chaosengines and instanceCount specifies the exact number of chaosengines to be launched between the range (start and end time). SO we can choose depending on our requirements.</p>

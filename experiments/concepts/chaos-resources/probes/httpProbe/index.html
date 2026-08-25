@@ -5871,28 +5871,28 @@ It can be executed by setting <code>httpProbe/inputs.method.get</code> field.</p
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">"active"</span>
 <span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">"default"</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">"app=nginx"</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">"deployment"</span>
 <span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">probe</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"check-frontend-access-url"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"httpProbe"</span>
 <span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;url&gt;"</span>
 <span class="w">          </span><span class="nt">method</span><span class="p">:</span>
 <span class="w">            </span><span class="c1"># call http get method and verify the response code</span>
 <span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
 <span class="w">              </span><span class="c1"># criteria which should be matched</span>
 <span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
 <span class="w">              </span><span class="c1"># exepected response code for the http request, which should follow the specified criteria</span>
-<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;response</span><span class="nv"> </span><span class="s">code&gt;"</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"Continuous"</span>
 <span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
 <span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
@@ -5909,32 +5909,32 @@ It can be executed by setting <code>httpProbe/inputs.method.post.body</code> fie
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">"active"</span>
 <span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">"default"</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">"app=nginx"</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">"deployment"</span>
 <span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">probe</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"check-frontend-access-url"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"httpProbe"</span>
 <span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;url&gt;"</span>
 <span class="w">          </span><span class="nt">method</span><span class="p">:</span>
 <span class="w">            </span><span class="c1"># call http post method and verify the response code</span>
 <span class="w">            </span><span class="nt">post</span><span class="p">:</span><span class="w"> </span>
 <span class="w">              </span><span class="c1"># value of the http body, used for the post request</span>
-<span class="w">              </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;http-body&gt;&quot;</span>
+<span class="w">              </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;http-body&gt;"</span>
 <span class="w">              </span><span class="c1"># http body content type</span>
-<span class="w">              </span><span class="nt">contentType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application/json;</span><span class="nv"> </span><span class="s">charset=UTF-8&quot;</span>
+<span class="w">              </span><span class="nt">contentType</span><span class="p">:</span><span class="w"> </span><span class="s">"application/json;</span><span class="nv"> </span><span class="s">charset=UTF-8"</span>
 <span class="w">              </span><span class="c1"># criteria which should be matched</span>
-<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;==&quot;</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="s">"=="</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
 <span class="w">              </span><span class="c1"># exepected response code for the http request, which should follow the specified criteria</span>
-<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">"200"</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"Continuous"</span>
 <span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
 <span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
@@ -5952,33 +5952,33 @@ It can be executed by setting <code>httpProbe/inputs.method.post.body</code> fie
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">"active"</span>
 <span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">"default"</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">"app=nginx"</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">"deployment"</span>
 <span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">probe</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"check-frontend-access-url"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"httpProbe"</span>
 <span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;url&gt;"</span>
 <span class="w">          </span><span class="nt">method</span><span class="p">:</span>
 <span class="w">            </span><span class="c1"># call http post method and verify the response code</span>
 <span class="w">            </span><span class="nt">post</span><span class="p">:</span><span class="w"> </span>
 <span class="w">              </span><span class="c1"># the configMap should be mounted to the experiment which contains http body</span>
 <span class="w">              </span><span class="c1"># use the mounted path here</span>
-<span class="w">              </span><span class="nt">bodyPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mnt/body.yml&quot;</span>
+<span class="w">              </span><span class="nt">bodyPath</span><span class="p">:</span><span class="w"> </span><span class="s">"/mnt/body.yml"</span>
 <span class="w">              </span><span class="c1"># http body content type</span>
-<span class="w">              </span><span class="nt">contentType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application/json;</span><span class="nv"> </span><span class="s">charset=UTF-8&quot;</span>
+<span class="w">              </span><span class="nt">contentType</span><span class="p">:</span><span class="w"> </span><span class="s">"application/json;</span><span class="nv"> </span><span class="s">charset=UTF-8"</span>
 <span class="w">              </span><span class="c1"># criteria which should be matched</span>
-<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;==&quot;</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="s">"=="</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
 <span class="w">              </span><span class="c1"># exepected response code for the http request, which should follow the specified criteria</span>
-<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">"200"</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"Continuous"</span>
 <span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
 <span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
@@ -5995,27 +5995,27 @@ It is an optional field and its unit is milliseconds.</p>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">"active"</span>
 <span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">"default"</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">"app=nginx"</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">"deployment"</span>
 <span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">probe</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"check-frontend-access-url"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"httpProbe"</span>
 <span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;url&gt;"</span>
 <span class="w">          </span><span class="c1"># timeout for the http requests</span>
 <span class="w">          </span><span class="nt">responseTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1">#in ms</span>
 <span class="w">          </span><span class="nt">method</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
 <span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"> </span><span class="c1"># ==, !=, oneof</span>
-<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;response</span><span class="nv"> </span><span class="s">code&gt;"</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"Continuous"</span>
 <span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
 <span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
@@ -6032,28 +6032,28 @@ It supports boolean values. Provide it to <code>true</code> to skip the certific
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">"active"</span>
 <span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">"default"</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">"app=nginx"</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">"deployment"</span>
 <span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">probe</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"check-frontend-access-url"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"httpProbe"</span>
 <span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;url&gt;"</span>
 <span class="w">          </span><span class="c1"># skip certificate checks for the httpProbe</span>
 <span class="w">          </span><span class="c1"># supports: true, false. default: false</span>
-<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
 <span class="w">          </span><span class="nt">method</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
 <span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"> </span>
-<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;response</span><span class="nv"> </span><span class="s">code&gt;"</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"Continuous"</span>
 <span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
 <span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
