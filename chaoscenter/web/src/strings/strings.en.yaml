@@ -273,6 +273,7 @@ deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
 deploySetup: Deploy the setup
+deployUsingKubectlApplyCommand: Deploy using kubectl apply command
 deployedOn: Deployed using
 description: Description
 descriptionOptional: Description (Optional)
@@ -448,6 +449,7 @@ goChaosHome: Go to Home
 greatJob: Great Job
 group: Group
 healthy: Healthy
+helmInstallation: Helm
 history: History
 hostedOn: Hosted on
 hostedOnAgent: Hosted on Chaos Infrastructure
@@ -601,6 +603,7 @@ logs: Logs
 logsOptional: Logs (Optional)
 mainTitle: How do you want to start off?
 manifestDownloadUnsuccessful: Manifest download is unavailable!
+manifestInstallation: Manifest
 manifestMissing: Manifest is missing! Please check your ChaosHub.
 manual: Manual
 manualInterruption: Manual Interruption needed

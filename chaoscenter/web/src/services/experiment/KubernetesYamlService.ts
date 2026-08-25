@@ -1181,8 +1181,14 @@ function updateContainerImage(image: string, registry: ImageRegistry | undefined
   const parts = image.split('/');
   const lastPart = parts[parts.length - 1]; // litmus-checker:2.11.0
 
+  // Fall back to the default registry repo when it is missing (e.g. when the
+  // experiment is edited directly from the Builder tab without visiting the
+  // Overview tab). Otherwise the repo resolves to the literal string
+  // "undefined", producing broken images like "undefined/go-runner:3.27.0".
+  const repo = registry?.repo || 'litmuschaos';
+
   // Build new image
-  const newImage = `${registry?.repo}/${lastPart}`;
+  const newImage = `${repo}/${lastPart}`;
 
   return newImage;
 }
