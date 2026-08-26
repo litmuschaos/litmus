@@ -23,6 +23,9 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
+# Avoid updating OS packages during build to keep image contents
+# reproducible; use a regularly patched base image release instead.
+
 COPY --from=builder /output/server $APP_DIR/
 COPY ./manifests/. $APP_DIR/manifests
 

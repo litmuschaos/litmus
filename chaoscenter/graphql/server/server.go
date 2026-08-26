@@ -10,17 +10,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
@@ -41,9 +42,9 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/telemetry"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -92,6 +93,10 @@ func setupGin() *gin.Engine {
 }
 
 func main() {
+	// RegisterMetrics is also called inside MongoConnection() (mongodb/init.go) for safety,
+	// ensuring metrics are registered even if called from a future entrypoint without main().
+	// The sync.Once guard inside RegisterMetrics() makes double-calls safe.
+	telemetry.RegisterMetrics()
 	router := setupGin()
 	var err error
 	mongodb.MgoClient, err = mongodb.MongoConnection()
@@ -116,9 +121,9 @@ func main() {
 		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
-		go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
+		go startGRPCServerWithTLS(mongodbOperator) // start GRPC server
 	} else {
-		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC serve
+		go startGRPCServer(utils.Config.GrpcPort, mongodbOperator) // start GRPC server
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
@@ -189,6 +194,7 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
+
 	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
@@ -270,17 +276,51 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 	log.Fatal(grpcServer.Serve(lis))
 }
 
-// startMetricsServer starts a separate HTTP server for Prometheus metrics
+// startMetricsServer starts a dedicated HTTP server for Prometheus metrics on
+// the port configured by METRICS_PORT (default 8889). If METRICS_ALLOWED_CIDR
+// is set, only requests from that CIDR (plus loopback) are served; otherwise
+// all IPs can reach the endpoint — rely on NetworkPolicy for cluster isolation.
 func startMetricsServer() {
 	metricsRouter := gin.New()
 	metricsRouter.Use(gin.Recovery())
-	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Disable forwarded-header trust so c.ClientIP() resolves to the direct peer
+	// IP rather than an X-Forwarded-For value from an untrusted proxy.
+	// This makes the CIDR check reliable when that direct peer is the actual
+	// scraper source (for example, non-proxied deployments). If requests arrive
+	// through a reverse proxy or load balancer, c.ClientIP() will be the proxy IP.
+	if err := metricsRouter.SetTrustedProxies(nil); err != nil {
+		log.Warnf("failed to configure trusted proxies for metrics server: %v", err)
+	}
+
+	// Parse optional CIDR allowlist for the metrics endpoint.
+	var allowedNet *net.IPNet
+	if cidr := utils.Config.MetricsAllowedCIDR; cidr != "" {
+		_, parsedNet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			log.Fatalf("METRICS_ALLOWED_CIDR %q is invalid; refusing to start metrics server: %v", cidr, err)
+		}
+		allowedNet = parsedNet
+	}
+
+	// Hoist the handler so it's created once at startup, not on every request.
+	metricsHandler := promhttp.Handler()
+
+	metricsRouter.GET("/metrics", func(c *gin.Context) {
+		if allowedNet != nil {
+			ip := net.ParseIP(c.ClientIP())
+			if ip == nil || (!ip.IsLoopback() && !allowedNet.Contains(ip)) {
+				c.AbortWithStatus(http.StatusForbidden)
+				return
+			}
+		}
+		metricsHandler.ServeHTTP(c.Writer, c.Request)
+	})
 
 	metricsPort := utils.Config.MetricsPort
-	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+	log.Infof("Metrics server running at http://0.0.0.0:%s/metrics", metricsPort)
 
 	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
 		log.Fatalf("Failed to start metrics server: %v", err)
 	}
-
 }
