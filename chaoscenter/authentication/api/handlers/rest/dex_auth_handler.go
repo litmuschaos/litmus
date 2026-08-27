@@ -120,6 +120,12 @@ func OAuthCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+
+		if !claims.Verified {
+			log.Error("OAuth Error: email not verified")
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 		createdAt := time.Now().UnixMilli()
 
 		var userData = entities.User{
