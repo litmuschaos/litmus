@@ -572,8 +572,14 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+		if member.UserID != uid {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -584,7 +590,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["acceptInvitation"],
 			string(entities.PendingInvitation),
 			service)
@@ -630,8 +636,14 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+		if member.UserID != uid {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -642,7 +654,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["declineInvitation"],
 			string(entities.PendingInvitation),
 			service)
@@ -688,6 +700,12 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+		if member.UserID != uid {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		if member.Role != nil && *member.Role == entities.RoleOwner {
 			owners, err := service.GetProjectOwners(member.ProjectID)
 			if err != nil {
@@ -703,7 +721,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -714,7 +732,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
 			service)
