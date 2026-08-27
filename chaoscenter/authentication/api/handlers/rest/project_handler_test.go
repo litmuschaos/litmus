@@ -1,6 +1,8 @@
 package rest_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -309,3 +312,166 @@ func TestGetProject(t *testing.T) {
 	})
 
 }
+
+func TestLeaveProjectBOLA(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("Legitimate self-operation - User A leaves project", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userA",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/leave_project", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		userA := &entities.User{
+			ID:             "userA",
+			IsInitialLogin: false,
+		}
+		projects := []*entities.Project{{ID: "projX"}}
+
+		service.On("GetUser", "userA").Return(userA, nil)
+		service.On("GetProjects", mock.Anything).Return(projects, nil)
+		service.On("UpdateInvite", "projX", "userA", entities.ExitedProject, (*entities.MemberRole)(nil)).Return(nil)
+
+		rest.LeaveProject(service)(c)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		service.AssertCalled(t, "UpdateInvite", "projX", "userA", entities.ExitedProject, (*entities.MemberRole)(nil))
+	})
+
+	t.Run("Cross-user operation - User A attempts to remove User B", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userB",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/leave_project", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		rest.LeaveProject(service)(c)
+
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrUnauthorized], w.Code)
+		service.AssertNotCalled(t, "UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	})
+}
+
+func TestAcceptInvitationBOLA(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("Legitimate self-operation - User A accepts invitation", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userA",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/accept_invitation", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		userA := &entities.User{
+			ID:             "userA",
+			IsInitialLogin: false,
+		}
+		projects := []*entities.Project{{ID: "projX"}}
+
+		service.On("GetUser", "userA").Return(userA, nil)
+		service.On("GetProjects", mock.Anything).Return(projects, nil)
+		service.On("UpdateInvite", "projX", "userA", entities.AcceptedInvitation, (*entities.MemberRole)(nil)).Return(nil)
+
+		rest.AcceptInvitation(service)(c)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		service.AssertCalled(t, "UpdateInvite", "projX", "userA", entities.AcceptedInvitation, (*entities.MemberRole)(nil))
+	})
+
+	t.Run("Cross-user operation - User A attempts to accept for User B", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userB",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/accept_invitation", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		rest.AcceptInvitation(service)(c)
+
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrUnauthorized], w.Code)
+		service.AssertNotCalled(t, "UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	})
+}
+
+func TestDeclineInvitationBOLA(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("Legitimate self-operation - User A declines invitation", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userA",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/decline_invitation", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		userA := &entities.User{
+			ID:             "userA",
+			IsInitialLogin: false,
+		}
+		projects := []*entities.Project{{ID: "projX"}}
+
+		service.On("GetUser", "userA").Return(userA, nil)
+		service.On("GetProjects", mock.Anything).Return(projects, nil)
+		service.On("UpdateInvite", "projX", "userA", entities.DeclinedInvitation, (*entities.MemberRole)(nil)).Return(nil)
+
+		rest.DeclineInvitation(service)(c)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		service.AssertCalled(t, "UpdateInvite", "projX", "userA", entities.DeclinedInvitation, (*entities.MemberRole)(nil))
+	})
+
+	t.Run("Cross-user operation - User A attempts to decline for User B", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Set("uid", "userA")
+		c.Set("role", string(entities.RoleUser))
+
+		body, _ := json.Marshal(entities.MemberInput{
+			ProjectID: "projX",
+			UserID:    "userB",
+		})
+		c.Request, _ = http.NewRequest(http.MethodPost, "/decline_invitation", bytes.NewBuffer(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		rest.DeclineInvitation(service)(c)
+
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrUnauthorized], w.Code)
+		service.AssertNotCalled(t, "UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	})
+}
+
