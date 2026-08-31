@@ -55,42 +55,59 @@ func (k8s *k8sSubscriber) GetLogs(podName, namespace, container string) (string,
 // create pod log for normal pods and chaos-engine pods
 func (k8s *k8sSubscriber) CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
+
+	// Try fetching logs from the main container first
 	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
-	// try getting argo pod logs
+
 	if err != nil {
-		logrus.Errorf("Failed to get argo pod %v logs, err: %v", podLog.PodName, err)
-		logDetails.MainPod = "Failed to get argo pod logs"
+		logrus.Warnf("main container log not found for pod %v, retrying helper container", podLog.PodName)
+
+		// Retry with empty container name (default / helper)
+		mainLog, err = k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "")
+		if err != nil {
+			logrus.Errorf("failed to fetch logs for pod %v: %v", podLog.PodName, err)
+			logDetails.MainPod = "logs not found"
+			// Continue to chaos-engine logs even if main logs failed
+		} else {
+			mainLog = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
+			logDetails.MainPod = mainLog[1 : len(mainLog)-1]
+		}
 	} else {
-		logDetails.MainPod = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
-		logDetails.MainPod = logDetails.MainPod[1 : len(logDetails.MainPod)-1]
+		mainLog = strconv.Quote(strings.Replace(mainLog, `"`, `'`, -1))
+		logDetails.MainPod = mainLog[1 : len(mainLog)-1]
 	}
-	// try getting experiment pod logs if requested
+
+	// Try getting experiment pod logs if requested
 	if strings.ToLower(podLog.PodType) == "chaosengine" && podLog.ChaosNamespace != nil {
 		chaosLog := make(map[string]string)
+
 		if podLog.ExpPod != nil {
 			expLog, err := k8s.GetLogs(*podLog.ExpPod, *podLog.ChaosNamespace, "")
 			if err == nil {
-				chaosLog[*podLog.ExpPod] = strconv.Quote(strings.Replace(expLog, `"`, `'`, -1))
-				chaosLog[*podLog.ExpPod] = chaosLog[*podLog.ExpPod][1 : len(chaosLog[*podLog.ExpPod])-1]
+				expLog = strconv.Quote(strings.Replace(expLog, `"`, `'`, -1))
+				chaosLog[*podLog.ExpPod] = expLog[1 : len(expLog)-1]
 			} else {
 				logrus.Errorf("Failed to get experiment pod %v logs, err: %v", *podLog.ExpPod, err)
 			}
 		}
+
 		if podLog.RunnerPod != nil {
 			runnerLog, err := k8s.GetLogs(*podLog.RunnerPod, *podLog.ChaosNamespace, "")
 			if err == nil {
-				chaosLog[*podLog.RunnerPod] = strconv.Quote(strings.Replace(runnerLog, `"`, `'`, -1))
-				chaosLog[*podLog.RunnerPod] = chaosLog[*podLog.RunnerPod][1 : len(chaosLog[*podLog.RunnerPod])-1]
+				runnerLog = strconv.Quote(strings.Replace(runnerLog, `"`, `'`, -1))
+				chaosLog[*podLog.RunnerPod] = runnerLog[1 : len(runnerLog)-1]
 			} else {
 				logrus.Errorf("Failed to get runner pod %v logs, err: %v", *podLog.RunnerPod, err)
 			}
 		}
+
 		if podLog.ExpPod == nil && podLog.RunnerPod == nil {
 			logDetails.ChaosPod = nil
 		} else {
 			logDetails.ChaosPod = chaosLog
 		}
 	}
+
 	return logDetails, nil
 }
 
