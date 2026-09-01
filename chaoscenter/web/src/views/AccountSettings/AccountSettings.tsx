@@ -9,6 +9,7 @@ import { useStrings } from '@strings';
 import { useDocumentTitle, useSearchParams, useUpdateSearchParams } from '@hooks';
 import AccountSettingsOverviewController from '@controllers/AccountSettingsOverview';
 import AccountSettingsUserManagementController from '@controllers/AccountSettingsUserManagement';
+import AccountSettingsAppearanceController from '@controllers/AccountSettingsAppearance';
 import type { User } from '@api/auth';
 import { useAppStore } from '@context';
 import { UserType } from '@models';
@@ -26,7 +27,8 @@ interface AccountSettingsViewProps {
 }
 enum AccountSettingsTabTypes {
   OVERVIEW = 'overview',
-  USER_MANAGEMENT = 'user-management'
+  USER_MANAGEMENT = 'user-management',
+  APPEARANCE = 'appearance'
 }
 
 export default function AccountSettingsView(props: AccountSettingsViewProps): React.ReactElement {
@@ -59,6 +61,10 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
       case AccountSettingsTabTypes.USER_MANAGEMENT:
         setActiveTab(tabID);
         updateSearchParams({ tab: AccountSettingsTabTypes.USER_MANAGEMENT });
+        break;
+      case AccountSettingsTabTypes.APPEARANCE:
+        setActiveTab(tabID);
+        updateSearchParams({ tab: AccountSettingsTabTypes.APPEARANCE });
         break;
     }
   };
@@ -94,6 +100,11 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
               title: getString('userManagement'),
               hidden: currentUserInfo?.userRole !== UserType.ADMIN,
               panel: <AccountSettingsUserManagementController />
+            },
+            {
+              id: 'appearance',
+              title: getString('appearance'),
+              panel: <AccountSettingsAppearanceController />
             }
           ]}
         />

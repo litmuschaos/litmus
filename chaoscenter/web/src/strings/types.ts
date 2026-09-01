@@ -59,6 +59,7 @@ export interface StringsMap {
   'appLabel': unknown
   'appLabelName': unknown
   'appNameSpace': unknown
+  'appearance': unknown
   'apply': unknown
   'applyChanges': unknown
   'at': unknown
@@ -204,6 +205,7 @@ export interface StringsMap {
   'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
+  'darkMode': unknown
   'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
