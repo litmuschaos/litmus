@@ -92,4 +92,5 @@ replace (
 	k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.21.2
 	k8s.io/metrics => k8s.io/metrics v0.21.2
 	k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.21.2
+    github.com/googleapis/gnostic => github.com/google/gnostic-models v0.6.9
 )
