@@ -447,12 +447,12 @@ body:has(#react-root[data-theme='dark']) {
   color: #d8d4ea;
 }
 
-#react-root[data-theme='dark'] a {
-  color: #b5aed0;
-}
-
 #react-root[data-theme='dark'] a:hover {
   color: #d8d4ea;
+}
+
+#react-root[data-theme='dark'] a {
+  color: #b5aed0;
 }
 
 #react-root[data-theme='dark'] [class*='FormError--'] {
@@ -495,14 +495,18 @@ body:has(#react-root[data-theme='dark']) {
   opacity: 1 !important;
 }
 
-#react-root[data-theme='dark'] [class*='SideNav'] [class*='link'] > [class*='text'],
-#react-root[data-theme='dark'] [class*='SideNav'] [class*='link'] > * {
-  color: #ffffff !important;
+#react-root[data-theme='dark'] [class*='MainNav'] [class*='text'] {
+  color: #fff !important;
 }
 
 #react-root[data-theme='dark'] [class*='NavExpandable'] [class*='text'] {
-  color: #ffffff !important;
+  color: #fff !important;
   opacity: 1 !important;
+}
+
+#react-root[data-theme='dark'] [class*='SideNav'] [class*='link'] > [class*='text'],
+#react-root[data-theme='dark'] [class*='SideNav'] [class*='link'] > * {
+  color: #fff !important;
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='subTitle'] {
@@ -517,10 +521,6 @@ body:has(#react-root[data-theme='dark']) {
   color: #ffffff !important;
 }
 
-#react-root[data-theme='dark'] [class*='MainNav'] [class*='text'] {
-  color: #ffffff !important;
-}
-
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='logOutContainer'] {
   opacity: 1 !important;
 }
@@ -531,8 +531,8 @@ body:has(#react-root[data-theme='dark']) {
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='logOutContainer'] svg {
-  color: #ffffff !important;
-  fill: #ffffff !important;
+  color: #fff !important;
+  fill: #fff !important;
 }
 
 #react-root[data-theme='dark'] .highcharts-container {

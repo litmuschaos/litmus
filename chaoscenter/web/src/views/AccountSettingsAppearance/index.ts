@@ -1,3 +1,1 @@
-import AccountSettingsAppearanceView from './AccountSettingsAppearance';
-
-export default AccountSettingsAppearanceView;
+export { default as AccountSettingsAppearanceView } from './AccountSettingsAppearance';

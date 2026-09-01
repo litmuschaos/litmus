@@ -28,7 +28,7 @@
     outline: none;
   }
 
-  // In dark mode: flip the icon to a sun, lighten the border/hover
+  /* In dark mode: flip the icon to a sun, lighten the border/hover */
   :global(#react-root[data-theme='dark']) & {
     border-color: #4d476d;
 

@@ -228,13 +228,13 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
-  'deployUsingKubectlApplyCommand': unknown
   'deleteProject': unknown
   'deleteProjectWarning': unknown
   'deleteSuccess': unknown
   'deployChaosInfrastructure': unknown
   'deployProbe': unknown
   'deploySetup': unknown
+  'deployUsingKubectlApplyCommand': unknown
   'deployedOn': unknown
   'description': unknown
   'descriptionOptional': unknown

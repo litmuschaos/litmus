@@ -1,3 +1,1 @@
-import AccountSettingsAppearanceController from './AccountSettingsAppearance';
-
-export default AccountSettingsAppearanceController;
+export { default as AccountSettingsAppearanceController } from './AccountSettingsAppearance';
