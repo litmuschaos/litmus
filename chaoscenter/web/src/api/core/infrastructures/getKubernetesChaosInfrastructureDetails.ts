@@ -14,7 +14,7 @@ export interface GetKubernetesChaosInfrastructureDetailsResponse {
 export const getChaosInfraDetails = ({
   infraID,
   options = {},
-  projectID
+  projectID,
 }: GqlAPIQueryRequest<
   GetKubernetesChaosInfrastructureDetailsResponse,
   GetKubernetesChaosInfrastructureDetailsRequest,
@@ -54,14 +54,14 @@ export const getChaosInfraDetails = ({
     `,
     {
       ...options,
-      fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
-      variables: { infraID, projectID }
-    }
+       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
+       variables: { infraID, projectID },
+    },
   );
   return {
     data,
     exists: (options as { skip?: boolean }).skip ? undefined : Boolean(data?.getInfraDetails),
     loading: (options as { skip?: boolean }).skip ? false : loading || !data,
-    ...rest
+    ...rest,
   };
 };
