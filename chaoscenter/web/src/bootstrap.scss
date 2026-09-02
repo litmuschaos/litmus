@@ -519,7 +519,7 @@ body:has(#react-root[data-theme='dark']) {
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='title'] {
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='logOutContainer'] {
@@ -528,7 +528,7 @@ body:has(#react-root[data-theme='dark']) {
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='logOutContainer'] > * {
   opacity: 1 !important;
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='logOutContainer'] svg {
