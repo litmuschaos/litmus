@@ -110,7 +110,7 @@ type ErrStrictPasswordPolicyViolation struct {
 
 type ErrStrictUsernamePolicyViolation struct {
 	Code    int    `json:"code" example:"401"`
-	Message string `json:"message" example:"The username should be atleast 3 characters long and atmost 16 characters long."`
+	Message string `json:"message" example:"The username should be at least 3 characters long and at most 254 characters long, must start with a letter or digit, and can only contain letters, digits, and the characters . _ - @ +"`
 }
 
 type ErrEmptyProjectName struct {

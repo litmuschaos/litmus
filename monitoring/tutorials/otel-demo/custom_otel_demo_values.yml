@@ -21,7 +21,7 @@ opentelemetry-collector:
                   replacement: 'chaos-exporter-service'
       httpcheck/frontendproxy:
         targets:
-          - endpoint: 'http://{{ include "otel-demo.name" . }}-frontendproxy:8080'
+          - endpoint: "http://frontend-proxy:8080"
       redis:
         endpoint: "valkey-cart:6379"
         collection_interval: 10s
@@ -29,18 +29,19 @@ opentelemetry-collector:
     exporters:
       ## Create an exporter to Jaeger using the standard `otlp` export format
       otlp:
-        endpoint: '{{ include "otel-demo.name" . }}-jaeger-collector:4317'
+        endpoint: "jaeger:4317"
         tls:
           insecure: true
       # Create an exporter to Prometheus (metrics)
       otlphttp/prometheus:
-        endpoint: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090/api/v1/otlp'
+        endpoint: "http://prometheus:9090/api/v1/otlp"
         tls:
           insecure: true
       opensearch:
-        logs_index: otel
+        logs_index: otel-logs
+        logs_index_time_format: "yyyy-MM-dd"
         http:
-          endpoint: "http://otel-demo-opensearch:9200"
+          endpoint: "http://opensearch:9200"
           tls:
             insecure: true
 

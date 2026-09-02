@@ -421,8 +421,8 @@ const TuneDetailsStep: React.FC<
   const scope = getScope();
   const { getString } = useStrings();
   // TODO: Add monaco editor for source probe in CMD
-  const cmdComparatorType = React.useRef<string>('int');
-  const promComparatorType = React.useRef<string>('int');
+  const cmdComparatorType = React.useRef<string>(props.formData.kubernetesCMDProperties?.comparator?.type ?? 'int');
+  const promComparatorType = React.useRef<string>(props.formData.promProperties?.comparator?.type ?? 'int');
   const source = React.useRef<string>(props.formData.kubernetesCMDProperties?.source ?? '');
   const [isSourceSelected, setIsSourceSelected] = React.useState<boolean>(
     props.formData.kubernetesCMDProperties?.source ? true : false
