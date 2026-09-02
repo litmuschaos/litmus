@@ -319,6 +319,14 @@ body:has(#react-root[data-theme='dark']) {
   border-color: #2e2b47 !important;
 }
 
+#react-root[data-theme='dark'] a:hover {
+  color: #d8d4ea;
+}
+
+#react-root[data-theme='dark'] a {
+  color: #b5aed0;
+}
+
 #react-root[data-theme='dark'] [class*='Breadcrumbs--'] a,
 #react-root[data-theme='dark'] [class*='Breadcrumb--'] {
   color: #9990b9 !important;
@@ -447,13 +455,6 @@ body:has(#react-root[data-theme='dark']) {
   color: #d8d4ea;
 }
 
-#react-root[data-theme='dark'] a:hover {
-  color: #d8d4ea;
-}
-
-#react-root[data-theme='dark'] a {
-  color: #b5aed0;
-}
 
 #react-root[data-theme='dark'] [class*='FormError--'] {
   color: #ff8a8a;
@@ -510,7 +511,7 @@ body:has(#react-root[data-theme='dark']) {
 }
 
 #react-root[data-theme='dark'] [class*='SideNav'] [class*='subTitle'] {
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 #react-root[data-theme='dark'] [class*='ProjectSelector'] [class*='projectText'] {

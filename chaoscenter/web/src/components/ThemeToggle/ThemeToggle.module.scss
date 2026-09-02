@@ -29,6 +29,7 @@
   }
 
   /* In dark mode: flip the icon to a sun, lighten the border/hover */
+  /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
   :global(#react-root[data-theme='dark']) & {
     border-color: #4d476d;
 
