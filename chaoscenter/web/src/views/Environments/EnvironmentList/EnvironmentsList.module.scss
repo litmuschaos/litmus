@@ -90,10 +90,10 @@
   gap: 1rem;
   :global {
     .bp3-card:nth-child(1) {
-      background: #e8e8ff !important;
+      background: var(--primary-1) !important;
     }
     .bp3-card:nth-child(2) {
-      background: #d3fcfe !important;
+      background: var(--grey-100) !important;
     }
   }
 }

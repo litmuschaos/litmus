@@ -56,6 +56,7 @@ appKindName: app_kind
 appLabel: App Label
 appLabelName: app_label
 appNameSpace: App Namespace
+appearance: Appearance
 apply: Apply
 applyChanges: Apply Changes
 at: At
@@ -237,6 +238,7 @@ customValueText: All YAML files will use the custom values.
 customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
+darkMode: Dark Mode
 data: Data
 dataTypeFloat: Float
 dataTypeInt: Int

@@ -7,7 +7,7 @@
   --main-nav-width: 88px;
   /* stylelint-enable  color-no-hex */
 
-  background: var(--theme-light-nav-panel-bg);
+  background: var(--layout-main-nav-background);
   box-shadow: var(--panel-shadow);
   display: flex;
   flex-direction: column;
@@ -73,7 +73,7 @@
 
     &:hover {
       text-decoration: none;
-      background: var(--primary-9);
+      background: var(--layout-nav-active-background);
 
       :global {
         .bp3-icon {
@@ -88,7 +88,7 @@
           opacity: 1;
         }
       }
-      background: var(--primary-9);
+      background: var(--layout-nav-active-background);
     }
   }
 

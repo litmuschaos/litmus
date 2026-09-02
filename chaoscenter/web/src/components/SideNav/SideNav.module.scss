@@ -1,5 +1,5 @@
 .main {
-  background: var(--primary-9);
+  background: var(--layout-sidebar-background);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -41,7 +41,7 @@
   .bottomContainer {
     position: relative;
     min-height: 60px;
-    border-top: 1px solid var(--grey-600);
+    border-top: 1px solid var(--layout-sidebar-border-color);
     display: flex;
     align-items: center;
     justify-content: flex-start;
