@@ -51,21 +51,15 @@ const AutoSaveOnUnmount = ({
       const existingFaultData = faultDataRef.current;
       if (!existingFaultData?.engineCR) return;
 
-      const existingResources =
-        existingFaultData.engineCR.spec?.components?.runner?.resources;
+      const existingResources = existingFaultData.engineCR.spec?.components?.runner?.resources;
 
-      const updatedFaultData =
-        experimentHandler.updateFaultTunablesInFaultData(
-          existingFaultData,
-          getFaultTunableFromTuneExperimentFormValues(valuesRef.current)
-        );
+      const updatedFaultData = experimentHandler.updateFaultTunablesInFaultData(
+        existingFaultData,
+        getFaultTunableFromTuneExperimentFormValues(valuesRef.current)
+      );
 
-      if (
-        existingResources &&
-        updatedFaultData?.engineCR?.spec?.components?.runner
-      ) {
-        updatedFaultData.engineCR.spec.components.runner.resources =
-          existingResources;
+      if (existingResources && updatedFaultData?.engineCR?.spec?.components?.runner) {
+        updatedFaultData.engineCR.spec.components.runner.resources = existingResources;
       }
 
       setFaultData(updatedFaultData);
