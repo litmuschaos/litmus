@@ -41,3 +41,21 @@ func TestDeleteExperimentFromGit_RejectsNameEscapingProjectDir(t *testing.T) {
 
 	assert.EqualError(t, err, `invalid resource name "dir/name"`)
 }
+
+func TestUpsertProbeToGit_RejectsNameEscapingProjectDir(t *testing.T) {
+	svc := &gitOpsService{}
+	probe := probeRequestsOfAllTypes()["k8s"]
+	probe.Name = "../escape"
+
+	err := svc.UpsertProbeToGit(context.Background(), "project-1", probe)
+
+	assert.EqualError(t, err, `invalid resource name "../escape"`)
+}
+
+func TestDeleteProbeFromGit_RejectsNameEscapingProjectDir(t *testing.T) {
+	svc := &gitOpsService{}
+
+	err := svc.DeleteProbeFromGit(context.Background(), "project-1", "dir/name")
+
+	assert.EqualError(t, err, `invalid resource name "dir/name"`)
+}
