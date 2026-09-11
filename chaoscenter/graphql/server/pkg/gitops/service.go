@@ -255,55 +255,25 @@ func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID str
 		return err
 	}
 
-	gitLock.Lock(projectID, nil)
-	defer gitLock.Unlock(projectID, nil)
-	config, err := g.gitOpsOperator.GetGitConfig(ctx, projectID)
-	if err != nil {
-		return errors.New("Cannot get Git Config from DB : " + err.Error())
-	}
-	if config == nil {
-		return nil
-	}
-	gitLock.Lock(config.RepositoryURL, &config.Branch)
-	defer gitLock.Unlock(config.RepositoryURL, &config.Branch)
+	return g.commitToProjectRepo(ctx, projectID, "experiment", func(gitConfig GitConfig) (string, error) {
+		experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
 
-	gitConfig := GetGitOpsConfig(*config)
+		data, err := yaml.JSONToYAML([]byte(experiment.ExperimentManifest))
+		if err != nil {
+			return "", errors.New("Cannot convert manifest to yaml : " + err.Error())
+		}
 
-	err = g.SyncDBToGit(ctx, gitConfig)
-	if err != nil {
-		return errors.New("Sync Error | " + err.Error())
-	}
+		err = os.WriteFile(experimentPath, data, 0644)
+		if err != nil {
+			return "", errors.New("Cannot write experiment to git : " + err.Error())
+		}
 
-	experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
-
-	data, err := yaml.JSONToYAML([]byte(experiment.ExperimentManifest))
-	if err != nil {
-		return errors.New("Cannot convert manifest to yaml : " + err.Error())
-	}
-
-	err = os.WriteFile(experimentPath, data, 0644)
-	if err != nil {
-		return errors.New("Cannot write experiment to git : " + err.Error())
-	}
-
-	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Updated Experiment : "+experiment.ExperimentName, nil)
-	if err != nil {
-		return errors.New("Cannot commit experiment to git : " + err.Error())
-	}
-
-	err = gitConfig.GitPush()
-	if err != nil {
-		return errors.New("Cannot push experiment to git : " + err.Error())
-	}
-
-	query := bson.D{{"project_id", gitConfig.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"latest_commit", commit}}}}
-	err = g.gitOpsOperator.UpdateGitConfig(ctx, query, update)
-	if err != nil {
-		return errors.New("Failed to update git config : " + err.Error())
-	}
-
-	return nil
+		commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Updated Experiment : "+experiment.ExperimentName, nil)
+		if err != nil {
+			return "", errors.New("Cannot commit experiment to git : " + err.Error())
+		}
+		return commit, nil
+	})
 }
 
 // DeleteExperimentFromGit deletes experiment from git
@@ -314,6 +284,36 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 	}
 
 	log.Info("Deleting Experiment...")
+	return g.commitToProjectRepo(ctx, projectID, "experiment[delete]", func(gitConfig GitConfig) (string, error) {
+		experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
+		exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
+		if err != nil {
+			return "", errors.New("Cannot delete experiment from git : " + err.Error())
+		}
+		if !exists {
+			log.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
+			return "", nil
+		}
+		err = os.RemoveAll(gitConfig.LocalPath + "/" + experimentPath)
+		if err != nil {
+			return "", errors.New("Cannot delete experiment from git : " + err.Error())
+		}
+
+		commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, []string{experimentPath})
+		if err != nil {
+			log.Error("Error", err)
+			return "", errors.New("Cannot commit experiment[delete] to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// commitToProjectRepo brings the project's checkout up to date with git and
+// the DB, lets change modify the checkout and commit, then pushes the commit
+// and records it as the latest known one. It is a no-op when GitOps is not
+// enabled for the project. change returns an empty hash when it committed
+// nothing. subject names the resource in error messages.
+func (g *gitOpsService) commitToProjectRepo(ctx context.Context, projectID, subject string, change func(config GitConfig) (string, error)) error {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
@@ -334,30 +334,17 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Sync Error | " + err.Error())
 	}
 
-	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
-	exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
+	commit, err := change(gitConfig)
 	if err != nil {
-		return errors.New("Cannot delete experiment from git : " + err.Error())
+		return err
 	}
-	if !exists {
-		log.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
+	if commit == "" {
 		return nil
-	}
-	err = os.RemoveAll(gitConfig.LocalPath + "/" + experimentPath)
-	if err != nil {
-		return errors.New("Cannot delete experiment from git : " + err.Error())
-	}
-
-	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, []string{experimentPath})
-	if err != nil {
-		log.Error("Error", err)
-		return errors.New("Cannot commit experiment[delete] to git : " + err.Error())
 	}
 
 	err = gitConfig.GitPush()
 	if err != nil {
-		log.Error("Error", err)
-		return errors.New("Cannot push experiment[delete] to git : " + err.Error())
+		return errors.New("Cannot push " + subject + " to git : " + err.Error())
 	}
 
 	query := bson.D{{"project_id", gitConfig.ProjectID}}
