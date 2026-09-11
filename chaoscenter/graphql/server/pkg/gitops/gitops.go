@@ -48,10 +48,11 @@ type GitUser struct {
 	email    string
 }
 
-const (
-	DefaultPath     = "/tmp/gitops/"
-	ProjectDataPath = "litmus"
-)
+const ProjectDataPath = "litmus"
+
+// DefaultPath is the directory holding the local checkouts, one per project.
+// It is a variable so tests can point it at a temporary directory.
+var DefaultPath = "/tmp/gitops/"
 
 func GitUserFromContext(ctx context.Context) GitUser {
 	defaultUser := GitUser{
@@ -360,7 +361,8 @@ func (c GitConfig) GitCommit(user GitUser, message string, deleteFiles []string)
 		return "", err
 	}
 	if len(deleteFiles) == 0 {
-		_, err = w.Add("./litmus/" + c.ProjectID + "/")
+		// go-git rejects paths starting with "."; stage the project directory by its plain relative path
+		_, err = w.Add(ProjectDataPath + "/" + c.ProjectID)
 		if err != nil {
 			return "", err
 		}
