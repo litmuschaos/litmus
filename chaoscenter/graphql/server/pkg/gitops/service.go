@@ -560,7 +560,7 @@ func (g *gitOpsService) createExperiment(ctx context.Context, data, file string,
 		InfraID:               infraID,
 	}
 	revID := ""
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experiment, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experiment, config.ProjectID, revID, gitOpsUsername)
 	if err != nil {
 		return false, err
 	}
@@ -622,7 +622,7 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	}
 
 	revID := ""
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID, gitOpsUsername)
 	if err != nil {
 		return err
 	}

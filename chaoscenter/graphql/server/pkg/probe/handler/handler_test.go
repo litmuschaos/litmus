@@ -70,28 +70,10 @@ func TestAddProbe_DuplicateName(t *testing.T) {
 	mockOp.On("CountDocuments", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
 		Return(int64(1), nil).Once()
 
-	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{Name: "postman-test-probe-1"}, "project-1")
+	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{Name: "postman-test-probe-1"}, "project-1", "admin")
 
 	assert.Error(t, err)
 	assert.Equal(t, "probe already exists", err.Error())
-	mockOp.AssertNotCalled(t, "Create", mock.Anything, mock.Anything, mock.Anything)
-	mockOp.AssertExpectations(t)
-}
-
-func TestAddProbe_MissingJWTToken(t *testing.T) {
-	mockOp := new(dbMocks.MongoOperator)
-	svc := newProbeServiceWithMock(mockOp)
-
-	mockOp.On("CountDocuments", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
-		Return(int64(0), nil).Once()
-
-	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{
-		Name: "my-probe",
-		Type: model.ProbeTypeHTTPProbe,
-	}, "project-1")
-
-	assert.Error(t, err)
-	assert.Equal(t, "JWT token not found", err.Error())
 	mockOp.AssertNotCalled(t, "Create", mock.Anything, mock.Anything, mock.Anything)
 	mockOp.AssertExpectations(t)
 }
@@ -107,7 +89,7 @@ func TestAddProbe_DBErrorOnUniquenessCheck(t *testing.T) {
 	_, err := svc.AddProbe(context.Background(), model.ProbeRequest{
 		Name: "my-probe",
 		Type: model.ProbeTypeHTTPProbe,
-	}, "project-1")
+	}, "project-1", "admin")
 
 	assert.Error(t, err)
 	assert.Equal(t, dbErr, err)

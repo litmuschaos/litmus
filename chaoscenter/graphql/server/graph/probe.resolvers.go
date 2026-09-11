@@ -54,7 +54,12 @@ func (r *mutationResolver) AddProbe(ctx context.Context, request model.ProbeRequ
 		return nil, errors.New(err)
 	}
 
-	response, err := r.probeService.AddProbe(ctx, request, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := r.probeService.AddProbe(ctx, request, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -79,7 +84,12 @@ func (r *mutationResolver) UpdateProbe(ctx context.Context, request model.ProbeR
 		return "", err
 	}
 
-	response, err := r.probeService.UpdateProbe(ctx, request, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	response, err := r.probeService.UpdateProbe(ctx, request, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
@@ -104,7 +114,12 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 		return false, err
 	}
 
-	response, err := r.probeService.DeleteProbe(ctx, probeName, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := r.probeService.DeleteProbe(ctx, probeName, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err
