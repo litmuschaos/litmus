@@ -207,6 +207,35 @@ func TestSyncDBToGit_InvalidProbeManifestDoesNotAbortSync(t *testing.T) {
 	assert.Len(t, f.probeService.Calls, 2)
 }
 
+// enableGitOpsInDB makes the mocked DB report GitOps as enabled for the
+// project and points the local checkout directory at a temporary location.
+func (f *syncFixture) enableGitOpsInDB() {
+	previous := DefaultPath
+	DefaultPath = filepath.Join(f.t.TempDir(), "checkouts") + "/"
+	f.t.Cleanup(func() { DefaultPath = previous })
+
+	// GitPush refuses to run without credentials; the local file transport ignores them.
+	username, password := "user", "secret"
+	stored := dbGitOps.GitConfigDB{
+		ProjectID:     testProjectID,
+		RepositoryURL: f.config.RepositoryURL,
+		Branch:        f.config.Branch,
+		AuthType:      model.AuthTypeBasic,
+		UserName:      &username,
+		Password:      &password,
+	}
+	f.latestCommitInDB = f.userHead()
+	// Run executes before the return values are read, so the document can
+	// carry the latest_commit recorded by the most recent Update.
+	var getCall *mock.Call
+	getCall = f.mockOp.On("Get", mock.Anything, mongodb.GitOpsCollection, mock.Anything).
+		Run(func(mock.Arguments) {
+			stored.LatestCommit = f.latestCommitInDB
+			getCall.ReturnArguments = mock.Arguments{mongo.NewSingleResultFromDocument(stored, nil, nil), nil}
+		}).
+		Return(nil, nil)
+}
+
 // latestCommitFromUpdate extracts $set.latest_commit from an UpdateGitConfig update document.
 func latestCommitFromUpdate(t *testing.T, update bson.D) string {
 	t.Helper()
@@ -222,6 +251,81 @@ func latestCommitFromUpdate(t *testing.T, update bson.D) string {
 	}
 	t.Fatalf("update does not set latest_commit: %v", update)
 	return ""
+}
+
+// pullUser brings the user clone up to date with the remote.
+func (f *syncFixture) pullUser() {
+	wt, err := f.user.Worktree()
+	require.NoError(f.t, err)
+	err = wt.Pull(&git.PullOptions{RemoteName: "origin"})
+	if err != git.NoErrAlreadyUpToDate {
+		require.NoError(f.t, err)
+	}
+}
+
+func (f *syncFixture) userFile(relPath string) (string, bool) {
+	content, err := os.ReadFile(filepath.Join(f.userDir, relPath))
+	if os.IsNotExist(err) {
+		return "", false
+	}
+	require.NoError(f.t, err)
+	return string(content), true
+}
+
+func TestUpsertExperimentToGit_PushesManifestToRemote(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+
+	err := f.svc.UpsertExperimentToGit(context.Background(), testProjectID, &model.ChaosExperimentRequest{
+		ExperimentName:     "exp-1",
+		ExperimentManifest: `{"kind":"Workflow","metadata":{"name":"exp-1"}}`,
+	})
+
+	require.NoError(t, err)
+	f.pullUser()
+	content, exists := f.userFile("litmus/project-1/exp-1.yaml")
+	require.True(t, exists, "manifest should have been pushed to the remote")
+	assert.Contains(t, content, "kind: Workflow")
+}
+
+func TestDeleteExperimentFromGit_RemovesManifestFromRemote(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+	experiment := &model.ChaosExperimentRequest{ExperimentName: "exp-1", ExperimentManifest: `{"kind":"Workflow","metadata":{"name":"exp-1"}}`}
+	require.NoError(t, f.svc.UpsertExperimentToGit(context.Background(), testProjectID, experiment))
+
+	err := f.svc.DeleteExperimentFromGit(context.Background(), testProjectID, experiment)
+
+	require.NoError(t, err)
+	f.pullUser()
+	_, exists := f.userFile("litmus/project-1/exp-1.yaml")
+	assert.False(t, exists, "manifest should have been deleted from the remote")
+}
+
+func TestDeleteExperimentFromGit_IgnoresMissingManifest(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+
+	err := f.svc.DeleteExperimentFromGit(context.Background(), testProjectID, &model.ChaosExperimentRequest{ExperimentName: "never-existed"})
+
+	assert.NoError(t, err)
+	f.pullUser()
+	assert.False(t, f.userHasCommit("Deleted Experiment"), "nothing should have been committed")
+}
+
+// userHasCommit reports whether the user clone's history contains a commit whose message includes substr.
+func (f *syncFixture) userHasCommit(substr string) bool {
+	iter, err := f.user.Log(&git.LogOptions{})
+	require.NoError(f.t, err)
+	defer iter.Close()
+	found := false
+	_ = iter.ForEach(func(c *object.Commit) error {
+		if strings.Contains(c.Message, substr) {
+			found = true
+		}
+		return nil
+	})
+	return found
 }
 
 func TestLastCommittedContent_ReadsFilePresentAtHead(t *testing.T) {
