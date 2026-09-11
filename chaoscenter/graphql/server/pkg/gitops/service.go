@@ -31,6 +31,8 @@ import (
 const (
 	timeout  = time.Second * 5
 	tempPath = "/tmp/gitops_test/"
+	// gitOpsUsername is recorded as the acting user for changes applied from git
+	gitOpsUsername = "git-ops"
 )
 
 var (
@@ -95,7 +97,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 		return "", errors.New("Failed to updated experiment name " + err.Error())
 	}
 
-	username := "git-ops"
+	username := gitOpsUsername
 	chaosInfra.SendExperimentToSubscriber(experiments[0].ProjectID, &model.ChaosExperimentRequest{
 		ExperimentManifest: experiments[0].Revision[len(experiments[0].Revision)-1].ExperimentManifest,
 		InfraID:            experiments[0].InfraID,
@@ -562,7 +564,7 @@ func (g *gitOpsService) createExperiment(ctx context.Context, data, file string,
 	if err != nil {
 		return false, err
 	}
-	err = g.chaosExperimentService.ProcessExperimentCreation(context.Background(), input, "git-ops", config.ProjectID, wfType, revID, store.Store)
+	err = g.chaosExperimentService.ProcessExperimentCreation(context.Background(), input, gitOpsUsername, config.ProjectID, wfType, revID, store.Store)
 	if err != nil {
 		return false, err
 	}
@@ -624,7 +626,7 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	if err != nil {
 		return err
 	}
-	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, false, config.ProjectID, dataStore.Store)
+	return g.chaosExperimentService.ProcessExperimentUpdate(input, gitOpsUsername, wfType, revID, false, config.ProjectID, dataStore.Store)
 }
 
 // deleteExperiment helps in deleting experiment from DB during the SyncDBToGit operation
@@ -638,5 +640,5 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 		return err
 	}
 
-	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", dataStore.Store)
+	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, gitOpsUsername, dataStore.Store)
 }
