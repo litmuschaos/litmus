@@ -15,15 +15,15 @@ type ProbeService struct {
 	mock.Mock
 }
 
-// AddProbe provides a mock function with given fields: ctx, probe, projectID
-func (_m *ProbeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
-	ret := _m.Called(ctx, probe, projectID)
+// AddProbe provides a mock function with given fields: ctx, probe, projectID, username
+func (_m *ProbeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string, username string) (*model.Probe, error) {
+	ret := _m.Called(ctx, probe, projectID, username)
 	return ret.Get(0).(*model.Probe), ret.Error(1)
 }
 
-// DeleteProbe provides a mock function with given fields: ctx, probeName, projectID
-func (_m *ProbeService) DeleteProbe(ctx context.Context, probeName string, projectID string) (bool, error) {
-	ret := _m.Called(ctx, probeName, projectID)
+// DeleteProbe provides a mock function with given fields: ctx, probeName, projectID, username
+func (_m *ProbeService) DeleteProbe(ctx context.Context, probeName string, projectID string, username string) (bool, error) {
+	ret := _m.Called(ctx, probeName, projectID, username)
 	return ret.Get(0).(bool), ret.Error(1)
 }
 
@@ -63,9 +63,9 @@ func (_m *ProbeService) ListProbes(ctx context.Context, probeNames []string, inf
 	return ret.Get(0).([]*model.Probe), ret.Error(1)
 }
 
-// UpdateProbe provides a mock function with given fields: ctx, probe, projectID
-func (_m *ProbeService) UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error) {
-	ret := _m.Called(ctx, probe, projectID)
+// UpdateProbe provides a mock function with given fields: ctx, probe, projectID, username
+func (_m *ProbeService) UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string, username string) (string, error) {
+	ret := _m.Called(ctx, probe, projectID, username)
 	return ret.Get(0).(string), ret.Error(1)
 }
 

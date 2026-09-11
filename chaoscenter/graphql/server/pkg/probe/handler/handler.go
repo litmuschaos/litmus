@@ -18,7 +18,6 @@ import (
 
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -29,10 +28,10 @@ import (
 )
 
 type Service interface {
-	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
-	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
+	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID, username string) (*model.Probe, error)
+	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID, username string) (string, error)
 	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
-	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
+	DeleteProbe(ctx context.Context, probeName, projectID, username string) (bool, error)
 	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
 	GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
 	GetProbeYAMLData(ctx context.Context, probe model.GetProbeYAMLRequest, projectID string) (string, error)
@@ -56,8 +55,9 @@ func Error(logFields logrus.Fields, message string) error {
 	return errors.New(message)
 }
 
-// AddProbe - Create a new Probe
-func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
+// AddProbe - Create a new Probe. username is recorded as the creator; callers
+// resolve it from the JWT (resolvers) or pass a system identity (GitOps sync).
+func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID, username string) (*model.Probe, error) {
 	isUnique, err := p.ValidateUniqueProbe(ctx, probe.Name, projectID)
 	if err != nil {
 		return nil, err
@@ -69,15 +69,6 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	var (
 		currTime = time.Now().UnixMilli()
 	)
-	tkn, ok := ctx.Value(authorization.AuthKey).(string)
-	if !ok {
-		return nil, errors.New("JWT token not found")
-	}
-
-	username, err := authorization.GetUsername(tkn)
-	if err != nil {
-		return nil, err
-	}
 
 	logFields := logrus.Fields{
 		"projectId": projectID,
@@ -144,14 +135,8 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	return newProbe.GetOutputProbe(), nil
 }
 
-// UpdateProbe - Update a new Probe
-func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
-	if err != nil {
-		return "", err
-	}
-
+// UpdateProbe - Update an existing Probe. username is recorded as the updater.
+func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID, username string) (string, error) {
 	pr, err := p.probeOperator.GetProbeByName(ctx, request.Name, projectID)
 	if err != nil {
 		return "", err
@@ -494,15 +479,13 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	return recentExecutions, nil
 }
 
-// DeleteProbe - Deletes a single Probe
-func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error) {
+// DeleteProbe - Deletes a single Probe. username is recorded as the updater.
+func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID, username string) (bool, error) {
 
 	_, err := p.probeOperator.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {
 		return false, err
 	}
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 
 	Time := time.Now().UnixMilli()
 
