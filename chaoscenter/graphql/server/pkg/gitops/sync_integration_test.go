@@ -185,6 +185,18 @@ func TestSyncDBToGit_SkipsDeletedFileWithoutKind(t *testing.T) {
 	f.probeService.AssertNotCalled(t, "ValidateUniqueProbe", mock.Anything, mock.Anything, mock.Anything)
 }
 
+func TestSyncDBToGit_ReturnsRepositorySetupError(t *testing.T) {
+	f := newSyncFixture(t)
+	// a missing checkout is set up on the first sync; pushing the setup commit
+	// needs credentials, which this config does not have
+	config := f.config
+	config.LocalPath = filepath.Join(t.TempDir(), "fresh-checkout")
+
+	err := f.svc.SyncDBToGit(context.Background(), config)
+
+	assert.ErrorContains(t, err, "Error setting up repo")
+}
+
 func TestSyncDBToGit_IgnoresProbeManifestOutsideProjectDir(t *testing.T) {
 	f := newSyncFixture(t)
 

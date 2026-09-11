@@ -438,6 +438,9 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 	}
 	if !repositoryExists {
 		err = config.setupGitRepo(GitUserFromContext(ctx))
+		if err != nil {
+			return errors.New("Error setting up repo : " + err.Error())
+		}
 	} else {
 		err = config.GitPull()
 		if err != nil {
