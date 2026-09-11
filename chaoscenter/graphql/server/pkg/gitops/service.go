@@ -21,6 +21,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	probeHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -56,14 +57,16 @@ type gitOpsService struct {
 	gitOpsOperator         *gitops.Operator
 	chaosExperimentOps     chaos_experiment.Operator
 	chaosExperimentService chaosExperimentOps.Service
+	probeService           probeHandler.Service
 }
 
 // NewGitOpsService returns a new instance of a gitOpsService
-func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator) Service {
+func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator, probeService probeHandler.Service) Service {
 	return &gitOpsService{
 		gitOpsOperator:         gitOpsOperator,
 		chaosExperimentService: chaosExperimentService,
 		chaosExperimentOps:     chaosExperimentOps,
+		probeService:           probeService,
 	}
 }
 
@@ -473,6 +476,20 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
+			kind, err := deletedFileKind(file, config)
+			if err != nil {
+				// Guessing here could soft-delete an unrelated experiment or probe
+				// that happens to share the file name, so leave the DB untouched.
+				log.Error("Cannot determine kind of deleted file, skipping it : " + file + " | " + err.Error())
+				continue
+			}
+			if isProbeManifestKind(kind) {
+				err = g.deleteProbe(ctx, file, config)
+				if err != nil {
+					log.Error("Error while deleting probe db entry : " + file + " | " + err.Error())
+				}
+				continue
+			}
 			err = g.deleteExperiment(file, config)
 			if err != nil {
 				log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
@@ -491,11 +508,19 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			log.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
-		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
+		if isProbeManifestKind(kind) {
+			log.Info("Probe manifest changed in git : " + file)
+			err = g.syncProbe(ctx, data, file, config)
+			if err != nil {
+				log.Error("Error while syncing probe db entry : " + file + " | " + err.Error())
+			}
+			continue
+		}
 		if kind != "cronexperiment" && kind != "experiment" && kind != "chaosengine" && kind != "workflow" {
 			continue
 		}
+		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 
 		log.Info("WFID in changed File :", wfID)
 		if wfID == "" {
