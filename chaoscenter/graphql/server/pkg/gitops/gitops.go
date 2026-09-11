@@ -351,19 +351,22 @@ func (c GitConfig) GitPush() error {
 	return err
 }
 
-// GitCommit saves the changes in the repo and commits them with the message provided
-func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (string, error) {
+// GitCommit saves the changes in the repo and commits them with the message
+// provided. Without deleteFiles the whole project directory is staged;
+// otherwise only the removal of the given files is.
+func (c GitConfig) GitCommit(user GitUser, message string, deleteFiles []string) (string, error) {
 	_, w, err := c.getRepositoryWorktreeReference()
 	if err != nil {
 		return "", err
 	}
-	if deleteFile == nil {
+	if len(deleteFiles) == 0 {
 		_, err = w.Add("./litmus/" + c.ProjectID + "/")
 		if err != nil {
 			return "", err
 		}
-	} else {
-		_, err := w.Remove(*deleteFile)
+	}
+	for _, deleteFile := range deleteFiles {
+		_, err := w.Remove(deleteFile)
 		if err != nil {
 			return "", err
 		}

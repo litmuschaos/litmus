@@ -348,7 +348,7 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Cannot delete experiment from git : " + err.Error())
 	}
 
-	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, &experimentPath)
+	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, []string{experimentPath})
 	if err != nil {
 		log.Error("Error", err)
 		return errors.New("Cannot commit experiment[delete] to git : " + err.Error())
