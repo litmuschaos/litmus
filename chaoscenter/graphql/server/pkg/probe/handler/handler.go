@@ -30,6 +30,7 @@ import (
 type Service interface {
 	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID, username string) (*model.Probe, error)
 	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID, username string) (string, error)
+	ValidateProbeUpdate(ctx context.Context, probe model.ProbeRequest, projectID string) error
 	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
 	DeleteProbe(ctx context.Context, probeName, projectID, username string) (bool, error)
 	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
@@ -133,6 +134,19 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	}
 
 	return newProbe.GetOutputProbe(), nil
+}
+
+// ValidateProbeUpdate reports whether request can be applied to the stored
+// probe without changing it: the probe must exist and keep its type and
+// infrastructure type, and the request must carry the properties for that
+// type. UpdateProbe performs the same checks; callers that have to act before
+// updating (such as pushing the manifest to git) use this to fail early.
+func (p *probeService) ValidateProbeUpdate(ctx context.Context, request model.ProbeRequest, projectID string) error {
+	pr, err := p.probeOperator.GetProbeByName(ctx, request.Name, projectID)
+	if err != nil {
+		return err
+	}
+	return validateProbeUpdate(pr, request)
 }
 
 // validateProbeUpdate checks request against the stored probe. The

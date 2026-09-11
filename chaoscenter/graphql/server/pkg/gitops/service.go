@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -49,6 +50,8 @@ type Service interface {
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
 	DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
+	UpsertProbeToGit(ctx context.Context, projectID string, probe model.ProbeRequest) error
+	DeleteProbeFromGit(ctx context.Context, projectID string, probeName string) error
 	GitOpsSyncHandler(singleRun bool)
 	SyncDBToGit(ctx context.Context, config GitConfig) error
 }
@@ -306,6 +309,106 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		}
 		return commit, nil
 	})
+}
+
+// UpsertProbeToGit writes the probe as a ResilienceProbe manifest to the
+// project's git repository. Manifests that already describe the probe,
+// wherever they were authored, are updated in place; otherwise the manifest
+// is created at probeFilePath.
+func (g *gitOpsService) UpsertProbeToGit(ctx context.Context, projectID string, probe model.ProbeRequest) error {
+	fileName, err := manifestFileName(probe.Name)
+	if err != nil {
+		return err
+	}
+	data, err := renderProbeManifest(probe)
+	if err != nil {
+		return errors.New("Cannot convert probe to manifest : " + err.Error())
+	}
+	return g.commitToProjectRepo(ctx, projectID, "probe", func(config GitConfig) (string, error) {
+		relPaths, err := locateProbeManifests(config, fileName)
+		if err != nil {
+			return "", errors.New("Cannot locate probe manifest in git : " + err.Error())
+		}
+		if len(relPaths) == 0 {
+			relPaths = []string{probeFilePath(config.ProjectID, fileName)}
+		}
+		for _, relPath := range relPaths {
+			err = config.WriteFile(relPath, data)
+			if err != nil {
+				return "", errors.New("Cannot write probe to git : " + err.Error())
+			}
+		}
+		commit, err := config.GitCommit(GitUserFromContext(ctx), "Updated Probe : "+probe.Name, nil)
+		if err != nil {
+			return "", errors.New("Cannot commit probe to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// DeleteProbeFromGit removes every manifest of the probe from the project's
+// git repository, wherever inside the project directory it was authored.
+func (g *gitOpsService) DeleteProbeFromGit(ctx context.Context, projectID string, probeName string) error {
+	fileName, err := manifestFileName(probeName)
+	if err != nil {
+		return err
+	}
+	return g.commitToProjectRepo(ctx, projectID, "probe[delete]", func(config GitConfig) (string, error) {
+		relPaths, err := locateProbeManifests(config, fileName)
+		if err != nil {
+			return "", errors.New("Cannot locate probe manifest in git : " + err.Error())
+		}
+		if len(relPaths) == 0 {
+			log.Error("Probe manifest not found in git : ", probeName)
+			return "", nil
+		}
+		for _, relPath := range relPaths {
+			err = os.RemoveAll(filepath.Join(config.LocalPath, relPath))
+			if err != nil {
+				return "", errors.New("Cannot delete probe from git : " + err.Error())
+			}
+		}
+		commit, err := config.GitCommit(GitUserFromContext(ctx), "Deleted Probe : "+probeName, relPaths)
+		if err != nil {
+			return "", errors.New("Cannot commit probe[delete] to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// probeFilePath is where ChaosCenter creates probe manifests, relative to the
+// repository root. Manifests authored in git may live anywhere under the
+// project directory.
+func probeFilePath(projectID, name string) string {
+	return ProjectDataPath + "/" + projectID + "/probes/" + name + ".yaml"
+}
+
+// locateProbeManifests returns the repository-relative paths of all
+// ResilienceProbe manifests named after probeName in the project directory.
+func locateProbeManifests(config GitConfig, probeName string) ([]string, error) {
+	projectDir := filepath.Join(config.LocalPath, ProjectDataPath, config.ProjectID)
+	var found []string
+	err := filepath.WalkDir(projectDir, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil || entry.IsDir() || entry.Name() != probeName+".yaml" {
+			return err
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		kind, err := manifestKind(data)
+		if err != nil || !isProbeManifestKind(kind) {
+			// not a probe manifest (or not a manifest at all); keep looking
+			return nil
+		}
+		relPath, err := filepath.Rel(config.LocalPath, path)
+		if err != nil {
+			return err
+		}
+		found = append(found, filepath.ToSlash(relPath))
+		return nil
+	})
+	return found, err
 }
 
 // commitToProjectRepo brings the project's checkout up to date with git and

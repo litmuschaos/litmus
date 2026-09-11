@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -350,6 +351,17 @@ func (c GitConfig) GitPush() error {
 		return nil
 	}
 	return err
+}
+
+// WriteFile writes content to relPath inside the local checkout, creating
+// parent directories as needed.
+func (c GitConfig) WriteFile(relPath string, content []byte) error {
+	absPath := filepath.Join(c.LocalPath, relPath)
+	err := os.MkdirAll(filepath.Dir(absPath), 0755)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(absPath, content, 0644)
 }
 
 // GitCommit saves the changes in the repo and commits them with the message
