@@ -473,6 +473,58 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 	return c.LatestCommit, visited, nil
 }
 
+// LastCommittedContent returns the content of filePath from the most recent
+// commit that contains it. It is used to inspect files that were deleted from
+// the working tree.
+func (c GitConfig) LastCommittedContent(filePath string) ([]byte, error) {
+	repo, _, err := c.getRepositoryWorktreeReference()
+	if err != nil {
+		return nil, err
+	}
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return nil, err
+	}
+
+	commitIter, err := repo.Log(&git.LogOptions{
+		From:       headRef.Hash(),
+		Order:      git.LogOrderCommitterTime,
+		PathFilter: func(path string) bool { return path == filePath },
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get commit iterator: %w", err)
+	}
+	defer commitIter.Close()
+
+	// The filter yields the commits that changed the file, newest first. The
+	// first one that still contains it is the deletion's parent.
+	for {
+		commit, err := commitIter.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		f, err := commit.File(filePath)
+		if errors.Is(err, object.ErrFileNotFound) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		contents, err := f.Contents()
+		if err != nil {
+			return nil, err
+		}
+		return []byte(contents), nil
+	}
+
+	return nil, fmt.Errorf("file %s not found in any commit", filePath)
+}
+
 // GetLatestCommitHash returns the latest commit hash in the local repo for the project directory
 func (c GitConfig) GetLatestCommitHash() (string, error) {
 	path := ProjectDataPath + "/" + c.ProjectID + "/"
