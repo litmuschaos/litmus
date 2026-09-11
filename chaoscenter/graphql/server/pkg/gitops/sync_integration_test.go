@@ -340,6 +340,112 @@ func (f *syncFixture) userHasCommit(substr string) bool {
 	return found
 }
 
+func TestUpsertProbeToGit_PushesManifestToRemote(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+	request := probeRequestsOfAllTypes()["http"]
+
+	err := f.svc.UpsertProbeToGit(context.Background(), testProjectID, request)
+
+	require.NoError(t, err)
+	f.pullUser()
+	content, exists := f.userFile("litmus/project-1/probes/http-health-check.yaml")
+	require.True(t, exists, "manifest should have been pushed to the remote")
+	parsed, err := parseProbeManifest([]byte(content))
+	require.NoError(t, err)
+	assert.Equal(t, &request, parsed)
+}
+
+func TestUpsertProbeToGit_UpdatesExistingManifest(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+	request := probeRequestsOfAllTypes()["k8s"]
+	require.NoError(t, f.svc.UpsertProbeToGit(context.Background(), testProjectID, request))
+	request.K8sProperties.Operation = "absent"
+
+	err := f.svc.UpsertProbeToGit(context.Background(), testProjectID, request)
+
+	require.NoError(t, err)
+	f.pullUser()
+	content, _ := f.userFile("litmus/project-1/probes/k8s-probe.yaml")
+	assert.Contains(t, content, "operation: absent")
+}
+
+func TestDeleteProbeFromGit_RemovesManifestWrittenByChaosCenter(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+	require.NoError(t, f.svc.UpsertProbeToGit(context.Background(), testProjectID, probeRequestsOfAllTypes()["cmd"]))
+
+	err := f.svc.DeleteProbeFromGit(context.Background(), testProjectID, "cmd-probe")
+
+	require.NoError(t, err)
+	f.pullUser()
+	_, exists := f.userFile("litmus/project-1/probes/cmd-probe.yaml")
+	assert.False(t, exists, "manifest should have been deleted from the remote")
+}
+
+func TestUpsertProbeToGit_UpdatesManifestAuthoredElsewhereInPlace(t *testing.T) {
+	f := newSyncFixture(t)
+	f.commitAndPush("litmus/project-1/team-a/http-health-check.yaml", httpProbeManifestYAML)
+	f.enableGitOpsInDB()
+	request := probeRequestsOfAllTypes()["http"]
+
+	err := f.svc.UpsertProbeToGit(context.Background(), testProjectID, request)
+
+	require.NoError(t, err)
+	f.pullUser()
+	_, defaultExists := f.userFile("litmus/project-1/probes/http-health-check.yaml")
+	assert.False(t, defaultExists, "no second manifest must be created")
+	content, exists := f.userFile("litmus/project-1/team-a/http-health-check.yaml")
+	require.True(t, exists)
+	parsed, err := parseProbeManifest([]byte(content))
+	require.NoError(t, err)
+	assert.Equal(t, &request, parsed)
+}
+
+func TestDeleteProbeFromGit_RemovesEveryManifestOfTheProbe(t *testing.T) {
+	f := newSyncFixture(t)
+	f.commitAndPush("litmus/project-1/team-a/http-health-check.yaml", httpProbeManifestYAML)
+	f.commitAndPush("litmus/project-1/probes/http-health-check.yaml", httpProbeManifestYAML)
+	f.enableGitOpsInDB()
+
+	err := f.svc.DeleteProbeFromGit(context.Background(), testProjectID, "http-health-check")
+
+	require.NoError(t, err)
+	f.pullUser()
+	_, teamExists := f.userFile("litmus/project-1/team-a/http-health-check.yaml")
+	_, defaultExists := f.userFile("litmus/project-1/probes/http-health-check.yaml")
+	assert.False(t, teamExists)
+	assert.False(t, defaultExists)
+	assert.True(t, f.userHasCommit("Deleted Probe : http-health-check"))
+}
+
+func TestDeleteProbeFromGit_RemovesManifestAuthoredElsewhere(t *testing.T) {
+	f := newSyncFixture(t)
+	// a same-named experiment manifest must not be mistaken for the probe
+	f.commitAndPush("litmus/project-1/http-health-check.yaml", "kind: Workflow\nmetadata:\n  name: http-health-check\n")
+	f.commitAndPush("litmus/project-1/team-a/http-health-check.yaml", httpProbeManifestYAML)
+	f.enableGitOpsInDB()
+
+	err := f.svc.DeleteProbeFromGit(context.Background(), testProjectID, "http-health-check")
+
+	require.NoError(t, err)
+	f.pullUser()
+	_, probeExists := f.userFile("litmus/project-1/team-a/http-health-check.yaml")
+	_, experimentExists := f.userFile("litmus/project-1/http-health-check.yaml")
+	assert.False(t, probeExists, "probe manifest should have been deleted")
+	assert.True(t, experimentExists, "experiment manifest must be left alone")
+}
+
+func TestDeleteProbeFromGit_IgnoresUnknownProbe(t *testing.T) {
+	f := newSyncFixture(t)
+	f.enableGitOpsInDB()
+
+	err := f.svc.DeleteProbeFromGit(context.Background(), testProjectID, "never-existed")
+
+	assert.NoError(t, err)
+}
+
 func TestLastCommittedContent_ReadsFilePresentAtHead(t *testing.T) {
 	f := newSyncFixture(t)
 	f.commitAndPush("litmus/project-1/http-health-check.yaml", httpProbeManifestYAML)

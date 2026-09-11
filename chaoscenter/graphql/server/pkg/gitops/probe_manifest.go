@@ -135,6 +135,57 @@ func parseProbeManifest(data []byte) (*model.ProbeRequest, error) {
 	return req, nil
 }
 
+// renderProbeManifest is the inverse of parseProbeManifest. Keys are emitted
+// in sorted order, so the output for a given probe is canonical and diffs in
+// git stay small.
+func renderProbeManifest(probe model.ProbeRequest) ([]byte, error) {
+	var properties interface{}
+	switch probe.Type {
+	case model.ProbeTypeHTTPProbe:
+		if probe.KubernetesHTTPProperties == nil {
+			return nil, errors.New("http probe type's properties are empty")
+		}
+		properties = probe.KubernetesHTTPProperties
+	case model.ProbeTypeCmdProbe:
+		if probe.KubernetesCMDProperties == nil {
+			return nil, errors.New("cmd probe type's properties are empty")
+		}
+		properties = probe.KubernetesCMDProperties
+	case model.ProbeTypePromProbe:
+		if probe.PromProperties == nil {
+			return nil, errors.New("prom probe type's properties are empty")
+		}
+		properties = probe.PromProperties
+	case model.ProbeTypeK8sProbe:
+		if probe.K8sProperties == nil {
+			return nil, errors.New("k8s probe type's properties are empty")
+		}
+		properties = probe.K8sProperties
+	default:
+		return nil, fmt.Errorf("unsupported probe type %q", probe.Type)
+	}
+
+	rawProperties, err := json.Marshal(properties)
+	if err != nil {
+		return nil, err
+	}
+
+	return yaml.Marshal(probeManifest{
+		APIVersion: probeManifestAPIVersion,
+		Kind:       probeManifestKind,
+		Metadata: probeManifestMetadata{
+			Name:        probe.Name,
+			Description: probe.Description,
+			Tags:        probe.Tags,
+		},
+		Spec: probeManifestSpec{
+			Type:               probe.Type,
+			InfrastructureType: probe.InfrastructureType,
+			Properties:         rawProperties,
+		},
+	})
+}
+
 // manifestKind returns the lowercase kind of a YAML or JSON manifest, or "" if it has none.
 func manifestKind(data []byte) (string, error) {
 	jsonData, err := yaml.YAMLToJSON(data)
