@@ -2,7 +2,7 @@ import { Card, Container, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
-import ThemeToggle from '@components/ThemeToggle/ThemeToggle';
+import ThemeSegmentedControl from '@components/ThemeToggle/ThemeSegmentedControl';
 
 export default function AccountSettingsAppearanceView(): React.ReactElement {
   const { getString } = useStrings();
@@ -16,7 +16,7 @@ export default function AccountSettingsAppearanceView(): React.ReactElement {
             <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_700}>
               {getString('darkMode')}
             </Text>
-            <ThemeToggle />
+            <ThemeSegmentedControl />
           </Layout.Horizontal>
         </Card>
       </Container>

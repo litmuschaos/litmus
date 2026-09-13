@@ -1,0 +1,81 @@
+/* stylelint-disable color-no-hex */
+
+.segmentedControl {
+  border: 1px solid var(--grey-300);
+  border-radius: 6px;
+  display: inline-flex;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.segment {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--grey-300);
+  color: var(--grey-600);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  gap: 6px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 96px;
+  padding: 7px 14px;
+  transition: background 90ms ease-in-out, color 90ms ease-in-out;
+  white-space: nowrap;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-7, #5f27cd);
+    outline-offset: -2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &.active {
+    background: var(--grey-100);
+    color: var(--grey-700);
+    font-weight: 500;
+  }
+
+  &:hover:not(.active) {
+    background: color-mix(in srgb, var(--grey-300) 40%, transparent);
+  }
+}
+
+.segmentIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ── Dark-mode overrides ── */
+/* stylelint-disable-next-line selector-pseudo-class-no-unknown */
+:global(#react-root[data-theme='dark']) {
+  .segmentedControl {
+    border-color: #4d476d;
+  }
+
+  .segment {
+    border-right-color: #4d476d;
+    color: #b0aac8;
+
+    &.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f4f2fb;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &:focus-visible {
+      outline-color: #a78bfa;
+    }
+  }
+}

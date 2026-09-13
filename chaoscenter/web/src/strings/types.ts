@@ -206,6 +206,7 @@ export interface StringsMap {
   'daily': unknown
   'dailyMessage': unknown
   'darkMode': unknown
+  'darkModeLabel': unknown
   'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
@@ -494,6 +495,7 @@ export interface StringsMap {
   'leaveProjectDescription': unknown
   'leaveThisPage': unknown
   'letsGetStarted': unknown
+  'lightMode': unknown
   'litmus': unknown
   'litmusChaos': unknown
   'litmuschaos': unknown
@@ -974,6 +976,7 @@ export interface StringsMap {
   'switchToLineChart': unknown
   'syncLatestRun': unknown
   'syncedSuccessfully': unknown
+  'systemMode': unknown
   'tags': unknown
   'target': unknown
   'targetApplication': unknown
