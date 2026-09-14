@@ -5,16 +5,18 @@ import css from './ThemeToggle.module.scss';
 /** Cycles through all three modes: light → system → dark → light. */
 const CYCLE_ORDER: ThemeMode[] = ['light', 'system', 'dark'];
 
+// prettier-ignore
 const NEXT_MODE: Record<ThemeMode, ThemeMode> = {
   dark: 'light',
   light: 'system',
-  system: 'dark'
+  system: 'dark',
 };
 
+// prettier-ignore
 const ARIA_LABEL: Record<ThemeMode, string> = {
   dark: 'Switch to light theme',
   light: 'Switch to system theme',
-  system: 'Switch to dark theme'
+  system: 'Switch to dark theme',
 };
 
 void CYCLE_ORDER; // silence unused-variable lint

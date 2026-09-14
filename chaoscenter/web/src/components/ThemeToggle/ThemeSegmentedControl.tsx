@@ -12,10 +12,11 @@ interface Segment {
   labelKey: 'lightMode' | 'systemMode' | 'darkModeLabel';
 }
 
+// prettier-ignore
 const SEGMENTS: Segment[] = [
   { mode: 'light', icon: '☀', labelKey: 'lightMode' },
   { mode: 'system', icon: '⊙', labelKey: 'systemMode' },
-  { mode: 'dark', icon: '☾', labelKey: 'darkModeLabel' }
+  { mode: 'dark', icon: '☾', labelKey: 'darkModeLabel' },
 ];
 
 /**
