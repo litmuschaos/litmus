@@ -1,1 +1,1 @@
-export { default as AccountSettingsAppearanceView } from './AccountSettingsAppearance';
+export { AccountSettingsAppearanceView } from './AccountSettingsAppearance';

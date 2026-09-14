@@ -1,9 +1,9 @@
 declare namespace ThemeSegmentedControlModuleScssNamespace {
   export interface IThemeSegmentedControlModuleScss {
-    segmentedControl: string;
+    active: string;
     segment: string;
     segmentIcon: string;
-    active: string;
+    segmentedControl: string;
   }
 }
 

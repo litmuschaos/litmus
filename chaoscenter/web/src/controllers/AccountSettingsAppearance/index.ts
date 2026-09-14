@@ -1,1 +1,1 @@
-export { default as AccountSettingsAppearanceController } from './AccountSettingsAppearance';
+export { AccountSettingsAppearanceController } from './AccountSettingsAppearance';

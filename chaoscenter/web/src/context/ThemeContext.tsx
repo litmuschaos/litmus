@@ -90,7 +90,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
-export function useTheme(): ThemeContextProps {
+export const useTheme = (): ThemeContextProps => {
   const themeContext = React.useContext(ThemeContext);
 
   if (!themeContext) {
@@ -98,4 +98,4 @@ export function useTheme(): ThemeContextProps {
   }
 
   return themeContext;
-}
+};

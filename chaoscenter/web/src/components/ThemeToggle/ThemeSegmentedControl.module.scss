@@ -70,12 +70,12 @@
       color: #f4f2fb;
     }
 
-    &:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
     &:focus-visible {
       outline-color: #a78bfa;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
     }
   }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { useTheme } from '@context';
-import type { ThemeMode } from '@context';
+import { useTheme, type ThemeMode } from '@context';
 import { useStrings } from '@strings';
 import css from './ThemeSegmentedControl.module.scss';
 
@@ -28,7 +27,7 @@ const SEGMENTS: Segment[] = [
  *   - Each button has aria-pressed reflecting selection state.
  *   - Full keyboard navigation: Tab to move focus, Enter/Space to select.
  */
-export default function ThemeSegmentedControl(): React.ReactElement {
+export const ThemeSegmentedControl = (): React.ReactElement => {
   const { themeMode, setThemeMode } = useTheme();
   const { getString } = useStrings();
 
@@ -52,4 +51,4 @@ export default function ThemeSegmentedControl(): React.ReactElement {
       ))}
     </div>
   );
-}
+};

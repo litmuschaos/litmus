@@ -2,9 +2,9 @@ import { Card, Container, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
-import ThemeSegmentedControl from '@components/ThemeToggle/ThemeSegmentedControl';
+import { ThemeSegmentedControl } from '@components/ThemeToggle/ThemeSegmentedControl';
 
-export default function AccountSettingsAppearanceView(): React.ReactElement {
+export const AccountSettingsAppearanceView = (): React.ReactElement => {
   const { getString } = useStrings();
 
   return (
@@ -22,4 +22,4 @@ export default function AccountSettingsAppearanceView(): React.ReactElement {
       </Container>
     </Layout.Vertical>
   );
-}
+};

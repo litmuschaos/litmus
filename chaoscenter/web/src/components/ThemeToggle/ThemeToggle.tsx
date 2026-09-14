@@ -1,21 +1,20 @@
 import React from 'react';
-import { useTheme } from '@context';
-import type { ThemeMode } from '@context';
+import { useTheme, type ThemeMode } from '@context';
 import css from './ThemeToggle.module.scss';
 
 /** Cycles through all three modes: light → system → dark → light. */
 const CYCLE_ORDER: ThemeMode[] = ['light', 'system', 'dark'];
 
 const NEXT_MODE: Record<ThemeMode, ThemeMode> = {
+  dark: 'light',
   light: 'system',
-  system: 'dark',
-  dark: 'light'
+  system: 'dark'
 };
 
 const ARIA_LABEL: Record<ThemeMode, string> = {
+  dark: 'Switch to light theme',
   light: 'Switch to system theme',
-  system: 'Switch to dark theme',
-  dark: 'Switch to light theme'
+  system: 'Switch to dark theme'
 };
 
 void CYCLE_ORDER; // silence unused-variable lint
@@ -25,7 +24,7 @@ void CYCLE_ORDER; // silence unused-variable lint
  * top-right header toolbar via DefaultLayout's `headerToolbar` prop.
  * Cycles through Light → System → Dark → Light.
  */
-export default function ThemeToggle(): React.ReactElement {
+export const ThemeToggle = (): React.ReactElement => {
   const { themeMode, setThemeMode } = useTheme();
 
   const handleClick = React.useCallback(() => {
@@ -41,4 +40,4 @@ export default function ThemeToggle(): React.ReactElement {
       onClick={handleClick}
     />
   );
-}
+};
