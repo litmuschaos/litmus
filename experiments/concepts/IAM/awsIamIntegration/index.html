@@ -5466,7 +5466,7 @@
 <h4 id="step-1-create-an-iam-oidc-provider-for-your-cluster">Step 1: Create an IAM OIDC provider for your cluster<a class="headerlink" href="#step-1-create-an-iam-oidc-provider-for-your-cluster" title="Permanent link">&para;</a></h4>
 <p>We need to perform this once for a cluster. We’re going to follow the <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">AWS documentation to setup an OIDC provider</a> with eksctl.</p>
 <p><strong>Check whether you have an existing IAM OIDC provider for your cluster:</strong> To check this you can follow the given instruction.</p>
-<p><strong><em>Note:</em></strong> <em>For demonstration we’ll be using cluster name as litmus-demo and region us-west-1 you can replace these values according to your ENV.</em></p>
+<p><em><strong>Note:</strong></em> <em>For demonstration we’ll be using cluster name as litmus-demo and region us-west-1 you can replace these values according to your ENV.</em></p>
 <p><div class="highlight"><pre><span></span><code>aws<span class="w"> </span>eks<span class="w"> </span>describe-cluster<span class="w"> </span>--name<span class="w"> </span>&lt;litmus-demo&gt;<span class="w"> </span>--query<span class="w"> </span><span class="s2">"cluster.identity.oidc.issuer"</span><span class="w"> </span>--output<span class="w"> </span>text
 </code></pre></div>
 <strong>Output:</strong></p>
@@ -5503,7 +5503,7 @@
 <span class="w">    </span><span class="nt">eks.amazonaws.com/role-arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;</span>
 </code></pre></div>
 <p>You can also annotate the experiment service account running the following command.</p>
-<p><strong><em>Notes:</em></strong> <br />
+<p><em><strong>Notes:</strong></em> <br />
 <em>1. Ideally, annotating the <code>litmus-admin</code> service account in <code>litmus</code> namespace should work for most of the experiments.</em> <br />
 <em>2. For the cluster autoscaler experiment, annotate the service account in the <code>kube-system</code> namespace.</em></p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>annotate<span class="w"> </span>serviceaccount<span class="w"> </span>-n<span class="w"> </span>&lt;SERVICE_ACCOUNT_NAMESPACE&gt;<span class="w"> </span>&lt;SERVICE_ACCOUNT_NAME&gt;<span class="w"> </span><span class="se">\</span>
