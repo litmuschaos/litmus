@@ -120,6 +120,13 @@ func OAuthCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+		// The email is what the account is keyed on below, so it is only usable
+		// once the provider states that it belongs to the subject.
+		if claims.Email == "" || !claims.Verified {
+			log.Errorf("OAuth Error: subject %s has no verified email claim", idToken.Subject)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
 		createdAt := time.Now().UnixMilli()
 
 		var userData = entities.User{
