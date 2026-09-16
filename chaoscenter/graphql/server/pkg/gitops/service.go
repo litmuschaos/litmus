@@ -247,6 +247,11 @@ func (g *gitOpsService) GetGitOpsDetails(ctx context.Context, projectID string) 
 
 // UpsertExperimentToGit adds/updates experiment to git
 func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
+	fileName, err := manifestFileName(experiment.ExperimentName)
+	if err != nil {
+		return err
+	}
+
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 	config, err := g.gitOpsOperator.GetGitConfig(ctx, projectID)
@@ -266,7 +271,7 @@ func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID str
 		return errors.New("Sync Error | " + err.Error())
 	}
 
-	experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
+	experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
 
 	data, err := yaml.JSONToYAML([]byte(experiment.ExperimentManifest))
 	if err != nil {
@@ -300,6 +305,11 @@ func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID str
 
 // DeleteExperimentFromGit deletes experiment from git
 func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
+	fileName, err := manifestFileName(experiment.ExperimentName)
+	if err != nil {
+		return err
+	}
+
 	log.Info("Deleting Experiment...")
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
@@ -321,7 +331,7 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Sync Error | " + err.Error())
 	}
 
-	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
+	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
 	exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
 	if err != nil {
 		return errors.New("Cannot delete experiment from git : " + err.Error())
