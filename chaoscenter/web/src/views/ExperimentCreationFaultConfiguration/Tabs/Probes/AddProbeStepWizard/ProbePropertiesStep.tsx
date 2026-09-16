@@ -65,34 +65,34 @@ export const ProbePropertiesStep: React.FC<StepProps<StepData>> = props => {
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="probeTimeout"
-                      label={formData.type == 'httpProbe' ? 'Probe Timeout (ms)' : 'Probe Timeout (sec)'}
+                      label={formData.type == 'httpProbe' ? getString('probeTimeoutMs') : getString('probeTimeoutSec')}
                       placeholder={String(formData.runProperties?.probeTimeout)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_timeout' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="interval"
-                      label="Interval (sec)"
+                      label={getString('intervalSec')}
                       placeholder={String(formData.runProperties?.interval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_interval' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="probePollingInterval"
-                      label="Polling Interval (sec)"
+                      label={getString('pollingIntervalSec')}
                       placeholder={String(formData.runProperties?.probePollingInterval)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_polling_interval' }}
                     />
                     <FormInput.Text
                       inputGroup={{ type: 'number' }}
                       name="initialDelay"
-                      label="Initial Delay (sec)"
+                      label={getString('initialDelaySec')}
                       placeholder={String(formData.runProperties?.initialDelay)}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_initial_delay' }}
                     />
                     <FormInput.CheckBox
                       name="stopOnFailure"
-                      label="Stop on Failure"
+                      label={getString('stopOnFailure')}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_stop_failure' }}
                     />
                   </Container>

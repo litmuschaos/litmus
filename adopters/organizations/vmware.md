@@ -13,4 +13,4 @@ In EUC (End-user computing), we are transforming to SaaS.  And resilience is key
 
 ### **How do we use Litmus**
 
-After the the services pass integration testing, the builds are refreshed to the Chaos Stack.  Litmus is used to inject chaos to this environment in order to make sure the services can still pass the integration test cases.
+After the services pass integration testing, the builds are refreshed to the Chaos Stack.  Litmus is used to inject chaos to this environment in order to make sure the services can still pass the integration test cases.

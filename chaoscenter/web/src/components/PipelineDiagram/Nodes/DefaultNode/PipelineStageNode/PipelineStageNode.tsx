@@ -7,6 +7,7 @@ import { Text, Button, ButtonVariation } from '@harnessio/uicore';
 import type { IconName } from '@harnessio/icons';
 import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
+import { useStrings } from '@strings';
 import { DiagramDrag, DiagramType, Event } from '../../../Constants';
 import SVGMarker from '../../SVGMarker';
 import AddLinkNode from '../AddLinkNode/AddLinkNode';
@@ -43,6 +44,7 @@ interface PipelineStageNodeProps {
   selectedNodeId?: string;
 }
 function PipelineStageNode(props: PipelineStageNodeProps): JSX.Element {
+  const { getString } = useStrings();
   const allowAdd = defaultTo(props.allowAdd, false);
   const [showAddNode, setVisibilityOfAdd] = React.useState(false);
   const CreateNode: React.FC<any> | undefined = props?.getNode?.(NodeType.CreateNode)?.component;
@@ -180,7 +182,7 @@ function PipelineStageNode(props: PipelineStageNodeProps): JSX.Element {
       >
         <div className="execution-running-animation" />
         {props?.data?.isInComplete && (
-          <Icon className={defaultCss.inComplete} size={12} name={'warning-sign'} color="orange500" />
+          <Icon className={defaultCss.inComplete} size={16} name={'execution-issue'} color="orange500" />
         )}
         {props.icon && <Icon size={28} name={props.icon as IconName} inverse={isSelectedNode()} />}
         {secondaryIcon && (
@@ -252,7 +254,7 @@ function PipelineStageNode(props: PipelineStageNodeProps): JSX.Element {
       {props.data?.conditionalExecutionEnabled && (
         <div className={defaultCss.conditional}>
           <Text
-            tooltip="Conditional Execution"
+            tooltip={getString('conditionalExecution')}
             tooltipProps={{
               isDark: true
             }}

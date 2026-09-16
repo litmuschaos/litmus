@@ -61,44 +61,26 @@
         letter-spacing: 0.13px;
       }
     }
-
-    .iconContainer {
-      position: absolute;
-      bottom: 50px;
-      right: 0;
-      left: 0;
-      overflow: hidden;
-      width: 100%;
-      pointer-events: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .icon {
-        opacity: 0.08;
-      }
-    }
   }
 }
 
 .link {
   display: block;
   margin-left: var(--spacing-medium);
+  margin-right: var(--spacing-medium);
   padding: var(--spacing-small) var(--spacing-medium);
+  border-radius: 2px;
   opacity: 0.8;
   z-index: 1;
 
   &:hover {
     text-decoration: none;
     opacity: 1;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
     background-color: var(--primary-7);
   }
 
   &.selected {
     background-color: var(--primary-7);
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
     opacity: 1;
   }
 

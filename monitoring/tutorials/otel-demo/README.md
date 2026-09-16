@@ -67,14 +67,14 @@ This tutorial provides a step-by-step guide for injecting chaos into target appl
    cd litmus/monitoring/tutorials/otel-demo
    helm install my-otel-demo open-telemetry/opentelemetry-demo --namespace otel-demo --values custom_otel_demo_values.yml
    ```
-   It contains Otel-demo microservices, OpenTelemetry(with chaos metrics), Prometheus, Jaeger and Grafana.  
+   It contains Otel-demo microservices, OpenTelemetry(with chaos metrics), Prometheus, Jaeger, Grafana, OpenSearch, and PostgreSQL.  
 4. Verify the installation.
    ```bash
    kubectl get all -n otel-demo
    ```
 5. Forward the Otel-demo frontend proxy port.
    ```bash
-   kubectl port-forward svc/my-otel-demo-frontendproxy 8080:8080 -n otel-demo
+   kubectl port-forward svc/frontend-proxy 8080:8080 -n otel-demo
    ```
 6. Access the following services.
    - Web store: [http://localhost:8080/](http://localhost:8080/)

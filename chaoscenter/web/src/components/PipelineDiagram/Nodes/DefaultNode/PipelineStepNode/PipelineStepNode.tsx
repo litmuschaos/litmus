@@ -5,6 +5,7 @@ import { Text, Button, ButtonVariation } from '@harnessio/uicore';
 import type { IconName } from '@harnessio/icons';
 import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
+import { useStrings } from '@strings';
 import { getStatusProps, getPositionOfAddIcon } from '../../utils';
 import { DiagramDrag, DiagramType, Event } from '../../../Constants';
 import SVGMarker from '../../SVGMarker';
@@ -26,6 +27,7 @@ interface PipelineStepNodeProps extends BaseReactComponentProps {
 }
 
 function PipelineStepNode(props: PipelineStepNodeProps): JSX.Element {
+  const { getString } = useStrings();
   const allowAdd = defaultTo(props.allowAdd, false);
   const [showAddNode, setVisibilityOfAdd] = React.useState(false);
   const stepType = props.type || props?.data?.step?.stepType || '';
@@ -168,7 +170,7 @@ function PipelineStepNode(props: PipelineStepNodeProps): JSX.Element {
       >
         <div className="execution-running-animation" />
         {props?.data?.isInComplete && (
-          <Icon className={defaultCss.inComplete} size={12} name={'warning-sign'} color="orange500" />
+          <Icon className={defaultCss.inComplete} size={16} name={'execution-issue'} color="orange500" />
         )}
         {stepIcon && (
           <>
@@ -203,7 +205,7 @@ function PipelineStepNode(props: PipelineStepNodeProps): JSX.Element {
         {props.data?.conditionalExecutionEnabled && (
           <div className={defaultCss.conditional}>
             <Text
-              tooltip="Conditional Execution"
+              tooltip={getString('conditionalExecution')}
               tooltipProps={{
                 isDark: true
               }}

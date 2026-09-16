@@ -90,7 +90,7 @@ func (e *Operator) GetEnvironmentWithProjectID(projectID string) ([]*Environment
 	defer cancel()
 
 	var environments []*Environment
-	results, err := mongodb.Operator.List(ctx, mongodb.EnvironmentCollection, query)
+	results, err := e.operator.List(ctx, mongodb.EnvironmentCollection, query)
 	if err != nil {
 		return []*Environment{}, err
 	}

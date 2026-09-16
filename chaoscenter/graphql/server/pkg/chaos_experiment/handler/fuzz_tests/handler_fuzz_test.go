@@ -158,7 +158,9 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 		experimentType := dbChaosExperiment.NonCronExperiment
 		ctx := context.Background()
 		mockServices := NewMockServices()
-		mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+		// Mock the List call to check for duplicate experiment names
+		cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+		mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
 		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
 			ExperimentID:   new(string),
 			InfraID:        "abc",

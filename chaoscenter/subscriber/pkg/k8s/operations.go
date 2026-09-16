@@ -132,23 +132,25 @@ func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
 	if err != nil {
 		return false, "", err
 	}
+	return isAgentConfirmedWithClientset(clientset)
+}
 
+func isAgentConfirmedWithClientset(clientset kubernetes.Interface) (bool, string, error) {
 	getCM, err := clientset.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), InfraConfigName, metav1.GetOptions{})
-	if k8s_errors.IsNotFound(err) {
-		return false, "", errors.New(InfraConfigName + " configmap not found")
-	} else if getCM.Data["IS_INFRA_CONFIRMED"] == "true" {
+	if err != nil {
+		if k8s_errors.IsNotFound(err) {
+			return false, "", errors.New(InfraConfigName + " configmap not found")
+		}
+		return false, "", err
+	}
+
+	if getCM.Data["IS_INFRA_CONFIRMED"] == "true" {
 		getSecret, err := clientset.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), InfraSecretName, metav1.GetOptions{})
 		if err != nil {
-			return false, "", errors.New(InfraSecretName + " secret not found")
-		}
-
-		if k8s_errors.IsNotFound(err) {
-			return false, "", err
+			return false, "", fmt.Errorf("failed to get %s secret: %w", InfraSecretName, err)
 		}
 
 		return true, string(getSecret.Data["ACCESS_KEY"]), nil
-	} else if err != nil {
-		return false, "", err
 	}
 
 	return false, "", nil
@@ -226,7 +228,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 
-			logrus.Info("%v not found ", obj.GetName())
+			logrus.Infof("%v not found ", obj.GetName())
 			return nil, nil
 		}
 		if err != nil {
@@ -249,7 +251,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			if k8s_errors.IsNotFound(err) {
 				fmt.Println(obj)
 				// This doesnt ever happen even if it is already deleted or not found
-				logrus.Info("%v not found ", obj.GetName())
+				logrus.Infof("%v not found ", obj.GetName())
 				return nil, nil
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
@@ -260,7 +262,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			if k8s_errors.IsNotFound(err) {
 
 				// This doesnt ever happen even if it is already deleted or not found
-				logrus.Info("%v not found ", obj.GetName())
+				logrus.Infof("%v not found ", obj.GetName())
 				return nil, nil
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource labels: ", objLabels, ", and namespace: ", obj.GetNamespace())
@@ -276,7 +278,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
-			logrus.Info("%v not found", obj.GetName())
+			logrus.Infof("%v not found", obj.GetName())
 			return nil, nil
 		}
 		if err != nil {

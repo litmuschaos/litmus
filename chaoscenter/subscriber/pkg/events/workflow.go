@@ -153,11 +153,13 @@ func (ev *subscriberEvents) WorkflowEventHandler(oldObj, workflowObj *v1alpha1.W
 		}
 
 		if nodeType == "ChaosEngine" && cd != nil {
-			// this happens if cd.ChaosResult == nil
-			if oldNodeStatus, ok := oldObj.Status.Nodes[i]; ok && oldNodeStatus.Phase == "Pending" && nodeStatus.Phase == "Running" {
-				details.Phase = "Running"
-			} else {
-				details.Phase = cd.ExperimentStatus
+			// Set default phase from chaos data
+			details.Phase = cd.ExperimentStatus
+			// Override to "Running" if transitioning from Pending (only applicable for UPDATE events where oldObj is not nil)
+			if oldObj != nil {
+				if oldNodeStatus, ok := oldObj.Status.Nodes[i]; ok && oldNodeStatus.Phase == "Pending" && nodeStatus.Phase == "Running" {
+					details.Phase = "Running"
+				}
 			}
 		}
 

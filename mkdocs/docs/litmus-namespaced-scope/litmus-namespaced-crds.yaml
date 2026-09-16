@@ -79,6 +79,8 @@ spec:
                           type: string
                         namespace:
                           type: string
+                        labelMatchMode:
+                          type: string
                       oneOf:
                         - required: [ names ]
                         - required: [ labels ]

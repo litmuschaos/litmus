@@ -155,7 +155,7 @@ Use the following example to tune this:
 
 [embedmd]:# (../chaos-engine/engine-spec/auxiliary-appinfo.yaml yaml)
 ```yaml
-# contains the comma seperated list of auxiliary applications details
+# contains the comma separated list of auxiliary applications details
 # it is provide in `<namespace1>:<key1=value1>,<namespace2>:<key2=value2>` format
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine

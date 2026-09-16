@@ -15,16 +15,19 @@ We welcome contributions of all kinds:
 ## Getting Started
 
 ### Ask Questions or Discuss Ideas
-- Join our community on [Slack](http://slack.litmuschaos.io) and post in **#litmus** for general questions or **#litmus-dev** for technical discussions.
+- Join our community on [Slack](https://slack.litmuschaos.io) and post in **#litmus** for general questions or **#litmus-dev** for technical discussions.
 
 ### Report Issues or Propose Changes
 - Open a new [GitHub issue](https://github.com/litmuschaos/litmus/issues/new) describing your request, bug, or feature idea.  
 - Check the [good-first-issues](https://github.com/litmuschaos/litmus/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label for beginner-friendly contributions.
 
 ### Set Up Your Development Environment
-- Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)  
+- **One-click automated setup**  
+  Follow the [Local Setup Guide](SETUP.md) to configure the environment automatically using shell scripts.
+- **Manual setup**  
+  Follow the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide) if you prefer to set up and configure the environment yourself.
 - Review [Development Best Practices](https://github.com/litmuschaos/litmus/wiki/Development-Best-Practices)  
-- For Go contributors, read [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
+- For Go contributors, read [Effective Go](https://go.dev/doc/effective_go) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)  
 
 You can contribute fixes and improvements by submitting a Pull Request (PR) on GitHub. Each PR will be reviewed by one or more maintainers and merged once it meets the project’s standards.
 
@@ -61,8 +64,8 @@ For full details, see the [DCO documentation](https://developercertificate.org/)
 
 3. **Develop & Test**  
 - Follow backend and frontend coding guidelines:  
-  - **Backend:** [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments), [Best Practices](https://peter.bourgon.org/go-in-production/#formatting-and-style)  
-  - **Frontend:** [Airbnb React Style Guide](https://airbnb.io/javascript/react/)  
+  - **Backend:** [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments), [Best Practices](https://peter.bourgon.org/go-in-production/#formatting-and-style)  
+  - **Frontend:** [Airbnb React Style Guide](https://javascript.airbnb.tech)  
 
 - If you are making any changes in backend, make sure you have run and tested the code locally, the reviewers might ask for relevant screenshots in the comments.
 - Include relevant tests for new code or bug fixes  
@@ -79,7 +82,7 @@ For full details, see the [DCO documentation](https://developercertificate.org/)
   - Merge occurs when all checks pass and reviews are approved  
   - If your PR is large or high-impact, coordinate with maintainers in **#litmus-dev** Slack
 
-If you are new to Go, consider reading [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
+If you are new to Go, consider reading [Effective Go](https://go.dev/doc/effective_go) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
 
 ## Pull Request Checklist
 - [ ] Rebase to the current master branch before submitting your pull request.
@@ -117,9 +120,18 @@ You can choose from a list of sub-dependent repos to contribute to, a few highli
 
 ## Community & Meetings
 
-The litmus community will have a weekly contributor sync-up on Tuesdays 16.00-16.30 IST / 12.30-13.00 CEST
+1. Community Meetings
+- These will be hosted every 3rd Wednesday of every month at  5:30 PM GMT /6:30 PM CEST /10 PM IST
+- These meetings cover community updates, new feature or release announcements, and user/adopter stories. Everyone in the community is welcome to join and participate in discussions.
 
-- The sync up meeting is held online on [Google Hangouts](https://meet.google.com/uvt-ozaw-bvp)
+
+2. Contributor Meetings
+- These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
+- These meetings focus on both technical and non-technical contributions to LitmusChaos. Maintainers, current contributors, and aspiring contributors are encouraged to join to discuss issues, fixes, enhancements, and future contributions.
+
+Fill out the [LitmusChaos Meetings invite form](https://forms.gle/qawjtFUeL431jmpv7) to get your Calendar invite!
+
 - The release items are tracked in the [release sheet](https://github.com/litmuschaos/litmus/releases).
+- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 
 If you cannot attend, participate asynchronously via Slack or GitHub discussions.

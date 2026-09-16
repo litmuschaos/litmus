@@ -29,7 +29,7 @@ export default function MinutesTab(props: MinutesTabInterface): JSX.Element {
         <FormInput.Select
           name="minutes"
           items={cronSensicalMinutesOptions}
-          placeholder="Select"
+          placeholder={getString('select')}
           onChange={option => {
             formikProps.setValues({
               ...values,

@@ -21,13 +21,14 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Service interface {
 	ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
 	ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error)
-	ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error
+	ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID string, notifyID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
@@ -71,10 +72,15 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 	return nil
 }
 
-// ProcessExperimentRunStop deletes a workflow entry and updates the database
-func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
+// ProcessExperimentRunStop marks an experiment run as stopped in the database and notifies
+// the infra subscriber if it's currently connected. Updating the DB here is important because
+// the infra might be disconnected (e.g. agent redeployed), in which case the stop signal
+// never reaches the agent and the run would be stuck in Running state forever.
+func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID string, notifyID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
 	update := bson.D{
 		{"$set", bson.D{
+			{"phase", string(model.ExperimentRunStatusStopped)},
+			{"completed", true},
 			{"updated_at", time.Now().UnixMilli()},
 			{"updated_by", mongodb.UserDetailResponse{
 				Username: username,
@@ -86,10 +92,61 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 	if err != nil {
 		return err
 	}
-	if r != nil {
+
+	if experimentRunID != "" {
+		experimentFilter := bson.D{
+			{"experiment_id", experiment.ExperimentID},
+			{"project_id", projectID},
+			{"recent_experiment_run_details.experiment_run_id", experimentRunID},
+		}
+
+		experimentUpdate := bson.D{
+			{"$set", bson.D{
+				{"recent_experiment_run_details.$.phase", string(model.ExperimentRunStatusStopped)},
+				{"recent_experiment_run_details.$.completed", true},
+				{"recent_experiment_run_details.$.updated_at", time.Now().UnixMilli()},
+				{"recent_experiment_run_details.$.updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
+			}},
+		}
+
+		err = c.chaosExperimentOperator.UpdateChaosExperiment(ctx, experimentFilter, experimentUpdate)
+		if err != nil {
+			logrus.WithError(err).Error("Failed to update experiment collection recent run details")
+			return fmt.Errorf("failed to update experiment collection recent run details: %w", err)
+		}
+	} else if notifyID != nil {
+		experimentFilter := bson.D{
+			{"experiment_id", experiment.ExperimentID},
+			{"project_id", projectID},
+			{"recent_experiment_run_details.notify_id", *notifyID},
+		}
+
+		experimentUpdate := bson.D{
+			{"$set", bson.D{
+				{"recent_experiment_run_details.$.phase", string(model.ExperimentRunStatusStopped)},
+				{"recent_experiment_run_details.$.completed", true},
+				{"recent_experiment_run_details.$.updated_at", time.Now().UnixMilli()},
+				{"recent_experiment_run_details.$.updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
+			}},
+		}
+
+		err = c.chaosExperimentOperator.UpdateChaosExperiment(ctx, experimentFilter, experimentUpdate)
+		if err != nil {
+			logrus.WithError(err).Error("Failed to update experiment collection recent run details by notify_id")
+			return fmt.Errorf("failed to update experiment collection recent run details by notify_id: %w", err)
+		}
+	}
+
+	// Best-effort: notify the agent to clean up in-flight resources. If the infra
+	// is not connected the channel send is a no-op and the DB state is still correct.
+	if r != nil && experimentRunID != "" {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
 			InfraID: experiment.InfraID,
-		}, &username, experimentRunID, "workflow_run_stop", r)
+		}, &username, &experimentRunID, "workflow_run_stop", r)
 	}
 
 	return nil

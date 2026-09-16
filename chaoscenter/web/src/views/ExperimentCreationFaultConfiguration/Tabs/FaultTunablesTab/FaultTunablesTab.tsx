@@ -1,5 +1,5 @@
-import React from 'react';
-import { Formik, Form, FormikProps } from 'formik';
+import React, { useEffect, useRef } from 'react';
+import { Formik, Form, FormikProps, useFormikContext } from 'formik';
 import { Container, Layout, Text } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import type { FaultData, FaultTunables } from '@models';
@@ -24,6 +24,56 @@ interface FaultTunablesTabProps {
   initialFaultTunables: FaultTunables | undefined;
   setFaultWeight: React.Dispatch<React.SetStateAction<number>>;
 }
+
+const AutoSaveOnUnmount = ({
+  setFaultData,
+  faultData
+}: {
+  setFaultData: React.Dispatch<React.SetStateAction<FaultData | undefined>>;
+  faultData: FaultData | undefined;
+}) => {
+  const { values } = useFormikContext<TuneExperimentForm>();
+
+  const valuesRef = useRef(values);
+  const faultDataRef = useRef(faultData);
+
+  useEffect(() => {
+    valuesRef.current = values;
+    faultDataRef.current = faultData;
+  });
+
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
+
+  useEffect(() => {
+    return () => {
+      if (!valuesRef.current || !experimentHandler) return;
+
+      const existingFaultData = faultDataRef.current;
+      if (!existingFaultData?.engineCR) return;
+
+      const existingResources =
+        existingFaultData.engineCR.spec?.components?.runner?.resources;
+
+      const updatedFaultData =
+        experimentHandler.updateFaultTunablesInFaultData(
+          existingFaultData,
+          getFaultTunableFromTuneExperimentFormValues(valuesRef.current)
+        );
+
+      if (
+        existingResources &&
+        updatedFaultData?.engineCR?.spec?.components?.runner
+      ) {
+        updatedFaultData.engineCR.spec.components.runner.resources =
+          existingResources;
+      }
+
+      setFaultData(updatedFaultData);
+    };
+  }, []);
+
+  return null;
+};
 
 export default function FaultTunablesTab({
   formRef,
@@ -69,6 +119,7 @@ export default function FaultTunablesTab({
             {formikProps => {
               return (
                 <>
+                  <AutoSaveOnUnmount setFaultData={setFaultData} faultData={faultData} />
                   <Form
                     style={{
                       height: collapsed ? faultTunableLength * 66 - 7 : Math.min(6, faultTunableLength) * 66 - 7,

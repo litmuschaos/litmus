@@ -8,6 +8,7 @@ import { PatternLines } from '@visx/pattern';
 import { LinearGradient } from '@visx/gradient';
 import { max, extent } from 'd3-array';
 import { Button, ButtonVariation } from '@harnessio/uicore';
+import { useStrings } from '@strings';
 import VisxAreaChart from './VisxAreaChart';
 
 interface GraphDataProps {
@@ -53,6 +54,7 @@ function ResiliencyScoreGraph({
   },
   graphData
 }: ResiliencyScoreGraphProps): JSX.Element {
+  const { getString } = useStrings();
   const stock = graphData;
 
   const brushRef = useRef<BaseBrush | null>(null);
@@ -211,14 +213,14 @@ function ResiliencyScoreGraph({
       </svg>
       <Button
         variation={ButtonVariation.PRIMARY}
-        text="Clear"
+        text={getString('clear')}
         icon="reset"
         onClick={handleClearClick}
         style={{ display: 'none' }}
       />
       <Button
         variation={ButtonVariation.PRIMARY}
-        text="Reset"
+        text={getString('reset')}
         icon="reset"
         onClick={handleResetClick}
         style={{ display: 'none' }}

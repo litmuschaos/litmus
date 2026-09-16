@@ -5,6 +5,7 @@ import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
 import { useHistory, useParams } from 'react-router-dom';
 import { Form, FormikProps, Formik } from 'formik';
 import { defaultTo } from 'lodash-es';
+import * as Yup from 'yup';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
@@ -19,6 +20,7 @@ import {
 } from '@api/entities';
 import type { GetImageRegistryRequest } from '@api/core/ImageRegistry';
 import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateImageRegistry';
+import { IMAGE_REGISTRY_REGEX, IMAGE_REPO_REGEX, K8S_SECRET_NAME_REGEX } from '@constants/validation';
 import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
@@ -124,6 +126,28 @@ export default function ImageRegistryView({
             onSubmit={values => handleSubmit(values)}
             innerRef={formikRef}
             enableReinitialize
+            validationSchema={Yup.object().shape({
+              isDefault: Yup.boolean(),
+              imageRegistryName: Yup.string().when('isDefault', {
+                is: false,
+                then: Yup.string()
+                  .required(getString('imageRegistryNameRequired'))
+                  .matches(IMAGE_REGISTRY_REGEX, getString('imageRegistryNameInvalid'))
+              }),
+              imageRepoName: Yup.string().when('isDefault', {
+                is: false,
+                then: Yup.string()
+                  .required(getString('imageRepoNameRequired'))
+                  .matches(IMAGE_REPO_REGEX, getString('imageRepoNameInvalid'))
+              }),
+              secretName: Yup.string().when(['isDefault', 'imageRegistryType'], {
+                is: (isDefault: boolean, imageRegistryType: string) =>
+                  !isDefault && imageRegistryType === ImageRegistryType.PRIVATE,
+                then: Yup.string()
+                  .required(getString('imageSecretNameRequired'))
+                  .matches(K8S_SECRET_NAME_REGEX, getString('imageSecretNameInvalid'))
+              })
+            })}
           >
             {formikProps => {
               return (

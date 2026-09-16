@@ -15,7 +15,10 @@ export default function OverviewController(): React.ReactElement {
   });
 
   const { data: infraStats, loading: loadingInfraStats } = getInfraStats({
-    ...scope
+    ...scope,
+    options: {
+      fetchPolicy: 'network-only'
+    }
   });
   const { data: experimentStats, loading: loadingExperimentStats } = getExperimentStats({
     ...scope

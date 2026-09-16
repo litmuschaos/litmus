@@ -20,19 +20,30 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
 	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -47,15 +58,15 @@ func init() {
 	}
 }
 
-func validateVersion() error {
+func validateVersion(mongoOperator mongodb.MongoOperator) error {
 	currentVersion := utils.Config.Version
-	dbVersion, err := config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), mongoOperator, "version")
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
 		err := config.CreateConfig(
-			context.Background(),
+			context.Background(), mongoOperator,
 			&config.ServerConfig{Key: "version", Value: currentVersion},
 		)
 		if err != nil {
@@ -76,6 +87,7 @@ func setupGin() *gin.Engine {
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.ValidateCors())
+	router.Use(metrics.MetricsMiddleware())
 	return router
 }
 
@@ -90,9 +102,8 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
-	if err := validateVersion(); err != nil {
+	if err := validateVersion(mongodbOperator); err != nil {
 		log.Fatal(err)
 	}
 
@@ -139,10 +150,48 @@ func main() {
 	if enableIntrospection {
 		srv.Use(extension.Introspection{})
 	}
+	limit := utils.Config.GqlQueryComplexityLimit
+	if limit > 0 {
+		srv.Use(extension.FixedComplexityLimit(limit))
+	} else if limit < 0 {
+		log.Warnf("GQL_QUERY_COMPLEXITY_LIMIT is set to %d which is invalid; skipping complexity limiting", limit)
+	}
+
+	// GraphQL operation tracking middleware
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		oc := graphql.GetOperationContext(ctx)
+		operationType := "query"
+		if oc.Operation != nil && oc.Operation.Operation == "mutation" {
+			operationType = "mutation"
+		}
+		operationName := oc.OperationName
+		if operationName == "" {
+			operationName = "anonymous"
+		}
+
+		// Store operation details in context for HTTP middleware to use
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationNameKey, operationName)
+		ctx = context.WithValue(ctx, metrics.GraphqlOperationTypeKey, operationType)
+
+		return next(ctx)
+	})
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).SyncDefaultChaosHubs()
+
+	// go routine for syncing gitops
+	chaosInfraOperator := dbChaosInfra.NewInfrastructureOperator(mongodbOperator)
+	chaosExperimentOperator := chaos_experiment.NewChaosExperimentOperator(mongodbOperator)
+	chaosExperimentRunOperator := chaos_experiment_run.NewChaosExperimentRunOperator(mongodbOperator)
+	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
+	probeOperator := dbSchemaProbe.NewChaosProbeOperator(mongodbOperator)
+
+	probeService := probe.NewProbeService(probeOperator)
+	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+
+	go gitOpsService.GitOpsSyncHandler(false)
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
@@ -156,10 +205,11 @@ func main() {
 
 	//general routers
 	router.GET("/status", handlers.StatusHandler())
-	router.GET("/readiness", handlers.ReadinessHandler())
+	router.GET("/readiness", handlers.ReadinessHandler(mongodbOperator))
 
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
+	go startMetricsServer()
 
 	if enableHTTPSConnection {
 		if utils.Config.TlsCertPath == "" || utils.Config.TlsKeyPath == "" {
@@ -224,4 +274,19 @@ func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 
 	log.Infof("GRPC server listening on %v", lis.Addr())
 	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startMetricsServer starts a separate HTTP server for Prometheus metrics
+func startMetricsServer() {
+	metricsRouter := gin.New()
+	metricsRouter.Use(gin.Recovery())
+	metricsRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	metricsPort := utils.Config.MetricsPort
+	log.Infof("Metrics server running at http://localhost:%s/metrics", metricsPort)
+
+	if err := http.ListenAndServe(":"+metricsPort, metricsRouter); err != nil {
+		log.Fatalf("Failed to start metrics server: %v", err)
+	}
+
 }

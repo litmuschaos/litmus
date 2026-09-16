@@ -6,7 +6,7 @@ import (
 	"time"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // generateExpiredFakeJWTToken generates a fake JWT token with expiration time set to the past

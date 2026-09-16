@@ -14,8 +14,12 @@ updates:
     directory: "chaoscenter/subscriber"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "github.com/argoproj/argo-workflows/v3"
 
   - package-ecosystem: "gomod"
     directory: "chaoscenter/graphql/server"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "github.com/argoproj/argo-workflows/v3"

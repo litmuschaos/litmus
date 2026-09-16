@@ -14,7 +14,7 @@ import {
 } from '@components/ExperimentActionButtons';
 import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { ExperimentRunStatus, ExperimentType, InfrastructureType } from '@api/entities';
-import { listExperiment, ListExperimentResponse } from '@api/core';
+import { listExperiment } from '@api/core';
 import { getScope } from '@utils';
 import { cronEnabled } from 'utils';
 
@@ -28,6 +28,8 @@ interface RightSideBarViewV2Props extends Partial<RefetchExperiments>, Partial<R
   isCronEnabled?: boolean;
   setIsCronEnabled?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   isEditMode?: boolean;
+  isExperimentRunning?: boolean;
+  runDisabled?: boolean;
 }
 
 function RightSideBarV2({
@@ -40,24 +42,22 @@ function RightSideBarV2({
   isEditMode,
   isCronEnabled,
   setIsCronEnabled,
+  isExperimentRunning,
+  runDisabled,
   refetchExperiments,
   refetchExperimentRuns
 }: RightSideBarViewV2Props): React.ReactElement {
   const { showError } = useToaster();
-  let experimentList: ListExperimentResponse | undefined;
-  if (experimentType === ExperimentType.CRON) {
-    const scope = getScope();
-    const { data: experimentListData } = listExperiment({
-      ...scope,
-      experimentIDs: [experimentID],
-      options: {
-        onError: err => showError(err.message),
-        fetchPolicy: 'network-only'
-      }
-    });
-
-    experimentList = experimentListData;
-  }
+  const scope = getScope();
+  const { data: experimentList } = listExperiment({
+    ...scope,
+    experimentIDs: [experimentID],
+    options: {
+      onError: err => showError(err.message),
+      fetchPolicy: 'network-only',
+      skip: experimentType !== ExperimentType.CRON
+    }
+  });
 
   React.useEffect(() => {
     if (experimentList !== undefined) {
@@ -70,7 +70,9 @@ function RightSideBarV2({
   }, [experimentList]);
 
   const { getString } = useStrings();
-  const showStopButton = phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
+  const showStopButton = isEditMode
+    ? isExperimentRunning // In edit mode, only rely on isExperimentRunning prop
+    : isExperimentRunning || phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
 
   const showEnableDisableCronButton =
     experimentType && experimentType === ExperimentType.CRON && isCronEnabled !== undefined;
@@ -158,7 +160,7 @@ function RightSideBarV2({
                 tooltipProps={{ disabled: true }}
                 experimentID={experimentID}
                 refetchExperiments={refetchExperiments}
-                // buttonProps={{ disabled: phase === ExperimentRunStatus.QUEUED }}
+                disabled={Boolean(runDisabled)}
               />
               <Text
                 style={{ textAlign: 'center' }}

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"

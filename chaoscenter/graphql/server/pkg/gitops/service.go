@@ -379,7 +379,6 @@ func (g *gitOpsService) gitSyncHelper(config gitops.GitConfigDB, wg *sync.WaitGr
 	}
 
 	gitConfig := GetGitOpsConfig(*conf)
-
 	err = g.SyncDBToGit(nil, gitConfig)
 	if err != nil {
 		log.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
@@ -480,9 +479,9 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			log.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
-		wfID := gjson.Get(string(data), "metadata.labels.experiment_id").String()
+		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
-		if kind != "cronexperiment" && kind != "experiment" && kind != "chaosengine" {
+		if kind != "cronexperiment" && kind != "experiment" && kind != "chaosengine" && kind != "workflow" {
 			continue
 		}
 

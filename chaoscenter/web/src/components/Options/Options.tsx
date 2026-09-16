@@ -3,12 +3,12 @@ import { Icon, IconName } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
 import React from 'react';
 import { Classes } from '@blueprintjs/core';
-import { useStrings } from '@strings';
+import { useStrings, StringKeys } from '@strings';
 import css from './Options.module.scss';
 
 interface OptionItemProps {
   icon: IconName;
-  text: string;
+  text: StringKeys;
   size: number;
   color?: string;
   disabled?: boolean;
@@ -37,7 +37,7 @@ function OptionItem({ icon, size, text, color, handler, disabled }: OptionItemPr
         style={{ padding: '6px 5px' }}
         tooltip={disabled ? getString('faultShouldHaveAtleastOneProbe') : undefined}
       >
-        {text}
+        {getString(text)}
       </Text>
     </div>
   );
@@ -56,7 +56,7 @@ export default function Options({ handleDelete, handleNavigate, disabled }: Opti
               disabled={disabled}
               icon="main-trash"
               color={disabled ? Color.GREY_400 : Color.RED_600}
-              text="Delete"
+              text="delete"
               size={19}
               handler={handleDelete}
             />
@@ -65,7 +65,7 @@ export default function Options({ handleDelete, handleNavigate, disabled }: Opti
             <OptionItem
               disabled={disabled}
               icon="command-resource-constraint"
-              text="View"
+              text="view"
               size={19}
               handler={handleNavigate}
             />

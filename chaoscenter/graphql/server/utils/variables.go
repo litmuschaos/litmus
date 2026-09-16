@@ -20,6 +20,7 @@ type Configuration struct {
 	ContainerRuntimeExecutor    string   `required:"true" split_words:"true"`
 	WorkflowHelperImageVersion  string   `required:"true" split_words:"true"`
 	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
+	ChaosGraphQLEndpoint        string   `split_words:"true" default:"http://chaos-litmus-server-service:9002"`
 	TlsCertB64                  string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string   `split_words:"true" default:"3030"`
@@ -29,9 +30,16 @@ type Configuration struct {
 	RestPort                    string   `split_words:"true" default:"8080"`
 	GrpcPort                    string   `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string   `required:"true" split_words:"true"`
-	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	GitUsername                 string   `required:"true" split_words:"true" default:"litmus"`
+	DefaultHubName              string   `required:"true" split_words:"true" default:"Litmus ChaosHub"`
+	DefaultHubGitURL            string   `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string   `required:"true" split_words:"true"`
+	DefaultHubIsPrivate         bool     `required:"true" split_words:"true" default:"false"`
+	DefaultHubAuthType          string   `split_words:"true"`
+	DefaultHubToken             string   `split_words:"true"`
+	DefaultHubUserName          string   `split_words:"true"`
+	DefaultHubPassword          string   `split_words:"true"`
+	DefaultHubSshPrivateKey     string   `split_words:"true"`
 	CustomChaosHubPath          string   `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string   `split_words:"true" default:"false"`
@@ -40,6 +48,8 @@ type Configuration struct {
 	TlsKeyPath                  string   `split_words:"true"`
 	CaCertTlsPath               string   `split_words:"true"`
 	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
+	GqlQueryComplexityLimit     int      `split_words:"true" default:"200"`
+	MetricsPort                 string   `envconfig:"METRICS_PORT" default:"8889"`
 }
 
 var Config Configuration

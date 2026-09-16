@@ -18,6 +18,9 @@ export function useRouteWithBaseUrl(scope?: RouteScope): UseRouteDefinitionsProp
   const { renderUrl, projectID } = useAppStore();
 
   function withProjectID(route: string): string {
+    if (!projectID || projectID.trim() === '') {
+      return `/settings/projects`;
+    }
     return `/project/${projectID}/${route.replace(/^\//, '')}`;
   }
 
@@ -31,6 +34,6 @@ export function useRouteWithBaseUrl(scope?: RouteScope): UseRouteDefinitionsProp
           normalizePath(`${renderUrl}/${scope === 'account' ? route(params) : withProjectID(route(params))}`)
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderUrl]
+    [renderUrl, projectID, scope]
   );
 }

@@ -34,6 +34,7 @@ func (g *GitMutexLock) Unlock(repo string, branch *string) {
 	key := getKey(repo, branch)
 	g.mapMutex.Lock()
 	if _, ok := g.gitMutex[key]; !ok {
+		g.mapMutex.Unlock()
 		return
 	}
 	temp := g.gitMutex[key]

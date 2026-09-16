@@ -11,6 +11,7 @@ import css from './ChaosStudio.module.scss';
 interface StudioActionButtonsProps {
   disabled: boolean;
   loading: boolean;
+  runDisabled?: boolean;
   handleDiscard: () => void;
   saveExperimentHandler: () => Promise<void>;
   runExperimentHandler: () => void;
@@ -19,6 +20,7 @@ interface StudioActionButtonsProps {
 export default function StudioActionButtons({
   disabled,
   loading,
+  runDisabled,
   handleDiscard,
   saveExperimentHandler,
   runExperimentHandler
@@ -32,7 +34,7 @@ export default function StudioActionButtons({
     <Layout.Horizontal spacing={'small'} flex={{ alignItems: 'center' }}>
       {hasUnsavedChangesInURL && (
         <Text color={Color.ORANGE_600} font={{ size: 'small' }} className={css.tagRender}>
-          Unsaved Changes
+          {getString('unsavedChanges')}
         </Text>
       )}
       <RbacButton
@@ -59,7 +61,7 @@ export default function StudioActionButtons({
         size={ButtonSize.SMALL}
         text={experimentType === ExperimentType.NON_CRON ? getString('run') : getString('schedule')}
         onClick={runExperimentHandler}
-        disabled={disabled || loading || hasUnsavedChangesInURL}
+        disabled={disabled || loading || hasUnsavedChangesInURL || Boolean(runDisabled)}
         tooltip={disabled ? getString('pleaseComplete') : undefined}
       />
     </Layout.Horizontal>

@@ -187,6 +187,12 @@ export abstract class ExperimentYamlService extends ChaosIDB {
     weight: number
   ): Promise<void>;
 
+  abstract updateFaultStepName(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    faultName: string,
+    stepName: string
+  ): Promise<void>;
+
   abstract updateExperimentManifestWithFaultData(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
     faultData: FaultData

@@ -86,7 +86,7 @@ export default function StudioScheduleView({ mode }: StudioScheduleViewProps): R
               <Form className={css.formContainer}>
                 <RadioButtonGroup
                   name="type"
-                  label={<Text font={{ variation: FontVariation.CARD_TITLE }}>Select Schedule</Text>}
+                  label={<Text font={{ variation: FontVariation.CARD_TITLE }}>{getString('selectSchedule')}</Text>}
                   inline={false}
                   selectedValue={formikProps.values.type}
                   onChange={(e: FormEvent<HTMLInputElement>) => {
