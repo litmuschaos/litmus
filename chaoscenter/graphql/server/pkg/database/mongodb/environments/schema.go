@@ -23,6 +23,6 @@ type TotalFilteredData struct {
 }
 
 type AggregatedEnvironments struct {
-	TotalFilteredEnvironments []TotalFilteredData `bson:"total_filtered_environments"`
-	Environments              []Environment       `bson:"environments"`
+	TotalFilteredEnvironments int           `bson:"total_filtered_environments"`
+	Environments              []Environment `bson:"environments"`
 }

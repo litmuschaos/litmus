@@ -92,19 +92,29 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 		pipeline = append(pipeline, sortStage)
 	}
 
-	// Pagination stages
-	paginationStages := project_utils.CreatePaginationStage(request.Pagination)
+	// Pagination stage
+	_, skip, limit := project_utils.CreatePaginationStage(request.Pagination)
 
-	// Facet stage to count total projects and paginate results
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"totalCount", bson.A{
-				bson.D{{"$count", "totalNumberOfProjects"}},
-			}},
-			{"projects", append(mongo.Pipeline{}, paginationStages...)},
+	// Count total project and get top-level document to array
+	countStage := bson.D{
+		{"$group", bson.D{
+			{"_id", nil},
+			{"totalNumberOfProjects", bson.D{{"$sum", 1}}},
+			{"projects", bson.D{{"$push", "$$ROOT"}}},
 		}},
 	}
-	pipeline = append(pipeline, facetStage)
+
+	// Paging results
+	pagingStage := bson.D{
+		{"$project", bson.D{
+			{"_id", 0},
+			{"totalNumberOfProjects", 1},
+			{"projects", bson.D{
+				{"$slice", bson.A{"$projects", skip, limit}},
+			}},
+		}}}
+
+	pipeline = append(pipeline, countStage, pagingStage)
 
 	// Execute the aggregate pipeline
 	cursor, err := r.Collection.Aggregate(ctx, pipeline)
@@ -115,10 +125,8 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 
 	// Extract results
 	var result struct {
-		TotalCount []struct {
-			TotalNumberOfProjects int64 `bson:"totalNumberOfProjects"`
-		} `bson:"totalCount"`
-		Projects []*entities.Project `bson:"projects"`
+		TotalNumberOfProjects int64               `bson:"totalNumberOfProjects"`
+		Projects              []*entities.Project `bson:"projects"`
 	}
 
 	if cursor.Next(ctx) {
@@ -128,8 +136,8 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 	}
 
 	var totalNumberOfProjects int64
-	if len(result.TotalCount) > 0 {
-		totalNumberOfProjects = result.TotalCount[0].TotalNumberOfProjects
+	if result.TotalNumberOfProjects > 0 {
+		totalNumberOfProjects = result.TotalNumberOfProjects
 	} else {
 		zero := int64(0)
 		return &entities.ListProjectResponse{
