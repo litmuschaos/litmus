@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DexRouter creates all the required routes for OAuth purposes.
-func DexRouter(router *gin.Engine, service services.ApplicationService) {
-	router.GET("/dex/login", rest.DexLogin())
-	router.GET("/dex/callback", rest.DexCallback(service))
+// OAuthRouter creates all the required routes for OAuth purposes.
+func OAuthRouter(router *gin.Engine, service services.ApplicationService) {
+	router.GET("/oauth/login", rest.OAuthLogin())
+	router.GET("/oauth/callback", rest.OAuthCallback(service))
 }

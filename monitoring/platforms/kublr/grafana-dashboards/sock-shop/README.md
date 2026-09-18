@@ -1,6 +1,6 @@
 # Sock shop application metrics dashboard
 
-This dashboard visualizes Sock Shop application metrics metrics interleaved with chaos events and chaos exporter metrics.
+This dashboard visualizes Sock Shop application metrics interleaved with chaos events and chaos exporter metrics.
 
 ## Prerequisites
 

@@ -1,6 +1,6 @@
 This is a list of organizations that have publicly acknowledged usage of LitmusChaos and shared details of how they are leveraging it for chaos engineering.
 Please send a PR to this file (along with details in a respective [org](./adopters/organizations) folder) to add/remove entries. If you are an independent user
-and wish to to share your adoption story, please raise a PR against the [users](USERS.md) file.
+and wish to share your adoption story, please raise a PR against the [users](USERS.md) file.
 
 These organizations have been broadly classified on the basis of how they contribute to the ecosystem: as vendors, as solution providers or as pure end-users of
 cloud-native technologies. Also included in this list are CNCF (or other) open-source projects that have integrated with Litmus or use it as part of their release/delivery process.
@@ -34,6 +34,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 | [PokerBaazi](https://www.pokerbaazi.com/)                                        | Chaos Engineering for Online Gaming                                                                      | [Our Story](adopters/organizations/pokerbaazi.md)                                      |
 | [Amadeus](https://amadeus.com/)                                                  | Enhance the resilience and reliability in Amadeus through Chaos Engineering                              | [Our Story](adopters/organizations/amadeus.md)                                      |
 | [Intertech](https://www.intertech.com.tr/)                                                  | Validate the resilience of our critical banking infrastructure through Chaos Engineering                              | [Our Story](adopters/organizations/intertech.md)                                      |
+| [Motorola Solutions](https://www.motorolasolutions.com/)                                    | Chaos Engineering for mission-critical microservices and workloads                                                    | [Our Story](adopters/organizations/motorola-solutions.md)                             |
 
 ### Cloud-Native Vendors
 
@@ -43,6 +44,7 @@ devops/reliability pipelines (such as for customer portals/websites etc.,) withi
 | Organization                                                                       | Usecase                                                                                                                                 | Details                                                                                |
 | :--------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
 | [KubeSphere](https://kubesphere.io/)                                               | Chaos Engineering                                                                                                                       | To Be Added                                                                            |
+| [Canonical](https://canonical.com/)                                                | Juju charmed operators for the Litmus control plane & chaos-testing charmed workloads                                                   | [Our Story](adopters/organizations/canonical.md)                                       |
 | [Kublr](https://kublr.com/)                                                        | Identify the weak spots and components prone to failures under stress                                                                   | [Our Story](adopters/organizations/kublr.md)                                           |
 | [MayaData](https://mayadata.io)                                                    | [Director Online](https://director.mayadata.io/)                                                                                        | [Our Story](adopters/organizations/mayadata.md)                                        |
 | [NetApp](https://www.netapp.com)                                                   | [Chaos Engineering](https://www.netapp.com/us/index.aspx)                                                                               | [Our Story](adopters/organizations/netapp.md)                                          |

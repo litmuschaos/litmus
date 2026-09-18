@@ -20,10 +20,10 @@ type SubscriberConfigurations struct {
 }
 
 func GetEndpoint(host string) (string, error) {
-	const apiPath = "/api/query"
+	const apiPath = "/query"
 	// returns endpoint from env, if provided by user
-	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return strings.TrimRight(utils.Config.ChaosCenterUiEndpoint, "/") + apiPath, nil
+	if utils.Config.ChaosGraphQLEndpoint != "" {
+		return strings.TrimRight(utils.Config.ChaosGraphQLEndpoint, "/") + apiPath, nil
 	}
 
 	return strings.TrimRight(host, "/") + apiPath, nil

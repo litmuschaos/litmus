@@ -226,6 +226,7 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
+  'deployUsingKubectlApplyCommand': unknown
   'deleteProject': unknown
   'deleteProjectWarning': unknown
   'deleteSuccess': unknown
@@ -384,6 +385,7 @@ export interface StringsMap {
   'greatJob': unknown
   'group': unknown
   'healthy': unknown
+  'helmInstallation': unknown
   'history': unknown
   'hostedOn': unknown
   'hostedOnAgent': unknown
@@ -502,6 +504,7 @@ export interface StringsMap {
   'logsOptional': unknown
   'mainTitle': unknown
   'manifestDownloadUnsuccessful': unknown
+  'manifestInstallation': unknown
   'manifestMissing': unknown
   'manual': unknown
   'manualInterruption': unknown

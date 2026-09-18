@@ -66,3 +66,20 @@ func TestReadinessHandler_DatabaseUpWithoutLitmus(t *testing.T) {
 	assert.Contains(t, w.Body.String(), `"database":"down"`)
 	mockOp.AssertExpectations(t)
 }
+
+func TestFileHandlerInvalidTokenReturnsAfterError(t *testing.T) {
+	mockOp := new(mocks.MongoOperator)
+
+	w := httptest.NewRecorder()
+	ctx := GetTestGinContext(w)
+	ctx.Params = []gin.Param{{Key: "key", Value: "not-a-jwt.yaml"}}
+
+	handlers.FileHandler(mockOp)(ctx)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Contains(t, w.Body.String(), "token contains an invalid number of segments")
+	assert.NotContains(t, w.Body.String(), "mongo: no documents in result")
+	assert.NotContains(t, w.Body.String(), "unable to parse referer header")
+	mockOp.AssertNotCalled(t, "Get", mock.Anything, mock.Anything, mock.Anything)
+	mockOp.AssertExpectations(t)
+}

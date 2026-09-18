@@ -1,6 +1,6 @@
 # Repeat Schedule
 
-It schedule the chaos in the repeat mode. There are various ways we can set up this type of schedule by varying the the fields inside `spec.repeat`. 
+It schedules chaos in repeat mode. There are various ways we can set up this type of schedule by varying the fields inside `spec.repeat`.
 
 `Note` - We have just one field i.e. minChaosInterval to be specified as mandatory one. All other fields are optional and totally dependent on the desired behaviour.
 

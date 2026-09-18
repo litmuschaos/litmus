@@ -1,7 +1,7 @@
-//  ^[a-zA-Z]          # Must start with a letter
-//  [a-zA-Z0-9_-]      # Allow letters, digits, underscores, and hyphens
-//  {2,15}$            # Ensure the length of the username is between 3 and 16 characters (1 character is already matched above)
-export const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/;
+//  ^[a-zA-Z0-9]       # Must start with a letter or digit
+//  [a-zA-Z0-9._@+-]   # Allow letters, digits, and the characters . _ - @ + (so emails are valid usernames for Dex SSO correlation)
+//  {2,253}$           # Ensure the length of the username is between 3 and 254 characters (1 character is already matched above; 254 is the RFC 5321 max email length)
+export const USERNAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9._@+-]{2,253}$/;
 
 //  ^(?=.*[a-z])       # At least one lowercase letter
 //  (?=.*[A-Z])        # At least one uppercase letter

@@ -61,8 +61,6 @@
     "@blueprintjs/select": "3.12.3",
     "@harnessio/design-system": "^1.6.0-beta.1",
     "@harnessio/icons": "^2.0.0-beta.2",
-    "@harnessio/oats-cli": "^2.1.0",
-    "@harnessio/oats-plugin-react-query": "^2.1.0",
     "@harnessio/uicore": "^4.0.0-beta.1a",
     "@popperjs/core": "^2.11.5",
     "@tanstack/react-query": "4.20.4",
@@ -82,13 +80,14 @@
     "highcharts-react-official": "3.0.0",
     "idb": "^7.0.2",
     "jwt-decode": "^3.1.2",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.18.0",
     "marked": "4.0",
     "masonry-layout": "^4.2.2",
     "moment": "^2.25.3",
     "monaco-editor": "^0.41.0",
     "monaco-yaml": "^5.0.0",
     "normalize.css": "^8.0.1",
+    "path-to-regexp": "1.9.0",
     "prompts": "^2.4.2",
     "qs": "^6.9.4",
     "react": "^17.0.2",
@@ -112,6 +111,8 @@
   },
   "devDependencies": {
     "@apollo/react-testing": "^4.0.0",
+    "@harnessio/oats-cli": "^2.1.0",
+    "@harnessio/oats-plugin-react-query": "^2.1.0",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "12.1.2",
@@ -176,6 +177,10 @@
     "@types/react-dom": "^17.0.9",
     "create-react-context": "0.3.0",
     "@blueprintjs/core": "3.26.1",
-    "d3-color": "3.1.0"
+    "d3-color": "3.1.0",
+    "lodash": "4.18.1",
+    "lodash-es": "4.18.1",
+    "**/react-router/path-to-regexp": "1.9.0",
+    "**/picomatch": "2.3.2"
   }
 }
