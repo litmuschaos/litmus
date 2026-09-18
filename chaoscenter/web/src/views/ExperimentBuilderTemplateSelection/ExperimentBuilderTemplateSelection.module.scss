@@ -26,8 +26,8 @@
   overflow-y: scroll;
 }
 .dragContainer {
-  border: 1px dashed #d9dae5;
-  background-color: #fafcff;
+  border: 1px dashed var(--grey-200);
+  background-color: var(--primary-bg);
   border-radius: 4px;
   min-height: 350px;
   width: 100%;
