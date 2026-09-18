@@ -57,6 +57,8 @@ body {
 }
 
 #react-root[data-theme='dark'] {
+  background-color: #17151f !important;
+  color: #e8e6f0 !important;
   --layout-sidebar-background: #16102d;
   --layout-sidebar-border-color: #4d476d;
   --layout-main-nav-background: #211b3c;
@@ -94,11 +96,6 @@ html[data-theme='dark'],
 body:has(#react-root[data-theme='dark']) {
   background-color: #17151f;
   color: #e8e6f0;
-}
-
-#react-root[data-theme='dark'] {
-  background-color: #17151f !important;
-  color: #e8e6f0 !important;
 }
 
 #react-root[data-theme='dark'] .bp3-card {
@@ -455,7 +452,6 @@ body:has(#react-root[data-theme='dark']) {
   color: #d8d4ea;
 }
 
-
 #react-root[data-theme='dark'] [class*='FormError--'] {
   color: #ff8a8a;
 }
@@ -476,7 +472,6 @@ body:has(#react-root[data-theme='dark']) {
 
 #react-root[data-theme='dark'] [class*='Tabs--tab'][aria-selected='true'] {
   color: #b5aed0 !important;
-  border-color: #b5aed0 !important;
 }
 
 #react-root[data-theme='dark'] [class*='Tabs--tab'] {

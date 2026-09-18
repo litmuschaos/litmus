@@ -1,6 +1,6 @@
 import { Card, Container, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
-import { Color, FontVariation } from '@harnessio/design-system';
+import { FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { ThemeSegmentedControl } from '@components/ThemeToggle/ThemeSegmentedControl';
 
@@ -13,9 +13,6 @@ export const AccountSettingsAppearanceView = (): React.ReactElement => {
         <Text font={{ variation: FontVariation.H3 }}>{getString('appearance')}</Text>
         <Card>
           <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_700}>
-              {getString('darkMode')}
-            </Text>
             <ThemeSegmentedControl />
           </Layout.Horizontal>
         </Card>
