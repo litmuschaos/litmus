@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -298,11 +297,15 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
 		return infraAction, err
 	}
 	data_store.Store.Mutex.Lock()
-	if infra_channel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
-		data_store.Store.Mutex.Unlock()
-		logrus.Print("ALREADY CONNECTED, FORCED DISCONNECT: ", request.InfraID)
-		close(infra_channel)
-		return infraAction, errors.New("CLUSTER ALREADY CONNECTED")
+	if oldInfraChannel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
+		// A previous connection for this infra is still registered (e.g. the old
+		// subscriber pod was force-deleted and the server hasn't yet detected the
+		// drop). Rather than rejecting this new, already-verified connection and
+		// leaving the infra stuck INACTIVE forever, tear down the stale entry and
+		// let the new connection take over.
+		logrus.Print("STALE CONNECTION FOUND, REPLACING: ", request.InfraID)
+		close(oldInfraChannel)
+		delete(data_store.Store.ConnectedInfra, request.InfraID)
 	}
 	data_store.Store.ConnectedInfra[request.InfraID] = infraAction
 	data_store.Store.Mutex.Unlock()
