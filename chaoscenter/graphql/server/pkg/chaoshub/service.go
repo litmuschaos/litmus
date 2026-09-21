@@ -476,8 +476,8 @@ func (c *chaosHubService) ListChaosFaults(ctx context.Context, hubID string, pro
 	return ChartsData, nil
 }
 
-// isSubPath checks whether targetPath is contained strictly within baseDir after path resolution.
-func isSubPath(baseDir, targetPath string) bool {
+// IsSubPath checks whether targetPath is contained strictly within baseDir after path resolution.
+func IsSubPath(baseDir, targetPath string) bool {
 	cleanBase := filepath.Clean(baseDir)
 	cleanTarget := filepath.Clean(targetPath)
 
@@ -486,6 +486,10 @@ func isSubPath(baseDir, targetPath string) bool {
 		return false
 	}
 	return true
+}
+
+func isSubPath(baseDir, targetPath string) bool {
+	return IsSubPath(baseDir, targetPath)
 }
 
 // GetChaosFault is used for getting details of chartserviceversion.yaml.
@@ -522,8 +526,14 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 		return nil, fmt.Errorf("invalid path: path traversal detected")
 	}
 
-	// Symlink escape check: if basePath exists on disk, ensure resolved symlink target stays within realHubPath
+	// Symlink escape check: ensure resolved symlink target stays within realHubPath
 	if realHubPath, err := filepath.EvalSymlinks(cleanHubPath); err == nil {
+		categoryPath := filepath.Join(cleanHubPath, request.Category)
+		if realCatPath, err := filepath.EvalSymlinks(categoryPath); err == nil {
+			if !isSubPath(realHubPath, realCatPath) {
+				return nil, fmt.Errorf("invalid path: path traversal detected")
+			}
+		}
 		if realBasePath, err := filepath.EvalSymlinks(basePath); err == nil {
 			if !isSubPath(realHubPath, realBasePath) {
 				return nil, fmt.Errorf("invalid path: path traversal detected")

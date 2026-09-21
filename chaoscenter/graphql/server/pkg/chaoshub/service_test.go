@@ -223,8 +223,9 @@ func TestGetChaosFault_SymlinkEscape(t *testing.T) {
 	assert.NoError(t, err)
 
 	outsideDir := filepath.Join("/tmp", "outside-hub-target")
-	assert.NoError(t, os.MkdirAll(outsideDir, 0755))
-	assert.NoError(t, os.WriteFile(filepath.Join(outsideDir, "fault.yaml"), []byte("outside-secret"), 0644))
+	outsideTarget := filepath.Join(outsideDir, "target")
+	assert.NoError(t, os.MkdirAll(outsideTarget, 0755))
+	assert.NoError(t, os.WriteFile(filepath.Join(outsideTarget, "fault.yaml"), []byte("outside-secret"), 0644))
 
 	t.Cleanup(func() {
 		os.RemoveAll(filepath.Join("/tmp", "default", "test-symlink-hub"))
@@ -250,3 +251,57 @@ func TestGetChaosFault_SymlinkEscape(t *testing.T) {
 	assert.Nil(t, details)
 	assert.Contains(t, err.Error(), "path traversal detected")
 }
+
+func TestIsSubPath(t *testing.T) {
+	base := filepath.Join("/tmp", "default", "faults")
+
+	tests := []struct {
+		name     string
+		target   string
+		expected bool
+	}{
+		{
+			name:     "exact base path",
+			target:   base,
+			expected: false,
+		},
+		{
+			name:     "valid child path",
+			target:   filepath.Join(base, "pod-delete"),
+			expected: true,
+		},
+		{
+			name:     "valid nested child path",
+			target:   filepath.Join(base, "kubernetes", "pod-delete"),
+			expected: true,
+		},
+		{
+			name:     "relative traversal escape",
+			target:   filepath.Join(base, "..", "secret"),
+			expected: false,
+		},
+		{
+			name:     "deep relative traversal escape",
+			target:   filepath.Join(base, "..", "..", "etc", "passwd"),
+			expected: false,
+		},
+		{
+			name:     "sibling directory prefix collision",
+			target:   filepath.Join("/tmp", "default", "faults-extra", "pod-delete"),
+			expected: false,
+		},
+		{
+			name:     "completely different root",
+			target:   filepath.Join("/etc", "shadow"),
+			expected: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			res := chaoshub.IsSubPath(base, tc.target)
+			assert.Equal(t, tc.expected, res)
+		})
+	}
+}
+
