@@ -476,13 +476,13 @@ func (c *chaosHubService) ListChaosFaults(ctx context.Context, hubID string, pro
 	return ChartsData, nil
 }
 
-// isSubPath checks whether targetPath is contained within baseDir after path resolution.
+// isSubPath checks whether targetPath is contained strictly within baseDir after path resolution.
 func isSubPath(baseDir, targetPath string) bool {
 	cleanBase := filepath.Clean(baseDir)
 	cleanTarget := filepath.Clean(targetPath)
 
 	rel, err := filepath.Rel(cleanBase, cleanTarget)
-	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+	if err != nil || rel == "." || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
 		return false
 	}
 	return true
@@ -490,6 +490,20 @@ func isSubPath(baseDir, targetPath string) bool {
 
 // GetChaosFault is used for getting details of chartserviceversion.yaml.
 func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.ExperimentRequest, projectID string) (*model.FaultDetails, error) {
+	if strings.TrimSpace(request.Category) == "" || strings.TrimSpace(request.ExperimentName) == "" {
+		return nil, fmt.Errorf("invalid path: category and experiment name cannot be empty")
+	}
+
+	cleanCategory := filepath.Clean(request.Category)
+	cleanExperiment := filepath.Clean(request.ExperimentName)
+
+	if cleanCategory == "." || cleanCategory == ".." || cleanExperiment == "." || cleanExperiment == ".." ||
+		!filepath.IsLocal(request.Category) || !filepath.IsLocal(request.ExperimentName) ||
+		strings.Contains(request.Category, "\\") || strings.Contains(request.ExperimentName, "\\") ||
+		strings.Contains(request.Category, "\x00") || strings.Contains(request.ExperimentName, "\x00") {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
+
 	chaosHub, err := c.getChaosHubDetails(ctx, request.HubID, projectID)
 	if err != nil {
 		return nil, err
@@ -506,6 +520,15 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 
 	if !isSubPath(cleanHubPath, basePath) {
 		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
+
+	// Symlink escape check: if basePath exists on disk, ensure resolved symlink target stays within realHubPath
+	if realHubPath, err := filepath.EvalSymlinks(cleanHubPath); err == nil {
+		if realBasePath, err := filepath.EvalSymlinks(basePath); err == nil {
+			if !isSubPath(realHubPath, realBasePath) {
+				return nil, fmt.Errorf("invalid path: path traversal detected")
+			}
+		}
 	}
 
 	//Get fault chartserviceversion.yaml data

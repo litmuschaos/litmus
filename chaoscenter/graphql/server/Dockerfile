@@ -23,6 +23,9 @@ LABEL maintainer="LitmusChaos"
 
 ENV APP_DIR="/litmus"
 
+# Ensure base packages (including libxslt) are patched
+RUN microdnf update -y && microdnf clean all
+
 COPY --from=builder /output/server $APP_DIR/
 COPY ./manifests/. $APP_DIR/manifests
 
