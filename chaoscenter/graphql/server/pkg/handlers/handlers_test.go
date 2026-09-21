@@ -77,7 +77,7 @@ func TestFileHandlerInvalidTokenReturnsAfterError(t *testing.T) {
 	handlers.FileHandler(mockOp)(ctx)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	assert.Contains(t, w.Body.String(), "token contains an invalid number of segments")
+	assert.Contains(t, w.Body.String(), "invalid infrastructure token")
 	assert.NotContains(t, w.Body.String(), "mongo: no documents in result")
 	assert.NotContains(t, w.Body.String(), "unable to parse referer header")
 	mockOp.AssertNotCalled(t, "Get", mock.Anything, mock.Anything, mock.Anything)
