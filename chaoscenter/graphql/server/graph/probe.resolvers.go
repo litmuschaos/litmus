@@ -54,7 +54,29 @@ func (r *mutationResolver) AddProbe(ctx context.Context, request model.ProbeRequ
 		return nil, errors.New(err)
 	}
 
-	response, err := r.probeService.AddProbe(ctx, request, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// As for experiments, the manifest is pushed to git before the DB changes so
+	// that a failed push leaves nothing behind. Everything that could make the
+	// DB reject the request is therefore checked before pushing.
+	isUnique, err := r.probeService.ValidateUniqueProbe(ctx, request.Name, projectID)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return nil, err
+	}
+	if !isUnique {
+		return nil, errors.New("probe already exists")
+	}
+	err = r.gitopsService.UpsertProbeToGit(ctx, projectID, request)
+	if err != nil {
+		logrus.WithFields(logFields).Errorf("failed to push the probe manifest to Git, err: %v", err)
+		return nil, err
+	}
+
+	response, err := r.probeService.AddProbe(ctx, request, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -79,7 +101,24 @@ func (r *mutationResolver) UpdateProbe(ctx context.Context, request model.ProbeR
 		return "", err
 	}
 
-	response, err := r.probeService.UpdateProbe(ctx, request, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// validate before pushing so git never holds a manifest the DB rejects
+	err = r.probeService.ValidateProbeUpdate(ctx, request, projectID)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return "", err
+	}
+	err = r.gitopsService.UpsertProbeToGit(ctx, projectID, request)
+	if err != nil {
+		logrus.WithFields(logFields).Errorf("failed to push the probe manifest to Git, err: %v", err)
+		return "", err
+	}
+
+	response, err := r.probeService.UpdateProbe(ctx, request, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
@@ -104,7 +143,27 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 		return false, err
 	}
 
-	response, err := r.probeService.DeleteProbe(ctx, probeName, projectID)
+	username, err := usernameFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	// confirm the probe exists before touching git
+	isUnique, err := r.probeService.ValidateUniqueProbe(ctx, probeName, projectID)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return false, err
+	}
+	if isUnique {
+		return false, errors.New("probe not found")
+	}
+	err = r.gitopsService.DeleteProbeFromGit(ctx, projectID, probeName)
+	if err != nil {
+		logrus.WithFields(logFields).Errorf("failed to delete the probe manifest from Git, err: %v", err)
+		return false, err
+	}
+
+	response, err := r.probeService.DeleteProbe(ctx, probeName, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err

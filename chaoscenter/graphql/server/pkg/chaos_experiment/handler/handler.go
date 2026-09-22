@@ -97,7 +97,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		Tags:                  request.Tags,
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &chaosWfReq, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &chaosWfReq, projectID, revID, username)
 	if err != nil {
 		return "", err
 	}
@@ -184,7 +184,7 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 		}
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID, username)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +303,7 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		}
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &request, projectID, revID, username)
 	if err != nil {
 		return nil, err
 	}
