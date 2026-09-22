@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -474,35 +476,96 @@ func (c *chaosHubService) ListChaosFaults(ctx context.Context, hubID string, pro
 	return ChartsData, nil
 }
 
+// IsSubPath checks whether targetPath is contained strictly within baseDir after path resolution.
+func IsSubPath(baseDir, targetPath string) bool {
+	cleanBase := filepath.Clean(baseDir)
+	cleanTarget := filepath.Clean(targetPath)
+
+	rel, err := filepath.Rel(cleanBase, cleanTarget)
+	if err != nil || rel == "." || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+		return false
+	}
+	return true
+}
+
+func isSubPath(baseDir, targetPath string) bool {
+	return IsSubPath(baseDir, targetPath)
+}
+
 // GetChaosFault is used for getting details of chartserviceversion.yaml.
 func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.ExperimentRequest, projectID string) (*model.FaultDetails, error) {
+	if strings.TrimSpace(request.Category) == "" || strings.TrimSpace(request.ExperimentName) == "" {
+		return nil, fmt.Errorf("invalid path: category and experiment name cannot be empty")
+	}
+
+	cleanCategory := filepath.Clean(request.Category)
+	cleanExperiment := filepath.Clean(request.ExperimentName)
+
+	if cleanCategory == "." || cleanCategory == ".." || cleanExperiment == "." || cleanExperiment == ".." ||
+		!filepath.IsLocal(request.Category) || !filepath.IsLocal(request.ExperimentName) ||
+		strings.Contains(request.Category, "\\") || strings.Contains(request.ExperimentName, "\\") ||
+		strings.Contains(request.Category, "\x00") || strings.Contains(request.ExperimentName, "\x00") {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
+
 	chaosHub, err := c.getChaosHubDetails(ctx, request.HubID, projectID)
 	if err != nil {
 		return nil, err
 	}
-	var basePath string
+	var hubPath string
 	if chaosHub.IsDefault {
-		basePath = "/tmp/default/" + chaosHub.Name + "/faults/" + request.Category + "/" + request.ExperimentName
+		hubPath = "/tmp/default/" + chaosHub.Name + "/faults"
 	} else {
-		basePath = DefaultPath + projectID + "/" + chaosHub.Name + "/faults/" + request.Category + "/" + request.ExperimentName
+		hubPath = DefaultPath + projectID + "/" + chaosHub.Name + "/faults"
+	}
+
+	cleanHubPath := filepath.Clean(hubPath)
+	basePath := filepath.Join(cleanHubPath, request.Category, request.ExperimentName)
+
+	if !isSubPath(cleanHubPath, basePath) {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
+
+	// Symlink escape check: ensure resolved symlink target stays within realHubPath
+	if realHubPath, err := filepath.EvalSymlinks(cleanHubPath); err == nil {
+		categoryPath := filepath.Join(cleanHubPath, request.Category)
+		if realCatPath, err := filepath.EvalSymlinks(categoryPath); err == nil {
+			if !isSubPath(realHubPath, realCatPath) {
+				return nil, fmt.Errorf("invalid path: path traversal detected")
+			}
+		}
+		if realBasePath, err := filepath.EvalSymlinks(basePath); err == nil {
+			if !isSubPath(realHubPath, realBasePath) {
+				return nil, fmt.Errorf("invalid path: path traversal detected")
+			}
+		}
 	}
 
 	//Get fault chartserviceversion.yaml data
-	csvPath := basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml"
+	csvPath := filepath.Join(basePath, request.ExperimentName+".chartserviceversion.yaml")
+	if !isSubPath(cleanHubPath, csvPath) {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
 	csvYaml, err := os.ReadFile(csvPath)
 	if err != nil {
 		csvYaml = []byte("")
 	}
 
 	//Get engine.yaml data
-	enginePath := basePath + "/" + "engine.yaml"
+	enginePath := filepath.Join(basePath, "engine.yaml")
+	if !isSubPath(cleanHubPath, enginePath) {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
 	engineYaml, err := os.ReadFile(enginePath)
 	if err != nil {
 		engineYaml = []byte("")
 	}
 
 	//Get fault.yaml data
-	faultPath := basePath + "/" + "fault.yaml"
+	faultPath := filepath.Join(basePath, "fault.yaml")
+	if !isSubPath(cleanHubPath, faultPath) {
+		return nil, fmt.Errorf("invalid path: path traversal detected")
+	}
 	faultYaml, err := os.ReadFile(faultPath)
 	if err != nil {
 		faultYaml = []byte("")
