@@ -6,6 +6,7 @@
 # NOTE - These will be executed when any make target is invoked.
 #
 IS_DOCKER_INSTALLED = $(shell which docker >> /dev/null 2>&1; echo $$?)
+SHELL := /bin/bash
 
 .PHONY: help
 help:
@@ -61,6 +62,31 @@ backend-services-checks:
 		&& exit 1; \
 	fi
 	@echo "------------------"
+	@echo "--> Check chaos-center graphql-server [aws documentDB support operator]"
+	@echo "------------------"
+	@curl -Os https://raw.githubusercontent.com/awslabs/amazon-documentdb-tools/master/compat-tool/compat.py
+	@result=$$(python3 compat.py --version 5.0 --directory graphql/server); \
+	if echo "$${result}" | grep -qi 'unsupported operators were found'; then \
+		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
+		&& exit 1; \
+	fi
+	@lookupResults=""; \
+	while read file; do \
+		fileLookupResult=$$(awk 'BEGIN {found_lookup=0} \
+			/\$$lookup/ {found_lookup=1} \
+			found_lookup && NF==0 {found_lookup=0} \
+			found_lookup && /"let"|"pipeline"/ { \
+				print "Found let or pipeline in file " FILENAME " at line " NR; \
+			}' "$${file}"); \
+		if [ -n "$${fileLookupResult}" ]; then \
+			lookupResults="$${lookupResults}$${fileLookupResult}\n"; \
+		fi; \
+	done < <(find graphql/server -name "*.go"); \
+	if [ -n "$${lookupResults}" ]; then \
+		echo -e "$${lookupResults}" \
+		&& exit 1; \
+	fi 
+	@echo "------------------"
 	@echo "--> Check chaos-center authentication [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd authentication && go mod tidy); \
@@ -69,6 +95,31 @@ backend-services-checks:
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code." \
 		&& exit 1; \
 	fi
+	@echo "------------------"
+	@echo "--> Check chaos-center authentication [aws documentDB support operator]"
+	@echo "------------------"
+	@curl -Os https://raw.githubusercontent.com/awslabs/amazon-documentdb-tools/master/compat-tool/compat.py
+	@result=$$(python3 compat.py --version 5.0 --directory authentication); \
+	if echo "$${result}" | grep -qi 'unsupported operators were found'; then \
+		echo "$${result}" | awk '/unsupported operators were found/ {f=1} f'  \
+		&& exit 1; \
+	fi
+		@lookupResults=""; \
+	while read file; do \
+		fileLookupResult=$$(awk 'BEGIN {found_lookup=0} \
+			/\$$lookup/ {found_lookup=1} \
+			found_lookup && NF==0 {found_lookup=0} \
+			found_lookup && /"let"|"pipeline"/ { \
+				print "Found let or pipeline in file " FILENAME " at line " NR; \
+			}' "$${file}"); \
+		if [ -n "$${fileLookupResult}" ]; then \
+			lookupResults="$${lookupResults}$${fileLookupResult}\n"; \
+		fi; \
+	done < <(find authentication -name "*.go"); \
+	if [ -n "$${lookupResults}" ]; then \
+		echo -e "$${lookupResults}" \
+		&& exit 1; \
+	fi 
 	@echo "------------------"
 	@echo "--> Check chaos-center subscriber [go mod tidy]"
 	@echo "------------------"
