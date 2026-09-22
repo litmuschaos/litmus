@@ -6,7 +6,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { StringsContext } from '@strings';
 import strings from 'strings/strings.en.yaml';
 import '../bootstrap.scss';
-import { AppStoreContext } from '@context';
+import { AppStoreContext, ThemeProvider } from '@context';
 import { ReactQueryProvider } from '@api/ReactQueryProvider';
 
 interface TestWrapperProps {
@@ -31,27 +31,29 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
   const getString = (key: string): string => key;
   const apolloClient = new ApolloClient({ cache: new InMemoryCache() });
   return (
-    <AppStoreContext.Provider
-      value={{
-        projectID: 'litmuschaos-test-project',
-        projectRole: 'Owner',
-        currentUserInfo: {
-          userRole: 'admin',
-          ID: 'uid',
-          username: 'admin'
-        },
-        renderUrl: `/account/uid`,
-        matchPath: '/account/:accountID',
-        updateAppStore: () => void NO_OPERATION
-      }}
-    >
-      <StringsContext.Provider value={{ data: strings as never, getString }}>
-        <ReactQueryProvider>
-          <ApolloProvider client={apolloClient}>
-            <BrowserRouter>{children}</BrowserRouter>
-          </ApolloProvider>
-        </ReactQueryProvider>
-      </StringsContext.Provider>
-    </AppStoreContext.Provider>
+    <ThemeProvider>
+      <AppStoreContext.Provider
+        value={{
+          projectID: 'litmuschaos-test-project',
+          projectRole: 'Owner',
+          currentUserInfo: {
+            userRole: 'admin',
+            ID: 'uid',
+            username: 'admin'
+          },
+          renderUrl: `/account/uid`,
+          matchPath: '/account/:accountID',
+          updateAppStore: () => void NO_OPERATION
+        }}
+      >
+        <StringsContext.Provider value={{ data: strings as never, getString }}>
+          <ReactQueryProvider>
+            <ApolloProvider client={apolloClient}>
+              <BrowserRouter>{children}</BrowserRouter>
+            </ApolloProvider>
+          </ReactQueryProvider>
+        </StringsContext.Provider>
+      </AppStoreContext.Provider>
+    </ThemeProvider>
   );
 }
