@@ -62,6 +62,10 @@ func cases(key string, value string, operator string) bool {
 
 func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{}, oldData interface{}) bool {
 	finalResult := false
+	if len(etp.Spec.Conditions) == 0 {
+		return false
+	}
+
 	if etp.Spec.ConditionType == "and" {
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
@@ -70,26 +74,27 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 				return false
 			}
 
-			oldDataResult, err := jmespath.Search(condition.Key, oldData)
-			if err != nil {
-				logrus.Error(err)
-				return false
+			if condition.Operator == "Change" {
+				oldDataResult, err := jmespath.Search(condition.Key, oldData)
+				if err != nil {
+					logrus.Error(err)
+					return false
+				}
+				if newDataResult == oldDataResult {
+					return false
+				}
+				continue
 			}
 
-			if newDataResult != oldDataResult {
-				if condition.Operator == "Change" {
-					finalResult = true
-				} else {
-					str := fmt.Sprintf("%v", newDataResult)
-					if val := cases(str, *condition.Value, condition.Operator); !val {
-						finalResult = val
-						break
-					} else if val {
-						finalResult = true
-					}
-				}
+			if condition.Value == nil {
+				return false
+			}
+			str := fmt.Sprintf("%v", newDataResult)
+			if !cases(str, *condition.Value, condition.Operator) {
+				return false
 			}
 		}
+		return true
 	} else if etp.Spec.ConditionType == "or" {
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
