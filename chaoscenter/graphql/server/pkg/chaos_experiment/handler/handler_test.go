@@ -116,7 +116,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, store.Store).Return(nil).Once()
 				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
 			wantErr: false,
@@ -195,7 +195,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, store.Store).Return(nil).Once()
 
 				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
