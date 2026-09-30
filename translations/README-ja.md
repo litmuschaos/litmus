@@ -15,9 +15,9 @@
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *他の言語は[ここを参照してください。](translations/TRANSLATIONS.md).*
+#### *他の言語は[ここを参照してください。](TRANSLATIONS.md).*
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md)
+[🇰🇷](README-ko.md) [🇨🇳](README-chn.md)
 
 ## 概要
 
@@ -41,7 +41,7 @@ Litmusはクラウドネイティブなアプローチで、カオスの生成�
 
 ## Litmusを始める
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 始めるには <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmusドキュメンテーション</a>を参照ください。。
 
@@ -57,7 +57,7 @@ Litmusはクラウドネイティブなアプローチで、カオスの生成�
 
 ## 考慮すべき事項
 
-Litmus（カオスフレームワークとして）で行う必要がある考慮すべき事項のいくつかは、ここに大まかにリストアップされています。これらの多くは、[ロードマップ](./ROADMAP.md)で述べられているように、すでに作業が行われています。特定のエクスペリメントに関する詳細や制限については、それぞれの[エクスペリメントドキュメント](https://docs.litmuschaos.io/docs/pod-delete/)を参照してください。
+Litmus（カオスフレームワークとして）で行う必要がある考慮すべき事項のいくつかは、ここに大まかにリストアップされています。これらの多くは、[ロードマップ](../ROADMAP.md)で述べられているように、すでに作業が行われています。特定のエクスペリメントに関する詳細や制限については、それぞれの[エクスペリメントドキュメント](https://docs.litmuschaos.io/docs/pod-delete/)を参照してください。
 
 - Docker以外のコンテナランタイム（containerd, CRI-O）のネットワークカオスは[1.8.0](https://github.com/litmuschaos/litmus/releases/tag/1.8.0)からサポートされています。
 - Litmusのカオスオペレーターとカオスエクスペリメントはクラスタ内のkubernetesリソースとして動作します。インターネットから隔離された環境の場合、カオスカスタムリソースとイメージをオンプレミスでホストする必要があります。
@@ -67,7 +67,7 @@ Litmus（カオスフレームワークとして）で行う必要がある考�
 
 ## ライセンス
 
-Litmus は Apache License, Version 2.0 の下でライセンスされています。ライセンスの全文は[ライセンス](./LICENSE)を参照してください。Litmusプロジェクトで使用されているプロジェクトの中には、別のライセンスで管理されているものもありますので、そのライセンスを参照してください。
+Litmus は Apache License, Version 2.0 の下でライセンスされています。ライセンスの全文は[ライセンス](../LICENSE)を参照してください。Litmusプロジェクトで使用されているプロジェクトの中には、別のライセンスで管理されているものもありますので、そのライセンスを参照してください。
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
