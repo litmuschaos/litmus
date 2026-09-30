@@ -114,6 +114,11 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return &model.RegisterInfraResponse{}, err
 	}
 
+	accessKey, err := utils.GenerateAccessKey(32)
+	if err != nil {
+		return &model.RegisterInfraResponse{}, err
+	}
+
 	if input.NodeSelector != nil {
 		selectors := strings.Split(*input.NodeSelector, ",")
 
@@ -160,7 +165,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			},
 		},
 		EnvironmentID:  input.EnvironmentID,
-		AccessKey:      utils.RandomString(32),
+		AccessKey:      accessKey,
 		PlatformName:   input.PlatformName,
 		InfraNamespace: input.InfraNamespace,
 		ServiceAccount: input.ServiceAccount,
