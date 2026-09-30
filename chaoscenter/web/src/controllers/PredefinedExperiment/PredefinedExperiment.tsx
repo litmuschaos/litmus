@@ -24,7 +24,7 @@ export default function PredefinedExperimentController(): React.ReactElement {
     experiments: [experimentName as string],
     options: {
       onError: error => showError(error.message),
-      nextFetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-and-network'
     }
   });
 
@@ -34,14 +34,18 @@ export default function PredefinedExperimentController(): React.ReactElement {
     }
   }, [hubID, experimentName, getPredefinedExperimentQuery]);
 
+  // Treat "not yet called" as loading to prevent a brief 400 error render
+  // before the lazy query fires (useLazyQuery returns loading=false initially)
+  const isLoading = !getPredefinedExperimentCalled || getPredefinedExperimentLoading;
+
   return (
-    <Loader loading={getPredefinedExperimentLoading || !getPredefinedExperimentCalled} height={'100vh'}>
+    <Loader loading={isLoading} height={'100vh'}>
       <PredefinedExperimentView
         predefinedExperimentDetails={predefinedExperiment?.getPredefinedExperiment?.[0]}
         // TODO: remove search param as prop
         chartName={chartName as string}
         loading={{
-          listPredefinedExperiment: getPredefinedExperimentLoading || !getPredefinedExperimentCalled
+          getPredefinedExperiment: isLoading
         }}
       />
     </Loader>

@@ -61,7 +61,7 @@ export const getChaosInfraDetails = ({
   return {
     data,
     exists: (options as { skip?: boolean }).skip ? undefined : Boolean(data?.getInfraDetails),
-    loading: (options as { skip?: boolean }).skip ? false : loading || !data,
+    loading,
     ...rest,
   };
 };

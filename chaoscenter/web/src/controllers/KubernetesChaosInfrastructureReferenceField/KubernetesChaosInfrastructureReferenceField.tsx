@@ -1,11 +1,11 @@
-import { Pagination, useToaster } from '@harnessio/uicore';
 import React from 'react';
+import { Pagination, useToaster } from '@harnessio/uicore';
 import { getChaosInfraDetails, listChaosInfra } from '@api/core';
+import { listEnvironment } from '@api/core/environments';
 import { getScope } from '@utils';
 import ChaosInfrastructureReferenceFieldView from '@views/ChaosInfrastructureReferenceField';
-import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
 import type { InfrastructureDetails } from '@views/ChaosInfrastructureReferenceField/ChaosInfrastructureReferenceField';
-import { listEnvironment } from '@api/core/environments';
+import { AllEnv, type ChaosInfrastructureReferenceFieldProps } from '@models';
 
 function KubernetesChaosInfrastructureReferenceFieldController({
   setFieldValue,
@@ -50,25 +50,28 @@ function KubernetesChaosInfrastructureReferenceFieldController({
     if (envID === AllEnv.AllEnv) {
       setInitialAllInfrastructureLength(listChaosInfraData?.listInfras.totalNoOfInfras || 0);
     }
-  }, [listChaosInfraData]);
+  }, [listChaosInfraData, envID]);
 
   const preSelectedEnvironment = listEnvironmentData?.listEnvironments?.environments?.find(
     ({ environmentID }) => environmentID === initialEnvironmentID
   );
 
+  // Use exact get API results if present (to handle pagination during edit), fallback to list search
   const preSelectedInfrastructure =
-    getChaosInfraDetailsData?.getInfraDetails ||
+    getChaosInfraDetailsData?.getInfraDetails ??
     listChaosInfraData?.listInfras.infras.find(({ infraID }) => infraID === initialInfrastructureID);
 
-  const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure && {
-    id: preSelectedInfrastructure?.infraID,
-    name: preSelectedInfrastructure?.name,
-    tags: preSelectedInfrastructure?.tags,
-    isActive: preSelectedInfrastructure?.isActive,
-    noOfExperiments: preSelectedInfrastructure?.noOfExperiments,
-    noOfExperimentsRuns: preSelectedInfrastructure?.noOfExperimentRuns,
-    environmentID: preSelectedInfrastructure?.environmentID
-  };
+  const preSelectedInfrastructureDetails: InfrastructureDetails | undefined = preSelectedInfrastructure
+    ? {
+        id: preSelectedInfrastructure.infraID,
+        name: preSelectedInfrastructure.name,
+        tags: preSelectedInfrastructure.tags,
+        isActive: preSelectedInfrastructure.isActive,
+        noOfExperiments: preSelectedInfrastructure.noOfExperiments,
+        noOfExperimentsRuns: preSelectedInfrastructure.noOfExperimentRuns,
+        environmentID: preSelectedInfrastructure.environmentID
+      }
+    : undefined;
 
   React.useEffect(() => {
     setPage(0);
@@ -76,7 +79,7 @@ function KubernetesChaosInfrastructureReferenceFieldController({
 
   React.useEffect(() => {
     if (preSelectedEnvironment) {
-      setEnvID(preSelectedEnvironment?.environmentID);
+      setEnvID(preSelectedEnvironment.environmentID);
     }
   }, [preSelectedEnvironment, setFieldValue]);
 
