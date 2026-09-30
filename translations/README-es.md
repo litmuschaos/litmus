@@ -15,10 +15,10 @@
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Leer en [otros idiomas](translations/TRANSLATIONS.md)*
+#### *Leer en [otros idiomas](TRANSLATIONS.md)*
 
 
-[🇰🇷](translations/README-ko.md) [🇨🇳](translations/README-chn.md) [🇧🇷](translations/README-pt-br.md) [🇮🇳](translations/README-hi.md) [🇪🇸](translations/README-es.md)
+[🇰🇷](README-ko.md) [🇨🇳](README-chn.md) [🇧🇷](README-pt-br.md) [🇮🇳](README-hi.md) [🇪🇸](README-es.md)
 
 ## Descripción general
 
@@ -67,7 +67,7 @@ Revisa los <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.m
 
 ## Consideraciones que tener en cuenta
 
-A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](./ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
+A continuación se enumeran algunas consideraciones que se deben tener en cuenta sobre Litmus como framework de Chaos. Muchas de ellas ya están siendo trabajadas como se menciona en [ROADMAP](../ROADMAP.md). Para detalles o limitaciones sobre experimentos específicos, 
 se debe consultar la [documentación de los experimentos](https://docs.litmuschaos.io/docs/pod-delete/) respectiva.
 
   - El Operador Chaos Litmus y los Experimentos Chaos corren como recursos de Kubernetes en un clúster. En caso de entornos airgapeados los recursos Chaos personalizaos y las imágenes debe ser alojados en local.
@@ -77,7 +77,7 @@ se debe consultar la [documentación de los experimentos](https://docs.litmuscha
 
 ## Licencia
 
-Litmos está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](./LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su lecencia específica.
+Litmos está licenciado bajo la Licencia Apache, versión 2.0. Ver el texto completo en [LICENCIA](../LICENSE). Algunos proyectos usados por Litmus pueden estar sometidos a  una licencia diferente, consulte su lecencia específica.
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
 
