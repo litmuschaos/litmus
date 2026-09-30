@@ -21,7 +21,7 @@ interface PredefinedExperimentProps {
   predefinedExperimentDetails: PredefinedExperiment | undefined;
   chartName: string;
   loading: {
-    listPredefinedExperiment: boolean;
+    getPredefinedExperiment: boolean;
   };
 }
 
@@ -65,7 +65,7 @@ export default function PredefinedExperimentView({
         variation={ButtonVariation.PRIMARY}
         text={getString('launchExperiment')}
         intent="success"
-        disabled={predefinedExperimentDetails === undefined || loading.listPredefinedExperiment ? true : false}
+        disabled={predefinedExperimentDetails === undefined || loading.getPredefinedExperiment ? true : false}
         size={ButtonSize.MEDIUM}
         permission={PermissionGroup.OWNER}
         onClick={launchExperiment}
@@ -73,7 +73,7 @@ export default function PredefinedExperimentView({
     </ParentComponentErrorWrapper>
   );
 
-  if (!loading.listPredefinedExperiment && predefinedExperimentDetails === undefined) {
+  if (!loading.getPredefinedExperiment && predefinedExperimentDetails === undefined) {
     return (
       <GenericErrorHandler
         errStatusCode={400}
@@ -93,7 +93,7 @@ export default function PredefinedExperimentView({
       headerToolbar={toolbar}
       subTitle={parsedCSV?.spec?.keywords.map((keyword: string) => keyword).join(', ') ?? getString('na')}
       noPadding
-      loading={loading.listPredefinedExperiment}
+      loading={loading.getPredefinedExperiment}
     >
       <Layout.Vertical
         padding={{ top: 'medium', right: 'xlarge', bottom: 'medium', left: 'xlarge' }}
