@@ -31,6 +31,7 @@ export default function TotalInfrastructureCard({
 
   const defaultChartOptions: Highcharts.Options = {
     chart: {
+      backgroundColor: 'transparent',
       plotBackgroundColor: 'transparent',
       plotBorderWidth: 0,
       plotShadow: false,

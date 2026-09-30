@@ -38,6 +38,13 @@ export default function DefaultLayoutTemplate({
   hideSideNav
 }: React.PropsWithChildren<DefaultLayoutTemplateProps>): React.ReactElement {
   const breadCrumb = <LitmusBreadCrumbs links={breadcrumbs} />;
+
+  const toolbar = headerToolbar ? (
+    <Layout.Horizontal spacing="small" flex={{ alignItems: 'center' }}>
+      {headerToolbar}
+    </Layout.Horizontal>
+  ) : null;
+
   return (
     <Container className={css.test} flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
       <Container flex className={css.leftSideBar}>
@@ -48,7 +55,7 @@ export default function DefaultLayoutTemplate({
         <Page.Header
           size={subTitle ? 'large' : 'medium'}
           breadcrumbs={breadCrumb}
-          toolbar={headerToolbar}
+          toolbar={toolbar}
           title={
             <span data-testid="header">
               <Layout.Horizontal spacing="small">

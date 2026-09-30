@@ -209,7 +209,7 @@
       fill: var(--color-orange) !important;
     }
     .bp3-tab-list {
-      background: white;
+      background: var(--white);
       width: 100%;
       border-bottom: 0;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.13);
@@ -266,7 +266,7 @@
 }
 
 .rightSideBar {
-  background-color: #fafbfc !important;
+  background-color: var(--grey-50) !important;
   min-height: var(--page-min-height);
   width: 64px;
   height: 100vh;

@@ -59,6 +59,7 @@ export interface StringsMap {
   'appLabel': unknown
   'appLabelName': unknown
   'appNameSpace': unknown
+  'appearance': unknown
   'apply': unknown
   'applyChanges': unknown
   'at': unknown
@@ -114,7 +115,6 @@ export interface StringsMap {
   'chaosInfrastructureSuccess': unknown
   'chaosInfrastructureText': unknown
   'chaosInfrastructures': unknown
-  'clear': unknown
   'chaosResultNotAvailable': unknown
   'chaosResults': unknown
   'chaosStudio': unknown
@@ -128,6 +128,7 @@ export interface StringsMap {
   'chooseHubAccess': unknown
   'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
+  'clear': unknown
   'clearSearch': unknown
   'clickDownload': unknown
   'clone': unknown
@@ -156,9 +157,9 @@ export interface StringsMap {
   'confirmText': unknown
   'connectChaosHub': unknown
   'connectHub': unknown
-  'connected': unknown
   'connectInfraKubernetes': unknown
   'connectInfraTooltip': unknown
+  'connected': unknown
   'connectionModal.method': unknown
   'connectionModal.options.option1.icon': unknown
   'connectionModal.options.option1.text': unknown
@@ -204,10 +205,12 @@ export interface StringsMap {
   'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
+  'darkMode': unknown
+  'darkModeLabel': unknown
+  'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
   'dataTypeString': unknown
-  'data': unknown
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
@@ -226,13 +229,13 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
-  'deployUsingKubectlApplyCommand': unknown
   'deleteProject': unknown
   'deleteProjectWarning': unknown
   'deleteSuccess': unknown
   'deployChaosInfrastructure': unknown
   'deployProbe': unknown
   'deploySetup': unknown
+  'deployUsingKubectlApplyCommand': unknown
   'deployedOn': unknown
   'description': unknown
   'descriptionOptional': unknown
@@ -427,9 +430,9 @@ export interface StringsMap {
   'inactiveTooltip': unknown
   'infraName': unknown
   'infraNameValidationLowercase': unknown
-  'infraNameValidationNoStartDash': unknown
-  'infraNameValidationNoEndDash': unknown
   'infraNameValidationMaxLength': unknown
+  'infraNameValidationNoEndDash': unknown
+  'infraNameValidationNoStartDash': unknown
   'infraNameValidationRequired': unknown
   'infrastructure': unknown
   'infrastructureCommand': unknown
@@ -492,6 +495,7 @@ export interface StringsMap {
   'leaveProjectDescription': unknown
   'leaveThisPage': unknown
   'letsGetStarted': unknown
+  'lightMode': unknown
   'litmus': unknown
   'litmusChaos': unknown
   'litmuschaos': unknown
@@ -747,11 +751,11 @@ export interface StringsMap {
   'probeValidation.url': unknown
   'probeValidation.value': unknown
   'probeValidation.version': unknown
-  'production': unknown
   'probes': unknown
   'probesArePassed': unknown
   'problems': unknown
   'prod': unknown
+  'production': unknown
   'project': unknown
   'projectCreatedByYou': unknown
   'projectDashboard.noProjectDescription': unknown
@@ -769,8 +773,8 @@ export interface StringsMap {
   'promDescription': unknown
   'promProbeDetails': unknown
   'promProbeTitle': unknown
-  'prometheusEndpoint': unknown
   'prometheusDataComparison': unknown
+  'prometheusEndpoint': unknown
   'prometheusQuery': unknown
   'prometheusQueryPath': unknown
   'properties': unknown
@@ -972,6 +976,7 @@ export interface StringsMap {
   'switchToLineChart': unknown
   'syncLatestRun': unknown
   'syncedSuccessfully': unknown
+  'systemMode': unknown
   'tags': unknown
   'target': unknown
   'targetApplication': unknown

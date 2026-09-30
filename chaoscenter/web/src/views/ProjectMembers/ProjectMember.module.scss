@@ -53,7 +53,7 @@
   div[class*='TableV2--row TableV2--card'] {
     border-radius: 6px !important;
     &:hover {
-      background-color: white !important;
+      background-color: var(--white) !important;
     }
   }
   div[class*='TableV2--header'],
