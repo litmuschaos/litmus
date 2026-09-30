@@ -31,9 +31,9 @@ func (_m *ChaosExperimentService) EXPECT() *ChaosExperimentService_Expecter {
 	return &ChaosExperimentService_Expecter{mock: &_m.Mock}
 }
 
-// ProcessExperiment provides a mock function with given fields: ctx, workflow, projectID, revID
-func (_m *ChaosExperimentService) ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error) {
-	ret := _m.Called(ctx, workflow, projectID, revID)
+// ProcessExperiment provides a mock function with given fields: ctx, workflow, projectID, revID, username
+func (_m *ChaosExperimentService) ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string, username string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error) {
+	ret := _m.Called(ctx, workflow, projectID, revID, username)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ProcessExperiment")
@@ -42,27 +42,27 @@ func (_m *ChaosExperimentService) ProcessExperiment(ctx context.Context, workflo
 	var r0 *model.ChaosExperimentRequest
 	var r1 *chaos_experiment.ChaosExperimentType
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.ChaosExperimentRequest, string, string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error)); ok {
-		return rf(ctx, workflow, projectID, revID)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.ChaosExperimentRequest, string, string, string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error)); ok {
+		return rf(ctx, workflow, projectID, revID, username)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *model.ChaosExperimentRequest, string, string) *model.ChaosExperimentRequest); ok {
-		r0 = rf(ctx, workflow, projectID, revID)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.ChaosExperimentRequest, string, string, string) *model.ChaosExperimentRequest); ok {
+		r0 = rf(ctx, workflow, projectID, revID, username)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.ChaosExperimentRequest)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *model.ChaosExperimentRequest, string, string) *chaos_experiment.ChaosExperimentType); ok {
-		r1 = rf(ctx, workflow, projectID, revID)
+	if rf, ok := ret.Get(1).(func(context.Context, *model.ChaosExperimentRequest, string, string, string) *chaos_experiment.ChaosExperimentType); ok {
+		r1 = rf(ctx, workflow, projectID, revID, username)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*chaos_experiment.ChaosExperimentType)
 		}
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, *model.ChaosExperimentRequest, string, string) error); ok {
-		r2 = rf(ctx, workflow, projectID, revID)
+	if rf, ok := ret.Get(2).(func(context.Context, *model.ChaosExperimentRequest, string, string, string) error); ok {
+		r2 = rf(ctx, workflow, projectID, revID, username)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -80,13 +80,14 @@ type ChaosExperimentService_ProcessExperiment_Call struct {
 //   - workflow *model.ChaosExperimentRequest
 //   - projectID string
 //   - revID string
-func (_e *ChaosExperimentService_Expecter) ProcessExperiment(ctx interface{}, workflow interface{}, projectID interface{}, revID interface{}) *ChaosExperimentService_ProcessExperiment_Call {
-	return &ChaosExperimentService_ProcessExperiment_Call{Call: _e.mock.On("ProcessExperiment", ctx, workflow, projectID, revID)}
+//   - username string
+func (_e *ChaosExperimentService_Expecter) ProcessExperiment(ctx interface{}, workflow interface{}, projectID interface{}, revID interface{}, username interface{}) *ChaosExperimentService_ProcessExperiment_Call {
+	return &ChaosExperimentService_ProcessExperiment_Call{Call: _e.mock.On("ProcessExperiment", ctx, workflow, projectID, revID, username)}
 }
 
-func (_c *ChaosExperimentService_ProcessExperiment_Call) Run(run func(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string)) *ChaosExperimentService_ProcessExperiment_Call {
+func (_c *ChaosExperimentService_ProcessExperiment_Call) Run(run func(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string, username string)) *ChaosExperimentService_ProcessExperiment_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*model.ChaosExperimentRequest), args[2].(string), args[3].(string))
+		run(args[0].(context.Context), args[1].(*model.ChaosExperimentRequest), args[2].(string), args[3].(string), args[4].(string))
 	})
 	return _c
 }
@@ -96,7 +97,7 @@ func (_c *ChaosExperimentService_ProcessExperiment_Call) Return(_a0 *model.Chaos
 	return _c
 }
 
-func (_c *ChaosExperimentService_ProcessExperiment_Call) RunAndReturn(run func(context.Context, *model.ChaosExperimentRequest, string, string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error)) *ChaosExperimentService_ProcessExperiment_Call {
+func (_c *ChaosExperimentService_ProcessExperiment_Call) RunAndReturn(run func(context.Context, *model.ChaosExperimentRequest, string, string, string) (*model.ChaosExperimentRequest, *chaos_experiment.ChaosExperimentType, error)) *ChaosExperimentService_ProcessExperiment_Call {
 	_c.Call.Return(run)
 	return _c
 }

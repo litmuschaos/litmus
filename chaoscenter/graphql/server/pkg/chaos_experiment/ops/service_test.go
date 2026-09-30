@@ -342,7 +342,7 @@ func Test_chaosExperimentService_ProcessExperiment(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.given(tc.experiment)
-			_, _, err := chaosExperimentRunTestService.ProcessExperiment(context.Background(), tc.experiment, projectID, revID)
+			_, _, err := chaosExperimentRunTestService.ProcessExperiment(context.Background(), tc.experiment, projectID, revID, "admin")
 			if (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentService.ProcessExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return

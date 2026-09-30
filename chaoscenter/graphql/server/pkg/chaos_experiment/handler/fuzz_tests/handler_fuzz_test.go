@@ -83,7 +83,7 @@ func FuzzSaveChaosExperiment(f *testing.F) {
 		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 		mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
+		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
 			ExperimentID:   &targetStruct.request.ID,
 			InfraID:        targetStruct.request.InfraID,
 			ExperimentType: &model.AllExperimentType[0],
@@ -161,7 +161,7 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 		// Mock the List call to check for duplicate experiment names
 		cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
 		mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Once()
-		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
+		mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&model.ChaosExperimentRequest{
 			ExperimentID:   new(string),
 			InfraID:        "abc",
 			ExperimentType: &model.AllExperimentType[0],

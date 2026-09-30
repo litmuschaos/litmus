@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -48,10 +49,11 @@ type GitUser struct {
 	email    string
 }
 
-const (
-	DefaultPath     = "/tmp/gitops/"
-	ProjectDataPath = "litmus"
-)
+const ProjectDataPath = "litmus"
+
+// DefaultPath is the directory holding the local checkouts, one per project.
+// It is a variable so tests can point it at a temporary directory.
+var DefaultPath = "/tmp/gitops/"
 
 func GitUserFromContext(ctx context.Context) GitUser {
 	defaultUser := GitUser{
@@ -351,19 +353,34 @@ func (c GitConfig) GitPush() error {
 	return err
 }
 
-// GitCommit saves the changes in the repo and commits them with the message provided
-func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (string, error) {
+// WriteFile writes content to relPath inside the local checkout, creating
+// parent directories as needed.
+func (c GitConfig) WriteFile(relPath string, content []byte) error {
+	absPath := filepath.Join(c.LocalPath, relPath)
+	err := os.MkdirAll(filepath.Dir(absPath), 0755)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(absPath, content, 0644)
+}
+
+// GitCommit saves the changes in the repo and commits them with the message
+// provided. Without deleteFiles the whole project directory is staged;
+// otherwise only the removal of the given files is.
+func (c GitConfig) GitCommit(user GitUser, message string, deleteFiles []string) (string, error) {
 	_, w, err := c.getRepositoryWorktreeReference()
 	if err != nil {
 		return "", err
 	}
-	if deleteFile == nil {
-		_, err = w.Add("./litmus/" + c.ProjectID + "/")
+	if len(deleteFiles) == 0 {
+		// go-git rejects paths starting with "."; stage the project directory by its plain relative path
+		_, err = w.Add(ProjectDataPath + "/" + c.ProjectID)
 		if err != nil {
 			return "", err
 		}
-	} else {
-		_, err := w.Remove(*deleteFile)
+	}
+	for _, deleteFile := range deleteFiles {
+		_, err := w.Remove(deleteFile)
 		if err != nil {
 			return "", err
 		}
@@ -471,6 +488,58 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 
 	c.LatestCommit = headRef.Hash().String()
 	return c.LatestCommit, visited, nil
+}
+
+// LastCommittedContent returns the content of filePath from the most recent
+// commit that contains it. It is used to inspect files that were deleted from
+// the working tree.
+func (c GitConfig) LastCommittedContent(filePath string) ([]byte, error) {
+	repo, _, err := c.getRepositoryWorktreeReference()
+	if err != nil {
+		return nil, err
+	}
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return nil, err
+	}
+
+	commitIter, err := repo.Log(&git.LogOptions{
+		From:       headRef.Hash(),
+		Order:      git.LogOrderCommitterTime,
+		PathFilter: func(path string) bool { return path == filePath },
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get commit iterator: %w", err)
+	}
+	defer commitIter.Close()
+
+	// The filter yields the commits that changed the file, newest first. The
+	// first one that still contains it is the deletion's parent.
+	for {
+		commit, err := commitIter.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		f, err := commit.File(filePath)
+		if errors.Is(err, object.ErrFileNotFound) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		contents, err := f.Contents()
+		if err != nil {
+			return nil, err
+		}
+		return []byte(contents), nil
+	}
+
+	return nil, fmt.Errorf("file %s not found in any commit", filePath)
 }
 
 // GetLatestCommitHash returns the latest commit hash in the local repo for the project directory

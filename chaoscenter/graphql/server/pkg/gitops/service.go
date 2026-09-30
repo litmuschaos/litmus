@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -21,6 +22,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	probeHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -31,6 +33,8 @@ import (
 const (
 	timeout  = time.Second * 5
 	tempPath = "/tmp/gitops_test/"
+	// gitOpsUsername is recorded as the acting user for changes applied from git
+	gitOpsUsername = "git-ops"
 )
 
 var (
@@ -46,6 +50,8 @@ type Service interface {
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
 	DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
+	UpsertProbeToGit(ctx context.Context, projectID string, probe model.ProbeRequest) error
+	DeleteProbeFromGit(ctx context.Context, projectID string, probeName string) error
 	GitOpsSyncHandler(singleRun bool)
 	SyncDBToGit(ctx context.Context, config GitConfig) error
 }
@@ -54,14 +60,16 @@ type gitOpsService struct {
 	gitOpsOperator         *gitops.Operator
 	chaosExperimentOps     chaos_experiment.Operator
 	chaosExperimentService chaosExperimentOps.Service
+	probeService           probeHandler.Service
 }
 
 // NewGitOpsService returns a new instance of a gitOpsService
-func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator) Service {
+func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator, probeService probeHandler.Service) Service {
 	return &gitOpsService{
 		gitOpsOperator:         gitOpsOperator,
 		chaosExperimentService: chaosExperimentService,
 		chaosExperimentOps:     chaosExperimentOps,
+		probeService:           probeService,
 	}
 }
 
@@ -95,7 +103,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 		return "", errors.New("Failed to updated experiment name " + err.Error())
 	}
 
-	username := "git-ops"
+	username := gitOpsUsername
 	chaosInfra.SendExperimentToSubscriber(experiments[0].ProjectID, &model.ChaosExperimentRequest{
 		ExperimentManifest: experiments[0].Revision[len(experiments[0].Revision)-1].ExperimentManifest,
 		InfraID:            experiments[0].InfraID,
@@ -245,60 +253,170 @@ func (g *gitOpsService) GetGitOpsDetails(ctx context.Context, projectID string) 
 
 // UpsertExperimentToGit adds/updates experiment to git
 func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
-	gitLock.Lock(projectID, nil)
-	defer gitLock.Unlock(projectID, nil)
-	config, err := g.gitOpsOperator.GetGitConfig(ctx, projectID)
+	fileName, err := manifestFileName(experiment.ExperimentName)
 	if err != nil {
-		return errors.New("Cannot get Git Config from DB : " + err.Error())
-	}
-	if config == nil {
-		return nil
-	}
-	gitLock.Lock(config.RepositoryURL, &config.Branch)
-	defer gitLock.Unlock(config.RepositoryURL, &config.Branch)
-
-	gitConfig := GetGitOpsConfig(*config)
-
-	err = g.SyncDBToGit(ctx, gitConfig)
-	if err != nil {
-		return errors.New("Sync Error | " + err.Error())
+		return err
 	}
 
-	experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
+	return g.commitToProjectRepo(ctx, projectID, "experiment", func(gitConfig GitConfig) (string, error) {
+		experimentPath := gitConfig.LocalPath + "/" + ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
 
-	data, err := yaml.JSONToYAML([]byte(experiment.ExperimentManifest))
-	if err != nil {
-		return errors.New("Cannot convert manifest to yaml : " + err.Error())
-	}
+		data, err := yaml.JSONToYAML([]byte(experiment.ExperimentManifest))
+		if err != nil {
+			return "", errors.New("Cannot convert manifest to yaml : " + err.Error())
+		}
 
-	err = os.WriteFile(experimentPath, data, 0644)
-	if err != nil {
-		return errors.New("Cannot write experiment to git : " + err.Error())
-	}
+		err = os.WriteFile(experimentPath, data, 0644)
+		if err != nil {
+			return "", errors.New("Cannot write experiment to git : " + err.Error())
+		}
 
-	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Updated Experiment : "+experiment.ExperimentName, nil)
-	if err != nil {
-		return errors.New("Cannot commit experiment to git : " + err.Error())
-	}
-
-	err = gitConfig.GitPush()
-	if err != nil {
-		return errors.New("Cannot push experiment to git : " + err.Error())
-	}
-
-	query := bson.D{{"project_id", gitConfig.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"latest_commit", commit}}}}
-	err = g.gitOpsOperator.UpdateGitConfig(ctx, query, update)
-	if err != nil {
-		return errors.New("Failed to update git config : " + err.Error())
-	}
-
-	return nil
+		commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Updated Experiment : "+experiment.ExperimentName, nil)
+		if err != nil {
+			return "", errors.New("Cannot commit experiment to git : " + err.Error())
+		}
+		return commit, nil
+	})
 }
 
 // DeleteExperimentFromGit deletes experiment from git
 func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
+	fileName, err := manifestFileName(experiment.ExperimentName)
+	if err != nil {
+		return err
+	}
+
 	log.Info("Deleting Experiment...")
+	return g.commitToProjectRepo(ctx, projectID, "experiment[delete]", func(gitConfig GitConfig) (string, error) {
+		experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + fileName + ".yaml"
+		exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
+		if err != nil {
+			return "", errors.New("Cannot delete experiment from git : " + err.Error())
+		}
+		if !exists {
+			log.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
+			return "", nil
+		}
+		err = os.RemoveAll(gitConfig.LocalPath + "/" + experimentPath)
+		if err != nil {
+			return "", errors.New("Cannot delete experiment from git : " + err.Error())
+		}
+
+		commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, []string{experimentPath})
+		if err != nil {
+			log.Error("Error", err)
+			return "", errors.New("Cannot commit experiment[delete] to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// UpsertProbeToGit writes the probe as a ResilienceProbe manifest to the
+// project's git repository. Manifests that already describe the probe,
+// wherever they were authored, are updated in place; otherwise the manifest
+// is created at probeFilePath.
+func (g *gitOpsService) UpsertProbeToGit(ctx context.Context, projectID string, probe model.ProbeRequest) error {
+	fileName, err := manifestFileName(probe.Name)
+	if err != nil {
+		return err
+	}
+	data, err := renderProbeManifest(probe)
+	if err != nil {
+		return errors.New("Cannot convert probe to manifest : " + err.Error())
+	}
+	return g.commitToProjectRepo(ctx, projectID, "probe", func(config GitConfig) (string, error) {
+		relPaths, err := locateProbeManifests(config, fileName)
+		if err != nil {
+			return "", errors.New("Cannot locate probe manifest in git : " + err.Error())
+		}
+		if len(relPaths) == 0 {
+			relPaths = []string{probeFilePath(config.ProjectID, fileName)}
+		}
+		for _, relPath := range relPaths {
+			err = config.WriteFile(relPath, data)
+			if err != nil {
+				return "", errors.New("Cannot write probe to git : " + err.Error())
+			}
+		}
+		commit, err := config.GitCommit(GitUserFromContext(ctx), "Updated Probe : "+probe.Name, nil)
+		if err != nil {
+			return "", errors.New("Cannot commit probe to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// DeleteProbeFromGit removes every manifest of the probe from the project's
+// git repository, wherever inside the project directory it was authored.
+func (g *gitOpsService) DeleteProbeFromGit(ctx context.Context, projectID string, probeName string) error {
+	fileName, err := manifestFileName(probeName)
+	if err != nil {
+		return err
+	}
+	return g.commitToProjectRepo(ctx, projectID, "probe[delete]", func(config GitConfig) (string, error) {
+		relPaths, err := locateProbeManifests(config, fileName)
+		if err != nil {
+			return "", errors.New("Cannot locate probe manifest in git : " + err.Error())
+		}
+		if len(relPaths) == 0 {
+			log.Error("Probe manifest not found in git : ", probeName)
+			return "", nil
+		}
+		for _, relPath := range relPaths {
+			err = os.RemoveAll(filepath.Join(config.LocalPath, relPath))
+			if err != nil {
+				return "", errors.New("Cannot delete probe from git : " + err.Error())
+			}
+		}
+		commit, err := config.GitCommit(GitUserFromContext(ctx), "Deleted Probe : "+probeName, relPaths)
+		if err != nil {
+			return "", errors.New("Cannot commit probe[delete] to git : " + err.Error())
+		}
+		return commit, nil
+	})
+}
+
+// probeFilePath is where ChaosCenter creates probe manifests, relative to the
+// repository root. Manifests authored in git may live anywhere under the
+// project directory.
+func probeFilePath(projectID, name string) string {
+	return ProjectDataPath + "/" + projectID + "/probes/" + name + ".yaml"
+}
+
+// locateProbeManifests returns the repository-relative paths of all
+// ResilienceProbe manifests named after probeName in the project directory.
+func locateProbeManifests(config GitConfig, probeName string) ([]string, error) {
+	projectDir := filepath.Join(config.LocalPath, ProjectDataPath, config.ProjectID)
+	var found []string
+	err := filepath.WalkDir(projectDir, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil || entry.IsDir() || entry.Name() != probeName+".yaml" {
+			return err
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		kind, err := manifestKind(data)
+		if err != nil || !isProbeManifestKind(kind) {
+			// not a probe manifest (or not a manifest at all); keep looking
+			return nil
+		}
+		relPath, err := filepath.Rel(config.LocalPath, path)
+		if err != nil {
+			return err
+		}
+		found = append(found, filepath.ToSlash(relPath))
+		return nil
+	})
+	return found, err
+}
+
+// commitToProjectRepo brings the project's checkout up to date with git and
+// the DB, lets change modify the checkout and commit, then pushes the commit
+// and records it as the latest known one. It is a no-op when GitOps is not
+// enabled for the project. change returns an empty hash when it committed
+// nothing. subject names the resource in error messages.
+func (g *gitOpsService) commitToProjectRepo(ctx context.Context, projectID, subject string, change func(config GitConfig) (string, error)) error {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
@@ -319,30 +437,17 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Sync Error | " + err.Error())
 	}
 
-	experimentPath := ProjectDataPath + "/" + gitConfig.ProjectID + "/" + experiment.ExperimentName + ".yaml"
-	exists, err := PathExists(gitConfig.LocalPath + "/" + experimentPath)
+	commit, err := change(gitConfig)
 	if err != nil {
-		return errors.New("Cannot delete experiment from git : " + err.Error())
+		return err
 	}
-	if !exists {
-		log.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
+	if commit == "" {
 		return nil
-	}
-	err = os.RemoveAll(gitConfig.LocalPath + "/" + experimentPath)
-	if err != nil {
-		return errors.New("Cannot delete experiment from git : " + err.Error())
-	}
-
-	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, &experimentPath)
-	if err != nil {
-		log.Error("Error", err)
-		return errors.New("Cannot commit experiment[delete] to git : " + err.Error())
 	}
 
 	err = gitConfig.GitPush()
 	if err != nil {
-		log.Error("Error", err)
-		return errors.New("Cannot push experiment[delete] to git : " + err.Error())
+		return errors.New("Cannot push " + subject + " to git : " + err.Error())
 	}
 
 	query := bson.D{{"project_id", gitConfig.ProjectID}}
@@ -436,6 +541,9 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 	}
 	if !repositoryExists {
 		err = config.setupGitRepo(GitUserFromContext(ctx))
+		if err != nil {
+			return errors.New("Error setting up repo : " + err.Error())
+		}
 	} else {
 		err = config.GitPull()
 		if err != nil {
@@ -461,6 +569,20 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
+			kind, err := deletedFileKind(file, config)
+			if err != nil {
+				// Guessing here could soft-delete an unrelated experiment or probe
+				// that happens to share the file name, so leave the DB untouched.
+				log.Error("Cannot determine kind of deleted file, skipping it : " + file + " | " + err.Error())
+				continue
+			}
+			if isProbeManifestKind(kind) {
+				err = g.deleteProbe(ctx, file, config)
+				if err != nil {
+					log.Error("Error while deleting probe db entry : " + file + " | " + err.Error())
+				}
+				continue
+			}
 			err = g.deleteExperiment(file, config)
 			if err != nil {
 				log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
@@ -479,11 +601,19 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			log.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
-		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
+		if isProbeManifestKind(kind) {
+			log.Info("Probe manifest changed in git : " + file)
+			err = g.syncProbe(ctx, data, file, config)
+			if err != nil {
+				log.Error("Error while syncing probe db entry : " + file + " | " + err.Error())
+			}
+			continue
+		}
 		if kind != "cronexperiment" && kind != "experiment" && kind != "chaosengine" && kind != "workflow" {
 			continue
 		}
+		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
 
 		log.Info("WFID in changed File :", wfID)
 		if wfID == "" {
@@ -558,11 +688,11 @@ func (g *gitOpsService) createExperiment(ctx context.Context, data, file string,
 		InfraID:               infraID,
 	}
 	revID := ""
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experiment, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experiment, config.ProjectID, revID, gitOpsUsername)
 	if err != nil {
 		return false, err
 	}
-	err = g.chaosExperimentService.ProcessExperimentCreation(context.Background(), input, "git-ops", config.ProjectID, wfType, revID, store.Store)
+	err = g.chaosExperimentService.ProcessExperimentCreation(context.Background(), input, gitOpsUsername, config.ProjectID, wfType, revID, store.Store)
 	if err != nil {
 		return false, err
 	}
@@ -620,11 +750,11 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	}
 
 	revID := ""
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID, gitOpsUsername)
 	if err != nil {
 		return err
 	}
-	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, false, config.ProjectID, dataStore.Store)
+	return g.chaosExperimentService.ProcessExperimentUpdate(input, gitOpsUsername, wfType, revID, false, config.ProjectID, dataStore.Store)
 }
 
 // deleteExperiment helps in deleting experiment from DB during the SyncDBToGit operation
@@ -638,5 +768,5 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 		return err
 	}
 
-	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", dataStore.Store)
+	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, gitOpsUsername, dataStore.Store)
 }

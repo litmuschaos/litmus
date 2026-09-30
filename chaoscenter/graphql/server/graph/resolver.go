@@ -2,6 +2,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
 
@@ -65,7 +66,7 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	go chaosInfrastructureService.RecordInfraMetrics(context.Background())
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator, probeService)
 	chaosExperimentRunService := chaos_experiment_run2.NewChaosExperimentRunService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator)
-	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
+	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator, probeService)
 	imageRegistryService := image_registry.NewImageRegistryService(imageRegistryOperator)
 	environmentService := envHandler.NewEnvironmentService(EnvironmentOperator)
 
@@ -103,4 +104,14 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		return next(newCtx)
 	}
 	return config
+}
+
+// usernameFromContext resolves the acting user from the JWT placed in the
+// context by the authorization middleware.
+func usernameFromContext(ctx context.Context) (string, error) {
+	tkn, ok := ctx.Value(authorization.AuthKey).(string)
+	if !ok {
+		return "", errors.New("JWT token not found")
+	}
+	return authorization.GetUsername(tkn)
 }

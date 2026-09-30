@@ -56,6 +56,18 @@ func (g *GitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 	return args.Error(0)
 }
 
+// UpsertProbeToGit provides a mock function with given fields: ctx, projectID, probe
+func (g *GitOpsService) UpsertProbeToGit(ctx context.Context, projectID string, probe model.ProbeRequest) error {
+	args := g.Called(ctx, projectID, probe)
+	return args.Error(0)
+}
+
+// DeleteProbeFromGit provides a mock function with given fields: ctx, projectID, probeName
+func (g *GitOpsService) DeleteProbeFromGit(ctx context.Context, projectID string, probeName string) error {
+	args := g.Called(ctx, projectID, probeName)
+	return args.Error(0)
+}
+
 // GitOpsSyncHandler provides a mock function with given fields: singleRun
 func (g *GitOpsService) GitOpsSyncHandler(singleRun bool) {
 	g.Called(singleRun)
