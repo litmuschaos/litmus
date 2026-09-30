@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
-	github.com/argoproj/argo-workflows/v3 v3.7.14
+	github.com/argoproj/argo-workflows/v3 v3.7.15
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-git/go-git/v5 v5.19.2
@@ -36,6 +36,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
+	github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20250520111509-a70c2aa677fa // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect

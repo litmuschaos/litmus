@@ -14,10 +14,11 @@ import (
 type contextKey string
 
 const (
-	AuthKey      = contextKey("authorization")
-	UserClaim    = contextKey("user-claims")
-	BearerSchema = "Bearer "
-	CookieName   = "token"
+	AuthKey        = contextKey("authorization")
+	UserClaim      = contextKey("user-claims")
+	SystemActorKey = contextKey("system-actor")
+	BearerSchema   = "Bearer "
+	CookieName     = "token"
 )
 
 // Middleware verifies jwt and checks if user has enough privilege to access route (no roles' info needed)

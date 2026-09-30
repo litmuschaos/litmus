@@ -60,3 +60,20 @@ func GetUsername(token string) (string, error) {
 
 	return "", errors.New("invalid Token")
 }
+
+// GetUsernameFromContext returns the authenticated username or a trusted system actor.
+func GetUsernameFromContext(ctx context.Context) (string, error) {
+	if ctx == nil {
+		return "", errors.New("authentication context not found")
+	}
+
+	if token, ok := ctx.Value(AuthKey).(string); ok && token != "" {
+		return GetUsername(token)
+	}
+
+	if actor, ok := ctx.Value(SystemActorKey).(string); ok && actor != "" {
+		return actor, nil
+	}
+
+	return "", errors.New("JWT token not found")
+}
