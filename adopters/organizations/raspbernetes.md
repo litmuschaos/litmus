@@ -1,6 +1,6 @@
 # Raspbernetes
 
-[Raspbernetes](gttps://github.com/raspbernetes) is an open source project with multiple contributors for running Kubernetes 
+[Raspbernetes](https://github.com/raspbernetes) is an open source project with multiple contributors for running Kubernetes 
 clusters on Raspberry Pis. The project started with a goal to automate the setup and management of a Kubernetes cluster on Raspberry Pis. 
 It aims to be completely declarative and idempotent.
 
