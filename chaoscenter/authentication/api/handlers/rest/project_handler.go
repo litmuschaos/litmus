@@ -173,16 +173,18 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "Permission denied, user is not admin",
 			})
+			return
 		}
 		project, err := service.GetProjectStats()
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 		if project == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
-		}
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 		c.JSON(http.StatusOK, response.ProjectStats{Data: project})

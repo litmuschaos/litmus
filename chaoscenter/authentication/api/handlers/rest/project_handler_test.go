@@ -392,3 +392,41 @@ func TestInvitationHandlersActOnTheCaller(t *testing.T) {
 		})
 	}
 }
+
+func TestGetProjectStats(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("non admin caller is denied without reading project stats", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("role", string(entities.RoleUser))
+
+		service := new(mocks.MockedApplicationService)
+		service.On("GetProjectStats").Return([]*entities.ProjectStats{
+			{Name: "other-tenant-project", ProjectID: "other-tenant-project-id"},
+		}, nil)
+
+		rest.GetProjectStats(service)(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.NotContains(t, w.Body.String(), "other-tenant-project")
+		service.AssertNotCalled(t, "GetProjectStats")
+	})
+
+	t.Run("admin caller receives project stats", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("role", string(entities.RoleAdmin))
+
+		service := new(mocks.MockedApplicationService)
+		service.On("GetProjectStats").Return([]*entities.ProjectStats{
+			{Name: "test-project", ProjectID: "test-project-id"},
+		}, nil)
+
+		rest.GetProjectStats(service)(ctx)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Contains(t, w.Body.String(), "test-project")
+		service.AssertExpectations(t)
+	})
+}
