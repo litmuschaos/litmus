@@ -5,18 +5,24 @@ on:
       - master
       - v*
 
+permissions:
+  contents: read
+
 env:
   DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
 
 jobs:
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     # Set job outputs to values from filter step
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
       graphql-server: ${{ steps.filter.outputs.graphql-server }}
       authentication: ${{ steps.filter.outputs.authentication }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
+      subscriber-image: ${{ steps.filter.outputs.subscriber-image }}
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
       dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
@@ -24,6 +30,7 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          predicate-quantifier: 'every'
           filters: |
             frontend:
               - 'chaoscenter/web/**'
@@ -33,6 +40,10 @@ jobs:
               - 'chaoscenter/authentication/**'
             subscriber:
               - 'chaoscenter/subscriber/**'
+            subscriber-image:
+              - 'chaoscenter/subscriber/**'
+              - '!chaoscenter/subscriber/**/*_test.go'
+              - '!chaoscenter/subscriber/**/testdata/**'
             event-tracker:
               - 'chaoscenter/event-tracker/**'
             dex-server:
@@ -148,9 +159,9 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'  
+          severity: 'CRITICAL,HIGH'
           ignore-policy: ignore.rego
-                 
+
 
   docker-build-authentication-server:
     runs-on: ubuntu-latest
@@ -178,14 +189,14 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-        
+
   docker-build-subscriber:
     runs-on: ubuntu-latest
     needs:
       - backend-checks
       - changes
       # - backend-unit-tests
-    if: ${{ needs.changes.outputs.subscriber == 'true' }}
+    if: ${{ needs.changes.outputs.subscriber-image == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -206,7 +217,7 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
           ignore-policy: ignore.rego
-          
+
 
   docker-build-frontend:
     runs-on: ubuntu-latest
@@ -237,7 +248,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-      
+
 
   docker-build-event-tracker:
     runs-on: ubuntu-latest
@@ -265,7 +276,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-        
+
 
   docker-build-dex-server:
     runs-on: ubuntu-latest
@@ -292,4 +303,3 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-       

@@ -21,7 +21,7 @@ import (
 func GetCapabilities() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		capabilities := new(response.CapabilitiesResponse)
-		capabilities.Dex.Enabled = utils.DexEnabled
+		capabilities.Dex.Enabled = utils.OAuthEnabled
 		c.JSON(200, capabilities)
 	}
 }

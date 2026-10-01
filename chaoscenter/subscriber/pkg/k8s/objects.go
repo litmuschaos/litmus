@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -15,7 +16,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/kubernetes"
 )
 
 var (
@@ -35,30 +35,41 @@ func (k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceReq
 		}
 		namespaceData = append(namespaceData, KubeNamespace)
 	} else {
-		// In case of cluster scope, get all the namespaces
-		conf, err := k8s.GetKubeConfig()
-		if err != nil {
-			return nil, err
-		}
-		clientset, err := kubernetes.NewForConfig(conf)
+		// Cached clientset instead of creating new one
+		clientset, err := k8s.GetGenericK8sClient()
 		if err != nil {
 			return nil, err
 		}
 
-		namespace, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			return nil, err
+		// Add context timeout to prevent indefinite hangs
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
+		// Add pagination support for clusters with many namespaces
+		listOpts := metav1.ListOptions{
+			Limit: 500, // Fetch in batches of 500
 		}
-		if len(namespace.Items) > 0 {
-			for _, namespace := range namespace.Items {
 
-				KubeNamespace := &types.KubeNamespace{
-					Name: namespace.GetName(),
-				}
-
-				namespaceData = append(namespaceData, KubeNamespace)
+		for {
+			namespaceList, err := clientset.CoreV1().Namespaces().List(ctx, listOpts)
+			if err != nil {
+				return nil, err
 			}
-		} else {
+
+			for _, ns := range namespaceList.Items {
+				namespaceData = append(namespaceData, &types.KubeNamespace{
+					Name: ns.GetName(),
+				})
+			}
+
+			// Check if there are more results to fetch
+			if namespaceList.Continue == "" {
+				break
+			}
+			listOpts.Continue = namespaceList.Continue
+		}
+
+		if len(namespaceData) == 0 {
 			return nil, errors.New("No namespace available")
 		}
 	}

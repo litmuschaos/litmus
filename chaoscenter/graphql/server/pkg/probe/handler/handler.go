@@ -58,7 +58,13 @@ func Error(logFields logrus.Fields, message string) error {
 
 // AddProbe - Create a new Probe
 func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
-	// TODO: Add check if probe exists
+	isUnique, err := p.ValidateUniqueProbe(ctx, probe.Name, projectID)
+	if err != nil {
+		return nil, err
+	}
+	if !isUnique {
+		return nil, errors.New("probe already exists")
+	}
 
 	var (
 		currTime = time.Now().UnixMilli()

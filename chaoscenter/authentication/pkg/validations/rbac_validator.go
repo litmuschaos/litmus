@@ -43,7 +43,7 @@ func RbacValidator(uid string, projectID string,
 		log.Errorf("authgRPC Error: %s", err)
 		return err
 	}
-	if project == nil {
+	if len(project) == 0 {
 		return errors.New("auth gRPC - Unauthorized")
 	}
 

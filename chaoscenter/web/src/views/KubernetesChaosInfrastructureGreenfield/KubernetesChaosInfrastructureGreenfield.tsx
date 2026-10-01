@@ -1,4 +1,5 @@
-import { Button, ButtonVariation, Layout, useToaster } from '@harnessio/uicore';
+import { 
+Button, ButtonVariation, Layout, useToaster, Tabs, Tab, Text } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import type { MutationFunction } from '@api/types';
@@ -7,6 +8,7 @@ import { useStrings } from '@strings';
 import { downloadYamlAsFile, getFormattedFileName, getScope } from '@utils';
 import type { StepData } from '@views/KubernetesChaosInfrastructureCreationModal/KubernetesChaosInfrastructureStepWizardConfiguration';
 import CodeBlock from '@components/CodeBlock';
+import { HelmInstallationCommand } from '@components/HelmInstallationCommand';
 import { InfrastructureType } from '@api/entities';
 import type {
   connectChaosInfraManifestModeResponse,
@@ -31,55 +33,101 @@ export default function KubernetesChaosInfrastructureGreenfieldView({
   const scope = getScope();
   const { showError, showSuccess } = useToaster();
   const [loading, setLoading] = React.useState<boolean>(false);
+    const [selectedTab, setSelectedTab] = React.useState<string>('manifest');
+    const [registeredInfraID, setRegisteredInfraID] = React.useState<string>('');
+    const [registeredToken, setRegisteredToken] = React.useState<string>('');
 
   // Fetch the formatted file name for giving apply command
   const fileName = getFormattedFileName(data.value.name);
   const kubectlApplyFile = `kubectl apply -f ${fileName}-litmus-chaos-enable.yml`;
 
-  return (
-    <Layout.Horizontal flex={{ alignItems: 'center' }} spacing="small">
-      <CodeBlock text={kubectlApplyFile} isCopyButtonEnabled />
-      <Button
-        disabled={infraRegistered}
-        loading={loading}
-        onClick={() => {
-          setLoading(true);
-          setInfraRegistered(true);
-          connectChaosInfrastructureMutation({
-            variables: {
-              projectID: scope.projectID,
-              request: {
-                infraScope: data.value.infraScope,
-                name: data.value.name,
-                environmentID: environmentID,
-                description: data.value.description ?? undefined,
-                platformName: 'Kubernetes',
-                infraNamespace: data.value.chaosInfrastructureNamespace,
-                serviceAccount: data.value.serviceAccountName,
-                infraNsExists: data.value.infraScope === DeploymentScopeOptions.CLUSTER ? false : true,
-                infraSaExists: false,
-                skipSsl: data.value.skipSSLCheck,
-                tolerations: data.value.tolerationValues ?? undefined,
-                nodeSelector: data.value.nodeSelectorValues
-                  ? `${data.value.nodeSelectorValues[0].key.trim()}=${data.value.nodeSelectorValues[0].value.trim()}`
-                  : undefined,
-                tags: data.value.tags ?? undefined,
-                infrastructureType: InfrastructureType.KUBERNETES
-              }
-            },
-            onCompleted: (result: connectChaosInfraManifestModeResponse) => {
-              setLoading(false);
-              showSuccess(getString('chaosInfrastructureSuccess'));
-              downloadYamlAsFile(result.registerInfra.manifest, `${fileName}-litmus-chaos-enable.yml`);
-            },
-            onError: err => {
-              showError(err.message);
-            }
-          });
-        }}
-        variation={ButtonVariation.PRIMARY}
-        text={getString('download')}
-      />
-    </Layout.Horizontal>
+return (
+    <Layout.Vertical spacing="medium">
+      <Tabs
+        id="installationTabs"
+        selectedTabId={selectedTab}
+        onChange={(tabId: string) => setSelectedTab(tabId)}
+      >
+        <Tab
+          id="manifest"
+          title={getString('manifestInstallation')}
+          panel={
+            <Layout.Vertical spacing="small" padding="medium">
+              <Text>{getString('deployUsingKubectlApplyCommand')}:</Text>
+              <Layout.Horizontal flex={{ alignItems: 'center' }} spacing="small">
+                <CodeBlock text={kubectlApplyFile} isCopyButtonEnabled />
+                <Button
+                  disabled={infraRegistered}
+                  loading={loading}
+                  onClick={() => {
+                    setLoading(true);
+                    setInfraRegistered(true);
+                    connectChaosInfrastructureMutation({
+                      variables: {
+                        projectID: scope.projectID,
+                        request: {
+                          infraScope: data.value.infraScope,
+                          name: data.value.name,
+                          environmentID: environmentID,
+                          description: data.value.description ?? undefined,
+                          platformName: 'Kubernetes',
+                          infraNamespace: data.value.chaosInfrastructureNamespace,
+                          serviceAccount: data.value.serviceAccountName,
+                          infraNsExists: data.value.infraScope === DeploymentScopeOptions.CLUSTER ? false : true,
+                          infraSaExists: false,
+                          skipSsl: data.value.skipSSLCheck,
+                          tolerations: data.value.tolerationValues ?? undefined,
+                          nodeSelector: data.value.nodeSelectorValues
+                            ? `${data.value.nodeSelectorValues[0].key.trim()}=${data.value.nodeSelectorValues[0].value.trim()}`
+                            : undefined,
+                          tags: data.value.tags ?? undefined,
+                          infrastructureType: InfrastructureType.KUBERNETES
+                        }
+                      }
+                    })
+                    .then(result => {
+                      setLoading(false);
+                      const manifest = result.data?.registerInfra.manifest;
+                      const infraID = result.data?.registerInfra.infraID;
+                      const token = result.data?.registerInfra.token;
+                      if (!manifest) {
+                        showError(getString('error'));
+                        return;
+                      }
+                      if (infraID) setRegisteredInfraID(infraID);
+                      if (token) setRegisteredToken(token);
+                      showSuccess(getString('chaosInfrastructureSuccess'));
+                      downloadYamlAsFile(manifest, `${fileName}-litmus-chaos-enable.yml`);
+                    })
+                      .catch((err: Error) => {
+                        showError(err.message);
+                      });
+                  }}
+                  variation={ButtonVariation.PRIMARY}
+                  text={getString('download')}
+                />
+              </Layout.Horizontal>
+            </Layout.Vertical>
+          }
+        />
+        <Tab
+          id="helm"
+          title={getString('helmInstallation')}
+          panel={
+            <Layout.Vertical spacing="small" padding="medium">
+              <HelmInstallationCommand
+                infraID={registeredInfraID || data.value.name}
+                accessKey={registeredToken}
+                infraName={data.value.name}
+                environmentID={environmentID}
+                infraNamespace={data.value.chaosInfrastructureNamespace}
+                infraScope={data.value.infraScope === DeploymentScopeOptions.CLUSTER ? 'cluster' : 'namespace'}
+                platformName="Kubernetes"
+              />
+            </Layout.Vertical>
+          }
+        />
+      </Tabs>
+    </Layout.Vertical>
   );
 }

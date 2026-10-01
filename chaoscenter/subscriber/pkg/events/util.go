@@ -78,7 +78,7 @@ func (ev *subscriberEvents) getChaosData(nodeStatus v1alpha13.NodeStatus, engine
 }
 
 // CheckChaosData util function, checks if event is a chaos-exp event, if so -  extract the chaos data
-func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
+func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosEngineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
 	// considering chaos events has only 1 artifact with manifest as raw data
@@ -100,11 +100,35 @@ func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, work
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
-			cd, err = ev.getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
+			engineNS := resolveEngineNamespace(obj.GetNamespace(), chaosEngineNS)
+			cd, err = ev.getChaosData(nodeStatus, name, engineNS, chaosClient)
 			return nodeType, cd, err
 		}
 	}
 	return nodeType, nil, nil
+}
+
+// resolveEngineNamespace returns fallbackNS if manifestNS is empty or contains unrendered template syntax (e.g. {{...}}).
+func resolveEngineNamespace(manifestNS, fallbackNS string) string {
+	engineNS := strings.TrimSpace(manifestNS)
+	if engineNS == "" || strings.Contains(engineNS, "{{") {
+		return fallbackNS
+	}
+	return engineNS
+}
+
+// getAdminModeNamespace extracts adminModeNamespace from workflow parameters, returning fallbackNS if absent or unrendered.
+func getAdminModeNamespace(parameters []v1alpha1.Parameter, fallbackNS string) string {
+	for _, param := range parameters {
+		if param.Name == "adminModeNamespace" {
+			val := strings.TrimSpace(param.GetValue())
+			if val != "" && !strings.Contains(val, "{{") {
+				return val
+			}
+			break
+		}
+	}
+	return fallbackNS
 }
 
 func getNameFromLog(log string) string {

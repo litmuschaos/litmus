@@ -6,11 +6,16 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   # Job for finding last commit sha of pull-request
   find-latest-commit-sha:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
       commit-sha: ${{ steps.getcommit.outputs.sha }}
     steps:
@@ -85,6 +90,8 @@ jobs:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
     needs: [docker-build-image]
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: Checkout litmus-E2E Repository
         uses: actions/checkout@v4

@@ -74,6 +74,12 @@ function ChaosInfrastructureReferenceFieldView({
   const { showError } = useToaster();
   const { getString } = useStrings();
 
+  React.useEffect(() => {
+    if (preSelectedInfrastructure && !selectedInfrastructure) {
+      setSelectedInfrastructure(preSelectedInfrastructure);
+    }
+  }, [preSelectedInfrastructure, selectedInfrastructure]);
+
   const EnvListItem = ({ envDetail }: { envDetail: EnvironmentDetail }): JSX.Element => {
     return (
       <Container

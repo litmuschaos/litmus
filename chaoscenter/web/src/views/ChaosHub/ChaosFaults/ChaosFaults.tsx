@@ -12,6 +12,7 @@ import Loader from '@components/Loader';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
 import type { ListFaultResponse } from '@api/core';
 import config from '@config';
+import litmusIcon from '@images/litmusIcon.svg';
 import css from './ChaosFaults.module.scss';
 
 interface ChaosFaultsProps {
@@ -116,7 +117,7 @@ function ChaosFaults({ hubDetails, faultCategories, loading, searchValue }: Chao
                   style={{ width: 23, height: 23, objectFit: 'contain' }}
                 />
               ) : (
-                <Icon size={23} name="chaos-litmuschaos" />
+                <img src={litmusIcon} alt="Litmus Icon" width={23} height={23} />
               )}
 
               <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.PRIMARY_7}>

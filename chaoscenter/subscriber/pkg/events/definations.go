@@ -14,7 +14,7 @@ import (
 type SubscriberEvents interface {
 	ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string)
 	StopChaosEngineState(namespace string, workflowRunID *string) error
-	CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error)
+	CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosEngineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error)
 	GetWorkflowObj(uid string) (*v1alpha1.Workflow, error)
 	ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error)
 	GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error)
