@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, TextProps, timeToDisplayText } from '@harnessio/uicore';
 import { isNil } from 'lodash-es';
 import { useStrings } from '@strings';
+import { handleTimestampAmbiguity } from '@utils';
 
 export interface DurationProps extends Omit<TextProps, 'icon'> {
   startTime?: number;
@@ -46,7 +47,9 @@ export default function Duration(props: DurationProps): React.ReactElement {
     };
   }, [endTime]);
 
-  let delta = startTime ? Math.abs(startTime - _endTime) : 0;
+  const normalizedStartTime = startTime ? parseInt(handleTimestampAmbiguity(String(startTime))) : 0;
+  const normalizedEndTime = parseInt(handleTimestampAmbiguity(String(_endTime)));
+  let delta = startTime ? Math.abs(normalizedStartTime - normalizedEndTime) : 0;
   const showZeroSecondsResultLessThan1ms = !!showZeroSecondsResult && delta < 1000;
 
   if ((!showMilliSeconds && delta >= 1000) || showZeroSecondsResultLessThan1ms) {
