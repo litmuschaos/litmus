@@ -932,16 +932,8 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 		}},
 	}
 
-	facetStage := bson.D{
-		{"$facet", bson.D{
-			{"total_chaos_hubs", bson.A{
-				matchIdentifierStage,
-				bson.D{{"$count", "count"}},
-			}},
-		}},
-	}
-
-	pipeline = append(pipeline, facetStage)
+	countStage := bson.D{{"$count", "total_chaos_hubs"}}
+	pipeline = append(pipeline, matchIdentifierStage, countStage)
 	// Call aggregation on pipeline
 	hubCursor, err := c.chaosHubOperator.GetAggregateChaosHubs(ctx, pipeline)
 	if err != nil {
@@ -949,14 +941,14 @@ func (c *chaosHubService) GetChaosHubStats(ctx context.Context, projectID string
 	}
 	var res []dbSchemaChaosHub.AggregatedChaosHubStats
 
-	if err = hubCursor.All(ctx, &res); err != nil || len(res) == 0 || len(res[0].TotalChaosHubs) == 0 {
+	if err = hubCursor.All(ctx, &res); err != nil || len(res) == 0 || res[0].TotalChaosHubs == 0 {
 		return &model.GetChaosHubStatsResponse{
 			TotalChaosHubs: 1,
 		}, err
 	}
 
 	return &model.GetChaosHubStatsResponse{
-		TotalChaosHubs: res[0].TotalChaosHubs[0].Count + 1,
+		TotalChaosHubs: res[0].TotalChaosHubs + 1,
 	}, nil
 
 }

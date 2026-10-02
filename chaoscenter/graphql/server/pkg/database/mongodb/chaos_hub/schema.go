@@ -59,5 +59,5 @@ type TotalCount struct {
 }
 
 type AggregatedChaosHubStats struct {
-	TotalChaosHubs []TotalCount `bson:"total_chaos_hubs"`
+	TotalChaosHubs int `bson:"total_chaos_hubs"`
 }

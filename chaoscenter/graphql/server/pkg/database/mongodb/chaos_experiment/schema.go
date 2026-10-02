@@ -109,7 +109,7 @@ type FaultEventMetadata struct {
 }
 
 type AggregatedExperimentRuns struct {
-	TotalFilteredExperimentRuns []TotalFilteredData      `bson:"total_filtered_experiment_runs"`
+	TotalFilteredExperimentRuns int                      `bson:"total_filtered_experiment_runs"`
 	FlattenedExperimentRuns     []FlattenedExperimentRun `bson:"flattened_experiment_runs"`
 }
 
@@ -151,7 +151,7 @@ type ExperimentDetails struct {
 }
 
 type AggregatedExperiments struct {
-	TotalFilteredExperiments []TotalFilteredData              `bson:"total_filtered_experiments"`
+	TotalFilteredExperiments int                              `bson:"total_filtered_experiments"`
 	ScheduledExperiments     []ChaosExperimentsWithRunDetails `bson:"scheduled_experiments"`
 }
 
@@ -166,7 +166,7 @@ type CategorizedExperimentRunStats struct {
 }
 
 type AggregatedExperimentStats struct {
-	TotalExperiments         []TotalFilteredData             `bson:"total_experiments"`
+	TotalExperiments         int                             `bson:"total_experiments"`
 	TotalFilteredExperiments []CategorizedExperimentRunStats `bson:"categorized_by_resiliency_score"`
 }
 
