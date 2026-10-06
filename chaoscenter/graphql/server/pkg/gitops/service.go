@@ -632,7 +632,7 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 
-	query := bson.D{{"experiment_name", fileName}, {"project_id", config.ProjectID}}
+	query := bson.D{{"name", fileName}, {"project_id", config.ProjectID}, {"is_removed", false}}
 	experiment, err := g.chaosExperimentOps.GetExperiment(context.Background(), query)
 	if err != nil {
 		return err
