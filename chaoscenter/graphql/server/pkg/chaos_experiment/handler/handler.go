@@ -728,13 +728,13 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		if request.Sort.Ascending != nil && *request.Sort.Ascending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", -1},
+					{"name", 1},
 				}},
 			}
 		} else {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", 1},
+					{"name", -1},
 				}},
 			}
 		}
