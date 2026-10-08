@@ -81,7 +81,7 @@ export function getDurationBetweenTwoDates(startTime: number | undefined, endTim
   if (startTime && (endTime === undefined || isNaN(endTime))) {
     return `${moment(startTime).format('D MMM YYYY')}, ${moment(startTime).format('HH:mm')} - --`;
   }
-  if (moment(startTime).format('D MMM') === moment(endTime).format('D MMM'))
+  if (moment(startTime).isSame(moment(endTime), 'day'))
     return `${moment(startTime).format('D MMM YYYY')}, ${moment(startTime).format('HH:mm')} - ${moment(endTime).format(
       'HH:mm'
     )}`;
