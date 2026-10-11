@@ -28,11 +28,10 @@ describe('Duration', () => {
   test('displays 0 duration when startTime is not provided', () => {
     render(
       <TestWrapper>
-        <Duration endTime={1718000030000} />
+        <Duration endTime={1718000030000} showZeroSecondsResult />
       </TestWrapper>
     );
-    // delta should be 0 when no startTime
-    expect(screen.getByText(/duration/i)).toBeInTheDocument();
+    expect(screen.getByText(/0s/)).toBeInTheDocument();
   });
 
   test('renders custom durationText when provided', () => {
