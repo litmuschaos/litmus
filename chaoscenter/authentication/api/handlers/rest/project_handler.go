@@ -58,7 +58,11 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		request := projectUtils.GetProjectFilters(c)
+		request, err := projectUtils.GetProjectFilters(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		request.UserID = user.ID
 
 		res, err := service.GetProjectsByUserID(request)
@@ -135,7 +139,11 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		request := projectUtils.GetProjectFilters(c)
+		request, err := projectUtils.GetProjectFilters(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
 		res, err := service.GetProjectsByUserID(request)
 		if res == nil || (res.TotalNumberOfProjects != nil && *res.TotalNumberOfProjects == 0) {
