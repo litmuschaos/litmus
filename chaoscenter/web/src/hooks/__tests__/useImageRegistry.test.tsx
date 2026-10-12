@@ -14,20 +14,18 @@ jest.mock('../useAppStore', () => ({
 const mockGetImageRegistry = getImageRegistry as jest.Mock;
 const mockUseAppStore = useAppStore as jest.Mock;
 
-function registryResponse(imageRegistryName: string): object {
-  return {
-    data: {
-      getImageRegistry: {
-        imageRegistryInfo: {
-          imageRegistryName,
-          imageRepoName: 'team/chaos',
-          secretName: 'registry-secret'
-        }
+const registryResponse = (imageRegistryName: string): object => ({
+  data: {
+    getImageRegistry: {
+      imageRegistryInfo: {
+        imageRegistryName,
+        imageRepoName: 'team/chaos',
+        secretName: 'registry-secret'
       }
-    },
-    loading: false
-  };
-}
+    }
+  },
+  loading: false
+});
 
 describe('useImageRegistry', () => {
   beforeEach(() => {
