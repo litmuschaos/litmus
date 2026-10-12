@@ -4,11 +4,11 @@ import { useImageRegistry } from '../useImageRegistry';
 import { useAppStore } from '../useAppStore';
 
 jest.mock('@api/core/ImageRegistry', () => ({
-  getImageRegistry: jest.fn()
+  getImageRegistry: jest.fn(),
 }));
 
 jest.mock('../useAppStore', () => ({
-  useAppStore: jest.fn()
+  useAppStore: jest.fn(),
 }));
 
 const mockGetImageRegistry = getImageRegistry as jest.Mock;
@@ -20,11 +20,11 @@ const registryResponse = (imageRegistryName: string): object => ({
       imageRegistryInfo: {
         imageRegistryName,
         imageRepoName: 'team/chaos',
-        secretName: 'registry-secret'
+        secretName: 'registry-secret',
       }
-    }
+    },
   },
-  loading: false
+  loading: false,
 });
 
 describe('useImageRegistry', () => {

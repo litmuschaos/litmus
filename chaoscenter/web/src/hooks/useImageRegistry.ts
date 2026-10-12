@@ -24,7 +24,7 @@ export function useImageRegistry(): { imageRegistry: ImageRegistry | undefined; 
         repo: getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName
           ? `${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRegistryName}/${getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName}`
           : getImageRegistryData.getImageRegistry.imageRegistryInfo.imageRepoName,
-        secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName
+        secret: getImageRegistryData.getImageRegistry.imageRegistryInfo.secretName,
       }
     : DEFAULT_IMAGE_REGISTRY;
 
