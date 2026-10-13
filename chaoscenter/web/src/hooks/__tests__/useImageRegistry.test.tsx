@@ -21,7 +21,7 @@ const registryResponse = (imageRegistryName: string): object => ({
         imageRegistryName,
         imageRepoName: 'team/chaos',
         secretName: 'registry-secret',
-      }
+      },
     },
   },
   loading: false,
