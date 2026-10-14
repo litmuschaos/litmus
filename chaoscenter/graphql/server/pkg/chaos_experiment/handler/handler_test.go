@@ -116,7 +116,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, store.Store).Return(nil).Once()
 				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
 			wantErr: false,
@@ -195,7 +195,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, store.Store).Return(nil).Once()
 
 				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
@@ -491,7 +491,6 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -541,7 +540,6 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
-				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: true,
 		},
@@ -556,6 +554,8 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				return
 			}
 			assertExpectations(mockServices, t)
+			// Deleting a single run must not remove the experiment manifest from git.
+			mockServices.GitOpsService.AssertNotCalled(t, "DeleteExperimentFromGit", mock.Anything, mock.Anything, mock.Anything)
 		})
 	}
 }
@@ -942,6 +942,49 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 				return
 			}
 			assertExpectations(mockServices, t)
+		})
+	}
+}
+
+func TestChaosExperimentHandler_ListExperiment_SortByName(t *testing.T) {
+	ascending, descending := true, false
+	tests := []struct {
+		name      string
+		ascending *bool
+		wantOrder int
+	}{
+		{name: "ascending sorts names A to Z", ascending: &ascending, wantOrder: 1},
+		{name: "descending sorts names Z to A", ascending: &descending, wantOrder: -1},
+		{name: "default sorts names Z to A", ascending: nil, wantOrder: -1},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			mockServices := NewMockServices()
+			var gotSort bson.D
+			cursor, _ := mongo.NewCursorFromDocuments([]interface{}{bson.D{}}, nil, nil)
+			mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).
+				Run(func(args mock.Arguments) {
+					pipeline := args.Get(2).(mongo.Pipeline)
+					facet := pipeline[len(pipeline)-1][0].Value.(bson.D)
+					for _, field := range facet {
+						if field.Key == "scheduled_experiments" {
+							gotSort = field.Value.(bson.A)[0].(bson.D)
+						}
+					}
+				}).Return(cursor, nil).Once()
+
+			request := model.ListExperimentRequest{
+				Sort: &model.ExperimentSortInput{
+					Field:     model.ExperimentSortingFieldName,
+					Ascending: tc.ascending,
+				},
+			}
+			_, _ = mockServices.ChaosExperimentHandler.ListExperiment(uuid.New().String(), request)
+
+			want := bson.D{{"$sort", bson.D{{"name", tc.wantOrder}}}}
+			if !reflect.DeepEqual(gotSort, want) {
+				t.Errorf("sort stage = %v, want %v", gotSort, want)
+			}
 		})
 	}
 }
