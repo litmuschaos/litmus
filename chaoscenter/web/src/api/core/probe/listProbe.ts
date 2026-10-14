@@ -1,5 +1,5 @@
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
-import type { InfrastructureType, Probe, ProbeFilterRequest } from '@api/entities';
+import type { InfrastructureType, Pagination, Probe, ProbeFilterRequest, SortType } from '@api/entities';
 import type {
   GqlAPIQueryResponse,
   GqlAPIQueryRequest,
@@ -7,15 +7,27 @@ import type {
   GqlAPILazyQueryRequest
 } from '@api/types';
 
+export interface ProbeSortInput {
+  field: SortType;
+  ascending?: boolean;
+}
+
 export interface ListProbeRequest {
   projectID: string;
   probeNames?: Array<string>;
   infrastructureType?: InfrastructureType;
   filter?: ProbeFilterRequest;
+  pagination?: Pagination;
+  sort?: ProbeSortInput;
+}
+
+export interface ListProbes {
+  totalNoOfProbes: number;
+  probes: Array<Probe>;
 }
 
 export interface ListProbeResponse {
-  listProbes: Array<Probe>;
+  listProbes: ListProbes;
 }
 
 export function listProbes({
@@ -24,6 +36,8 @@ export function listProbes({
   probeNames,
   infrastructureType,
   filter,
+  pagination,
+  sort,
   // Options
   options = {}
 }: GqlAPIQueryRequest<ListProbeResponse, ListProbeRequest>): GqlAPIQueryResponse<ListProbeResponse, ListProbeRequest> {
@@ -35,51 +49,58 @@ export function listProbes({
         $infrastructureType: InfrastructureType
         $projectID: ID!
         $filter: ProbeFilterInput
+        $pagination: Pagination
+        $sort: ProbeSortInput
       ) {
         listProbes(
           probeNames: $probeNames
           infrastructureType: $infrastructureType
           projectID: $projectID
           filter: $filter
+          pagination: $pagination
+          sort: $sort
         ) {
-          name
-          description
-          type
-          infrastructureType
-          kubernetesHTTPProperties {
-            probeTimeout
-            interval
-            url
-          }
-          kubernetesCMDProperties {
-            probeTimeout
-            interval
-            command
-          }
-          promProperties {
-            probeTimeout
-            interval
-          }
-          recentExecutions {
-            faultName
-            status {
-              verdict
+          totalNoOfProbes
+          probes {
+            name
+            description
+            type
+            infrastructureType
+            kubernetesHTTPProperties {
+              probeTimeout
+              interval
+              url
             }
-            executedByExperiment {
-              experimentName
-              experimentID
-              updatedAt
-              updatedBy {
-                username
-                email
+            kubernetesCMDProperties {
+              probeTimeout
+              interval
+              command
+            }
+            promProperties {
+              probeTimeout
+              interval
+            }
+            recentExecutions {
+              faultName
+              status {
+                verdict
+              }
+              executedByExperiment {
+                experimentName
+                experimentID
+                updatedAt
+                updatedBy {
+                  username
+                  email
+                }
               }
             }
-          }
-          referencedBy
-          updatedAt
-          updatedBy {
-            username
-            email
+            referencedBy
+            updatedAt
+            updatedBy {
+              username
+              email
+            }
           }
         }
       }
@@ -89,7 +110,9 @@ export function listProbes({
         projectID,
         probeNames,
         infrastructureType,
-        filter
+        filter,
+        pagination,
+        sort
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
@@ -117,8 +140,11 @@ export function minimalListProbes({
     gql`
       query listProbes($probeNames: [ID!], $infrastructureType: InfrastructureType, $projectID: ID!) {
         listProbes(probeNames: $probeNames, infrastructureType: $infrastructureType, projectID: $projectID) {
-          name
-          type
+          totalNoOfProbes
+          probes {
+            name
+            type
+          }
         }
       }
     `,
@@ -152,90 +178,93 @@ export function listLazyProbes({
     gql`
       query listProbes($probeNames: [ID!], $projectID: ID!, $filter: ProbeFilterInput) {
         listProbes(probeNames: $probeNames, projectID: $projectID, filter: $filter) {
-          name
-          description
-          type
-          tags
-          type
-          updatedBy {
-            username
-            email
-          }
-          kubernetesHTTPProperties {
-            probeTimeout
-            interval
-            retry
-            attempt
-            evaluationTimeout
-            probePollingInterval
-            initialDelay
-            stopOnFailure
-            url
-            method {
-              get {
-                criteria
-                responseCode
+          totalNoOfProbes
+          probes {
+            name
+            description
+            type
+            tags
+            type
+            updatedBy {
+              username
+              email
+            }
+            kubernetesHTTPProperties {
+              probeTimeout
+              interval
+              retry
+              attempt
+              evaluationTimeout
+              probePollingInterval
+              initialDelay
+              stopOnFailure
+              url
+              method {
+                get {
+                  criteria
+                  responseCode
+                }
+                post {
+                  contentType
+                  body
+                  bodyPath
+                  criteria
+                  responseCode
+                }
               }
-              post {
-                contentType
-                body
-                bodyPath
+              insecureSkipVerify
+            }
+            promProperties {
+              probeTimeout
+              interval
+              retry
+              attempt
+              evaluationTimeout
+              probePollingInterval
+              initialDelay
+              stopOnFailure
+              endpoint
+              query
+              queryPath
+              comparator {
+                type
+                value
                 criteria
-                responseCode
               }
             }
-            insecureSkipVerify
-          }
-          promProperties {
-            probeTimeout
-            interval
-            retry
-            attempt
-            evaluationTimeout
-            probePollingInterval
-            initialDelay
-            stopOnFailure
-            endpoint
-            query
-            queryPath
-            comparator {
-              type
-              value
-              criteria
+            k8sProperties {
+              probeTimeout
+              interval
+              retry
+              attempt
+              evaluationTimeout
+              probePollingInterval
+              initialDelay
+              stopOnFailure
+              group
+              version
+              resource
+              resourceNames
+              namespace
+              fieldSelector
+              labelSelector
+              operation
             }
-          }
-          k8sProperties {
-            probeTimeout
-            interval
-            retry
-            attempt
-            evaluationTimeout
-            probePollingInterval
-            initialDelay
-            stopOnFailure
-            group
-            version
-            resource
-            resourceNames
-            namespace
-            fieldSelector
-            labelSelector
-            operation
-          }
-          kubernetesCMDProperties {
-            probeTimeout
-            interval
-            retry
-            attempt
-            evaluationTimeout
-            probePollingInterval
-            initialDelay
-            stopOnFailure
-            command
-            comparator {
-              type
-              value
-              criteria
+            kubernetesCMDProperties {
+              probeTimeout
+              interval
+              retry
+              attempt
+              evaluationTimeout
+              probePollingInterval
+              initialDelay
+              stopOnFailure
+              command
+              comparator {
+                type
+                value
+                criteria
+              }
             }
           }
         }
