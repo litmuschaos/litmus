@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -294,12 +296,14 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 			pipeline = append(pipeline, matchProbeType)
 		}
 
-		// Filtering based on Probe Name
+		// Filtering based on Probe Name.
+		// Escape the user-provided value with regexp.QuoteMeta so it is matched
+		// literally, preventing regex/NoSQL injection and ReDoS.
 		if filter.Name != nil && *filter.Name != "" {
 			matchProbeNameStage := bson.D{
 				{"$match", bson.D{
 					{"name", bson.D{
-						{"$regex", filter.Name},
+						{"$regex", primitive.Regex{Pattern: regexp.QuoteMeta(*filter.Name)}},
 					}},
 				}},
 			}
