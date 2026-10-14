@@ -31,7 +31,7 @@ import (
 type Service interface {
 	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
 	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
-	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
+	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error)
 	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
 	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
 	GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
@@ -248,7 +248,7 @@ func (p *probeService) GetProbeYAMLData(ctx context.Context, probeRequest model.
 }
 
 // ListProbes - List a single/all Probes
-func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
+func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match the Probe Names from the input array
@@ -349,21 +349,69 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 	}
 	pipeline = append(pipeline, matchIdentifierStage)
 
-	var allProbes []dbSchemaProbe.Probe
+	// Sorting
+	var sortStage bson.D
+	switch {
+	case sort != nil && sort.Field == model.ProbeSortingFieldName:
+		// Sorting based on probe name
+		if sort.Ascending != nil && *sort.Ascending {
+			sortStage = bson.D{{"$sort", bson.D{{"name", 1}}}}
+		} else {
+			sortStage = bson.D{{"$sort", bson.D{{"name", -1}}}}
+		}
+	case sort != nil && sort.Field == model.ProbeSortingFieldTime:
+		// Sorting based on last updated time
+		if sort.Ascending != nil && *sort.Ascending {
+			sortStage = bson.D{{"$sort", bson.D{{"updated_at", 1}}}}
+		} else {
+			sortStage = bson.D{{"$sort", bson.D{{"updated_at", -1}}}}
+		}
+	default:
+		// Default sorting: by last updated time in descending order
+		sortStage = bson.D{{"$sort", bson.D{{"updated_at", -1}}}}
+	}
+
+	// Pagination
+	paginatedProbes := bson.A{
+		sortStage,
+	}
+	if pagination != nil {
+		paginationSkipStage := bson.D{
+			{"$skip", pagination.Page * pagination.Limit},
+		}
+		paginationLimitStage := bson.D{
+			{"$limit", pagination.Limit},
+		}
+		paginatedProbes = append(paginatedProbes, paginationSkipStage, paginationLimitStage)
+	}
+
+	// Add two stages where we first count the total number of filtered probes and then paginate the results
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"total_filtered_probes", bson.A{
+				bson.D{{"$count", "count"}},
+			}},
+			{"probes", paginatedProbes},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
 
 	probeCursor, err := p.probeOperator.GetAggregateProbes(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	err = probeCursor.All(context.Background(), &allProbes)
-	if err != nil {
-		return nil, err
+	var aggregatedProbes []dbSchemaProbe.AggregatedProbes
+	if err = probeCursor.All(context.Background(), &aggregatedProbes); err != nil || len(aggregatedProbes) == 0 {
+		return &model.ListProbeResponse{
+			TotalNoOfProbes: 0,
+			Probes:          []*model.Probe{},
+		}, err
 	}
 
 	var probeDetails []*model.Probe
 
-	for _, probe := range allProbes {
+	for _, probe := range aggregatedProbes[0].Probes {
 		var lastTenExecutions []*model.ProbeRecentExecutions
 		recentExecutions, err := GetProbeExecutionHistoryInExperimentRuns(projectID, probe.Name)
 		if err != nil {
@@ -387,7 +435,15 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 		probeDetails = append(probeDetails, probeDetail)
 	}
 
-	return probeDetails, nil
+	totalFilteredProbesCounter := 0
+	if len(aggregatedProbes) > 0 && len(aggregatedProbes[0].TotalFilteredProbes) > 0 {
+		totalFilteredProbesCounter = aggregatedProbes[0].TotalFilteredProbes[0].Count
+	}
+
+	return &model.ListProbeResponse{
+		TotalNoOfProbes: totalFilteredProbesCounter,
+		Probes:          probeDetails,
+	}, nil
 }
 
 func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string) ([]*model.ProbeRecentExecutions, error) {

@@ -564,6 +564,42 @@ input ProbeFilterInput {
 }
 
 """
+Defines the fields on which Probes can be sorted
+"""
+enum ProbeSortingField {
+  NAME
+  TIME
+}
+
+"""
+Defines sorting options for Probes
+"""
+input ProbeSortInput {
+  """
+  Field in which sorting will be done
+  """
+  field: ProbeSortingField!
+  """
+  Bool value indicating whether the sorting will be done in ascending order
+  """
+  ascending: Boolean
+}
+
+"""
+Defines the response for the listProbes query with total probes count
+"""
+type ListProbeResponse {
+  """
+  Total number of probes
+  """
+  totalNoOfProbes: Int!
+  """
+  Details related to the probes
+  """
+  probes: [Probe]!
+}
+
+"""
 Defines the input for PROM probe properties
 """
 input PROMProbeRequest {
@@ -1066,7 +1102,9 @@ extend type Query {
     infrastructureType: InfrastructureType
     probeNames: [ID!]
     filter: ProbeFilterInput
-  ): [Probe]! @authorized
+    pagination: Pagination
+    sort: ProbeSortInput
+  ): ListProbeResponse! @authorized
 
   """
   Returns a single Probe based on ProbeName and various filter parameters
