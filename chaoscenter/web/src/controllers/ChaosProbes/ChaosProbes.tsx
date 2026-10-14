@@ -47,7 +47,7 @@ export default function ChaosProbesController(): React.ReactElement {
     resetPage
   };
 
-  const probes = data?.listProbes;
+  const probes = data?.listProbes?.probes;
 
   const chaosProbesTableData: ChaosProbesTableProps | undefined = probes && {
     content: generateChaosProbesDashboardTableContent(probes)
