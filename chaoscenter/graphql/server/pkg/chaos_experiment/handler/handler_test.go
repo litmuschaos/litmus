@@ -491,7 +491,6 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -541,7 +540,6 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
-				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: true,
 		},
@@ -556,6 +554,8 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				return
 			}
 			assertExpectations(mockServices, t)
+			// Deleting a single run must not remove the experiment manifest from git.
+			mockServices.GitOpsService.AssertNotCalled(t, "DeleteExperimentFromGit", mock.Anything, mock.Anything, mock.Anything)
 		})
 	}
 }
