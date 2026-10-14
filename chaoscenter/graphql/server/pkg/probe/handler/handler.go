@@ -510,8 +510,10 @@ func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID str
 	if err != nil {
 		return false, err
 	}
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := authorization.GetUsernameFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
 
 	Time := time.Now().UnixMilli()
 
