@@ -119,7 +119,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			return "", err
 		}
 
-		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
+		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, store.Store)
 		if err != nil {
 			return "", err
 		}
