@@ -31,6 +31,7 @@ import (
 type Service interface {
 	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
 	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
+	ValidateProbeUpdate(ctx context.Context, probe model.ProbeRequest, projectID string) error
 	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
 	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
 	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
@@ -139,7 +140,42 @@ func (p *probeService) AddProbe(ctx context.Context, probe model.ProbeRequest, p
 	return newProbe.GetOutputProbe(), nil
 }
 
-// UpdateProbe - Update a new Probe
+// ValidateProbeUpdate reports whether request can be applied to the stored
+// probe without changing it: the probe must exist and keep its type and
+// infrastructure type, and the request must carry the properties for that
+// type. UpdateProbe performs the same checks; callers that have to act before
+// updating (such as pushing the manifest to git) use this to fail early.
+func (p *probeService) ValidateProbeUpdate(ctx context.Context, request model.ProbeRequest, projectID string) error {
+	pr, err := p.probeOperator.GetProbeByName(ctx, request.Name, projectID)
+	if err != nil {
+		return err
+	}
+	return validateProbeUpdate(pr, request)
+}
+
+// validateProbeUpdate checks request against the stored probe. The
+// type-specific property helpers dereference the properties of the stored
+// type, so both the type and the matching properties must be present.
+func validateProbeUpdate(stored dbSchemaProbe.Probe, request model.ProbeRequest) error {
+	if model.ProbeType(stored.Type) != request.Type {
+		return fmt.Errorf("probe type cannot be changed from %s to %s", stored.Type, request.Type)
+	}
+	if stored.InfrastructureType != request.InfrastructureType {
+		return fmt.Errorf("probe infrastructure type cannot be changed from %s to %s", stored.InfrastructureType, request.InfrastructureType)
+	}
+	if request.Type == model.ProbeTypeHTTPProbe && request.KubernetesHTTPProperties == nil {
+		return errors.New("http probe type's properties are empty")
+	} else if request.Type == model.ProbeTypeCmdProbe && request.KubernetesCMDProperties == nil {
+		return errors.New("cmd probe type's properties are empty")
+	} else if request.Type == model.ProbeTypePromProbe && request.PromProperties == nil {
+		return errors.New("prom probe type's properties are empty")
+	} else if request.Type == model.ProbeTypeK8sProbe && request.K8sProperties == nil {
+		return errors.New("k8s probe type's properties are empty")
+	}
+	return nil
+}
+
+// UpdateProbe - Update an existing Probe
 func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
 	username, err := authorization.GetUsernameFromContext(ctx)
 	if err != nil {
@@ -148,6 +184,9 @@ func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeReque
 
 	pr, err := p.probeOperator.GetProbeByName(ctx, request.Name, projectID)
 	if err != nil {
+		return "", err
+	}
+	if err := validateProbeUpdate(pr, request); err != nil {
 		return "", err
 	}
 
@@ -189,16 +228,6 @@ func (p *probeService) UpdateProbe(ctx context.Context, request model.ProbeReque
 		case model.ProbeTypeK8sProbe:
 			utils.AddK8SProbeProperties(newProbe, request)
 		}
-	}
-
-	if request.Type == model.ProbeTypeHTTPProbe && request.KubernetesHTTPProperties == nil {
-		return "", errors.New("http probe type's properties are empty")
-	} else if request.Type == model.ProbeTypeCmdProbe && request.KubernetesCMDProperties == nil {
-		return "", errors.New("cmd probe type's properties are empty")
-	} else if request.Type == model.ProbeTypePromProbe && request.PromProperties == nil {
-		return "", errors.New("prom probe type's properties are empty")
-	} else if request.Type == model.ProbeTypeK8sProbe && request.K8sProperties == nil {
-		return "", errors.New("k8s probe type's properties are empty")
 	}
 
 	var updateQuery bson.D
@@ -495,8 +524,10 @@ func (p *probeService) DeleteProbe(ctx context.Context, probeName, projectID str
 	if err != nil {
 		return false, err
 	}
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username, err := authorization.GetUsernameFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
 
 	Time := time.Now().UnixMilli()
 
