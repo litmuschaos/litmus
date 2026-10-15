@@ -125,6 +125,8 @@ func (ev *subscriberEvents) WorkflowEventHandler(oldObj, workflowObj *v1alpha1.W
 	nodes := make(map[string]types.Node)
 	logrus.Info("Workflow RUN_ID: ", workflowObj.UID, " and event type: ", eventType)
 
+	adminModeNS := getAdminModeNamespace(workflowObj.Spec.Arguments.Parameters, workflowObj.ObjectMeta.Namespace)
+
 	for i, nodeStatus := range workflowObj.Status.Nodes {
 
 		var (
@@ -135,7 +137,7 @@ func (ev *subscriberEvents) WorkflowEventHandler(oldObj, workflowObj *v1alpha1.W
 		// considering chaos events has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 && nodeStatus.Inputs.Artifacts[0].Raw != nil {
 			//extracts chaos data
-			nodeType, cd, err = ev.CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
+			nodeType, cd, err = ev.CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, adminModeNS, chaosClient)
 			if err != nil {
 				logrus.WithError(err).Print("Failed to parse ChaosEngine CRD")
 			}

@@ -275,6 +275,7 @@ deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
 deploySetup: Deploy the setup
+deployUsingKubectlApplyCommand: Deploy using kubectl apply command
 deployedOn: Deployed using
 description: Description
 descriptionOptional: Description (Optional)
@@ -460,6 +461,7 @@ groupRemoved: Group removed from project successfully
 groupRole: Group Role
 groupRoleUpdated: Group role updated successfully
 healthy: Healthy
+helmInstallation: Helm
 history: History
 hostedOn: Hosted on
 hostedOnAgent: Hosted on Chaos Infrastructure
@@ -613,6 +615,7 @@ logs: Logs
 logsOptional: Logs (Optional)
 mainTitle: How do you want to start off?
 manifestDownloadUnsuccessful: Manifest download is unavailable!
+manifestInstallation: Manifest
 manifestMissing: Manifest is missing! Please check your ChaosHub.
 manual: Manual
 manualInterruption: Manual Interruption needed
@@ -1244,7 +1247,9 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
-usernameValidText: Username can only contain letters, digits, underscores, and hyphens
+usernameValidText: >-
+  Username must start with a letter or digit and can only contain letters,
+  digits, and the characters . _ - @ +
 usersNotAvailableMessage: No users available to send invitation
 usersNotAvailableTitle: No users available
 validationError: Validation Error

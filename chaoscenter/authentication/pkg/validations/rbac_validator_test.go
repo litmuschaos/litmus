@@ -9,6 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestRbacValidator_IndividualMemberAllowed(t *testing.T) {
@@ -19,11 +20,6 @@ func TestRbacValidator_IndividualMemberAllowed(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"dev-team"},
 	}, nil)
-	// Current implementation continues to a group check when groups are present,
-	// so both lookups must return a matching project for authorization to succeed.
-	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
-		{ID: "proj1"},
-	}, nil).Once()
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
 		{ID: "proj1"},
 	}, nil).Once()
@@ -33,6 +29,8 @@ func TestRbacValidator_IndividualMemberAllowed(t *testing.T) {
 		service)
 
 	assert.NoError(t, err)
+	service.AssertNumberOfCalls(t, "GetProjects", 1)
+	service.AssertExpectations(t)
 }
 
 func TestRbacValidator_IndividualMemberDenied_GroupAllowed(t *testing.T) {
@@ -43,15 +41,24 @@ func TestRbacValidator_IndividualMemberDenied_GroupAllowed(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"dev-team"},
 	}, nil)
-	// Current implementation returns unauthorized as soon as individual check has no match.
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{}, nil).Once()
+	groupFilter := bson.D{
+		{Key: "_id", Value: "proj1"},
+		{Key: "groups", Value: bson.D{
+			{Key: "$elemMatch", Value: bson.D{
+				{Key: "group", Value: bson.D{{Key: "$in", Value: []string{"dev-team"}}}},
+				{Key: "role", Value: bson.D{{Key: "$in", Value: []string{string(entities.RoleExecutor)}}}},
+			}},
+		}},
+	}
+	service.On("GetProjects", groupFilter).Return([]*entities.Project{{ID: "proj1"}}, nil).Once()
 
 	err := validations.RbacValidator("user1", "proj1",
 		[]string{string(entities.RoleExecutor)}, string(entities.AcceptedInvitation),
 		service)
 
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "Unauthorized")
+	assert.NoError(t, err)
+	service.AssertExpectations(t)
 }
 
 func TestRbacValidator_BothDenied(t *testing.T) {
@@ -100,17 +107,26 @@ func TestRbacValidator_ExplicitGroupsParam(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"should-not-be-used"},
 	}, nil)
-	// Current implementation returns unauthorized as soon as individual check has no match.
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{}, nil).Once()
 
 	// Pass explicit groups via variadic param — should override user.OIDCGroups
 	explicitGroups := []string{"explicit-group"}
+	groupFilter := bson.D{
+		{Key: "_id", Value: "proj1"},
+		{Key: "groups", Value: bson.D{
+			{Key: "$elemMatch", Value: bson.D{
+				{Key: "group", Value: bson.D{{Key: "$in", Value: explicitGroups}}},
+				{Key: "role", Value: bson.D{{Key: "$in", Value: []string{string(entities.RoleExecutor)}}}},
+			}},
+		}},
+	}
+	service.On("GetProjects", groupFilter).Return([]*entities.Project{{ID: "proj1"}}, nil).Once()
 	err := validations.RbacValidator("user1", "proj1",
 		[]string{string(entities.RoleExecutor)}, string(entities.AcceptedInvitation),
 		service, explicitGroups)
 
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "Unauthorized")
+	assert.NoError(t, err)
+	service.AssertExpectations(t)
 }
 
 func TestRbacValidator_DeactivatedUser(t *testing.T) {

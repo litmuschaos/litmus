@@ -74,7 +74,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
             username: Yup.string()
               .required(getString('usernameIsRequired'))
               .min(3, getString('fieldMinLength', { length: 3 }))
-              .max(16, getString('fieldMaxLength', { length: 16 }))
+              .max(254, getString('fieldMaxLength', { length: 254 }))
               .matches(USERNAME_REGEX, getString('usernameValidText')),
             password: Yup.string().required(getString('passwordIsRequired')),
             reEnterPassword: Yup.string()

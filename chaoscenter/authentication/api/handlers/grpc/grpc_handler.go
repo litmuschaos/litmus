@@ -66,6 +66,10 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 	memberMap := make(map[string]entities.User)
 
 	authUsers, err := s.ApplicationService.FindUsersByUID(uids)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
 	for _, authUser := range *authUsers {
 		memberMap[authUser.ID] = authUser
 	}
@@ -81,10 +85,6 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 		projectMember.Uid = member.UserID
 		projectMember.JoinedAt = strconv.FormatInt(member.JoinedAt, 10)
 		projectMembers = append(projectMembers, &projectMember)
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return &protos.GetProjectByIdResponse{

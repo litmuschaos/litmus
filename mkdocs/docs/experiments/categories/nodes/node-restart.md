@@ -191,8 +191,24 @@
       <tr>
         <td> LIB  </td>
         <td> The chaos lib used to inject the chaos </td>
-        <td> Defaults to </code>litmus</code> supported litmus only </td>
+        <td> Defaults to <code>litmus</code>; supported: litmus only </td>
       </tr>
+      <tr>
+        <td> STATUS_CHECK_DELAY </td>
+        <td> Time interval (in seconds) between subsequent status checks </td>
+        <td> Defaults to 2 </td>
+      </tr>
+      <tr>
+        <td> STATUS_CHECK_TIMEOUT </td>
+        <td> Maximum time (in seconds) to wait for the application/auxiliary checks to be successful </td>
+        <td> Defaults to 180 </td>
+      </tr>
+      <tr>
+        <td> TERMINATION_GRACE_PERIOD_SECONDS </td>
+        <td> Grace period (in seconds) for the helper pod termination </td>
+        <td> Defaults to 0 </td>
+      </tr>
+
     </table>
 
 ## Experiment Examples

@@ -9,36 +9,28 @@ import (
 	"strconv"
 	"time"
 
-	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
-
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/google/uuid"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
-	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/tidwall/sjson"
-
+	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
+	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
-	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
-	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
-
-	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/metrics"
 )
 
 // ChaosExperimentHandler is the handler for chaos experiment
@@ -127,7 +119,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			return "", err
 		}
 
-		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
+		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, store.Store)
 		if err != nil {
 			return "", err
 		}
@@ -271,17 +263,7 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 
 		workflowRun.IsRemoved = true
 
-		wf := model.ChaosExperimentRequest{
-			ExperimentID:   &workflow.ExperimentID,
-			ExperimentName: workflow.Name,
-		}
-
-		err = c.gitOpsService.DeleteExperimentFromGit(ctx, projectID, &wf)
-		if err != nil {
-			logrus.Errorf("Failed to delete experiment manifest from git, err: %v", err)
-			return false, err
-		}
-
+		// Only the run is deleted; the experiment and its manifest in git stay.
 		err = c.chaosExperimentRunService.ProcessExperimentRunDelete(ctx, query, workflowRunID, workflowRun, workflow, username, r)
 		if err != nil {
 			return false, err
@@ -736,13 +718,13 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		if request.Sort.Ascending != nil && *request.Sort.Ascending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", -1},
+					{"name", 1},
 				}},
 			}
 		} else {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", 1},
+					{"name", -1},
 				}},
 			}
 		}
@@ -1250,17 +1232,25 @@ func (c *ChaosExperimentHandler) GetLogs(reqID string, pod model.PodLogRequest, 
 			ExternalData: &externalData,
 		},
 	}
-	if clusterChan, ok := r.ConnectedInfra[pod.InfraID]; ok {
+	r.Mutex.Lock()
+	clusterChan, connected := r.ConnectedInfra[pod.InfraID]
+	r.Mutex.Unlock()
+	if connected {
 		clusterChan <- &payload
-	} else if reqChan, ok := r.ExperimentLog[reqID]; ok {
-		resp := model.PodLogResponse{
-			PodName:         pod.PodName,
-			ExperimentRunID: pod.ExperimentRunID,
-			PodType:         pod.PodType,
-			Log:             "INFRA ERROR : INFRA NOT CONNECTED",
+	} else {
+		r.Mutex.Lock()
+		reqChan, ok := r.ExperimentLog[reqID]
+		r.Mutex.Unlock()
+		if ok {
+			resp := model.PodLogResponse{
+				PodName:         pod.PodName,
+				ExperimentRunID: pod.ExperimentRunID,
+				PodType:         pod.PodType,
+				Log:             "INFRA ERROR : INFRA NOT CONNECTED",
+			}
+			reqChan <- &resp
+			close(reqChan)
 		}
-		reqChan <- &resp
-		close(reqChan)
 	}
 }
 
@@ -1278,15 +1268,23 @@ func (c *ChaosExperimentHandler) GetKubeObjData(reqID string, kubeObject model.K
 			ExternalData: &externalData,
 		},
 	}
-	if clusterChan, ok := r.ConnectedInfra[kubeObject.InfraID]; ok {
+	r.Mutex.Lock()
+	clusterChan, connected := r.ConnectedInfra[kubeObject.InfraID]
+	r.Mutex.Unlock()
+	if connected {
 		clusterChan <- &payload
-	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
-		resp := model.KubeObjectResponse{
-			InfraID: kubeObject.InfraID,
-			KubeObj: &model.KubeObject{},
+	} else {
+		r.Mutex.Lock()
+		reqChan, ok := r.KubeObjectData[reqID]
+		r.Mutex.Unlock()
+		if ok {
+			resp := model.KubeObjectResponse{
+				InfraID: kubeObject.InfraID,
+				KubeObj: &model.KubeObject{},
+			}
+			reqChan <- &resp
+			close(reqChan)
 		}
-		reqChan <- &resp
-		close(reqChan)
 	}
 }
 
@@ -1304,15 +1302,23 @@ func (c *ChaosExperimentHandler) GetKubeNamespaceData(reqID string, kubeNamespac
 			ExternalData: &externalData,
 		},
 	}
-	if clusterChan, ok := r.ConnectedInfra[kubeNamespace.InfraID]; ok {
+	r.Mutex.Lock()
+	clusterChan, connected := r.ConnectedInfra[kubeNamespace.InfraID]
+	r.Mutex.Unlock()
+	if connected {
 		clusterChan <- &payload
-	} else if reqChan, ok := r.KubeNamespaceData[reqID]; ok {
-		resp := model.KubeNamespaceResponse{
-			InfraID:       kubeNamespace.InfraID,
-			KubeNamespace: []*model.KubeNamespace{},
+	} else {
+		r.Mutex.Lock()
+		reqChan, ok := r.KubeNamespaceData[reqID]
+		r.Mutex.Unlock()
+		if ok {
+			resp := model.KubeNamespaceResponse{
+				InfraID:       kubeNamespace.InfraID,
+				KubeNamespace: []*model.KubeNamespace{},
+			}
+			reqChan <- &resp
+			close(reqChan)
 		}
-		reqChan <- &resp
-		close(reqChan)
 	}
 }
 
@@ -1523,9 +1529,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 
 	return true, err
 }
-func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData, username string) (bool, error) {
-
-	var experimentRunsID []string
+func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string, r *store.StateData, username string) (bool, error) {
 
 	query := bson.D{
 		{"experiment_id", experimentID},
@@ -1537,12 +1541,22 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		return false, err
 	}
 
+	if experimentRunID != nil && *experimentRunID == "" {
+		experimentRunID = nil
+	}
+
+	if notifyID != nil && *notifyID == "" {
+		notifyID = nil
+	}
+
 	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
-	if experimentRunID == nil {
+	var runsToStop []dbChaosExperimentRun.ChaosExperimentRun
+	if experimentRunID == nil && notifyID == nil {
 
 		// Fetching all the experiment runs in the experiment
 		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
 			{"experiment_id", experimentID},
+			{"project_id", projectID},
 			{"is_removed", false},
 		})
 		if err != nil {
@@ -1550,28 +1564,38 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		}
 
 		for _, runs := range expRuns {
-			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
-				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout) || runs.Phase == string(model.ExperimentRunStatusQueued)) && !runs.Completed {
+				runsToStop = append(runsToStop, runs)
 			}
 		}
 
 		// Check if experiment run count is 0 and if it's not a cron experiment
-		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
-			return false, fmt.Errorf("no running or timeout experiments found")
+		if len(runsToStop) == 0 && experiment.CronSyntax == "" {
+			return false, fmt.Errorf("no running, timeout, or queued experiments found")
 		}
-	} else if *experimentRunID != "" {
-		experimentRunsID = []string{*experimentRunID}
+	} else if experimentRunID != nil && *experimentRunID != "" {
+		runsToStop = append(runsToStop, dbChaosExperimentRun.ChaosExperimentRun{ExperimentRunID: *experimentRunID})
+	} else if notifyID != nil {
+		runsToStop = append(runsToStop, dbChaosExperimentRun.ChaosExperimentRun{NotifyID: notifyID})
 	}
 
-	for _, runID := range experimentRunsID {
+	for _, run := range runsToStop {
 		// scope the update to the specific run so we don't accidentally touch sibling runs
 		runQuery := bson.D{
 			{"experiment_id", experimentID},
 			{"project_id", projectID},
-			{"experiment_run_id", runID},
 			{"is_removed", false},
 		}
-		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, &runID, experiment, username, projectID, r)
+
+		if run.ExperimentRunID != "" {
+			runQuery = append(runQuery, bson.E{Key: "experiment_run_id", Value: run.ExperimentRunID})
+		} else if run.NotifyID != nil {
+			runQuery = append(runQuery, bson.E{Key: "notify_id", Value: *run.NotifyID})
+		} else {
+			return false, fmt.Errorf("missing experiment_run_id and notify_id for experiment run stop")
+		}
+
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, runQuery, run.ExperimentRunID, run.NotifyID, experiment, username, projectID, r)
 		if err != nil {
 			return false, err
 		}

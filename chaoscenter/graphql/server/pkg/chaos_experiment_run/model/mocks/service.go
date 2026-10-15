@@ -30,9 +30,9 @@ func (_m *ChaosExperimentRunService) EXPECT() *ChaosExperimentRunService_Expecte
 	return &ChaosExperimentRunService_Expecter{mock: &_m.Mock}
 }
 
-// ProcessCompletedExperimentRun provides a mock function with given fields: execData, wfID, runID
-func (_m *ChaosExperimentRunService) ProcessCompletedExperimentRun(execData chaos_experiment_run.ExecutionData, wfID string, runID string) (chaos_experiment_run.ExperimentRunMetrics, error) {
-	ret := _m.Called(execData, wfID, runID)
+// ProcessCompletedExperimentRun provides a mock function with given fields: execData, wfID, experimentRunID
+func (_m *ChaosExperimentRunService) ProcessCompletedExperimentRun(execData chaos_experiment_run.ExecutionData, wfID string, experimentRunID string) (chaos_experiment_run.ExperimentRunMetrics, error) {
+	ret := _m.Called(execData, wfID, experimentRunID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ProcessCompletedExperimentRun")
@@ -41,16 +41,16 @@ func (_m *ChaosExperimentRunService) ProcessCompletedExperimentRun(execData chao
 	var r0 chaos_experiment_run.ExperimentRunMetrics
 	var r1 error
 	if rf, ok := ret.Get(0).(func(chaos_experiment_run.ExecutionData, string, string) (chaos_experiment_run.ExperimentRunMetrics, error)); ok {
-		return rf(execData, wfID, runID)
+		return rf(execData, wfID, experimentRunID)
 	}
 	if rf, ok := ret.Get(0).(func(chaos_experiment_run.ExecutionData, string, string) chaos_experiment_run.ExperimentRunMetrics); ok {
-		r0 = rf(execData, wfID, runID)
+		r0 = rf(execData, wfID, experimentRunID)
 	} else {
 		r0 = ret.Get(0).(chaos_experiment_run.ExperimentRunMetrics)
 	}
 
 	if rf, ok := ret.Get(1).(func(chaos_experiment_run.ExecutionData, string, string) error); ok {
-		r1 = rf(execData, wfID, runID)
+		r1 = rf(execData, wfID, experimentRunID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -66,12 +66,12 @@ type ChaosExperimentRunService_ProcessCompletedExperimentRun_Call struct {
 // ProcessCompletedExperimentRun is a helper method to define mock.On call
 //   - execData chaos_experiment_run.ExecutionData
 //   - wfID string
-//   - runID string
-func (_e *ChaosExperimentRunService_Expecter) ProcessCompletedExperimentRun(execData interface{}, wfID interface{}, runID interface{}) *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call {
-	return &ChaosExperimentRunService_ProcessCompletedExperimentRun_Call{Call: _e.mock.On("ProcessCompletedExperimentRun", execData, wfID, runID)}
+//   - experimentRunID string
+func (_e *ChaosExperimentRunService_Expecter) ProcessCompletedExperimentRun(execData interface{}, wfID interface{}, experimentRunID interface{}) *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call {
+	return &ChaosExperimentRunService_ProcessCompletedExperimentRun_Call{Call: _e.mock.On("ProcessCompletedExperimentRun", execData, wfID, experimentRunID)}
 }
 
-func (_c *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call) Run(run func(execData chaos_experiment_run.ExecutionData, wfID string, runID string)) *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call {
+func (_c *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call) Run(run func(execData chaos_experiment_run.ExecutionData, wfID string, experimentRunID string)) *ChaosExperimentRunService_ProcessCompletedExperimentRun_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(chaos_experiment_run.ExecutionData), args[1].(string), args[2].(string))
 	})
@@ -141,16 +141,16 @@ func (_c *ChaosExperimentRunService_ProcessExperimentRunDelete_Call) RunAndRetur
 }
 
 // ProcessExperimentRunStop provides a mock function with given fields: ctx, query, experimentRunID, experiment, username, projectID, r
-func (_m *ChaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query primitive.D, experimentRunID *string, experiment chaos_experiment.ChaosExperimentRequest, username string, projectID string, r *data_store.StateData) error {
-	ret := _m.Called(ctx, query, experimentRunID, experiment, username, projectID, r)
+func (_m *ChaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query primitive.D, experimentRunID string, notifyID *string, experiment chaos_experiment.ChaosExperimentRequest, username string, projectID string, r *data_store.StateData) error {
+	ret := _m.Called(ctx, query, experimentRunID, notifyID, experiment, username, projectID, r)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ProcessExperimentRunStop")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, primitive.D, *string, chaos_experiment.ChaosExperimentRequest, string, string, *data_store.StateData) error); ok {
-		r0 = rf(ctx, query, experimentRunID, experiment, username, projectID, r)
+	if rf, ok := ret.Get(0).(func(context.Context, primitive.D, string, *string, chaos_experiment.ChaosExperimentRequest, string, string, *data_store.StateData) error); ok {
+		r0 = rf(ctx, query, experimentRunID, notifyID, experiment, username, projectID, r)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -166,18 +166,19 @@ type ChaosExperimentRunService_ProcessExperimentRunStop_Call struct {
 // ProcessExperimentRunStop is a helper method to define mock.On call
 //   - ctx context.Context
 //   - query primitive.D
-//   - experimentRunID *string
+//   - experimentRunID string
+//   - notifyID *string
 //   - experiment chaos_experiment.ChaosExperimentRequest
 //   - username string
 //   - projectID string
 //   - r *data_store.StateData
-func (_e *ChaosExperimentRunService_Expecter) ProcessExperimentRunStop(ctx interface{}, query interface{}, experimentRunID interface{}, experiment interface{}, username interface{}, projectID interface{}, r interface{}) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
-	return &ChaosExperimentRunService_ProcessExperimentRunStop_Call{Call: _e.mock.On("ProcessExperimentRunStop", ctx, query, experimentRunID, experiment, username, projectID, r)}
+func (_e *ChaosExperimentRunService_Expecter) ProcessExperimentRunStop(ctx interface{}, query interface{}, experimentRunID interface{}, notifyID interface{}, experiment interface{}, username interface{}, projectID interface{}, r interface{}) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
+	return &ChaosExperimentRunService_ProcessExperimentRunStop_Call{Call: _e.mock.On("ProcessExperimentRunStop", ctx, query, experimentRunID, notifyID, experiment, username, projectID, r)}
 }
 
-func (_c *ChaosExperimentRunService_ProcessExperimentRunStop_Call) Run(run func(ctx context.Context, query primitive.D, experimentRunID *string, experiment chaos_experiment.ChaosExperimentRequest, username string, projectID string, r *data_store.StateData)) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
+func (_c *ChaosExperimentRunService_ProcessExperimentRunStop_Call) Run(run func(ctx context.Context, query primitive.D, experimentRunID string, notifyID *string, experiment chaos_experiment.ChaosExperimentRequest, username string, projectID string, r *data_store.StateData)) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(primitive.D), args[2].(*string), args[3].(chaos_experiment.ChaosExperimentRequest), args[4].(string), args[5].(string), args[6].(*data_store.StateData))
+		run(args[0].(context.Context), args[1].(primitive.D), args[2].(string), args[3].(*string), args[4].(chaos_experiment.ChaosExperimentRequest), args[5].(string), args[6].(string), args[7].(*data_store.StateData))
 	})
 	return _c
 }
@@ -187,7 +188,7 @@ func (_c *ChaosExperimentRunService_ProcessExperimentRunStop_Call) Return(_a0 er
 	return _c
 }
 
-func (_c *ChaosExperimentRunService_ProcessExperimentRunStop_Call) RunAndReturn(run func(context.Context, primitive.D, *string, chaos_experiment.ChaosExperimentRequest, string, string, *data_store.StateData) error) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
+func (_c *ChaosExperimentRunService_ProcessExperimentRunStop_Call) RunAndReturn(run func(context.Context, primitive.D, string, *string, chaos_experiment.ChaosExperimentRequest, string, string, *data_store.StateData) error) *ChaosExperimentRunService_ProcessExperimentRunStop_Call {
 	_c.Call.Return(run)
 	return _c
 }

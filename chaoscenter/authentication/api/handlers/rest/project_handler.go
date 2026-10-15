@@ -174,16 +174,18 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "Permission denied, user is not admin",
 			})
+			return
 		}
 		project, err := service.GetProjectStats()
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 		if project == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
-		}
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 		c.JSON(http.StatusOK, response.ProjectStats{Data: project})
@@ -573,8 +575,10 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -585,7 +589,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["acceptInvitation"],
 			string(entities.PendingInvitation),
 			service)
@@ -596,7 +600,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = service.UpdateInvite(member.ProjectID, member.UserID, entities.AcceptedInvitation, nil)
+		err = service.UpdateInvite(member.ProjectID, uid, entities.AcceptedInvitation, nil)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -631,8 +635,10 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -643,7 +649,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["declineInvitation"],
 			string(entities.PendingInvitation),
 			service)
@@ -654,7 +660,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = service.UpdateInvite(member.ProjectID, member.UserID, entities.DeclinedInvitation, nil)
+		err = service.UpdateInvite(member.ProjectID, uid, entities.DeclinedInvitation, nil)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -703,8 +709,10 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			}
 		}
 
+		uid := c.MustGet("uid").(string)
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
-		initialLogin, err := CheckInitialLogin(service, c.MustGet("uid").(string))
+		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -715,7 +723,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
+		err = validations.RbacValidator(uid, member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
 			service)
@@ -726,7 +734,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = service.UpdateInvite(member.ProjectID, member.UserID, entities.ExitedProject, nil)
+		err = service.UpdateInvite(member.ProjectID, uid, entities.ExitedProject, nil)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
