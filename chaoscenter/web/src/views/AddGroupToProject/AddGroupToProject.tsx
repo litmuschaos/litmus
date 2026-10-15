@@ -11,7 +11,7 @@ import { useAddGroupToProjectMutation, type GetProjectGroupsOkResponse } from '@
 interface AddGroupToProjectViewProps {
   handleClose: () => void;
   getGroupsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
   ) => Promise<QueryObserverResult<GetProjectGroupsOkResponse, unknown>>;
 }
 
@@ -39,14 +39,14 @@ const AddGroupToProjectView = ({ handleClose, getGroupsRefetch }: AddGroupToProj
         getGroupsRefetch();
         showSuccess(getString('groupAdded'));
         handleClose();
-      }
-    }
+      },
+    },
   );
 
   const roleOptions: SelectOption[] = [
     { label: getString('viewer'), value: 'Viewer' },
     { label: getString('Executor'), value: 'Executor' },
-    { label: 'Owner', value: 'Owner' }
+    { label: 'Owner', value: 'Owner' },
   ];
 
   return (
@@ -63,8 +63,8 @@ const AddGroupToProjectView = ({ handleClose, getGroupsRefetch }: AddGroupToProj
               displayName: values.displayName || undefined,
               group: values.groupName,
               projectID,
-              role: values.role as 'Executor' | 'Owner' | 'Viewer'
-            }
+              role: values.role as 'Executor' | 'Owner' | 'Viewer',
+            },
           });
         }}
         validate={values => {

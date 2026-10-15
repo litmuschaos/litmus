@@ -10,7 +10,7 @@ const defaultProps = {
   infraName: 'test-infra',
   infraNamespace: 'litmus',
   infraScope: 'cluster' as const,
-  platformName: 'Kubernetes'
+  platformName: 'Kubernetes',
 };
 
 describe('HelmInstallationCommand', () => {

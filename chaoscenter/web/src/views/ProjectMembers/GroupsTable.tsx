@@ -17,7 +17,7 @@ interface GroupsTableViewProps {
   groups: GroupMember[] | undefined;
   isLoading: boolean;
   getGroupsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
   ) => Promise<QueryObserverResult<GetProjectGroupsOkResponse, unknown>>;
 }
 
@@ -44,7 +44,7 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
         Header: getString('groupName').toUpperCase(),
         accessor: 'group',
         id: 'group',
-        width: '40%'
+        width: '40%',
       },
       {
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
@@ -55,7 +55,7 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
         Header: getString('groupRole').toUpperCase(),
         accessor: 'role',
         id: 'role',
-        width: '30%'
+        width: '30%',
       },
       {
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => (
@@ -66,7 +66,7 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
         Header: getString('assignedAt').toUpperCase(),
         accessor: 'assignedAt',
         id: 'assignedAt',
-        width: '20%'
+        width: '20%',
       },
       {
         Cell: ({ row: { original: data } }: { row: Row<GroupMember> }) => {
@@ -104,11 +104,11 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
         },
         Header: '',
         disableSortBy: true,
-        id: 'threeDotMenu'
-      }
+        id: 'threeDotMenu',
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   return (
@@ -121,7 +121,7 @@ const GroupsTableView = ({ groups, getGroupsRefetch, isLoading }: GroupsTableVie
         noData={{
           message: getString('noGroupsMessage'),
           messageTitle: getString('noGroupsTitle'),
-          when: () => groups?.length === EMPTY_GROUPS_COUNT
+          when: () => groups?.length === EMPTY_GROUPS_COUNT,
         }}
       >
         {groups && <TableV2<GroupMember> columns={columns} sortable data={groups} />}

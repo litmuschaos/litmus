@@ -8,7 +8,7 @@ interface RemoveGroupControllerProps {
   groupName: string;
   hideDeleteModal: () => void;
   getGroupsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
   ) => Promise<QueryObserverResult<GetProjectGroupsOkResponse, unknown>>;
 }
 
@@ -22,8 +22,8 @@ const RemoveGroupController = (props: RemoveGroupControllerProps): React.ReactEl
       onSuccess: data => {
         getGroupsRefetch();
         showSuccess(data.message);
-      }
-    }
+      },
+    },
   );
 
   return (

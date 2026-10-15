@@ -13,13 +13,13 @@ describe('GroupsTableView', () => {
   test('renders group members with name, role, and date', () => {
     const groups: GroupMember[] = [
       { assignedAt: 1713700000000, displayName: 'Dev Team', group: 'dev-team-guid', role: 'Executor' },
-      { assignedAt: 1713700000000, group: 'qa-team-guid', role: 'Viewer' }
+      { assignedAt: 1713700000000, group: 'qa-team-guid', role: 'Viewer' },
     ];
 
     render(
       <TestWrapper>
         <GroupsTableView groups={groups} isLoading={false} getGroupsRefetch={mockRefetch} />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     // Check displayName is rendered when available
@@ -42,7 +42,7 @@ describe('GroupsTableView', () => {
     render(
       <TestWrapper>
         <GroupsTableView groups={[]} isLoading={false} getGroupsRefetch={mockRefetch} />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     expect(screen.getByText('noGroupsTitle')).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('GroupsTableView', () => {
     render(
       <TestWrapper>
         <GroupsTableView groups={undefined} isLoading={true} getGroupsRefetch={mockRefetch} />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     // Count header shows 0 while loading

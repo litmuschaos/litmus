@@ -5,7 +5,7 @@ import type { Project } from '@api/auth';
 // Mock jwt-decode
 jest.mock('jwt-decode', () => ({
   __esModule: true,
-  default: jest.fn()
+  default: jest.fn(),
 }));
 const mockedJwtDecode = jwtDecode as jest.MockedFunction<typeof jwtDecode>;
 
@@ -20,7 +20,7 @@ describe('getEffectiveProjectRole', () => {
       groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Owner' }],
       members: [{ invitation: 'Accepted', role: 'Executor', userID: 'user1', username: 'test' }],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     // Individual member role takes priority — no JWT decode needed
@@ -35,14 +35,14 @@ describe('getEffectiveProjectRole', () => {
       groups: ['dev-team'],
       role: 'user',
       uid: 'user1',
-      username: 'test'
+      username: 'test',
     });
 
     const project: Project = {
       groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [{ invitation: 'Accepted', role: 'Owner', userID: 'other-user', username: 'other' }],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -56,18 +56,18 @@ describe('getEffectiveProjectRole', () => {
       groups: ['dev-team', 'admin-team'],
       role: 'user',
       uid: 'user1',
-      username: 'test'
+      username: 'test',
     });
 
     const project: Project = {
       groups: [
         { assignedAt: 1000, group: 'dev-team', role: 'Viewer' },
         { assignedAt: 2000, group: 'admin-team', role: 'Owner' },
-        { assignedAt: 3000, group: 'qa-team', role: 'Executor' }
+        { assignedAt: 3000, group: 'qa-team', role: 'Executor' },
       ],
       members: [],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -81,14 +81,14 @@ describe('getEffectiveProjectRole', () => {
       groups: ['unrelated-group'],
       role: 'user',
       uid: 'user1',
-      username: 'test'
+      username: 'test',
     });
 
     const project: Project = {
       groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -100,7 +100,7 @@ describe('getEffectiveProjectRole', () => {
       groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -113,7 +113,7 @@ describe('getEffectiveProjectRole', () => {
     const project: Project = {
       members: [],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');
@@ -126,14 +126,14 @@ describe('getEffectiveProjectRole', () => {
       exp: 9999999999,
       role: 'user',
       uid: 'user1',
-      username: 'test'
+      username: 'test',
     });
 
     const project: Project = {
       groups: [{ assignedAt: 1000, group: 'dev-team', role: 'Executor' }],
       members: [],
       name: 'Test',
-      projectID: 'proj1'
+      projectID: 'proj1',
     };
 
     const result = getEffectiveProjectRole(project, 'user1');

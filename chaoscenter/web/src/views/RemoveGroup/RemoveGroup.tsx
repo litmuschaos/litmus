@@ -38,12 +38,12 @@ const RemoveGroupView = (props: RemoveGroupViewProps): React.ReactElement => {
               {
                 body: {
                   group: groupName,
-                  projectID
-                }
+                  projectID,
+                },
               },
               {
-                onSuccess: handleClose
-              }
+                onSuccess: handleClose,
+              },
             )
           }
         />

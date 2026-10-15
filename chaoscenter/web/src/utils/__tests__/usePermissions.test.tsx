@@ -20,7 +20,7 @@ const createWrapper = (projectRole?: string): React.ComponentType<WrapperProps> 
           projectID: 'test-project',
           projectRole,
           renderUrl: '/account/uid',
-          updateAppStore
+          updateAppStore,
         }}
       >
         {children}
@@ -34,59 +34,59 @@ const createWrapper = (projectRole?: string): React.ComponentType<WrapperProps> 
 describe('usePermissions', () => {
   test('Owner has access to all permissions (returns false = not disabled)', () => {
     const { result } = renderHook(() => usePermissions({ permission: PermissionGroup.OWNER }), {
-      wrapper: createWrapper('Owner')
+      wrapper: createWrapper('Owner'),
     });
     expect(result.current).toBe(false);
   });
 
   test('Executor has access to Executor and Viewer permissions', () => {
     const { result: executorPerm } = renderHook(() => usePermissions({ permission: PermissionGroup.Executor }), {
-      wrapper: createWrapper('Executor')
+      wrapper: createWrapper('Executor'),
     });
     expect(executorPerm.current).toBe(false);
 
     const { result: viewerPerm } = renderHook(() => usePermissions({ permission: PermissionGroup.VIEWER }), {
-      wrapper: createWrapper('Executor')
+      wrapper: createWrapper('Executor'),
     });
     expect(viewerPerm.current).toBe(false);
   });
 
   test('Executor cannot access Owner permissions', () => {
     const { result } = renderHook(() => usePermissions({ permission: PermissionGroup.OWNER }), {
-      wrapper: createWrapper('Executor')
+      wrapper: createWrapper('Executor'),
     });
     expect(result.current).toBe(true);
   });
 
   test('Viewer can only access Viewer permissions', () => {
     const { result: viewerPerm } = renderHook(() => usePermissions({ permission: PermissionGroup.VIEWER }), {
-      wrapper: createWrapper('Viewer')
+      wrapper: createWrapper('Viewer'),
     });
     expect(viewerPerm.current).toBe(false);
   });
 
   test('Viewer cannot access Executor or Owner permissions', () => {
     const { result: executorPerm } = renderHook(() => usePermissions({ permission: PermissionGroup.Executor }), {
-      wrapper: createWrapper('Viewer')
+      wrapper: createWrapper('Viewer'),
     });
     expect(executorPerm.current).toBe(true);
 
     const { result: ownerPerm } = renderHook(() => usePermissions({ permission: PermissionGroup.OWNER }), {
-      wrapper: createWrapper('Viewer')
+      wrapper: createWrapper('Viewer'),
     });
     expect(ownerPerm.current).toBe(true);
   });
 
   test('No role (undefined) disables all permissions', () => {
     const { result } = renderHook(() => usePermissions({ permission: PermissionGroup.VIEWER }), {
-      wrapper: createWrapper(undefined)
+      wrapper: createWrapper(undefined),
     });
     expect(result.current).toBe(true);
   });
 
   test('Empty string role disables all permissions', () => {
     const { result } = renderHook(() => usePermissions({ permission: PermissionGroup.VIEWER }), {
-      wrapper: createWrapper('')
+      wrapper: createWrapper(''),
     });
     expect(result.current).toBe(true);
   });
