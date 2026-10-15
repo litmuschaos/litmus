@@ -62,7 +62,7 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
     {
       label: 'Editor',
       value: 'Editor',
-    }
+    },
   ];
   return <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />;
 };
@@ -84,7 +84,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
     {
       label: 'Editor',
       value: 'Editor',
-    }
+    },
   ];
 
   const { showSuccess } = useToaster();
