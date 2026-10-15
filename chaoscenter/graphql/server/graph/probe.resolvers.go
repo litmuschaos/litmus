@@ -114,7 +114,7 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 }
 
 // ListProbes is the resolver for the listProbes field.
-func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
+func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error) {
 	logFields := logrus.Fields{
 		"projectId":  projectID,
 		"probeNames": probeNames,
@@ -128,7 +128,7 @@ func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infras
 		return nil, err
 	}
 
-	response, err := r.probeService.ListProbes(ctx, probeNames, infrastructureType, filter, projectID)
+	response, err := r.probeService.ListProbes(ctx, probeNames, infrastructureType, filter, pagination, sort, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
