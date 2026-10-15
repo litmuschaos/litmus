@@ -29,6 +29,8 @@ export interface StringsMap {
   'actualResilienceScore': unknown
   'add': unknown
   'addExperimentToChaosHub': unknown
+  'addGroup': unknown
+  'addGroupToProject': unknown
   'addNewCluster': unknown
   'addNewCustomizedProbes': unknown
   'addNewProbes': unknown
@@ -61,6 +63,7 @@ export interface StringsMap {
   'appNameSpace': unknown
   'apply': unknown
   'applyChanges': unknown
+  'assignedAt': unknown
   'at': unknown
   'atAGlance': unknown
   'attempt': unknown
@@ -114,7 +117,6 @@ export interface StringsMap {
   'chaosInfrastructureSuccess': unknown
   'chaosInfrastructureText': unknown
   'chaosInfrastructures': unknown
-  'clear': unknown
   'chaosResultNotAvailable': unknown
   'chaosResults': unknown
   'chaosStudio': unknown
@@ -128,6 +130,7 @@ export interface StringsMap {
   'chooseHubAccess': unknown
   'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
+  'clear': unknown
   'clearSearch': unknown
   'clickDownload': unknown
   'clone': unknown
@@ -156,9 +159,9 @@ export interface StringsMap {
   'confirmText': unknown
   'connectChaosHub': unknown
   'connectHub': unknown
-  'connected': unknown
   'connectInfraKubernetes': unknown
   'connectInfraTooltip': unknown
+  'connected': unknown
   'connectionModal.method': unknown
   'connectionModal.options.option1.icon': unknown
   'connectionModal.options.option1.text': unknown
@@ -204,10 +207,10 @@ export interface StringsMap {
   'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
+  'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
   'dataTypeString': unknown
-  'data': unknown
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
@@ -293,6 +296,8 @@ export interface StringsMap {
   'endedAt': unknown
   'endpoint': unknown
   'enterCustomCron': unknown
+  'enterGroupDisplayName': unknown
+  'enterGroupName': unknown
   'enterHubAccountURL': unknown
   'enterHubName': unknown
   'enterHubRepositoryBranch': unknown
@@ -384,6 +389,14 @@ export interface StringsMap {
   'goChaosHome': unknown
   'greatJob': unknown
   'group': unknown
+  'groupAdded': unknown
+  'groupAlreadyExists': unknown
+  'groupDisplayName': unknown
+  'groupMembers': unknown
+  'groupName': unknown
+  'groupRemoved': unknown
+  'groupRole': unknown
+  'groupRoleUpdated': unknown
   'healthy': unknown
   'helmInstallation': unknown
   'history': unknown
@@ -427,9 +440,9 @@ export interface StringsMap {
   'inactiveTooltip': unknown
   'infraName': unknown
   'infraNameValidationLowercase': unknown
-  'infraNameValidationNoStartDash': unknown
-  'infraNameValidationNoEndDash': unknown
   'infraNameValidationMaxLength': unknown
+  'infraNameValidationNoEndDash': unknown
+  'infraNameValidationNoStartDash': unknown
   'infraNameValidationRequired': unknown
   'infrastructure': unknown
   'infrastructureCommand': unknown
@@ -592,6 +605,8 @@ export interface StringsMap {
   'noFilteredActiveInfra': unknown
   'noFilteredData.subtitle': unknown
   'noFilteredData.title': unknown
+  'noGroupsMessage': unknown
+  'noGroupsTitle': unknown
   'noHealthyState': unknown
   'noInvitationsFound': unknown
   'noKubernetesChaosInfrastructureFound': PrimitiveObject<'value'>
@@ -747,11 +762,11 @@ export interface StringsMap {
   'probeValidation.url': unknown
   'probeValidation.value': unknown
   'probeValidation.version': unknown
-  'production': unknown
   'probes': unknown
   'probesArePassed': unknown
   'problems': unknown
   'prod': unknown
+  'production': unknown
   'project': unknown
   'projectCreatedByYou': unknown
   'projectDashboard.noProjectDescription': unknown
@@ -769,8 +784,8 @@ export interface StringsMap {
   'promDescription': unknown
   'promProbeDetails': unknown
   'promProbeTitle': unknown
-  'prometheusEndpoint': unknown
   'prometheusDataComparison': unknown
+  'prometheusEndpoint': unknown
   'prometheusQuery': unknown
   'prometheusQueryPath': unknown
   'properties': unknown
@@ -805,6 +820,8 @@ export interface StringsMap {
   'remoteHubRequired': unknown
   'remoteRepo': unknown
   'remove': unknown
+  'removeGroup': unknown
+  'removeGroupConfirmation': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
   'removeProbeDesc': unknown
@@ -904,6 +921,7 @@ export interface StringsMap {
   'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
+  'selectRole': unknown
   'selectSchedule': unknown
   'selectTimeframe': unknown
   'selectYourProbe': unknown

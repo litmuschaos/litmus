@@ -60,6 +60,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 
 		request := projectUtils.GetProjectFilters(c)
 		request.UserID = user.ID
+		request.Groups = user.OIDCGroups
 
 		res, err := service.GetProjectsByUserID(request)
 		if err != nil {

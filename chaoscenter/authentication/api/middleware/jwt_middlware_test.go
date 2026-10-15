@@ -123,3 +123,61 @@ func TestJwtMiddleware_Error(t *testing.T) {
 		t.Errorf("Handler returned wrong status code: got %v want %v", status, utils.ErrorStatusCodes[utils.ErrUnauthorized])
 	}
 }
+
+func TestJwtMiddleware_ExtractsGroupsFromClaims(t *testing.T) {
+	router := gin.Default()
+	mockService := new(mocks.MockedApplicationService)
+	router.Use(middleware.JwtMiddleware(mockService))
+
+	router.GET("/status", func(c *gin.Context) {
+		groupsVal, exists := c.Get("groups")
+		assert.True(t, exists, "groups should be set in context")
+		groups, ok := groupsVal.([]string)
+		assert.True(t, ok, "groups should be []string")
+		assert.Equal(t, []string{"group-a", "group-b"}, groups)
+		c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	})
+
+	mockService.On("ValidateToken", "token-with-groups").Return(&jwt.Token{
+		Valid: true,
+		Claims: jwt.MapClaims{
+			"username": "testuser",
+			"uid":      "12345",
+			"role":     "user",
+			"groups":   []interface{}{"group-a", "group-b"},
+		},
+	}, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/status", nil)
+	req.Header.Set("Authorization", "Bearer token-with-groups")
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestJwtMiddleware_NoGroupsClaim(t *testing.T) {
+	router := gin.Default()
+	mockService := new(mocks.MockedApplicationService)
+	router.Use(middleware.JwtMiddleware(mockService))
+
+	router.GET("/status", func(c *gin.Context) {
+		_, exists := c.Get("groups")
+		assert.False(t, exists, "groups should not be set when not in claims")
+		c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	})
+
+	mockService.On("ValidateToken", "token-no-groups").Return(&jwt.Token{
+		Valid: true,
+		Claims: jwt.MapClaims{
+			"username": "testuser",
+			"uid":      "12345",
+			"role":     "user",
+		},
+	}, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/status", nil)
+	req.Header.Set("Authorization", "Bearer token-no-groups")
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+}
