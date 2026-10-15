@@ -49,9 +49,9 @@ func (mr *MockSubscriberEventsMockRecorder) ChaosEventWatcher(arg0, arg1, arg2 i
 }
 
 // CheckChaosData mocks base method.
-func (m *MockSubscriberEvents) CheckChaosData(arg0 v1alpha1.NodeStatus, arg1 string, arg2 *v1alpha10.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
+func (m *MockSubscriberEvents) CheckChaosData(arg0 v1alpha1.NodeStatus, arg1, arg2 string, arg3 *v1alpha10.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckChaosData", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "CheckChaosData", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(*types.ChaosData)
 	ret2, _ := ret[2].(error)
@@ -59,9 +59,9 @@ func (m *MockSubscriberEvents) CheckChaosData(arg0 v1alpha1.NodeStatus, arg1 str
 }
 
 // CheckChaosData indicates an expected call of CheckChaosData.
-func (mr *MockSubscriberEventsMockRecorder) CheckChaosData(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockSubscriberEventsMockRecorder) CheckChaosData(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckChaosData", reflect.TypeOf((*MockSubscriberEvents)(nil).CheckChaosData), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckChaosData", reflect.TypeOf((*MockSubscriberEvents)(nil).CheckChaosData), arg0, arg1, arg2, arg3)
 }
 
 // GenerateWorkflowPayload mocks base method.

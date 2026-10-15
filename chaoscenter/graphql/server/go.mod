@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/chaoscenter/graphql/server
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/99designs/gqlgen v0.17.49
@@ -25,7 +25,7 @@ require (
 	github.com/tidwall/sjson v1.2.5
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.mongodb.org/mongo-driver v1.17.7
-	golang.org/x/crypto v0.55.0
+	golang.org/x/crypto v0.56.0
 	google.golang.org/grpc v1.83.2
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v2 v2.4.0
@@ -36,6 +36,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
+	github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20250520111509-a70c2aa677fa // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
