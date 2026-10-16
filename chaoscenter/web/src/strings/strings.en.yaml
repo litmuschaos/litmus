@@ -56,6 +56,7 @@ appKindName: app_kind
 appLabel: App Label
 appLabelName: app_label
 appNameSpace: App Namespace
+appearance: Appearance
 apply: Apply
 applyChanges: Apply Changes
 at: At
@@ -237,6 +238,8 @@ customValueText: All YAML files will use the custom values.
 customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
+darkMode: Dark Mode
+darkModeLabel: Dark mode
 data: Data
 dataTypeFloat: Float
 dataTypeInt: Int
@@ -590,6 +593,7 @@ leaveProject: Leave Project
 leaveProjectDescription: Are you sure you want to leave the project?
 leaveThisPage: Leave this Page
 letsGetStarted: Let`s get started
+lightMode: Light mode
 litmus: Litmus
 litmusChaos: LitmusChaos
 litmuschaos: litmuschaos
@@ -1154,6 +1158,7 @@ switchToBarChart: Switch to bar chart
 switchToLineChart: Switch to line chart
 syncLatestRun: Sync Latest Run
 syncedSuccessfully: Synced Successfully
+systemMode: System
 tags: 'Tags:'
 target: Target
 targetApplication: Target Application
