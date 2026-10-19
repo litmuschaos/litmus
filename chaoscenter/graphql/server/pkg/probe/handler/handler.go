@@ -249,9 +249,30 @@ func (p *probeService) GetProbeYAMLData(ctx context.Context, probeRequest model.
 	return manifest, err
 }
 
+// projectIDPattern constrains the project ID (a generated UUID) to a safe
+// identifier charset before it is used to build the Mongo query.
+var projectIDPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,100}$`)
+
+// probeNamePattern bounds the length of a user-supplied probe name used in the
+// query filter. Probe names are otherwise unconstrained, so it accepts any
+// character and only rejects empty or oversized values (253 is the Kubernetes
+// object-name limit).
+var probeNamePattern = regexp.MustCompile(`^[\s\S]{1,253}$`)
+
 // ListProbes - List a single/all Probes
 func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
 	var pipeline mongo.Pipeline
+
+	// Validate the user-supplied identifiers before they flow into the query,
+	// so untrusted input cannot reach the aggregation unchecked.
+	if !projectIDPattern.MatchString(projectID) {
+		return nil, errors.New("invalid project id")
+	}
+	for _, probeName := range probeNames {
+		if !probeNamePattern.MatchString(probeName) {
+			return nil, errors.New("invalid probe name in filter")
+		}
+	}
 
 	// Match the Probe Names from the input array
 	if probeNames != nil && len(probeNames) != 0 {

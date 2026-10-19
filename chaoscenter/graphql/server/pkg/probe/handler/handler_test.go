@@ -185,6 +185,29 @@ func TestListProbes_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
+func TestListProbes_RejectsInvalidProjectID(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	resp, err := svc.ListProbes(context.Background(), nil, nil, nil, nil, nil, "bad id with spaces")
+
+	assert.Error(t, err)
+	assert.Nil(t, resp)
+	// The query must never be built from an invalid identifier.
+	mockOp.AssertNotCalled(t, "Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestListProbes_RejectsInvalidProbeName(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	resp, err := svc.ListProbes(context.Background(), []string{""}, nil, nil, nil, nil, "project-1")
+
+	assert.Error(t, err)
+	assert.Nil(t, resp)
+	mockOp.AssertNotCalled(t, "Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+}
+
 func TestGetProbe_DBError(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
