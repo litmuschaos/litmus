@@ -17,6 +17,11 @@ Labels: `endpoint`, `status`, `operation_name`, `operation_type`
 Example operation names: `listExperiment`, `runChaosExperiment`, `getExperiment`  
 Example operation types: `query`, `mutation`
 
+Operation details are captured when GraphQL operation execution begins and shared
+with the HTTP metrics middleware. Anonymous operations use `anonymous` as their
+operation name. Non-GraphQL requests and requests rejected before operation
+execution, such as invalid queries, use `N/A` for both operation labels.
+
 **`litmus_api_response_time_milliseconds`**  
 Tracks how long API requests take to respond (in milliseconds).  
 Labels: `endpoint`, `operation_name`, `operation_type`  
