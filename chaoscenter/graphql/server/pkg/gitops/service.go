@@ -13,6 +13,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	chaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	dataStore "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -35,7 +36,7 @@ const (
 
 var (
 	gitLock           = NewGitLock()
-	backgroundContext = context.Background()
+	backgroundContext = context.WithValue(context.Background(), authorization.SystemActorKey, "git-ops")
 )
 
 type Service interface {
@@ -379,7 +380,7 @@ func (g *gitOpsService) gitSyncHelper(config gitops.GitConfigDB, wg *sync.WaitGr
 	}
 
 	gitConfig := GetGitOpsConfig(*conf)
-	err = g.SyncDBToGit(nil, gitConfig)
+	err = g.SyncDBToGit(backgroundContext, gitConfig)
 	if err != nil {
 		log.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
 	}
