@@ -358,7 +358,7 @@ func (c GitConfig) GitCommit(user GitUser, message string, deleteFile *string) (
 		return "", err
 	}
 	if deleteFile == nil {
-		_, err = w.Add("./litmus/" + c.ProjectID + "/")
+		_, err = w.Add(ProjectDataPath + "/" + c.ProjectID + "/")
 		if err != nil {
 			return "", err
 		}
