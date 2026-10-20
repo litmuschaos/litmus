@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -112,6 +113,98 @@ func TestAddProbe_DBErrorOnUniquenessCheck(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, dbErr, err)
 	mockOp.AssertNotCalled(t, "Create", mock.Anything, mock.Anything, mock.Anything)
+	mockOp.AssertExpectations(t)
+}
+
+func TestListProbesWithPagination_DBError(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	dbErr := errors.New("aggregate failed")
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Return((*mongo.Cursor)(nil), dbErr).Once()
+
+	resp, err := svc.ListProbesWithPagination(context.Background(), nil, nil, nil, nil, nil, "project-1")
+
+	assert.Error(t, err)
+	assert.Equal(t, dbErr, err)
+	assert.Nil(t, resp)
+	mockOp.AssertExpectations(t)
+}
+
+func TestListProbesWithPagination_EmptyResult(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	// A $facet result with no matched probes and no count bucket.
+	facetDoc := bson.D{
+		{"total_filtered_probes", bson.A{}},
+		{"probes", bson.A{}},
+	}
+	cursor, err := mongo.NewCursorFromDocuments([]interface{}{facetDoc}, nil, nil)
+	assert.NoError(t, err)
+
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Return(cursor, nil).Once()
+
+	resp, err := svc.ListProbesWithPagination(context.Background(), nil, nil, nil, nil, nil, "project-1")
+
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, 0, resp.TotalNoOfProbes)
+	assert.Empty(t, resp.Probes)
+	mockOp.AssertExpectations(t)
+}
+
+func TestListProbesWithPagination_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	facetDoc := bson.D{
+		{"total_filtered_probes", bson.A{}},
+		{"probes", bson.A{}},
+	}
+	cursor, err := mongo.NewCursorFromDocuments([]interface{}{facetDoc}, nil, nil)
+	assert.NoError(t, err)
+
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Return(cursor, nil).Once()
+
+	ascending := true
+	resp, err := svc.ListProbesWithPagination(
+		context.Background(),
+		nil, nil, nil,
+		&model.Pagination{Page: 0, Limit: 10},
+		&model.ProbeSortInput{Field: model.ProbeSortingFieldName, Ascending: &ascending},
+		"project-1",
+	)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, 0, resp.TotalNoOfProbes)
+	mockOp.AssertExpectations(t)
+}
+
+// TestListProbes_DelegatesToPagination verifies the deprecated ListProbes
+// returns the unpaginated probe slice from the paginated implementation.
+func TestListProbes_DelegatesToPagination(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	svc := newProbeServiceWithMock(mockOp)
+
+	facetDoc := bson.D{
+		{"total_filtered_probes", bson.A{}},
+		{"probes", bson.A{}},
+	}
+	cursor, err := mongo.NewCursorFromDocuments([]interface{}{facetDoc}, nil, nil)
+	assert.NoError(t, err)
+
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Return(cursor, nil).Once()
+
+	probes, err := svc.ListProbes(context.Background(), nil, nil, nil, "project-1")
+
+	assert.NoError(t, err)
+	assert.Empty(t, probes)
 	mockOp.AssertExpectations(t)
 }
 

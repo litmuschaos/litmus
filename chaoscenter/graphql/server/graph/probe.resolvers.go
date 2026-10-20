@@ -137,6 +137,30 @@ func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infras
 	return response, err
 }
 
+// ListProbesWithPagination is the resolver for the listProbesWithPagination field.
+func (r *queryResolver) ListProbesWithPagination(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error) {
+	logFields := logrus.Fields{
+		"projectId":  projectID,
+		"probeNames": probeNames,
+	}
+
+	logrus.WithFields(logFields).Info("request received to get probes with pagination")
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListProbes],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := r.probeService.ListProbesWithPagination(ctx, probeNames, infrastructureType, filter, pagination, sort, projectID)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return nil, err
+	}
+
+	return response, err
+}
+
 // GetProbe is the resolver for the getProbe field.
 func (r *queryResolver) GetProbe(ctx context.Context, projectID string, probeName string) (*model.Probe, error) {
 	logFields := logrus.Fields{
