@@ -26,8 +26,21 @@ func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 	}
 
 	uid := claims["uid"].(string)
+
+	// Extract OIDC groups from JWT claims
+	var groups []string
+	if rawGroups, ok := claims["groups"]; ok && rawGroups != nil {
+		if groupSlice, ok := rawGroups.([]interface{}); ok {
+			for _, g := range groupSlice {
+				if gs, ok := g.(string); ok {
+					groups = append(groups, gs)
+				}
+			}
+		}
+	}
+
 	err = validations.RbacValidator(uid, inputRequest.ProjectId,
-		inputRequest.RequiredRoles, inputRequest.Invitation, s.ApplicationService)
+		inputRequest.RequiredRoles, inputRequest.Invitation, s.ApplicationService, groups)
 	if err != nil {
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}

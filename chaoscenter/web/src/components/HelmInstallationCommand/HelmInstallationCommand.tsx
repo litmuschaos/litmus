@@ -15,36 +15,49 @@ export interface HelmInstallationCommandProps {
   litmusURL?: string;
 }
 
-export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (props) => {
-  const {
-    infraID,
-    accessKey,
-    infraName,
-    infraNamespace,
-    infraScope,
-    litmusURL,
-  } = props;
+export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = props => {
+  const { infraID, accessKey, infraName, infraNamespace, infraScope, litmusURL } = props;
 
   const { projectID } = getScope();
 
   const frontendURL = litmusURL || window.location.origin;
   const backendURL = `${window.location.origin}/api`;
 
-  const helmRepoCommands = '# Add Litmus Helm repository\nhelm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/\nhelm repo update';
-  
-  const helmInstallCommand = '# Install Chaos Infrastructure using Helm\nhelm install ' + infraName + ' litmuschaos/litmus-agent \\\n' +
-    '  --namespace ' + infraNamespace + ' \\\n' +
+  const helmRepoCommands =
+    '# Add Litmus Helm repository\nhelm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/\nhelm repo update';
+
+  const helmInstallCommand =
+    '# Install Chaos Infrastructure using Helm\nhelm install ' +
+    infraName +
+    ' litmuschaos/litmus-agent \\\n' +
+    '  --namespace ' +
+    infraNamespace +
+    ' \\\n' +
     '  --create-namespace \\\n' +
-    '  --set "INFRA_ID=' + infraID + '" \\\n' +
-    '  --set "ACCESS_KEY=' + accessKey + '" \\\n' +
-    '  --set "INFRA_NAME=' + infraName + '" \\\n' +
-    '  --set "LITMUS_URL=' + frontendURL + '" \\\n' +
-    '  --set "LITMUS_BACKEND_URL=' + backendURL + '" \\\n' +
-    '  --set "LITMUS_PROJECT_ID=' + projectID + '" \\\n' +
-    '  --set "global.INFRA_MODE=' + infraScope + '"';
+    '  --set "INFRA_ID=' +
+    infraID +
+    '" \\\n' +
+    '  --set "ACCESS_KEY=' +
+    accessKey +
+    '" \\\n' +
+    '  --set "INFRA_NAME=' +
+    infraName +
+    '" \\\n' +
+    '  --set "LITMUS_URL=' +
+    frontendURL +
+    '" \\\n' +
+    '  --set "LITMUS_BACKEND_URL=' +
+    backendURL +
+    '" \\\n' +
+    '  --set "LITMUS_PROJECT_ID=' +
+    projectID +
+    '" \\\n' +
+    '  --set "global.INFRA_MODE=' +
+    infraScope +
+    '"';
 
   const helmCommand = helmRepoCommands + '\n\n' + helmInstallCommand;
-  
+
   const verifyCommand = 'kubectl get pods -n ' + infraNamespace;
 
   return (
@@ -52,7 +65,7 @@ export const HelmInstallationCommand: React.FC<HelmInstallationCommandProps> = (
       <Text font={{ variation: FontVariation.BODY1 }}>
         Install the Chaos Infrastructure on your Kubernetes cluster using Helm with the following command:
       </Text>
-      
+
       <CodeBlock text={helmCommand} isCopyButtonEnabled />
 
       <Layout.Vertical spacing="xsmall" margin={{ top: 'medium' }}>

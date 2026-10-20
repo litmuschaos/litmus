@@ -29,4 +29,11 @@ func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.POST("/update_project_name", rest.UpdateProjectName(service))
 	router.POST("/update_member_role", rest.UpdateMemberRole(service))
 	router.POST("/delete_project/:project_id", rest.DeleteProject(service))
+
+	// Group management routes
+	router.POST("/add_group_to_project", rest.AddGroupToProject(service))
+	router.POST("/remove_group_from_project", rest.RemoveGroupFromProject(service))
+	router.POST("/update_group_role", rest.UpdateGroupRole(service))
+	router.GET("/get_project_groups/:project_id", rest.GetProjectGroups(service))
+	router.GET("/get_user_groups", rest.GetUserGroups(service))
 }

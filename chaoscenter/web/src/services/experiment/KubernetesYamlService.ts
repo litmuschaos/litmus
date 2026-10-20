@@ -452,11 +452,11 @@ export class KubernetesYamlService extends ExperimentYamlService {
     }
 
     const existingRunnerTols = manifest.spec.components?.runner?.tolerations;
-    const normalizedRunnerTols = Array.isArray(existingRunnerTols) 
-      ? existingRunnerTols 
-      : existingRunnerTols 
-        ? [existingRunnerTols] 
-        : [];
+    const normalizedRunnerTols = Array.isArray(existingRunnerTols)
+      ? existingRunnerTols
+      : existingRunnerTols
+      ? [existingRunnerTols]
+      : [];
 
     manifest.spec.components = {
       ...manifest.spec.components,
@@ -470,8 +470,8 @@ export class KubernetesYamlService extends ExperimentYamlService {
     const normalizedExpTols = Array.isArray(existingExpTols)
       ? existingExpTols
       : existingExpTols
-        ? [existingExpTols]
-        : [];
+      ? [existingExpTols]
+      : [];
 
     manifest.spec.experiments[0].spec.components = {
       ...manifest.spec.experiments[0].spec.components,
@@ -989,29 +989,29 @@ export class KubernetesYamlService extends ExperimentYamlService {
   }
 
   updateFaultTunablesInFaultData(
-  faultData: FaultData | undefined,
-  faultTunables: FaultTunables | undefined
-): FaultData | undefined {
-  const chaosEngine = faultData?.engineCR;
-  if (!chaosEngine || !faultTunables) return faultData;
+    faultData: FaultData | undefined,
+    faultTunables: FaultTunables | undefined
+  ): FaultData | undefined {
+    const chaosEngine = faultData?.engineCR;
+    if (!chaosEngine || !faultTunables) return faultData;
 
-  const envs: EnvVar[] = Object.entries(faultTunables).map(([envName, faultTunable]) => {
-    return {
-      name: envName,
-      value: faultTunable.value?.toString(),
-      valueFrom: faultTunable.valueFrom
-    };
-  });
+    const envs: EnvVar[] = Object.entries(faultTunables).map(([envName, faultTunable]) => {
+      return {
+        name: envName,
+        value: faultTunable.value?.toString(),
+        valueFrom: faultTunable.valueFrom
+      };
+    });
 
-  if (chaosEngine.spec?.experiments?.[0].spec.components) {
-    chaosEngine.spec.experiments[0].spec.components = {
-      ...chaosEngine.spec.experiments[0].spec.components,
-      env: envs
-    };
+    if (chaosEngine.spec?.experiments?.[0].spec.components) {
+      chaosEngine.spec.experiments[0].spec.components = {
+        ...chaosEngine.spec.experiments[0].spec.components,
+        env: envs
+      };
+    }
+
+    return faultData;
   }
-
-  return faultData;
-}
 
   async preProcessChaosEngineAndExperimentManifest(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
