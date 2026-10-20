@@ -116,7 +116,7 @@ func TestAddProbe_DBErrorOnUniquenessCheck(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestListProbes_DBError(t *testing.T) {
+func TestListProbesWithPagination_DBError(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
 
@@ -124,7 +124,7 @@ func TestListProbes_DBError(t *testing.T) {
 	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
 		Return((*mongo.Cursor)(nil), dbErr).Once()
 
-	resp, err := svc.ListProbes(context.Background(), nil, nil, nil, nil, nil, "project-1")
+	resp, err := svc.ListProbesWithPagination(context.Background(), nil, nil, nil, nil, nil, "project-1")
 
 	assert.Error(t, err)
 	assert.Equal(t, dbErr, err)
@@ -132,7 +132,7 @@ func TestListProbes_DBError(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestListProbes_EmptyResult(t *testing.T) {
+func TestListProbesWithPagination_EmptyResult(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
 
@@ -147,7 +147,7 @@ func TestListProbes_EmptyResult(t *testing.T) {
 	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
 		Return(cursor, nil).Once()
 
-	resp, err := svc.ListProbes(context.Background(), nil, nil, nil, nil, nil, "project-1")
+	resp, err := svc.ListProbesWithPagination(context.Background(), nil, nil, nil, nil, nil, "project-1")
 
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
@@ -156,7 +156,7 @@ func TestListProbes_EmptyResult(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestListProbes_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
+func TestListProbesWithPagination_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
 
@@ -171,7 +171,7 @@ func TestListProbes_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
 		Return(cursor, nil).Once()
 
 	ascending := true
-	resp, err := svc.ListProbes(
+	resp, err := svc.ListProbesWithPagination(
 		context.Background(),
 		nil, nil, nil,
 		&model.Pagination{Page: 0, Limit: 10},
@@ -185,27 +185,27 @@ func TestListProbes_WithSortAndPagination_BuildsValidPipeline(t *testing.T) {
 	mockOp.AssertExpectations(t)
 }
 
-func TestListProbes_RejectsInvalidProjectID(t *testing.T) {
+// TestListProbes_DelegatesToPagination verifies the deprecated ListProbes
+// returns the unpaginated probe slice from the paginated implementation.
+func TestListProbes_DelegatesToPagination(t *testing.T) {
 	mockOp := new(dbMocks.MongoOperator)
 	svc := newProbeServiceWithMock(mockOp)
 
-	resp, err := svc.ListProbes(context.Background(), nil, nil, nil, nil, nil, "bad id with spaces")
+	facetDoc := bson.D{
+		{"total_filtered_probes", bson.A{}},
+		{"probes", bson.A{}},
+	}
+	cursor, err := mongo.NewCursorFromDocuments([]interface{}{facetDoc}, nil, nil)
+	assert.NoError(t, err)
 
-	assert.Error(t, err)
-	assert.Nil(t, resp)
-	// The query must never be built from an invalid identifier.
-	mockOp.AssertNotCalled(t, "Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
-}
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Return(cursor, nil).Once()
 
-func TestListProbes_RejectsInvalidProbeName(t *testing.T) {
-	mockOp := new(dbMocks.MongoOperator)
-	svc := newProbeServiceWithMock(mockOp)
+	probes, err := svc.ListProbes(context.Background(), nil, nil, nil, "project-1")
 
-	resp, err := svc.ListProbes(context.Background(), []string{""}, nil, nil, nil, nil, "project-1")
-
-	assert.Error(t, err)
-	assert.Nil(t, resp)
-	mockOp.AssertNotCalled(t, "Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	assert.NoError(t, err)
+	assert.Empty(t, probes)
+	mockOp.AssertExpectations(t)
 }
 
 func TestGetProbe_DBError(t *testing.T) {

@@ -26,8 +26,8 @@ export default function SelectProbesTabController({
     }
   });
 
-  const chaosProbesSelectionTableData: ChaosProbesSelectionTableProps | undefined = data?.listProbes?.probes && {
-    content: generateChaosProbesSelectionDashboardTableContent(data.listProbes.probes)
+  const chaosProbesSelectionTableData: ChaosProbesSelectionTableProps | undefined = data?.listProbes && {
+    content: generateChaosProbesSelectionDashboardTableContent(data.listProbes)
   };
 
   return (

@@ -114,7 +114,7 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 }
 
 // ListProbes is the resolver for the listProbes field.
-func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error) {
+func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
 	logFields := logrus.Fields{
 		"projectId":  projectID,
 		"probeNames": probeNames,
@@ -128,7 +128,31 @@ func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infras
 		return nil, err
 	}
 
-	response, err := r.probeService.ListProbes(ctx, probeNames, infrastructureType, filter, pagination, sort, projectID)
+	response, err := r.probeService.ListProbes(ctx, probeNames, infrastructureType, filter, projectID)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return nil, err
+	}
+
+	return response, err
+}
+
+// ListProbesWithPagination is the resolver for the listProbesWithPagination field.
+func (r *queryResolver) ListProbesWithPagination(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error) {
+	logFields := logrus.Fields{
+		"projectId":  projectID,
+		"probeNames": probeNames,
+	}
+
+	logrus.WithFields(logFields).Info("request received to get probes with pagination")
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListProbes],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := r.probeService.ListProbesWithPagination(ctx, probeNames, infrastructureType, filter, pagination, sort, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err

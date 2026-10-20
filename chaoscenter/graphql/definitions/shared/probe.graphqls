@@ -1102,6 +1102,21 @@ extend type Query {
     infrastructureType: InfrastructureType
     probeNames: [ID!]
     filter: ProbeFilterInput
+  ): [Probe]!
+    @authorized
+    @deprecated(
+      reason: "Use listProbesWithPagination instead, which supports pagination, sorting and a total count. This query will be removed in a future release."
+    )
+
+  """
+  Returns a paginated, sortable list of Probes along with the total count,
+  following the same pattern as listExperiment and listInfras
+  """
+  listProbesWithPagination(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
     pagination: Pagination
     sort: ProbeSortInput
   ): ListProbeResponse! @authorized

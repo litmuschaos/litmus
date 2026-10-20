@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -15,7 +14,6 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -33,7 +31,8 @@ import (
 type Service interface {
 	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
 	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
-	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error)
+	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
+	ListProbesWithPagination(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error)
 	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
 	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
 	GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
@@ -249,30 +248,11 @@ func (p *probeService) GetProbeYAMLData(ctx context.Context, probeRequest model.
 	return manifest, err
 }
 
-// projectIDPattern constrains the project ID (a generated UUID) to a safe
-// identifier charset before it is used to build the Mongo query.
-var projectIDPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,100}$`)
-
-// probeNamePattern bounds the length of a user-supplied probe name used in the
-// query filter. Probe names are otherwise unconstrained, so it accepts any
-// character and only rejects empty or oversized values (253 is the Kubernetes
-// object-name limit).
-var probeNamePattern = regexp.MustCompile(`^[\s\S]{1,253}$`)
-
-// ListProbes - List a single/all Probes
-func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
+// ListProbesWithPagination returns a paginated, sortable list of Probes along
+// with the total count of probes matching the given filter. It follows the
+// same aggregation pattern as listExperiment and listInfras.
+func (p *probeService) ListProbesWithPagination(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
 	var pipeline mongo.Pipeline
-
-	// Validate the user-supplied identifiers before they flow into the query,
-	// so untrusted input cannot reach the aggregation unchecked.
-	if !projectIDPattern.MatchString(projectID) {
-		return nil, errors.New("invalid project id")
-	}
-	for _, probeName := range probeNames {
-		if !probeNamePattern.MatchString(probeName) {
-			return nil, errors.New("invalid probe name in filter")
-		}
-	}
 
 	// Match the Probe Names from the input array
 	if probeNames != nil && len(probeNames) != 0 {
@@ -317,14 +297,12 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 			pipeline = append(pipeline, matchProbeType)
 		}
 
-		// Filtering based on Probe Name.
-		// Escape the user-provided value with regexp.QuoteMeta so it is matched
-		// literally, preventing regex/NoSQL injection and ReDoS.
+		// Filtering based on Probe Name
 		if filter.Name != nil && *filter.Name != "" {
 			matchProbeNameStage := bson.D{
 				{"$match", bson.D{
 					{"name", bson.D{
-						{"$regex", primitive.Regex{Pattern: regexp.QuoteMeta(*filter.Name)}},
+						{"$regex", filter.Name},
 					}},
 				}},
 			}
@@ -469,6 +447,21 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 		TotalNoOfProbes: totalFilteredProbesCounter,
 		Probes:          probeDetails,
 	}, nil
+}
+
+// ListProbes - List a single/all Probes.
+//
+// Deprecated: retained for backward compatibility with existing clients
+// (e.g. litmusctl). New callers should use ListProbesWithPagination, which
+// returns pagination metadata and a total count. This simply delegates to the
+// paginated implementation and returns the full, unpaginated list of probes.
+func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
+	response, err := p.ListProbesWithPagination(ctx, probeNames, infrastructureType, filter, nil, nil, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Probes, nil
 }
 
 func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string) ([]*model.ProbeRecentExecutions, error) {

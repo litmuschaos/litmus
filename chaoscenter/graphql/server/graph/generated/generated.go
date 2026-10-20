@@ -636,7 +636,8 @@ type ComplexityRoot struct {
 		ListImageRegistry         func(childComplexity int, projectID string) int
 		ListInfras                func(childComplexity int, projectID string, request *model.ListInfraRequest) int
 		ListPredefinedExperiments func(childComplexity int, hubID string, projectID string) int
-		ListProbes                func(childComplexity int, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) int
+		ListProbes                func(childComplexity int, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) int
+		ListProbesWithPagination  func(childComplexity int, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) int
 		ValidateUniqueProbe       func(childComplexity int, projectID string, probeName string) int
 	}
 
@@ -793,7 +794,8 @@ type QueryResolver interface {
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
 	GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error)
-	ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error)
+	ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error)
+	ListProbesWithPagination(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput) (*model.ListProbeResponse, error)
 	GetProbe(ctx context.Context, projectID string, probeName string) (*model.Probe, error)
 	GetProbeYaml(ctx context.Context, projectID string, request model.GetProbeYAMLRequest) (string, error)
 	GetProbeReference(ctx context.Context, projectID string, probeName string) (*model.GetProbeReferenceResponse, error)
@@ -4031,7 +4033,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListProbes(childComplexity, args["projectID"].(string), args["infrastructureType"].(*model.InfrastructureType), args["probeNames"].([]string), args["filter"].(*model.ProbeFilterInput), args["pagination"].(*model.Pagination), args["sort"].(*model.ProbeSortInput)), true
+		return e.complexity.Query.ListProbes(childComplexity, args["projectID"].(string), args["infrastructureType"].(*model.InfrastructureType), args["probeNames"].([]string), args["filter"].(*model.ProbeFilterInput)), true
+
+	case "Query.listProbesWithPagination":
+		if e.complexity.Query.ListProbesWithPagination == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listProbesWithPagination_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListProbesWithPagination(childComplexity, args["projectID"].(string), args["infrastructureType"].(*model.InfrastructureType), args["probeNames"].([]string), args["filter"].(*model.ProbeFilterInput), args["pagination"].(*model.Pagination), args["sort"].(*model.ProbeSortInput)), true
 
 	case "Query.validateUniqueProbe":
 		if e.complexity.Query.ValidateUniqueProbe == nil {
@@ -8341,6 +8355,21 @@ extend type Query {
     infrastructureType: InfrastructureType
     probeNames: [ID!]
     filter: ProbeFilterInput
+  ): [Probe]!
+    @authorized
+    @deprecated(
+      reason: "Use listProbesWithPagination instead, which supports pagination, sorting and a total count. This query will be removed in a future release."
+    )
+
+  """
+  Returns a paginated, sortable list of Probes along with the total count,
+  following the same pattern as listExperiment and listInfras
+  """
+  listProbesWithPagination(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
     pagination: Pagination
     sort: ProbeSortInput
   ): ListProbeResponse! @authorized
@@ -9879,7 +9908,7 @@ func (ec *executionContext) field_Query_listPredefinedExperiments_args(ctx conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_listProbes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_listProbesWithPagination_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -9936,6 +9965,48 @@ func (ec *executionContext) field_Query_listProbes_args(ctx context.Context, raw
 		}
 	}
 	args["sort"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listProbes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 *model.InfrastructureType
+	if tmp, ok := rawArgs["infrastructureType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infrastructureType"))
+		arg1, err = ec.unmarshalOInfrastructureType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["infrastructureType"] = arg1
+	var arg2 []string
+	if tmp, ok := rawArgs["probeNames"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("probeNames"))
+		arg2, err = ec.unmarshalOID2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeNames"] = arg2
+	var arg3 *model.ProbeFilterInput
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg3, err = ec.unmarshalOProbeFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg3
 	return args, nil
 }
 
@@ -30819,7 +30890,116 @@ func (ec *executionContext) _Query_listProbes(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListProbes(rctx, fc.Args["projectID"].(string), fc.Args["infrastructureType"].(*model.InfrastructureType), fc.Args["probeNames"].([]string), fc.Args["filter"].(*model.ProbeFilterInput), fc.Args["pagination"].(*model.Pagination), fc.Args["sort"].(*model.ProbeSortInput))
+			return ec.resolvers.Query().ListProbes(rctx, fc.Args["projectID"].(string), fc.Args["infrastructureType"].(*model.InfrastructureType), fc.Args["probeNames"].([]string), fc.Args["filter"].(*model.ProbeFilterInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Probe); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.Probe`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Probe)
+	fc.Result = res
+	return ec.marshalNProbe2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listProbes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "projectID":
+				return ec.fieldContext_Probe_projectID(ctx, field)
+			case "name":
+				return ec.fieldContext_Probe_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Probe_description(ctx, field)
+			case "tags":
+				return ec.fieldContext_Probe_tags(ctx, field)
+			case "type":
+				return ec.fieldContext_Probe_type(ctx, field)
+			case "infrastructureType":
+				return ec.fieldContext_Probe_infrastructureType(ctx, field)
+			case "kubernetesHTTPProperties":
+				return ec.fieldContext_Probe_kubernetesHTTPProperties(ctx, field)
+			case "kubernetesCMDProperties":
+				return ec.fieldContext_Probe_kubernetesCMDProperties(ctx, field)
+			case "k8sProperties":
+				return ec.fieldContext_Probe_k8sProperties(ctx, field)
+			case "promProperties":
+				return ec.fieldContext_Probe_promProperties(ctx, field)
+			case "recentExecutions":
+				return ec.fieldContext_Probe_recentExecutions(ctx, field)
+			case "referencedBy":
+				return ec.fieldContext_Probe_referencedBy(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Probe_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Probe_createdAt(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Probe_updatedBy(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Probe_createdBy(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Probe", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_listProbes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_listProbesWithPagination(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listProbesWithPagination(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListProbesWithPagination(rctx, fc.Args["projectID"].(string), fc.Args["infrastructureType"].(*model.InfrastructureType), fc.Args["probeNames"].([]string), fc.Args["filter"].(*model.ProbeFilterInput), fc.Args["pagination"].(*model.Pagination), fc.Args["sort"].(*model.ProbeSortInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -30855,7 +31035,7 @@ func (ec *executionContext) _Query_listProbes(ctx context.Context, field graphql
 	return ec.marshalNListProbeResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐListProbeResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_listProbes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_listProbesWithPagination(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -30878,7 +31058,7 @@ func (ec *executionContext) fieldContext_Query_listProbes(ctx context.Context, f
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_listProbes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_listProbesWithPagination_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -43245,6 +43425,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_listProbes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "listProbesWithPagination":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listProbesWithPagination(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

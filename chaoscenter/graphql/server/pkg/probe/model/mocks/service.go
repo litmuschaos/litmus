@@ -57,8 +57,14 @@ func (_m *ProbeService) GetProbeYAMLData(ctx context.Context, probe model.GetPro
 	return ret.Get(0).(string), ret.Error(1)
 }
 
-// ListProbes provides a mock function with given fields: ctx, probeNames, infrastructureType, filter, pagination, sort, projectID
-func (_m *ProbeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
+// ListProbes provides a mock function with given fields: ctx, probeNames, infrastructureType, filter, projectID
+func (_m *ProbeService) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
+	ret := _m.Called(ctx, probeNames, infrastructureType, filter, projectID)
+	return ret.Get(0).([]*model.Probe), ret.Error(1)
+}
+
+// ListProbesWithPagination provides a mock function with given fields: ctx, probeNames, infrastructureType, filter, pagination, sort, projectID
+func (_m *ProbeService) ListProbesWithPagination(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, pagination *model.Pagination, sort *model.ProbeSortInput, projectID string) (*model.ListProbeResponse, error) {
 	ret := _m.Called(ctx, probeNames, infrastructureType, filter, pagination, sort, projectID)
 	return ret.Get(0).(*model.ListProbeResponse), ret.Error(1)
 }
