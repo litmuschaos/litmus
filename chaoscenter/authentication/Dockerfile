@@ -1,5 +1,4 @@
 # BUILD STAGE
-# CI rebuild trigger: 2026-10-20
 FROM golang:1.26 AS builder
 
 ARG TARGETOS=linux
