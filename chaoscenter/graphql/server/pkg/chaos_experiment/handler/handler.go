@@ -119,7 +119,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			return "", err
 		}
 
-		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
+		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, store.Store)
 		if err != nil {
 			return "", err
 		}
@@ -263,17 +263,7 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 
 		workflowRun.IsRemoved = true
 
-		wf := model.ChaosExperimentRequest{
-			ExperimentID:   &workflow.ExperimentID,
-			ExperimentName: workflow.Name,
-		}
-
-		err = c.gitOpsService.DeleteExperimentFromGit(ctx, projectID, &wf)
-		if err != nil {
-			logrus.Errorf("Failed to delete experiment manifest from git, err: %v", err)
-			return false, err
-		}
-
+		// Only the run is deleted; the experiment and its manifest in git stay.
 		err = c.chaosExperimentRunService.ProcessExperimentRunDelete(ctx, query, workflowRunID, workflowRun, workflow, username, r)
 		if err != nil {
 			return false, err
@@ -728,13 +718,13 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 		if request.Sort.Ascending != nil && *request.Sort.Ascending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", -1},
+					{"name", 1},
 				}},
 			}
 		} else {
 			sortStage = bson.D{
 				{"$sort", bson.D{
-					{"name", 1},
+					{"name", -1},
 				}},
 			}
 		}
