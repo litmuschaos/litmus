@@ -39,8 +39,11 @@ func TestInfraConnect_ReplacesStaleConnection(t *testing.T) {
 	newChannel, err := r.InfraConnect(ctx, model.InfraIdentity{InfraID: infraID})
 
 	require.NoError(t, err, "a verified reconnect must not be rejected because of a stale entry")
-	_, ok := <-staleChannel
-	require.False(t, ok, "stale channel should have been closed")
+	select {
+	case _, ok := <-staleChannel:
+		require.True(t, ok, "stale channel must not be closed")
+	default:
+	}
 	data_store.Store.Mutex.Lock()
 	current := data_store.Store.ConnectedInfra[infraID]
 	data_store.Store.Mutex.Unlock()
@@ -80,6 +83,17 @@ func TestInfraConnect_SecondConnectSucceedsAfterFirst(t *testing.T) {
 	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current))
 
 	cancel1()
+	time.Sleep(50 * time.Millisecond)
+	data_store.Store.Mutex.Lock()
+	current = data_store.Store.ConnectedInfra[infraID]
+	data_store.Store.Mutex.Unlock()
+	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current),
+		"old connection's cleanup must not remove the new connection")
+
 	cancel2()
 	time.Sleep(50 * time.Millisecond)
+	data_store.Store.Mutex.Lock()
+	_, exists := data_store.Store.ConnectedInfra[infraID]
+	data_store.Store.Mutex.Unlock()
+	require.False(t, exists)
 }

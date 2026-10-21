@@ -297,33 +297,35 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
 		return infraAction, err
 	}
 	data_store.Store.Mutex.Lock()
-	if oldInfraChannel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
+	if _, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
 		// A previous connection for this infra is still registered (e.g. the old
 		// subscriber pod was force-deleted and the server hasn't yet detected the
 		// drop). Rather than rejecting this new, already-verified connection and
 		// leaving the infra stuck INACTIVE forever, tear down the stale entry and
 		// let the new connection take over.
 		logrus.Print("STALE CONNECTION FOUND, REPLACING: ", request.InfraID)
-		close(oldInfraChannel)
-		delete(data_store.Store.ConnectedInfra, request.InfraID)
 	}
 	data_store.Store.ConnectedInfra[request.InfraID] = infraAction
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		verifiedInfra.IsActive = false
 		logrus.Print("Context Done, will handle disconnection for: ", request.InfraID)
-		newVerifiedInfra := model.Infra{}
-		copier.Copy(&newVerifiedInfra, &verifiedInfra)
-
-		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
 
 		data_store.Store.Mutex.Lock()
+		if current, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok && current != infraAction {
+			data_store.Store.Mutex.Unlock()
+			return
+		}
 		delete(data_store.Store.ConnectedInfra, request.InfraID)
 		data_store.Store.Mutex.Unlock()
+
+		verifiedInfra.IsActive = false
+		newVerifiedInfra := model.Infra{}
+		copier.Copy(&newVerifiedInfra, &verifiedInfra)
+		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
+
 		query := bson.D{{"infra_id", request.InfraID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", time.Now().UnixMilli()}}}}
-
 		err = r.chaosInfrastructureService.UpdateInfra(query, update)
 		if err != nil {
 			logrus.Print("Error", err)
