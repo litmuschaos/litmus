@@ -965,10 +965,9 @@ func TestChaosExperimentHandler_ListExperiment_SortByName(t *testing.T) {
 			mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).
 				Run(func(args mock.Arguments) {
 					pipeline := args.Get(2).(mongo.Pipeline)
-					facet := pipeline[len(pipeline)-1][0].Value.(bson.D)
-					for _, field := range facet {
-						if field.Key == "scheduled_experiments" {
-							gotSort = field.Value.(bson.A)[0].(bson.D)
+					for _, stage := range pipeline {
+						if stage[0].Key == "$sort" {
+							gotSort = stage
 						}
 					}
 				}).Return(cursor, nil).Once()

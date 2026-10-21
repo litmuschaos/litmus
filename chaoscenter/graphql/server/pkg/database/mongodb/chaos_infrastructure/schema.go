@@ -67,7 +67,7 @@ type AggregatedGetInfras struct {
 }
 
 type AggregatedInfras struct {
-	TotalFilteredInfras []TotalFilteredData `bson:"total_filtered_infras"`
+	TotalFilteredInfras int                 `bson:"total_filtered_infras"`
 	Infras              []ChaosInfraDetails `bson:"infras"`
 }
 
@@ -98,6 +98,8 @@ type TotalCount struct {
 }
 
 type AggregatedInfraStats struct {
-	TotalActiveInfrastructure     []TotalCount `bson:"total_active_infras"`
-	TotalConfirmedInfrastructures []TotalCount `bson:"total_confirmed_infras"`
+	TotalActiveInfrastructure        int `bson:"total_active_infras"`
+	TotalNotActiveInfrastructure     int `bson:"total_not_active_infras"`
+	TotalConfirmedInfrastructures    int `bson:"total_confirmed_infras"`
+	TotalNotConfirmedInfrastructures int `bson:"total_not_confirmed_infras"`
 }
