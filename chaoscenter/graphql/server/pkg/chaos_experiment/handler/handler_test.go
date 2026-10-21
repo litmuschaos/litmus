@@ -968,7 +968,6 @@ func TestChaosExperimentHandler_ListExperiment_SortByName(t *testing.T) {
 					for _, stage := range pipeline {
 						if stage[0].Key == "$sort" {
 							gotSort = stage
-							break
 						}
 					}
 				}).Return(cursor, nil).Once()
