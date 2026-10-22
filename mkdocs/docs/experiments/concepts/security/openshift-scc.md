@@ -63,6 +63,10 @@ readOnlyRootFilesystem: false
 requiredDropCapabilities: null
 runAsUser:
   type: RunAsAny
+# To allow fault pods that set a seccomp profile (e.g. RuntimeDefault).
+# Without this the pod is rejected with "seccomp may not be set".
+seccompProfiles:
+- '*'
 seLinuxContext:
   type: MustRunAs
 supplementalGroups:
@@ -82,6 +86,8 @@ volumes:
 # To authenticate with different cloud providers
 - secret
 ```
+
+**Note**: If fault pods (for example the helper pod of `pod-cpu-hog`) fail with an error such as `unable to validate against any security context constraint ... seccomp may not be set`, make sure the SCC includes the `seccompProfiles` field shown above.
 
 Install the SCC
 
