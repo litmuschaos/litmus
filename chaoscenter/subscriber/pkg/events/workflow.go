@@ -30,10 +30,18 @@ func init() {
 }
 
 var (
-	InfraScope     = os.Getenv("INFRA_SCOPE")
-	InfraNamespace = os.Getenv("INFRA_NAMESPACE")
-	InfraID        = os.Getenv("INFRA_ID")
+	InfraScope     = mustGetEnv("INFRA_SCOPE")
+	InfraNamespace = mustGetEnv("INFRA_NAMESPACE")
+	InfraID        = mustGetEnv("INFRA_ID")
 )
+
+func mustGetEnv(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		logrus.Fatalf("required environment variable %s is not set or empty", key)
+	}
+	return val
+}
 
 // WorkflowEventWatcher initializes the Argo Workflow event watcher
 func (ev *subscriberEvents) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
