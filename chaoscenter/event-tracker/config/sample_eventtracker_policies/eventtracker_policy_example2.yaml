@@ -1,0 +1,11 @@
+apiVersion: eventtracker.litmuschaos.io/v1
+kind: EventTrackerPolicy
+metadata:
+  name: eventtrackerpolicy-sample-2
+  namespace: litmus
+spec:
+  # Add fields here
+  condition_type: "or"
+  conditions:
+    - key: "metadata.labels.app"
+      operator: Change

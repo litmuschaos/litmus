@@ -1,0 +1,24 @@
+## provide the reset timeout value
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-reset-peer-sa
+  experiments:
+  - name: pod-http-reset-peer
+    spec:
+      components:
+        env:
+        # reset timeout specifies after how much duration to reset the connection
+        - name: RESET_TIMEOUT #in ms
+          value: '2000'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"

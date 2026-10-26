@@ -6,7 +6,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"   
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -20,4 +20,3 @@ spec:
         statusCheckTimeouts:
           delay: 2
           timeout: 180
-  

@@ -1,5 +1,5 @@
 # contains the comma seperated list of auxiliary applications details
-# it is provide in `<key1>=<value1>:<namespace1>,<key2>=<value2>:<namespace2>` format
+# it is provide in `<namespace1>:<key1=value1>,<namespace2>:<key2=value2>` format
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -8,12 +8,13 @@ spec:
   engineState: "active"
   annotationCheck: "false"
   # provide the comma separated auxiliary applications details
-  auxiliaryAppInfo: "app=nginx:nginx,app=busybox:default"
-  appinfo:
-    appns: "default"
-    applabel: "app=nginx"
-    appkind: "deployment"
-  chaosServiceAccount: pod-delete-sa
+  auxiliaryAppInfo: "nginx:app=nginx,default:app=busybox"
+  chaosServiceAccount: node-drain-sa
   experiments:
-  - name: pod-delete
-  
+  - name: node-drain
+    spec:
+      components:
+        env:
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'

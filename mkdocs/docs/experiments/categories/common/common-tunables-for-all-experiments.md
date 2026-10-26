@@ -28,7 +28,7 @@ spec:
         env:
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Ramp Time
@@ -61,7 +61,7 @@ spec:
         - name: RAMP_TIME
           value: '10' # in seconds
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Sequence of chaos execution
@@ -99,7 +99,7 @@ spec:
         - name: SEQUENCE
           value: 'parallel'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Name of chaos library
@@ -132,7 +132,7 @@ spec:
         - name: LIB
           value: 'litmus'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Instance ID
@@ -165,7 +165,7 @@ spec:
         - name: INSTANCE_ID
           value: '123'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Image used by the helper pod
@@ -201,5 +201,5 @@ spec:
         - name: LIB_IMAGE
           value: 'litmuschaos/go-runner:latest'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

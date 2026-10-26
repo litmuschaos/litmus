@@ -6,7 +6,7 @@ Provided below are tables with links to the individual experiment docs for easy 
 
 ## Kubernetes Experiments
 
-It contains chaos experiments which apply on the resources, which are running on the kubernetes cluster. It contains <code>Generic</code>, <code>Kafka</code>, <code>Cassandra</code> experiments.
+It contains chaos experiments which apply on the resources, which are running on the kubernetes cluster. It contains <code>Generic</code> experiments.
 
 Following Kubernetes Chaos experiments are available:
 
@@ -96,6 +96,31 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
     <td>Injects Network loss into Application Pod</td>
    <td><a href="/litmus/experiments/categories/pods/pod-network-loss">pod-network-loss</a></td>
   </tr>
+  <tr>
+    <td>Pod HTTP Latency</td>
+    <td>Injects HTTP latency into Application Pod</td>
+   <td><a href="/litmus/experiments/categories/pods/pod-http-latency">pod-http-latency</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Reset Peer</td>
+    <td>Injects HTTP reset peer into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-reset-peer">pod-http-reset-peer</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Status Code</td>
+    <td>Injects HTTP status code chaos into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-status-code">pod-http-status-code</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Body</td>
+    <td>Injects HTTP modify body into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-body">pod-http-modify-body</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Header</td>
+    <td>Injects HTTP Modify Header into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-header">pod-http-modify-header</a></td>
+  </tr>
 </table>
 
 #### Node Chaos
@@ -159,14 +184,51 @@ While Chaos Experiments under the Generic category offer the ability to induce c
     <th>User Guide</th>
   </tr>
   <tr>
-    <td>Kafka Broker Pod Failure</td>
-    <td>Kills the kafka broker pod</td>
-    <td><a href="/litmus/experiments/categories/kafka/kafka-broker-pod-failure">kafka-broker-pod-failure</a></td>
+    <td>Spring Boot App Kill</td>
+    <td>Kill the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-app-kill">spring-boot-app-kill</a></td>
   </tr>
   <tr>
-    <td>Cassandra Pod Delete</td>
-    <td>Kills the cassandra pod</td>
-    <td><a href="/litmus/experiments/categories/cassandra/cassandra-pod-delete">cassandra-pod-delete</a></td>
+    <td>Spring Boot CPU Stress</td>
+    <td>Stress the CPU of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress">spring-boot-cpu-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Memory Stress</td>
+    <td>Stress the memory of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-memory-stress">spring-boot-memory-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Latency </td>
+    <td>Inject latency to the spring boot application network</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-latency">spring-boot-latency</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Exception</td>
+    <td>Raise exceptions to the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Faults</td>
+    <td>It injects the multiple spring boot faults simultaneously on the target pods</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-faults">spring-boot-faults</a></td>
+  </tr>
+</table>
+
+### Load Chaos
+
+Load chaos contains different chaos experiments to test the app/platform service availability. It will install all the experiments which can be used to inject load into the services like VMs, Pods and so on.
+
+<table style="width: 100%;">
+  <tr>
+    <th>Experiment Name</th>
+    <th>Description</th>
+    <th>User Guide</th>
+  </tr>
+  <tr>
+    <td>k6 Load Generator</td>
+    <td>Generate load using single js script</td>
+    <td><a href="/litmus/experiments/categories/load/k6-loadgen">k6-loadgen</a></td>
   </tr>
 </table>
 
@@ -187,14 +249,14 @@ Following Platform Chaos experiments are available:
     <th>User Guide</th>
   </tr>
   <tr>
-    <td>EC2 Terminate By ID</td>
-    <td>Terminate the ec2 instance matched by instance id</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-id">ec2-terminate-by-id</a></td>
+    <td>EC2 Stop By ID</td>
+    <td>Stop the EC2 instance matched by instance id</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-id">ec2-stop-by-id</a></td>
   </tr>
   <tr>
-    <td>EC2 Terminate By Tag</td>
-    <td>Terminate the ec2 instance matched by instance tag</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-tag">ec2-terminate-by-tag</a></td>
+    <td>EC2 Stop By Tag</td>
+    <td>Stop the EC2 instance matched by instance tag</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-tag">ec2-stop-by-tag</a></td>
   </tr>
   <tr>
     <td>EBS Loss By ID</td>
@@ -205,6 +267,16 @@ Following Platform Chaos experiments are available:
     <td>EBS Loss By Tag</td>
     <td>Detach the EBS volume matched by volume tag</td>
     <td><a href="/litmus/experiments/categories/aws/ebs-loss-by-tag">ebs-loss-by-tag</a></td>
+  </tr>
+  <tr>
+    <td>AWS SSM Chaos By ID</td>
+    <td>Disrupt the state of infrastructure resources by ID</td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-id">aws-ssm-chaos-by-id</a></td>
+  </tr>
+  <tr>
+    <td>AWS SSM Chaos By Tag</td>
+    <td>Disrupt the state of infrastructure resources by tags</td>
+    <td><a href="/litmus/experiments/categories/aws-ssm/aws-ssm-chaos-by-tag">aws-ssm-chaos-by-tag</a></td>
   </tr>
 </table>
 
@@ -225,6 +297,16 @@ Following Platform Chaos experiments are available:
     <td>GCP VM Disk Loss</td>
     <td>Detach the gcp disk</td>
     <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss">gcp-vm-disk-loss</a></td>
+  </tr>
+  <tr>
+    <td>GCP VM Instance Stop By Label</td>
+    <td>Stop the GCP VM instance by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-instance-stop-by-label">gcp-vm-instance-stop-by-label</a></td>
+  </tr>
+  <tr>
+    <td>GCP VM Disk Loss By Label</td>
+    <td>Detach the GCP disk by label</td>
+    <td><a href="/litmus/experiments/categories/gcp/gcp-vm-disk-loss-by-label">gcp-vm-disk-loss-by-label</a></td>
   </tr>
 </table>
 

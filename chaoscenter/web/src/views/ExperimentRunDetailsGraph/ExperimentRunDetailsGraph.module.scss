@@ -1,0 +1,22 @@
+.graphContainer {
+  position: relative;
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+  flex-grow: 1;
+
+  $bg-color: #f6fcff;
+  $dot-color: #bbc1c4;
+
+  $dot-size: 1px;
+  $dot-space: 10px;
+
+  background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
+    linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color !important;
+  background-size: $dot-space $dot-space !important;
+  :global(.Resizer.horizontal:not(.disabled)) {
+    height: var(--spacing-xsmall);
+    background: var(--grey-200);
+    cursor: row-resize;
+    z-index: 2;
+  }
+}

@@ -17,11 +17,11 @@ spec:
       components:
         env:
         # runtime for the container
-        # supports docker, containerd, crio
+        # supports docker
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
+          value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

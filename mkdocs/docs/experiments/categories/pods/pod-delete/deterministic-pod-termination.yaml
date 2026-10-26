@@ -1,0 +1,29 @@
+# defines the deterministic pod termination order with inter-pod kill interval
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # order of pod termination
+        # supports: random, alphabetical, reverse
+        - name: POD_TERMINATION_ORDER
+          value: 'alphabetical'
+        - name: SEQUENCE
+          value: 'serial'
+        # optional: seconds to wait between consecutive pod kills (serial mode only)
+        - name: INTER_POD_KILL_INTERVAL_SECONDS
+          value: '5'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

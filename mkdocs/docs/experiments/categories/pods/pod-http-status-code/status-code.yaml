@@ -1,0 +1,28 @@
+## modified status code for the http response
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # modified status code for the http response
+        # if no value is provided, a random status code from the supported code list will selected
+        # if multiple comma separated values are provided, then a random value from the provided list will be selected
+        # if an invalid status code is provided, the experiment will fail
+        # supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"

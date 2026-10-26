@@ -1,7 +1,9 @@
 ---
-name: "\U0001f41b Bug report"
+name: "\U0001F41B Bug report"
 about: Create a report to help improve the project
+title: ''
 labels: bug
+assignees: ''
 
 ---
 
@@ -19,6 +21,9 @@ labels: bug
 **What happened**:
 
 **What you expected to happen**:
+
+**Where can this issue be corrected? (optional)**
+<!-- provide additional information about the file location or directory that needs to be modified to fix this issue, if available -->
 
 **How to reproduce it (as minimally and precisely as possible)**:
 

@@ -1,0 +1,48 @@
+.expressionBreakdown {
+  margin-top: 0;
+
+  > div > [data-name='column']:last-child {
+    border-right: 1px solid var(--bp3-intent-color, var(--grey-300));
+  }
+
+  .title {
+    margin-bottom: var(--spacing-small) !important;
+    color: var(--grey-800) !important;
+    font-size: 14px !important;
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--bp3-intent-color, var(--grey-300));
+    height: 38px;
+    padding-left: var(--spacing-small) !important;
+    &:nth-child(5) {
+      border-right: 1px solid var(--bp3-intent-color, var(--grey-300));
+    }
+    p {
+      color: var(--grey-800);
+      font-weight: bold !important;
+    }
+  }
+
+  .value {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--bp3-intent-color, var(--grey-300));
+    border-left: 1px solid var(--bp3-intent-color, var(--grey-300));
+    height: 38px;
+    padding-left: var(--spacing-small) !important;
+    p {
+      color: var(--grey-800);
+    }
+  }
+  .inactive {
+    background-color: var(--grey-100) !important;
+  }
+
+  .column {
+    border-top: 1px solid var(--bp3-intent-color, var(--grey-300));
+    border-bottom: 1px solid var(--bp3-intent-color, var(--grey-300));
+  }
+}

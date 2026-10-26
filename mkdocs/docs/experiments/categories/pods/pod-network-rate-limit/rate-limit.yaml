@@ -1,0 +1,29 @@
+# it applies rate limiting to the egress traffic
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-rate-limit-sa
+  experiments:
+  - name: pod-network-rate-limit
+    spec:
+      components:
+        env:
+        # network bandwidth rate limit
+        - name: NETWORK_BANDWIDTH
+          value: '1mbit'
+        # burst size for the bucket
+        - name: BURST
+          value: '32kbit'
+        # limit for bytes that can be queued
+        - name: LIMIT
+          value: '1600'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

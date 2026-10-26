@@ -1,0 +1,3 @@
+import KubernetesChaosInfrastructureController from './KubernetesChaosInfrastructure';
+
+export default KubernetesChaosInfrastructureController;

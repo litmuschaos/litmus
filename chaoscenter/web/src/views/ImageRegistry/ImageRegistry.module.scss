@@ -1,0 +1,51 @@
+.subCard {
+  background: rgba(250, 251, 252, 1);
+  gap: 0.25rem;
+}
+
+.radioButton {
+  width: 60%;
+  min-width: 900px;
+  :global {
+    .RadioButton--radio {
+      height: auto;
+      // width: 900px;
+      background: var(--white) !important;
+      box-shadow: 0px 0px 2px rgba(40, 41, 61, 0.04), 0px 4px 8px rgba(96, 97, 112, 0.16);
+      border-radius: 4px;
+      padding: 1.5rem 1.5rem !important;
+      margin-bottom: 1rem;
+    }
+    .RadioButton--radioIcon {
+      margin-top: 2px;
+    }
+    .bp3-form-group {
+      width: 100% !important;
+    }
+  }
+}
+.subRadioBtn {
+  width: 100%;
+  :global {
+    .RadioButton--radio {
+      height: auto;
+      width: auto;
+      background: none !important;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0 !important;
+      margin-bottom: 0;
+    }
+    .RadioButton--radioIcon {
+      margin-top: 0px;
+    }
+  }
+}
+
+.formContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}

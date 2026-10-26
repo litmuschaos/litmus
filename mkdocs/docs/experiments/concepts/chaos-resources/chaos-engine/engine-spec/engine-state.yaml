@@ -5,7 +5,7 @@ kind: ChaosEngine
 metadata:
   name: engine-nginx
 spec:
-  # contains the state of engine 
+  # contains the state of engine
   engineState: "active"
   annotationCheck: "false"
   appinfo:
@@ -15,4 +15,3 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  

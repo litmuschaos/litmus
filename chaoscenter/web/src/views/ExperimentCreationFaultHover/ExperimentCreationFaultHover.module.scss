@@ -1,0 +1,38 @@
+.root {
+  padding: var(--spacing-large);
+  position: relative;
+  height: 100%;
+  :global {
+    .OverlaySpinner--overlaySpinner {
+      height: 100%;
+    }
+  }
+}
+
+.experimentIcon {
+  height: auto;
+  width: 120px;
+}
+
+.heading {
+  margin: var(--spacing-medium) 0 !important;
+}
+
+.description {
+  margin: var(--spacing-medium) 0 !important;
+}
+
+.bottomIcon {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  margin-bottom: 50px !important;
+  width: 400px;
+}
+
+.detailsContainer {
+  height: 100%;
+  width: 100%;
+}

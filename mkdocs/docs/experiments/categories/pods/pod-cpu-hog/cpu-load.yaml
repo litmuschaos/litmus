@@ -1,0 +1,27 @@
+# cpu load for the stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-cpu-hog-sa
+  experiments:
+  - name: pod-cpu-hog
+    spec:
+      components:
+        env:
+        # cpu load in percentage for the stress
+        - name: CPU_LOAD
+          value: '100'
+        # cpu core should be provided as 0 for cpu load
+        # to work, otherwise it will take cpu core as priority
+        - name: CPU_CORES
+          value: '0'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'

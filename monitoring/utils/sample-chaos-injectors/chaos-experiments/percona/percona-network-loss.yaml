@@ -31,9 +31,8 @@ spec:
               value: "cluster1-pxc-0,cluster1-pxc-2"
             # provide the name of container runtime
             # for litmus LIB, it supports docker, containerd, crio
-            # for pumba LIB, it supports docker only
             - name: CONTAINER_RUNTIME
-              value: "docker"
+              value: 'containerd'
             # provide the socket file path
             - name: SOCKET_PATH
-              value: "/var/run/docker.sock"
+              value: '/run/containerd/containerd.sock'

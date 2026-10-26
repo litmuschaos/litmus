@@ -201,3 +201,187 @@ spec:
           stopOnFailure: true
           
 ```
+
+### Comparator
+
+Comparator used to validate the SLO based on the probe's actual and expected values for the specified criteria. 
+
+??? info "View the comparator's supported fields"
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.type</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold type of the probe's output</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>{int, float, string} (type: string)</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.type</code> holds the type of the probe's output/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.criteria</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the criteria, which should to be followed by the actual and expected probe outputs</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td> Float & Int type: {>,<.<=,>=,==,!=,oneOf,between}, String type: {equal, notEqual, contains, matches, notMatches, oneOf} </td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.criteria</code> holds the criteria, which should to be followed by the actual and expected probe outputs </td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.value</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the probe's expected value, which should follow the specified criteria</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td> value can be of int, float, string, slice type</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.value</code> hold the probe's expected value, which should follow the specified criteria </td>
+    </tr>
+    </table>
+
+Use the following example to tune this:
+
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  appinfo:
+  appns: "default"
+  applabel: "app=nginx"
+  appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      probe:
+      - name: "check-database-integrity"
+        type: "cmdProbe"
+        cmdProbe/inputs:
+          command: "<command>"
+          comparator:
+            # output type for the above command
+            # supports: string, int, float
+            type: "string"
+            # criteria which should be followed by the actual output and the expected output
+            #supports [>=, <=, >, <, ==, !=, oneOf, between] for int and float
+            # supports [contains, equal, notEqual, matches, notMatches, oneOf] for string values
+            criteria: "contains"
+            # expected value, which should follow the specified criteria
+            value: "<value-for-criteria-match>"
+          source:
+            image: "<source-image>"
+        mode: "Edge"
+        runProperties:
+          probeTimeout: 5
+          interval: 5
+          retry: 1
+          initialDelaySeconds: 5
+```
+
+#### Arithmetic criteria:
+
+It is used to compare the numeric values(int,float) for arithmetic comparisons.
+It consists of >, <, >=, <=, ==, != criteria
+
+```yaml
+comparator:
+  type: int
+  criteria: ">" 
+  value: "20"
+```
+
+#### OneOf criteria:
+
+It is used to compare numeric or string values, whether actual value lies in expected slice. Here expected values consists either of int/float/string values
+
+```yaml
+comparator:
+  type: int
+  criteria: "oneOf"
+  value: "[400,404,405]"
+```
+
+#### Between criteria:
+
+It is used to compare the numeric(int,float) values, whether actual value lies between the given lower and upper bound range[a,b]
+
+```yaml
+comparator:
+  type: int
+  criteria: "between"
+  value: "[1000,5000]"
+```
+
+#### Equal and NotEqual criteria:
+
+It is used to compare the string values, it checks whether actual value is equal/notEqual to the expected value or not
+
+```yaml
+comparator:
+  type: string
+  criteria: "equal" #equal or notEqual
+  value: "<string value>"
+```
+
+#### Contains criteria:
+
+It is used to compare the string values, it checks whether expected value is sub string of actual value or not
+
+```yaml
+comparator:
+  type: string
+  criteria: "contains" 
+  value: "<string value>"
+```
+
+#### Matches and NotMatches criteria:
+
+It is used to compare the string values, it checks whether the actual value matches/notMatches the regex(provided as expected value) or not
+
+```yaml
+comparator:
+  type: string
+  criteria: "matches" #matches or notMatches
+  value: "<regex>"
+```

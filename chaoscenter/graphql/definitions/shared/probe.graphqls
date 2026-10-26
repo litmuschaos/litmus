@@ -1,0 +1,1118 @@
+"""
+Defines the different types of Probes
+"""
+enum ProbeType {
+  httpProbe
+  cmdProbe
+  promProbe
+  k8sProbe
+}
+
+"""
+Defines the different types of Image Pull Policy
+"""
+enum ImagePullPolicy {
+  IfNotPresent
+  Always
+  Never
+}
+
+"""
+Defines the different modes of Probes
+"""
+enum Mode {
+  SOT
+  EOT
+  Edge
+  Continuous
+  OnChaos
+}
+
+"""
+Defines the different statuses of Probes
+"""
+enum ProbeStatus {
+  Running
+  Completed
+  Stopped
+  Error
+  Queued
+  NA
+}
+
+"""
+Defines the older different statuses of Probes
+"""
+enum ProbeVerdict {
+  Passed
+  Failed
+  NA
+  Awaited
+}
+
+"""
+Defines the methods of the probe properties
+"""
+type Method {
+  """
+  A GET request
+  """
+  get: GET
+  """
+  A POST request
+  """
+  post: POST
+}
+
+"""
+Details of GET request
+"""
+type GET {
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Details of POST request
+"""
+type POST {
+  """
+  Content Type of the request
+  """
+  contentType: String
+  """
+  Body of the request
+  """
+  body: String
+  """
+  Body Path of the HTTP body required for the http post request
+  """
+  bodyPath: String
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Defines the input for methods of the probe properties
+"""
+input MethodRequest {
+  """
+  A GET request
+  """
+  get: GETRequest
+  """
+  A POST request
+  """
+  post: POSTRequest
+}
+
+"""
+Details for input of GET request
+"""
+input GETRequest {
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Details for input of the POST request
+"""
+input POSTRequest {
+  """
+  Content Type of the request
+  """
+  contentType: String
+  """
+  Body of the request
+  """
+  body: String
+  """
+  Body Path of the request for Body
+  """
+  bodyPath: String
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Defines the common probe properties shared across different ProbeTypes
+"""
+interface CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+}
+
+"""
+Defines the details required for creating a Chaos Probe
+"""
+input ProbeRequest {
+  """
+  Name of the Probe
+  """
+  name: ID!
+  """
+  Description of the Probe
+  """
+  description: String
+  """
+  Tags of the Probe
+  """
+  tags: [String!]
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: ProbeType!
+  """
+  Infrastructure type of the Probe
+  """
+  infrastructureType: InfrastructureType!
+  """
+  HTTP Properties of the specific type of the Probe
+  """
+  kubernetesHTTPProperties: KubernetesHTTPProbeRequest
+  """
+  CMD Properties of the specific type of the Probe
+  """
+  kubernetesCMDProperties: KubernetesCMDProbeRequest
+  """
+  K8S Properties of the specific type of the Probe
+  """
+  k8sProperties: K8SProbeRequest
+  """
+  PROM Properties of the specific type of the Probe
+  """
+  promProperties: PROMProbeRequest
+}
+
+"""
+Defines the input for Kubernetes HTTP probe properties
+"""
+input KubernetesHTTPProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: MethodRequest!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+"""
+Defines the properties of the comparator
+"""
+type Comparator {
+  """
+  Type of the Comparator
+  """
+  type: String!
+  """
+  Value of the Comparator
+  """
+  value: String!
+  """
+  Operator of the Comparator
+  """
+  criteria: String!
+}
+
+"""
+Defines the input properties of the comparator
+"""
+input ComparatorInput {
+  """
+  Type of the Comparator
+  """
+  type: String!
+  """
+  Value of the Comparator
+  """
+  value: String!
+  """
+  Operator of the Comparator
+  """
+  criteria: String!
+}
+
+"""
+Defines the Executed by which experiment details for Probes
+"""
+type ExecutedByExperiment {
+  """
+  Experiment ID
+  """
+  experimentID: String!
+  """
+  Experiment Name
+  """
+  experimentName: String!
+  """
+  Timestamp at which the experiment was last updated
+  """
+  updatedAt: Int!
+  """
+  User who has updated the experiment
+  """
+  updatedBy: UserDetails
+}
+
+"""
+Defines the Execution History of experiment referenced by the Probe
+"""
+type ExecutionHistory {
+  """
+  Probe Mode
+  """
+  mode: Mode!
+  """
+  Fault Name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
+}
+"""
+Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
+"""
+type ProbeRecentExecutions {
+  """
+  Fault name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
+}
+
+"""
+Defines the Recent Executions of experiment referenced by the Probe
+"""
+type RecentExecutions {
+  """
+  Fault name
+  """
+  faultName: String!
+  """
+  Probe mode
+  """
+  mode: Mode!
+  """
+  Execution History
+  """
+  executionHistory: [ExecutionHistory!]!
+}
+
+"""
+Defines the response of the Probe reference API
+"""
+type GetProbeReferenceResponse {
+  """
+  Harness identifiers
+  """
+  projectID: ID!
+  """
+  Name of the Probe
+  """
+  name: String!
+  """
+  Total Runs
+  """
+  totalRuns: Int!
+  """
+  Recent Executions of the probe
+  """
+  recentExecutions: [RecentExecutions]!
+}
+
+"""
+Defines the CMD probe properties
+"""
+type KubernetesCMDProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: Comparator!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+"""
+Defines the details of the Probe entity
+"""
+type Probe implements ResourceDetails & Audit {
+  """
+  Harness identifiers
+  """
+  projectID: ID!
+  """
+  Name of the Probe
+  """
+  name: String!
+  """
+  Description of the Probe
+  """
+  description: String
+  """
+  Tags of the Probe
+  """
+  tags: [String!]
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: ProbeType!
+  """
+  Infrastructure type of the Probe
+  """
+  infrastructureType: InfrastructureType!
+  """
+  Kubernetes HTTP Properties of the specific type of the Probe
+  """
+  kubernetesHTTPProperties: KubernetesHTTPProbe
+  """
+  Kubernetes CMD Properties of the specific type of the Probe
+  """
+  kubernetesCMDProperties: KubernetesCMDProbe
+  """
+  K8S Properties of the specific type of the Probe
+  """
+  k8sProperties: K8SProbe
+  """
+  PROM Properties of the specific type of the Probe
+  """
+  promProperties: PROMProbe
+  """
+  All execution histories of the probe
+  """
+  recentExecutions: [ProbeRecentExecutions!]
+  """
+  Referenced by how many faults
+  """
+  referencedBy: Int
+  """
+  Timestamp at which the Probe was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp at which the Probe was created
+  """
+  createdAt: String!
+  """
+  User who has updated the Probe
+  """
+  updatedBy: UserDetails
+  """
+  User who has created the Probe
+  """
+  createdBy: UserDetails
+}
+
+"""
+Defines the input for Probe filter
+"""
+input ProbeFilterInput {
+  """
+  Name of the Probe
+  """
+  name: String
+  """
+  Date range for filtering purpose
+  """
+  dateRange: DateRange
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: [ProbeType]
+}
+
+"""
+Defines the input for PROM probe properties
+"""
+input PROMProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Endpoint of the Probe
+  """
+  endpoint: String!
+  """
+  Query of the Probe
+  """
+  query: String
+  """
+  Query path of the Probe
+  """
+  queryPath: String
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+}
+
+"""
+Defines the input for HTTP probe properties
+"""
+input HTTPProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: MethodRequest!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+"""
+Defines the input for K8S probe properties
+"""
+input K8SProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Group of the Probe
+  """
+  group: String
+  """
+  Version of the Probe
+  """
+  version: String!
+  """
+  Resource of the Probe
+  """
+  resource: String!
+  """
+  Namespace of the Probe
+  """
+  namespace: String
+  """
+  Resource Names of the Probe
+  """
+  resourceNames: String
+  """
+  Field Selector of the Probe
+  """
+  fieldSelector: String
+  """
+  Label Selector of the Probe
+  """
+  labelSelector: String
+  """
+  Operation of the Probe
+  """
+  operation: String!
+}
+
+"""
+Defines the PROM probe properties
+"""
+type PROMProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Endpoint of the Probe
+  """
+  endpoint: String!
+  """
+  Query of the Probe
+  """
+  query: String
+  """
+  Query path of the Probe
+  """
+  queryPath: String
+  """
+  Comparator of the Probe
+  """
+  comparator: Comparator!
+}
+
+"""
+Defines the input for Kubernetes CMD probe properties
+"""
+input KubernetesCMDProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+"""
+Defines the Kubernetes HTTP probe properties
+"""
+type KubernetesHTTPProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: Method!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+"""
+Defines the input for CMD probe properties
+"""
+input CMDProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+"""
+Defines the K8S probe properties
+"""
+type K8SProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Group of the Probe
+  """
+  group: String
+  """
+  Version of the Probe
+  """
+  version: String!
+  """
+  Resource of the Probe
+  """
+  resource: String!
+  """
+  Namespace of the Probe
+  """
+  namespace: String
+  """
+  Resource Names of the Probe
+  """
+  resourceNames: String
+  """
+  Field Selector of the Probe
+  """
+  fieldSelector: String
+  """
+  Label Selector of the Probe
+  """
+  labelSelector: String
+  """
+  Operation of the Probe
+  """
+  operation: String!
+}
+
+"""
+Status defines whether a probe is pass or fail
+"""
+type Status {
+  """
+  Verdict defines the verdict of the probe, range: Passed, Failed, N/A
+  """
+  verdict: ProbeVerdict!
+  """
+  Description defines the description of probe status
+  """
+  description: String
+}
+
+"""
+Defines the response for Get Probe In Experiment Run Query
+"""
+type GetProbesInExperimentRunResponse {
+  """
+  Probe Object
+  """
+  probe: Probe!
+  """
+  Mode of the probe
+  """
+  mode: Mode!
+  """
+  Status of the Probe
+  """
+  status: Status!
+}
+
+"""
+Defines the input requests for GetProbeYAML query
+"""
+input GetProbeYAMLRequest {
+  """
+  Probe name of the probe
+  """
+  probeName: ID!
+  """
+  Mode of the Probe (SoT, EoT, Edge, Continuous or OnChaos)
+  """
+  mode: Mode!
+}
+
+extend type Query {
+  """
+  Returns the list of Probes based on various filter parameters
+  """
+  listProbes(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
+  ): [Probe]! @authorized
+
+  """
+  Returns a single Probe based on ProbeName and various filter parameters
+  """
+  getProbe(projectID: ID!, probeName: ID!): Probe! @authorized
+
+  """
+  Returns the Probe YAML based on ProbeName which can be used in ChaosEngine manifest
+  """
+  getProbeYAML(projectID: ID!, request: GetProbeYAMLRequest!): String!
+    @authorized
+
+  """
+  Returns all the reference of the Probe based on ProbeName
+  """
+  getProbeReference(projectID: ID!, probeName: ID!): GetProbeReferenceResponse!
+    @authorized
+
+  """
+  Returns all the Probes attached to the requested Experiment Run
+  """
+  getProbesInExperimentRun(
+    projectID: ID!
+    experimentRunID: String!
+    faultName: String!
+  ): [GetProbesInExperimentRunResponse]! @authorized
+
+  """
+  Validates if a probe is already present, returns true if unique
+  """
+  validateUniqueProbe(projectID: ID!, probeName: ID!): Boolean! @authorized
+}
+
+extend type Mutation {
+  """
+  Creates a new Probe
+  """
+  addProbe(request: ProbeRequest!, projectID: ID!): Probe! @authorized
+
+  """
+  Update the configuration of a Probe
+  """
+  updateProbe(request: ProbeRequest!, projectID: ID!): String! @authorized
+
+  """
+  Delete a Probe
+  """
+  deleteProbe(probeName: ID!, projectID: ID!): Boolean! @authorized
+}

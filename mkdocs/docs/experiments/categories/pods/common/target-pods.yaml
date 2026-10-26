@@ -20,4 +20,4 @@ spec:
         - name: TARGET_PODS
           value: 'pod1,pod2'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

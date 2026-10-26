@@ -1,0 +1,33 @@
+.inviteTable {
+  width: 100%;
+}
+
+.tableContainer {
+  width: 100%;
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+  }
+  div[class*='TableV2--body'] {
+    overflow-y: scroll;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  div[class*='TableV2--row TableV2--card'] {
+    margin-bottom: 0 !important;
+  }
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+  div[class*='TableV2--header'],
+  div[class*='TableV2--cells'] {
+    display: grid !important;
+    grid-template-columns: 1.5fr 1fr 200px;
+    gap: 1rem;
+  }
+}

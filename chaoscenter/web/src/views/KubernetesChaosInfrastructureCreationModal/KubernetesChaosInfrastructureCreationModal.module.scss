@@ -1,0 +1,256 @@
+.modal {
+  min-width: 1280px;
+  width: 1300px;
+  min-height: 800px;
+  padding-bottom: 0;
+}
+
+.modalStepWizard {
+  width: 1200px;
+  height: 700px;
+  overflow-y: scroll;
+  position: inherit;
+  :global {
+    .OverlaySpinner--overlaySpinner {
+      height: 100% !important;
+    }
+    .FloatingContainer--floatingContainer {
+      transform: scale(0.85);
+    }
+    .StepWizard--navBarList {
+      background-color: var(--primary-9) !important;
+    }
+  }
+}
+
+.modalHeader {
+  :global {
+    .bp3-dialog-header {
+      margin: 0 !important;
+      padding: 0;
+      background-image: url('./Images/combined.png');
+      background-size: cover;
+    }
+    .bp3-heading {
+      margin: 0 !important;
+    }
+  }
+}
+
+.modalTitleContainer {
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
+
+.modalTitleLayout {
+  position: absolute;
+  top: 50%;
+  left: 21%;
+  transform: translate(-50%, -50%);
+}
+
+.modalTitleCloseIcon {
+  position: absolute;
+  top: 20%;
+  left: 97%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.greenFieldDescriptionLeftBorder {
+  width: 0;
+  border-left: 0.5px solid var(--grey-200);
+}
+
+.greenFieldDescriptionArea {
+  flex-grow: 1;
+  max-width: 568px;
+  margin: 80px auto 0px auto !important;
+}
+
+.greenFieldDescriptionImage {
+  margin: 25px 0px 0px 100px !important;
+}
+
+.greenFieldDescriptionButtonArea {
+  width: 100%;
+  border-bottom: 0.5px solid var(--grey-200);
+  box-shadow: 0px 0px 1px rgb(40 41 61 / 4%), 0px -2px 4px rgb(96 97 112 / 16%);
+}
+
+.deploymentContainer {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 22px 37px 47px 30px;
+  border-radius: 6px;
+}
+
+.formSubSection {
+  width: 320px;
+}
+
+.horizontalRule {
+  border: 1px solid var(--grey-100);
+}
+
+.flexProvider {
+  display: flex;
+  width: 100%;
+}
+
+.noteCard {
+  width: 310px;
+  height: 100px;
+  margin-left: 20px;
+}
+
+.wrapper {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  div[class*='StepWizard--main'] {
+    height: 100%;
+  }
+  div[class*='StepWizard--stepDetails'] {
+    overflow-y: scroll;
+  }
+  :global {
+    .FloatingContainer--floatingContainer {
+      position: absolute !important;
+      right: 20px !important;
+      bottom: 20px !important;
+    }
+  }
+}
+
+.keyValHeader {
+  margin-bottom: var(--spacing-xlarge) !important;
+  align-items: center;
+
+  p:first-of-type {
+    flex-basis: 48%;
+  }
+  p:last-of-type {
+    flex-basis: 34%;
+  }
+}
+
+.tolerationHeader {
+  margin-bottom: var(--spacing-xlarge) !important;
+  align-items: center;
+
+  p {
+    margin-right: 8px;
+  }
+}
+
+.addRowButton {
+  padding-left: 0 !important;
+  margin-bottom: var(--spacing-small) !important;
+  span:nth-last-child(1) {
+    white-space: nowrap;
+  }
+}
+
+.keyValueContainer {
+  align-items: center;
+  :global {
+    .bp3-form-content {
+      position: relative;
+    }
+
+    .bp3-form-helper-text {
+      position: absolute;
+      [class*='errorDiv'] {
+        margin-top: 0 !important;
+      }
+    }
+  }
+
+  &:first-of-type {
+    margin-top: var(--spacing-small) !important;
+  }
+
+  > *:nth-child(2) {
+    flex-basis: 50%;
+  }
+
+  .textCss {
+    flex-basis: 50%;
+    margin-right: var(--spacing-small) !important;
+    margin-bottom: var(--spacing-small) !important;
+    font-size: var(--font-size-small) !important;
+  }
+
+  .valueTextRef {
+    position: relative;
+    bottom: 14px;
+
+    p[data-testid='dropdown-value'] {
+      font-size: var(--font-size-small) !important;
+    }
+
+    > [class*='label'] {
+      align-self: flex-end;
+    }
+  }
+
+  .removeRow {
+    position: relative;
+    bottom: 5px;
+  }
+}
+
+.tooltipMarginProvider {
+  margin-right: 12px;
+}
+
+.serviceAccountInput {
+  margin-bottom: 0;
+}
+
+.serviceAccountLink {
+  color: var(--primary-7);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.nodeSelectorContainer {
+  max-width: 450px;
+}
+
+.tolerationsContainer {
+  max-width: 700px;
+}
+
+.crossIcon {
+  cursor: pointer;
+}
+
+.namespaceScopeText {
+  max-width: 629px;
+  margin-top: 20px !important;
+  margin-bottom: 16px !important;
+}
+
+.kubectlApplyText {
+  max-width: 629px;
+  margin-top: 20px !important;
+}
+
+.runCommandText {
+  max-width: 629px;
+  margin-top: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.checkStatusText {
+  max-width: 629px;
+  margin-top: 32px !important;
+}
+
+.stepButton {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 78px;
+}

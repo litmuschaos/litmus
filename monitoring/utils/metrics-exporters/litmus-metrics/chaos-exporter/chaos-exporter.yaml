@@ -28,6 +28,17 @@ spec:
           env:
             - name: TSDB_SCRAPE_INTERVAL
               value: '10'
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           # uncomment the following lines to use the litmuschaos exporter for monitoring the chaos events and chaosresults for a selected namespace
           # - name: WATCH_NAMESPACE
           #   value: 'litmus'

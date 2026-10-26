@@ -1,0 +1,27 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: gcp-vm-instance-stop-by-label-sa
+  experiments:
+  - name: gcp-vm-instance-stop-by-label
+    spec:
+      components:
+        env:
+        - name: CHAOS_INTERVAL
+          value: '15'
+        
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+
+        - name: INSTANCE_LABEL
+          value: 'vm:target-vm'
+
+        - name: ZONES
+          value: 'us-east1-b'
+
+        - name: GCP_PROJECT_ID
+          value: 'my-project-4513'

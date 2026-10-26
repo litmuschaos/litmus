@@ -18,6 +18,17 @@ spec:
         - image: grafana/grafana:latest
           imagePullPolicy: Always
           name: grafana
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 3000
               name: grafana

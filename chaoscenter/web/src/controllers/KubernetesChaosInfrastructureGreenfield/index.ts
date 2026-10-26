@@ -1,0 +1,3 @@
+import KubernetesChaosInfrastructureGreenfieldController from './KubernetesChaosInfrastructureGreenfield';
+
+export default KubernetesChaosInfrastructureGreenfieldController;

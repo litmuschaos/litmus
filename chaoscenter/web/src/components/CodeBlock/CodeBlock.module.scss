@@ -1,0 +1,15 @@
+.codeBlockWrapper {
+  max-width: 511px;
+}
+
+.textMargin {
+  margin-right: 32px !important;
+}
+
+.codeBlock {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 6px 12px;
+  background: var(--primary-2);
+}

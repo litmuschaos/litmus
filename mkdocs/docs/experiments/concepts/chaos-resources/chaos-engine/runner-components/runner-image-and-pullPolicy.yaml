@@ -9,7 +9,7 @@ spec:
   components:
     runner:
       # override the image of the chaos-runner
-      # by default it is used the image based on the litmus version 
+      # by default it is used the image based on the litmus version
       image: "litmuschaos/chaos-runner:latest"
       # imagePullPolicy for the runner image
       # supports: Always, IfNotPresent. default: IfNotPresent
@@ -21,4 +21,3 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  

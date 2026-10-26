@@ -1,0 +1,24 @@
+
+$line-height-heading: 1.2;
+$font-size-large-heading: 1.7105263158rem;
+$font-weight-large-heading: 700;
+$content-padding: 20px;
+$text-color: #535b60;
+$text-weight: 400;
+$text-size: 1.5789473684rem;
+
+#spectaql {
+  h2 {
+    color: $text-color;
+    font-weight: $text-weight;
+    font-size: $text-size;
+  }
+
+  .doc-heading {
+    line-height: $line-height-heading;
+    font-size: $font-size-large-heading;
+    font-weight: $font-weight-large-heading;
+    color: #535b60
+  }
+
+}

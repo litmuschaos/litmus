@@ -1,0 +1,26 @@
+.main {
+  z-index: 1;
+}
+
+.text {
+  margin: var(--spacing-small) var(--spacing-small) var(--spacing-xsmall) var(--spacing-medium) !important;
+  padding: var(--spacing-small) var(--spacing-medium) !important;
+  color: var(--white) !important;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px !important;
+  cursor: pointer;
+
+  span[class*='bp3-icon'] {
+    color: inherit !important;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.border {
+  margin: var(--spacing-small) var(--spacing-xlarge) var(--spacing-xsmall) var(--spacing-xxlarge) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

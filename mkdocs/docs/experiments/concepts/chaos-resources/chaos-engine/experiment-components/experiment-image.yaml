@@ -5,7 +5,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"   
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -17,4 +17,3 @@ spec:
       components:
         # override the image of the experiment pod
         experimentImage: "litmuschaos/go-runner:ci"
-  

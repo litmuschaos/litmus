@@ -17,7 +17,7 @@ spec:
           value: '10'
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: VIRTUAL_DISK_NAMES
           value: 'disk-01,disk-02'
         - name: RESOURCE_GROUP

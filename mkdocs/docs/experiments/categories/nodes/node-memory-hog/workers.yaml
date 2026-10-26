@@ -16,4 +16,4 @@ spec:
         - name: NUMBER_OF_WORKERS
           value: '1' 
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

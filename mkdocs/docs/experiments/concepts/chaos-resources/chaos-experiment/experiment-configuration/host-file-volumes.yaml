@@ -81,8 +81,8 @@ spec:
     # it contains host file volumes
     hostFileVolumes:
       - name: socket file
-        mountPath: "/var/run/docker.sock"
-        nodePath: "/var/run/docker.sock"
+        mountPath: "/run/containerd/containerd.sock"
+        nodePath: "/run/containerd/containerd.sock"
     labels:
       name: pod-delete
       app.kubernetes.io/part-of: litmus

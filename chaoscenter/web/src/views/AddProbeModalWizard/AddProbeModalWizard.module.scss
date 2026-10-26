@@ -1,0 +1,108 @@
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.horizontalFlex {
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.probeWizard {
+  :global {
+    .StepWizard--navBarList {
+      background-color: var(--primary-9) !important;
+      box-shadow: 0px 2px 4px rgba(40, 41, 61, 0.04), 0px 8px 16px rgba(96, 97, 112, 0.16) !important;
+    }
+
+    .StepWizard--harnessWatermark {
+      background-image: none !important;
+    }
+  }
+
+  .probeDetailsInnerContainer {
+    padding: 6px;
+    height: 516px;
+    margin-bottom: 1rem;
+    overflow: auto !important;
+  }
+}
+
+.yamlBuilder {
+  height: 100%;
+  position: relative;
+}
+
+.yamlBuilderBody {
+  height: 100%;
+  border: none;
+  border-right: 1px solid var(--grey-250) !important;
+  border-radius: 0px;
+  > div:first-child {
+    height: 100%;
+    padding-bottom: 0 !important;
+  }
+  :global {
+    .react-monaco-editor-container {
+      overflow: hidden;
+      height: calc(100%) !important;
+    }
+    .margin-view-overlays {
+      border-right: 1px solid var(--grey-250) !important;
+      background: var(--primary-bg);
+    }
+  }
+}
+
+.repoType {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 4px 6px;
+  background: var(--grey-50);
+  color: var(--primary-9);
+  border-radius: 4px;
+  font-size: 10px;
+  border: 1px solid var(--grey-200);
+}
+
+.card {
+  width: 350px;
+  margin: 1rem 0;
+  margin-right: 1rem;
+}
+
+.cardBody {
+  width: 300px;
+  height: 100%;
+}
+
+.menuItem {
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100%;
+  color: var(--white) !important;
+  text-decoration: none !important;
+}
+
+.hubStatus {
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: #0ab000;
+}
+
+.successMessage {
+  img {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.spaceTop {
+  margin-top: 2rem !important;
+}
+
+.overlayContainer {
+  height: calc(100vh - 177px);
+}

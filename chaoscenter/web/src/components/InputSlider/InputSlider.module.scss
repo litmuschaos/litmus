@@ -1,0 +1,198 @@
+.gap-1 {
+  gap: 0.25;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-3 {
+  gap: 0.75rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.grow {
+  flex-grow: 1;
+}
+
+input[type='range'] {
+  height: 25px;
+  -webkit-appearance: none;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 5px;
+}
+input[type='range']::-webkit-slider-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50px;
+  background: var(--primary-7);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6.7px;
+}
+
+.inputScore-0::-webkit-slider-thumb {
+  margin-left: 0px;
+  margin-right: 0;
+}
+.inputScore-0::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 0%, rgba(243, 243, 250, 1) 0%);
+}
+
+.inputScore-1::-webkit-slider-thumb {
+  margin-left: -7px;
+  margin-right: 0;
+}
+.inputScore-1::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 10%, rgba(243, 243, 250, 1) 10%);
+}
+
+.inputScore-2::-webkit-slider-thumb {
+  margin-left: -5px;
+  margin-right: 0;
+}
+.inputScore-2::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 20%, rgba(243, 243, 250, 1) 20%);
+}
+
+.inputScore-3::-webkit-slider-thumb {
+  margin-left: -3px;
+  margin-right: 0;
+}
+.inputScore-3::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 30%, rgba(243, 243, 250, 1) 30%);
+}
+
+.inputScore-4::-webkit-slider-thumb {
+  margin-left: -1px;
+  margin-right: 0;
+}
+.inputScore-4::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 40%, rgba(243, 243, 250, 1) 40%);
+}
+
+.inputScore-5::-webkit-slider-thumb {
+  margin-left: 0.5px;
+  margin-right: 0;
+}
+.inputScore-5::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 50%, rgba(243, 243, 250, 1) 50%);
+}
+
+.inputScore-6::-webkit-slider-thumb {
+  margin-left: 3px;
+  margin-right: 0;
+}
+.inputScore-6::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 60%, rgba(243, 243, 250, 1) 60%);
+}
+
+.inputScore-7::-webkit-slider-thumb {
+  margin-left: 5px;
+  margin-right: 0;
+}
+.inputScore-7::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 70%, rgba(243, 243, 250, 1) 70%);
+}
+
+.inputScore-8::-webkit-slider-thumb {
+  margin-left: 7px;
+  margin-right: 0;
+}
+.inputScore-8::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 80%, rgba(243, 243, 250, 1) 80%);
+}
+
+.inputScore-9::-webkit-slider-thumb {
+  margin-left: 8px;
+  margin-right: 0;
+}
+.inputScore-9::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 90%, rgba(243, 243, 250, 1) 90%);
+}
+
+.inputScore-10::-webkit-slider-thumb {
+  margin-left: 0;
+  margin-right: 0;
+}
+.inputScore-10::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--primary-7) 100%, rgba(243, 243, 250, 1) 100%);
+}
+
+input[type='range']::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+input[type='range']::-moz-range-thumb {
+  height: 19px;
+  width: 19px;
+  border-radius: 50px;
+  background: var(--primary-7);
+  cursor: pointer;
+}
+input[type='range']::-ms-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+}
+input[type='range']::-ms-fill-lower {
+  border-radius: 10px;
+}
+input[type='range']::-ms-fill-upper {
+  border-radius: 10px;
+}
+input[type='range']::-ms-thumb {
+  margin-top: 1px;
+  height: 19px;
+  width: 19px;
+  border-radius: 50px;
+  background: var(--primary-7);
+  cursor: pointer;
+}
+
+.rangeSliderCont {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+
+  div.zeroLabel {
+    position: absolute;
+    bottom: -20px;
+    left: 4px;
+  }
+  div.tenLabel {
+    position: absolute;
+    bottom: -20px;
+    right: 2px;
+  }
+
+  div.rangeLabel {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    div {
+      &:first-child {
+        visibility: hidden;
+      }
+      height: 100%;
+      width: 1px;
+      background-color: #0b0b0d60;
+    }
+  }
+}

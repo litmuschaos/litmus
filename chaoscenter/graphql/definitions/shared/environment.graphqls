@@ -1,0 +1,116 @@
+
+enum EnvironmentType{
+    PROD
+    NON_PROD
+}
+
+type Environment implements ResourceDetails & Audit {
+    projectID:String!
+    environmentID : String!
+    name: String!
+    description: String
+    tags:[String!]
+    type: EnvironmentType!
+    createdAt: String!
+    createdBy: UserDetails
+    updatedBy: UserDetails
+    updatedAt: String!
+    isRemoved: Boolean
+    infraIDs:[String!]
+}
+
+input CreateEnvironmentRequest{
+    environmentID : String! #check if human readable ID is required
+    name: String!
+    type: EnvironmentType!
+    description: String
+    tags:[String!]
+}
+
+input UpdateEnvironmentRequest{
+    environmentID : String!
+    name: String
+    description: String
+    tags:[String]
+    type: EnvironmentType
+}
+
+"""
+Defines filter options for infras
+"""
+input EnvironmentFilterInput {
+    """
+    Name of the environment
+    """
+    name: String
+    """
+    ID of the environment
+    """
+    description: String
+    """
+    Type name of environment
+    """
+    type: EnvironmentType
+    """
+    Tags of an environment
+    """
+    tags: [String!]
+}
+enum EnvironmentSortingField {
+    NAME
+    TIME
+}
+
+"""
+Defines sorting options for experiment
+"""
+input EnvironmentSortInput {
+    """
+    Field in which sorting will be done
+    """
+    field: EnvironmentSortingField!
+    """
+    Bool value indicating whether the sorting will be done in ascending order
+    """
+    ascending: Boolean
+}
+
+
+input ListEnvironmentRequest{
+    """
+    Environment ID
+    """
+    environmentIDs: [ID!]
+    """
+    Details for fetching paginated data
+    """
+    pagination: Pagination
+    """
+    Details for fetching filtered data
+    """
+    filter: EnvironmentFilterInput
+    """
+    Details for fetching sorted data
+    """
+    sort: EnvironmentSortInput
+}
+
+type ListEnvironmentResponse{
+    """
+    Total number of environment
+    """
+    totalNoOfEnvironments: Int!
+    environments:[Environment]
+}
+
+extend type Query {
+
+    getEnvironment(projectID: ID!, environmentID: ID!) : Environment @authorized
+    listEnvironments (projectID: ID!, request: ListEnvironmentRequest): ListEnvironmentResponse @authorized
+}
+
+extend type Mutation{
+    createEnvironment( projectID:ID!,request:CreateEnvironmentRequest): Environment @authorized
+    updateEnvironment( projectID:ID!,request:UpdateEnvironmentRequest): String! @authorized
+    deleteEnvironment(projectID:ID!,environmentID: ID!): String! @authorized
+}

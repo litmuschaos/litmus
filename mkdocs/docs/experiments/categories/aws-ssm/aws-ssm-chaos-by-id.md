@@ -18,7 +18,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>aws-ssm-chaos-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/aws-ssm/aws-ssm-chaos-by-id/experiment.yaml">here</a>
+    -  Ensure that the <code>aws-ssm-chaos-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/aws/aws-ssm-chaos-by-id/fault.yaml">here</a>
     - Ensure that you have the required AWS access and your target EC2 instances have attached an IAM instance profile. To know more checkout [Systems Manager Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-launch-managed-instance.html).
     - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
@@ -50,7 +50,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/aws-ssm/aws-ssm-chaos-by-id/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
@@ -134,6 +133,11 @@
         <td> Instance ID of the target ec2 instance. Multiple IDs can also be provided as a comma(,) separated values</td>
         <td> Multiple IDs can be provided as `id1,id2` </td>
       </tr>
+      <tr>
+        <td> REGION </td>
+        <td> The region name of the target instace</td>
+        <td> </td>
+      </tr>
     </table>
     
     <h2>Optional Fields</h2>
@@ -208,12 +212,7 @@
         <td> RAMP_TIME </td>
         <td> Period to wait before and after injection of chaos in sec </td>
         <td> </td>
-      </tr>    
-      <tr>
-        <td> REGION </td>
-        <td> The region name of the target instace</td>
-        <td> </td>
-      </tr> 
+      </tr>     
     </table>
 
 ## Experiment Examples
@@ -251,5 +250,5 @@ spec:
         - name: REGION
           value: '<region of the EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

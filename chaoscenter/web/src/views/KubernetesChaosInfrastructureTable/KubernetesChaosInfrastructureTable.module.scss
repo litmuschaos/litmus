@@ -1,0 +1,83 @@
+.upperSection {
+  padding: 15px 28px !important;
+  background-color: var(--white) !important;
+  display: grid !important;
+  grid-template-columns: 1.5fr 10rem 1fr 1fr 1rem;
+}
+
+.chaosInfrastructureIdBlock {
+  max-width: 76px;
+  color: var(--grey-600) !important;
+  background: var(--grey-100) !important;
+  border-radius: 8px;
+  padding-left: 4px !important;
+  margin-right: 8px !important;
+  margin-left: 5px !important;
+}
+
+.maxWidth {
+  max-width: 128px;
+}
+
+.idInfoSection {
+  margin-top: 12px !important;
+  align-items: center;
+}
+
+.tableRow {
+  :global {
+    div[class*='TableV2--card'] {
+      max-height: 72px;
+      box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+    }
+  }
+  :global {
+    p[class*='StyledProps--margin-bottom-small'] {
+      margin-bottom: 0 !important;
+    }
+
+    .TableV2--cells {
+      min-width: 100%;
+    }
+  }
+}
+
+.parentContainer {
+  width: 100%;
+  padding: 12px 15px;
+}
+
+.cardContainer {
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  margin-bottom: 8px !important;
+  border-radius: 8px;
+  overflow-y: scroll;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  & > div:first-child {
+    margin-left: 8px;
+  }
+}
+
+.lowerSection {
+  padding: 7px 20px !important;
+  background: var(--grey-50) !important;
+  border-top: 1px solid var(--grey-200);
+}
+
+.kubernetesInfrastructureDeleteNoteSection {
+  margin-bottom: 12px !important;
+  word-break: break-word;
+}
+
+.kubernetesInfrastructureCRDsNoteSection {
+  word-break: break-word;
+}
+
+.mainInfo {
+  margin-top: 5px !important;
+}

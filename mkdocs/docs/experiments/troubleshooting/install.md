@@ -29,7 +29,7 @@ If not created, install it from [here](https://github.com/litmuschaos/chaos-oper
 Under typical operating conditions, the ChaosOperator makes use of finalizers to ensure that the ChaosEngine is deleted 
 only after chaos resources (chaos-runner, experiment pod, any other helper pods) are removed. 
 
-When uninstalling Litmus via the operator manifest (which contains the namespace, operator, crd specifictions in a single YAML) 
+When uninstalling Litmus via the operator manifest, which contains the namespace, operator, and crd specifications in a single YAML,
 without deleting the existing chaosengine resources first, the ChaosOperator deployment may get deleted before the CRD removal 
 is attempted. Since the stale chaosengines have the finalizer present on them, their deletion (triggered by the CRD delete) and 
 by consequence, the deletion of the chaosengine CRD itself is "stuck". 

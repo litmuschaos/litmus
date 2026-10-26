@@ -15,7 +15,7 @@
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
 
-#### *Das README in [anderen Sprachen](translations/TRANSLATIONS.md).*
+#### *Das README in [anderen Sprachen](TRANSLATIONS.md).*
 
 [KR](https://github.com/litmuschaos/litmus/blob/master/translations/README-ko.md) [CN](https://github.com/litmuschaos/litmus/blob/master/translations/README-chn.md) [GB](https://github.com/litmuschaos/litmus/blob/master/README.md)
 
@@ -59,7 +59,7 @@ Die Chaos-Experimente werden auf <a href="https://hub.litmuschaos.io" target="_b
 
 ## Mit Litmus loslegen
 
-[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
+[![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
 Erste Informationen findet man in der <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Dokumentation (Seite aktuell noch auf Englisch)</a>.
 
@@ -77,7 +77,7 @@ während der Entwicklung Litmus zum Chaos Engineering nutzen_)
 ## Anmerkungen
 
 Ein paar relevante Dinge, die bei der Arbeit mit Litmus zu beachten sind, sind im Folgenden
-aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](./ROADMAP.nd). Für Details zu den
+aufgelistet. Die meisten offenen Punkte sind bereits Teil der [Roadmap](../ROADMAP.md). Für Details zu den
 Einschränkungen bestimmter Experimente empfiehlt sich ein Blick in die
 jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 
@@ -89,7 +89,7 @@ jeweilige [Dokumentation](https://docs.litmuschaos.io/docs/pod-delete/).
 ## Lizenz
 
 Litmus ist unter der Apache License, Version 2.0 zugelassen. Die komplette Lizenz
-ist auf folgender Seite zu finden: [Lizenz](./LICENSE). Einige Projekte, die
+ist auf folgender Seite zu finden: [Lizenz](../LICENSE). Einige Projekte, die
 von Litmus genutzt werden, sind eventuell anders Lizensiert.
 Bitte schaue bei den jeweiligen Projekt nach.
 
@@ -98,7 +98,7 @@ Bitte schaue bei den jeweiligen Projekt nach.
 
 Litmus Chaos ist Teil der CNCF Projekte.
 
-[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+[![CNCF](https://github.com/cncf/artwork/blob/main/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
 
 ## Gemeinschaft
 
@@ -120,5 +120,5 @@ Kommunikationskanäle zum Austausch und für weitere Informationen:
 </a>
 <br>
 <a href="https://landscape.cncf.io/selected=litmus">
-  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/cncf-landscape-horizontal-color.svg" alt="Litmus on CNCF Landscape" height="15">
 </a>

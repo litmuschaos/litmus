@@ -9,4 +9,4 @@ To execute pod chaos experiments in Kubernetes clusters on AWS & Azure cloud
 Litmus is being used as part of the QA cycles to catch bugs & verify resiliency. 
 
 ## Benefits in using Litmus.   
-We needed a clean way to introduce anomolies in the system to figure out its behaviour, Litmus was the one that was clean and easy to use
+We needed a clean way to introduce anomalies in the system to figure out its behaviour, Litmus was the one that was clean and easy to use

@@ -7,7 +7,7 @@ This document lists the criteria as per which the maturity levels of chaos exper
  <tr>
   <th> Alpha </th>
   <th> Beta </th>
-  <th> General Availabilty </th>
+  <th> General Availability </th>
  </tr>
 
  <tr>

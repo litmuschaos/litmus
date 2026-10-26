@@ -1,0 +1,3 @@
+import AccountSettingsUserManagementController from './AccountSettingsUserManagement';
+
+export default AccountSettingsUserManagementController;

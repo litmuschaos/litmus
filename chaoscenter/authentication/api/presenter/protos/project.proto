@@ -1,0 +1,19 @@
+syntax = "proto3";
+package protos;
+
+option go_package = "./protos";
+
+import "google/protobuf/wrappers.proto";
+
+// The project service definition.
+service Project {
+  // Initialize project by adding instances for the required db collections
+  rpc InitializeProject (ProjectInitializationRequest) returns (google.protobuf.BoolValue) {
+  }
+}
+
+// The request message containing the projectID
+message ProjectInitializationRequest {
+  string projectID = 1;
+  string role = 2;
+}

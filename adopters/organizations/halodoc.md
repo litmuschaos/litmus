@@ -29,4 +29,4 @@ At Halodoc we use Litmus to validate the resiliency of our private aws managed e
 
 ### Benefits of litmus
 
-Litmus has has a wide variety of chaos experiments for Kubernetes workload and Infrastructure and provides a very easy way for end-to-end automation of resiliency test cases.
+Litmus has a wide variety of chaos experiments for Kubernetes workload and Infrastructure and provides a very easy way for end-to-end automation of resiliency test cases.

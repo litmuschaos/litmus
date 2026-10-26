@@ -1,0 +1,44 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-faults-sa
+  experiments:
+    - name: spring-boot-faults
+      spec:
+        components:
+          env:
+            # set chaos duration (in sec) as desired
+            - name: TOTAL_CHAOS_DURATION
+              value: '30'
+
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
+
+            # it enables spring app-kill fault
+            - name: CM_KILL_APPLICATION_ACTIVE
+              value: 'true'
+
+            # it enables spring-boot memory stress fault
+            - name: CM_MEMORY_ACTIVE
+              value: ''
+
+            # it contains fraction of memory to be stressed(0.70 equals 70%)
+            # it supports value in range [0.01,0.95]
+            # it is applicable when memory is active
+            - name: MEMORY_FILL_FRACTION
+              value: '0.70'
+            
+            ## percentage of total pods to target
+            - name: PODS_AFFECTED_PERC
+              value: ''
+              

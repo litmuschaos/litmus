@@ -1,0 +1,28 @@
+# provide the cpu load fraction to be stressed
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-cpu-stress-sa
+  experiments:
+    - name: spring-boot-cpu-stress
+      spec:
+        components:
+          env:
+            # it contains the fraction of the used CPU. Eg: 0.95 equals 95%.
+            # it supports value in range [0.1,1.0]
+            - name: CPU_LOAD_FRACTION
+              value: '0.9'
+
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
+

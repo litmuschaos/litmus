@@ -26,4 +26,4 @@ We explored Litmus to validate the resiliency of our private telco cloud by cove
 
 ### Benefits of litmus
 
-Litmus has has a wide variety of generic test cases for Kubernetes workload and Infrastructure and provides a very easy way for end-to-end automation of resiliency test cases.
+Litmus has a wide variety of generic test cases for Kubernetes workload and Infrastructure and provides a very easy way for end-to-end automation of resiliency test cases.

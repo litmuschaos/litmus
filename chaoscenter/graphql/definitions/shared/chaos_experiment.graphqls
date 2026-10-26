@@ -1,0 +1,781 @@
+"""
+Defines the details of the weightages of each chaos fault in the experiment
+"""
+input WeightagesInput {
+  """
+  Name of the fault
+  """
+  faultName: String!
+  """
+  Weightage of the fault
+  """
+  weightage: Int!
+}
+
+enum ExperimentType {
+  All
+  Experiment
+  CronExperiment
+  ChaosEngine
+  ChaosSchedule
+}
+
+enum ExperimentRunStatus {
+  All
+  Running
+  Completed
+  Completed_With_Error
+  Stopped
+  Skipped
+  Error
+  Timeout
+  Terminated
+  Queued
+  NA
+}
+
+enum ScheduleType {
+  CRON
+  NON_CRON
+  ALL
+}
+
+"""
+Defines the details for a chaos experiment
+"""
+input SaveChaosExperimentRequest {
+  """
+  ID of the experiment
+  """
+  id: String!
+  """
+  Type of the experiment
+  """
+  type: ExperimentType
+  """
+  Name of the experiment
+  """
+  name: String!
+  """
+  Description of the experiment
+  """
+  description: String!
+  """
+  Manifest of the experiment
+  """
+  manifest: String!
+  """
+  ID of the target infrastructure in which the experiment will run
+  """
+  infraID: ID!
+  """
+  Tags of the infrastructure
+  """
+  tags: [String!]
+}
+
+"""
+Defines the details for a chaos experiment
+"""
+input ChaosExperimentRequest {
+  """
+  ID of the experiment
+  """
+  experimentID: String
+  """
+  Boolean check indicating if the created scenario will be executed or not
+  """
+  runExperiment: Boolean
+  """
+  Manifest of the experiment
+  """
+  experimentManifest: String!
+  """
+  Type of the experiment
+  """
+  experimentType: ExperimentType
+  """
+  Cron syntax of the experiment schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Description of the experiment
+  """
+  experimentDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the experiment
+  """
+  weightages: [WeightagesInput!]!
+  """
+  Bool value indicating whether the experiment is a custom experiment or not
+  """
+  isCustomExperiment: Boolean!
+  """
+  ID of the target infra in which the experiment will run
+  """
+  infraID: ID!
+  """
+  Tags of the infra
+  """
+  tags: [String!]
+}
+
+"""
+Defines the response received for querying the details of chaos experiment
+"""
+type ChaosExperimentResponse {
+  """
+  ID of the experiment
+  """
+  experimentID: String!
+  projectID: ID!
+  """
+  Cron syntax of the experiment schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Description of the experiment
+  """
+  experimentDescription: String!
+  """
+  Bool value indicating whether the experiment is a custom experiment or not
+  """
+  isCustomExperiment: Boolean!
+  """
+  Tags of the infra
+  """
+  tags: [String!]
+}
+
+"""
+Defines the details for a experiment run
+"""
+input ExperimentRunRequest {
+  """
+  ID of the experiment
+  """
+  experimentID: String!
+  """
+  notifyID is required to give an ack for non cron experiment execution
+  """
+  notifyID: String
+  """
+  ID of the experiment run which is to be queried
+  """
+  experimentRunID: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Stores all the experiment run details related to the nodes of DAG graph and chaos results of the experiments
+  """
+  executionData: String!
+  """
+  ID of the infra infra in which the experiment is running
+  """
+  infraID: InfraIdentity!
+  """
+  ID of the revision which consists manifest details
+  """
+  revisionID: String!
+  """
+  Bool value indicating if the experiment run has completed
+  """
+  completed: Boolean!
+  """
+  Bool value indicating if the experiment run has removed
+  """
+  isRemoved: Boolean
+  """
+  User who has updated the experiment
+  """
+  updatedBy: String!
+}
+
+"""
+Defines the start date and end date for the filtering the data
+"""
+input DateRange {
+  """
+  Start date
+  """
+  startDate: String!
+  """
+  End date
+  """
+  endDate: String
+}
+
+"""
+Defines input type for experiment run filter
+"""
+input ExperimentRunFilterInput {
+  """
+  Name of the experiment
+  """
+  experimentName: String
+  """
+  Name of the infra infra
+  """
+  infraID: String
+  """
+  Type of the experiment
+  """
+  experimentType: ScheduleType
+  """
+  Status of the experiment run
+  """
+  experimentStatus: ExperimentRunStatus
+  """
+  Date range for filtering purpose
+  """
+  dateRange: DateRange
+  """
+  ID of experiment run
+  """
+  experimentRunID: String
+  """
+  Array of experiment run status
+  """
+  experimentRunStatus: [String]
+  """
+  Type of infras
+  """
+  infraTypes: [InfrastructureType]
+}
+
+"""
+Defines data required to fetch paginated data
+"""
+input Pagination {
+  """
+  Page number for which data will be fetched
+  """
+  page: Int!
+  """
+  Number of data to be fetched
+  """
+  limit: Int!
+}
+
+enum ExperimentSortingField {
+  NAME
+  TIME
+}
+
+"""
+Defines sorting options for experiment runs
+"""
+input ExperimentRunSortInput {
+  """
+  Field in which sorting will be done
+  """
+  field: ExperimentSortingField!
+  """
+  Bool value indicating whether the sorting will be done in ascending order
+  """
+  ascending: Boolean
+}
+
+"""
+Defines the details for experiment runs
+"""
+input ListExperimentRunRequest {
+  """
+  Array of experiment run IDs for which details will be fetched
+  """
+  experimentRunIDs: [ID]
+  """
+  Array of experiment IDs for which details will be fetched
+  """
+  experimentIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
+  pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
+  sort: ExperimentRunSortInput
+  """
+  Details for fetching filtered data
+  """
+  filter: ExperimentRunFilterInput
+}
+
+"""
+Defines the details of the weightages of each chaos fault in the experiment
+"""
+type Weightages {
+  """
+  Name of the fault
+  """
+  faultName: String!
+  """
+  Weightage of the experiment
+  """
+  weightage: Int!
+}
+
+"""
+Defines the details of a experiment run
+"""
+type ExperimentRun implements Audit {
+  projectID: ID!
+  """
+  ID of the experiment run which is to be queried
+  """
+  experimentRunID: ID!
+  """
+  Type of the experiment
+  """
+  experimentType: String
+  """
+  ID of the experiment
+  """
+  experimentID: ID!
+  """
+  Array containing weightage and name of each chaos fault in the experiment
+  """
+  weightages: [Weightages!]!
+  """
+  Timestamp at which experiment run was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp at which experiment run was created
+  """
+  createdAt: String!
+  """
+  Target infra in which the experiment will run
+  """
+  infra: Infra!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Manifest of the experiment run
+  """
+  experimentManifest: String!
+  """
+  Phase of the experiment run
+  """
+  phase: ExperimentRunStatus!
+  """
+  Resiliency score of the experiment
+  """
+  resiliencyScore: Float
+  """
+  Number of faults passed
+  """
+  faultsPassed: Int
+  """
+  Number of faults failed
+  """
+  faultsFailed: Int
+  """
+  Number of faults awaited
+  """
+  faultsAwaited: Int
+  """
+  Number of faults stopped
+  """
+  faultsStopped: Int
+  """
+  Number of faults which are not available
+  """
+  faultsNa: Int
+  """
+  Total number of faults
+  """
+  totalFaults: Int
+  """
+  Stores all the experiment run details related to the nodes of DAG graph and chaos results of the faults
+  """
+  executionData: String!
+  """
+  Bool value indicating if the experiment run has removed
+  """
+  isRemoved: Boolean
+  """
+  User who has updated the experiment
+  """
+  updatedBy: UserDetails
+  """
+  User who has created the experiment run
+  """
+  createdBy: UserDetails
+  """
+  Notify ID of the experiment run
+  """
+  notifyID: ID
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
+}
+
+"""
+Defines the details of a experiment to sent as response
+"""
+type ListExperimentRunResponse {
+  """
+  Total number of experiment runs
+  """
+  totalNoOfExperimentRuns: Int!
+  """
+  Defines details of experiment runs
+  """
+  experimentRuns: [ExperimentRun]!
+}
+
+"""
+Defines filter options for experiments
+"""
+input ExperimentFilterInput {
+  """
+  Name of the experiment
+  """
+  experimentName: String
+  """
+  Name of the infra in which the experiment is running
+  """
+  infraName: String
+  """
+  ID of the infra in which the experiment is running
+  """
+  infraID: String
+  """
+  Bool value indicating if Chaos Infrastructure is active
+  """
+  infraActive: Boolean
+  """
+  Scenario type of the experiment i.e. CRON or NON_CRON
+  """
+  scheduleType: ScheduleType
+  """
+  Status of the latest experiment run
+  """
+  status: String
+  """
+  Date range for filtering purpose
+  """
+  dateRange: DateRange
+  """
+  Type of infras
+  """
+  infraTypes: [InfrastructureType]
+}
+
+"""
+Defines the details for a experiment
+"""
+input ListExperimentRequest {
+  """
+  Array of experiment IDs for which details will be fetched
+  """
+  experimentIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
+  pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
+  sort: ExperimentSortInput
+  """
+  Details for fetching filtered data
+  """
+  filter: ExperimentFilterInput
+}
+
+"""
+Defines sorting options for experiment
+"""
+input ExperimentSortInput {
+  """
+  Field in which sorting will be done
+  """
+  field: ExperimentSortingField!
+  """
+  Bool value indicating whether the sorting will be done in ascending order
+  """
+  ascending: Boolean
+}
+
+type RecentExperimentRun implements Audit {
+  """
+  ID of the experiment run which is to be queried
+  """
+  experimentRunID: ID!
+  """
+  Phase of the experiment run
+  """
+  phase: String!
+  """
+  Resiliency score of the experiment
+  """
+  resiliencyScore: Float
+  """
+  Timestamp when the experiment was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the experiment was created
+  """
+  createdAt: String!
+  """
+  User who created the experiment run
+  """
+  createdBy: UserDetails
+  """
+  User who updated the experiment run
+  """
+  updatedBy: UserDetails
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
+}
+
+"""
+Defines the details for a experiment
+"""
+type Experiment implements ResourceDetails & Audit {
+  projectID: ID!
+  """
+  ID of the experiment
+  """
+  experimentID: String!
+  """
+  Type of the experiment
+  """
+  experimentType: String
+  """
+  Manifest of the experiment
+  """
+  experimentManifest: String!
+  """
+  Cron syntax of the experiment schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the experiment
+  """
+  name: String!
+  """
+  Description of the experiment
+  """
+  description: String!
+  """
+  Array containing weightage and name of each chaos fault in the experiment
+  """
+  weightages: [Weightages!]!
+  """
+  Bool value indicating whether the experiment is a custom experiment or not
+  """
+  isCustomExperiment: Boolean!
+  """
+  Timestamp when the experiment was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the experiment was created
+  """
+  createdAt: String!
+  """
+  Target infra in which the experiment will run
+  """
+  infra: Infra
+  """
+  Bool value indicating if the experiment has removed
+  """
+  isRemoved: Boolean!
+  """
+  Tags of the experiment
+  """
+  tags: [String!]
+  """
+  User who created the experiment
+  """
+  createdBy: UserDetails
+  """
+  Array of object containing details of recent experiment runs
+  """
+  recentExperimentRunDetails: [RecentExperimentRun]
+  """
+  Details of the user who updated the experiment
+  """
+  updatedBy: UserDetails
+}
+
+"""
+Defines the details for a given experiment with some additional data
+"""
+type GetExperimentResponse {
+  """
+  Details of experiment
+  """
+  experimentDetails: Experiment!
+  """
+  Average resiliency score of the experiment
+  """
+  averageResiliencyScore: Float
+}
+
+"""
+Defines the details for a experiment with total experiment count
+"""
+type ListExperimentResponse {
+  """
+  Total number of experiments
+  """
+  totalNoOfExperiments: Int!
+  """
+  Details related to the experiments
+  """
+  experiments: [Experiment]!
+}
+
+"""
+Defines the request for stopping a experiment
+"""
+type StopExperimentRunsRequest {
+  projectID: ID!
+  """
+  ID of the experiment to be stopped
+  """
+  experimentID: String!
+  """
+  ID of the experiment run to be stopped
+  """
+  experimentRunID: String
+}
+
+type RunChaosExperimentResponse {
+  notifyID: ID!
+}
+
+type GetExperimentRunStatsResponse {
+  """
+  Total number of experiment runs
+  """
+  totalExperimentRuns: Int!
+  """
+  Total number of completed experiments runs
+  """
+  totalCompletedExperimentRuns: Int!
+  """
+  Total number of stopped experiment runs
+  """
+  totalTerminatedExperimentRuns: Int!
+  """
+  Total number of running experiment runs
+  """
+  totalRunningExperimentRuns: Int!
+  """
+  Total number of stopped experiment runs
+  """
+  totalStoppedExperimentRuns: Int!
+  """
+  Total number of errored experiment runs
+  """
+  totalErroredExperimentRuns: Int!
+}
+
+type ResilienceScoreCategory {
+  """
+  Lower bound of the range(inclusive)
+  """
+  id: Int!
+  """
+  total experiments with avg resilience score between lower bound and upper bound(exclusive)
+  """
+  count: Int!
+}
+
+type GetExperimentStatsResponse {
+  """
+  Total number of experiments
+  """
+  totalExperiments: Int!
+  """
+  Total number of cron experiments
+  """
+  totalExpCategorizedByResiliencyScore: [ResilienceScoreCategory]!
+}
+
+type Query {
+
+
+  """
+  Returns the experiment based on experiment ID
+  """
+  getExperiment(projectID: ID!, experimentID: String!): GetExperimentResponse!
+
+  """
+  Returns the list of experiments based on various filter parameters
+  """
+  listExperiment(
+    projectID: ID!
+    request: ListExperimentRequest!
+  ): ListExperimentResponse!
+
+  """
+  Query to get experiment stats
+  """
+  getExperimentStats(projectID: ID!): GetExperimentStatsResponse!
+}
+
+type Mutation {
+  """
+  Creates a new experiment and applies its manifest
+  """
+  createChaosExperiment(
+    request: ChaosExperimentRequest!
+    projectID: ID!
+  ): ChaosExperimentResponse!
+
+  """
+  Saves a new experiment or updates if already exists
+  """
+  saveChaosExperiment(
+    request: SaveChaosExperimentRequest!
+    projectID: ID!
+  ): String!
+
+  """
+  Updates the experiment
+  """
+  updateChaosExperiment(
+    request: ChaosExperimentRequest!
+    projectID: ID!
+  ): ChaosExperimentResponse!
+
+  """
+  Removes a experiment from infra
+  """
+  deleteChaosExperiment(
+    experimentID: String!
+    experimentRunID: String
+    projectID: ID!
+  ): Boolean!
+
+  """
+  Enable/Disable cron experiment state
+  """
+  updateCronExperimentState(experimentID: String!
+    disable: Boolean!
+    projectID: ID!
+  ): Boolean! @authorized
+}

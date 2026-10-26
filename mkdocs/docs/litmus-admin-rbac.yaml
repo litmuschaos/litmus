@@ -103,6 +103,11 @@ rules:
   resources: ["rollouts"]
   verbs: ["list","get"]
 
+  # performs CRUD operations on the network policies
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies"]
+  verbs: ["create","delete","list","get"]
+
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
 - apiGroups: ["litmuschaos.io"]
   resources: ["chaosengines","chaosexperiments","chaosresults"]
