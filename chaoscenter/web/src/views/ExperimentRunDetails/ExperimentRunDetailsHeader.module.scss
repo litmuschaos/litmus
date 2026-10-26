@@ -37,7 +37,7 @@
 .test {
   :global {
     .PageHeader--large {
-      background-color: #eef6fc !important;
+      background-color: var(--layout-page-header-background) !important;
     }
     .PageHeader--breadcrumbsDiv {
       margin-bottom: 8px !important;
