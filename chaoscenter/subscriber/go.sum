@@ -4,8 +4,8 @@ github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 h1:bvDV9
 github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/argoproj/argo-workflows/v3 v3.7.14 h1:ptbGB8ljmDgV3PlX0dEMfHwuq1P9DklQ5Hi4XzHBVLA=
-github.com/argoproj/argo-workflows/v3 v3.7.14/go.mod h1:ZfqYgzWJJx8ZNZWAjog4fqBVaafF/XvTaMuZLKDlFFE=
+github.com/argoproj/argo-workflows/v3 v3.7.15 h1:0p8ZOXeFzO9uiJAyVAKJGN5UisGOoqbCjle5CuLyL4k=
+github.com/argoproj/argo-workflows/v3 v3.7.15/go.mod h1:al0Wl/zyMdI9TSXKFeRT8qRLnroPfhkXlQLEhBYLaAc=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
