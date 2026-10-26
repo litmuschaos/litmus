@@ -199,7 +199,8 @@ copiedToClipboard: Copied to clipboard
 copyPrompt: >-
   Copy the downloaded YML to a machine where you have kubectl installed and have
   access to your Kubernetes cluster.
-copyPrompt1: 2. Apply the Chaos CRDs manually
+copyPrompt1: 2. Apply the Chaos CRD
+ manually
 copyPrompt2: >-
   3. Copy the downloaded YML to a machine where you have kubectl installed and
   have access to your Kubernetes cluster.
@@ -485,7 +486,6 @@ imageRegistry: Image Registry
 imageRegistryNameInvalid: >-
   Registry name must be a valid hostname (e.g., docker.io, gcr.io,
   my-registry.example.com:5000)
-imageRegistryNameRequired: Registry name is required for custom image registry
 imageRegistryUpdateSuccess: Image Registry added successfully
 imageRepoNameInvalid: >-
   Repository name must contain only lowercase letters, numbers, dots,
@@ -904,7 +904,6 @@ probeValidation:
   url: URL is a required field
   value: Comparator value is a required field
   version: Probe version is a required field
-
 probes: Probes
 probesArePassed: probes are passed
 problems: Problems
