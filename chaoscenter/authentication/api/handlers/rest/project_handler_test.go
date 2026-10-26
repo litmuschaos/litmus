@@ -289,7 +289,7 @@ func TestGetProject(t *testing.T) {
 								Value: primitive.D{
 									primitive.E{
 										Key:   "$in",
-										Value: []string{"Owner", "Viewer", "Executor"},
+										Value: []string{"Owner", "Viewer", "Executor", "Editor"},
 									},
 								},
 							},
@@ -347,21 +347,21 @@ func TestInvitationHandlersActOnTheCaller(t *testing.T) {
 		{
 			name:               "accept_invitation",
 			handler:            rest.AcceptInvitation,
-			roles:              []string{"Owner", "Viewer", "Executor"},
+			roles:              []string{"Owner", "Viewer", "Executor", "Editor"},
 			invitation:         string(entities.PendingInvitation),
 			expectedInvitation: entities.AcceptedInvitation,
 		},
 		{
 			name:               "decline_invitation",
 			handler:            rest.DeclineInvitation,
-			roles:              []string{"Owner", "Viewer", "Executor"},
+			roles:              []string{"Owner", "Viewer", "Executor", "Editor"},
 			invitation:         string(entities.PendingInvitation),
 			expectedInvitation: entities.DeclinedInvitation,
 		},
 		{
 			name:               "leave_project",
 			handler:            rest.LeaveProject,
-			roles:              []string{"Owner", "Viewer", "Executor"},
+			roles:              []string{"Owner", "Viewer", "Executor", "Editor"},
 			invitation:         string(entities.AcceptedInvitation),
 			expectedInvitation: entities.ExitedProject,
 		},
