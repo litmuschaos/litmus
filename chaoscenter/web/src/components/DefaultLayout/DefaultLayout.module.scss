@@ -1,9 +1,12 @@
 $sub-header-height: 65px;
 
 .test {
+  background: var(--layout-page-background);
+  color: var(--layout-text-color);
+
   :global {
     .PageHeader--large {
-      background-color: #eef6fc !important;
+      background-color: var(--layout-page-header-background) !important;
     }
     .PageHeader--breadcrumbsDiv {
       margin-bottom: 8px !important;
@@ -37,15 +40,15 @@ $sub-header-height: 65px;
   position: sticky;
   top: 0;
   align-self: stretch;
-  border-right: 1px solid var(--grey-200);
+  border-right: 1px solid var(--layout-border-color);
 }
 
 .rightSideBar {
-  background-color: #fafbfc !important;
+  background-color: var(--layout-card-background) !important;
   min-height: var(--page-min-height);
   width: 64px;
   height: 100vh;
-  border-left: 1px solid var(--grey-200);
+  border-left: 1px solid var(--layout-border-color);
 }
 
 .innerContainer {
@@ -63,6 +66,7 @@ $sub-header-height: 65px;
 }
 
 .container {
+  background: var(--layout-page-background);
   z-index: 1;
   position: relative;
   height: 100%;
