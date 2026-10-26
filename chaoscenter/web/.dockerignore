@@ -1,0 +1,39 @@
+# Dependencies and build output are produced inside the image, never copied in.
+node_modules
+**/node_modules
+dist
+coverage
+.nyc_output
+reports
+cypress-coverage
+merged-coverage
+cypress/videos
+
+# Local tooling, caches and secrets that must not enter the build context.
+# .npmrc is excluded so developer registry credentials never reach the image;
+# the build generates its own minimal .npmrc (see Dockerfile).
+.husky
+.yalc
+yalc.lock
+.env
+.npmrc
+certificates
+tsconfig.tmp
+temp
+junit.xml
+yarn-error.log
+*.log
+
+# VCS / editor / OS cruft.
+.git
+.gitignore
+.idea
+.vscode
+.DS_Store
+
+# The image is built with pnpm; the yarn lockfile is not needed in context.
+yarn.lock
+
+# Docker artifacts themselves.
+Dockerfile
+.dockerignore

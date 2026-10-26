@@ -67,7 +67,7 @@ export default function PredefinedExperimentView({
         intent="success"
         disabled={predefinedExperimentDetails === undefined || loading.listPredefinedExperiment ? true : false}
         size={ButtonSize.MEDIUM}
-        permission={PermissionGroup.OWNER}
+        permission={PermissionGroup.EDITOR}
         onClick={launchExperiment}
       />
     </ParentComponentErrorWrapper>
@@ -172,7 +172,7 @@ export default function PredefinedExperimentView({
               variation={ButtonVariation.PRIMARY}
               size={ButtonSize.MEDIUM}
               margin={{ top: 'medium' }}
-              permission={PermissionGroup.OWNER}
+              permission={PermissionGroup.EDITOR}
               onClick={launchExperiment}
             />
           </ParentComponentErrorWrapper>
