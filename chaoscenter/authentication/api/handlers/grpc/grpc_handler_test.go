@@ -63,19 +63,32 @@ func TestGetProjectById(t *testing.T) {
 			expectedResponse:       nil,
 			expectedError:          true,
 		},
-	}
-
-	s := &grpc.ServerGrpc{
-		ApplicationService: &mocks.MockedApplicationService{},
+		{
+			name:      "NegativeTestFindUsersFails",
+			projectID: "project-id",
+			mockGetProjectResponse: &entities.Project{
+				ID:      "project-id",
+				Name:    "test-project",
+				Members: []*entities.Member{{UserID: "user-1"}},
+			},
+			mockGetProjectError:   nil,
+			mockFindUsersResponse: nil,
+			mockFindUsersError:    errors.New("database unavailable"),
+			expectedResponse:      nil,
+			expectedError:         true,
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
+			s := &grpc.ServerGrpc{
+				ApplicationService: &mocks.MockedApplicationService{},
+			}
 
 			mockService := s.ApplicationService.(*mocks.MockedApplicationService)
 			mockService.On("GetProjectByProjectID", tc.projectID).Return(tc.mockGetProjectResponse, tc.mockGetProjectError)
-			if tc.mockFindUsersResponse != nil {
+			if tc.mockFindUsersResponse != nil || tc.mockFindUsersError != nil {
 				mockService.On("FindUsersByUID", mock.Anything).Return(tc.mockFindUsersResponse, tc.mockFindUsersError)
 			}
 
