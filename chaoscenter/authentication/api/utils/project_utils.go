@@ -2,11 +2,14 @@ package utils
 
 import (
 	"fmt"
+	"log"
+	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	pkgUtils "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -17,6 +20,13 @@ func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
 	uID, exists := c.Get("uid")
 	if exists {
 		request.UserID = uID.(string)
+	}
+
+	// Extract OIDC groups from context (set by JWT middleware)
+	if groupsVal, exists := c.Get("groups"); exists {
+		if groups, ok := groupsVal.([]string); ok {
+			request.Groups = groups
+		}
 	}
 
 	// Initialize request.Filter and request.Sort if they are nil
@@ -99,22 +109,44 @@ func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
 	return &request, nil
 }
 
-func CreateMatchStage(userID string) bson.D {
-	return bson.D{
-		{"$match", bson.D{
-			{"is_removed", false},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"invitation", bson.D{
-						{"$nin", bson.A{
-							string(entities.PendingInvitation),
-							string(entities.DeclinedInvitation),
-							string(entities.ExitedProject),
-						}},
+func CreateMatchStage(userID string, groups []string) bson.D {
+	memberMatch := bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"invitation", bson.D{
+					{"$nin", bson.A{
+						string(entities.PendingInvitation),
+						string(entities.DeclinedInvitation),
+						string(entities.ExitedProject),
 					}},
 				}},
 			}},
+		}},
+	}
+
+	conditions := bson.A{memberMatch}
+
+	if len(groups) > 0 {
+		sanitizedGroups, err := pkgUtils.SanitizeMongoSlice(groups)
+		if err != nil {
+			log.Printf("CreateMatchStage: invalid group name: %s", err)
+		} else {
+			groupMatch := bson.D{
+				{"groups", bson.D{
+					{"$elemMatch", bson.D{
+						{"group", bson.D{{"$in", sanitizedGroups}}},
+					}},
+				}},
+			}
+			conditions = append(conditions, groupMatch)
+		}
+	}
+
+	return bson.D{
+		{"$match", bson.D{
+			{"is_removed", false},
+			{"$or", conditions},
 		}},
 	}
 }
@@ -143,10 +175,11 @@ func CreateFilterStages(filter *entities.ListProjectInputFilter, userID string) 
 	}
 
 	if filter.ProjectName != nil {
+		quotedProjectName := regexp.QuoteMeta(*filter.ProjectName)
 		stages = append(stages, bson.D{
 			{"$match", bson.D{
 				{"name", bson.D{
-					{"$regex", primitive.Regex{Pattern: *filter.ProjectName, Options: "i"}},
+					{"$regex", primitive.Regex{Pattern: quotedProjectName, Options: "i"}},
 				}},
 			}},
 		})

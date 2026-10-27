@@ -1,5 +1,4 @@
-import { 
-Button, ButtonVariation, Layout, useToaster, Tabs, Tab, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Layout, useToaster, Tabs, Tab, Text } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import type { MutationFunction } from '@api/types';
@@ -33,21 +32,17 @@ export default function KubernetesChaosInfrastructureGreenfieldView({
   const scope = getScope();
   const { showError, showSuccess } = useToaster();
   const [loading, setLoading] = React.useState<boolean>(false);
-    const [selectedTab, setSelectedTab] = React.useState<string>('manifest');
-    const [registeredInfraID, setRegisteredInfraID] = React.useState<string>('');
-    const [registeredToken, setRegisteredToken] = React.useState<string>('');
+  const [selectedTab, setSelectedTab] = React.useState<string>('manifest');
+  const [registeredInfraID, setRegisteredInfraID] = React.useState<string>('');
+  const [registeredToken, setRegisteredToken] = React.useState<string>('');
 
   // Fetch the formatted file name for giving apply command
   const fileName = getFormattedFileName(data.value.name);
   const kubectlApplyFile = `kubectl apply -f ${fileName}-litmus-chaos-enable.yml`;
 
-return (
+  return (
     <Layout.Vertical spacing="medium">
-      <Tabs
-        id="installationTabs"
-        selectedTabId={selectedTab}
-        onChange={(tabId: string) => setSelectedTab(tabId)}
-      >
+      <Tabs id="installationTabs" selectedTabId={selectedTab} onChange={(tabId: string) => setSelectedTab(tabId)}>
         <Tab
           id="manifest"
           title={getString('manifestInstallation')}
@@ -85,20 +80,20 @@ return (
                         }
                       }
                     })
-                    .then(result => {
-                      setLoading(false);
-                      const manifest = result.data?.registerInfra.manifest;
-                      const infraID = result.data?.registerInfra.infraID;
-                      const token = result.data?.registerInfra.token;
-                      if (!manifest) {
-                        showError(getString('error'));
-                        return;
-                      }
-                      if (infraID) setRegisteredInfraID(infraID);
-                      if (token) setRegisteredToken(token);
-                      showSuccess(getString('chaosInfrastructureSuccess'));
-                      downloadYamlAsFile(manifest, `${fileName}-litmus-chaos-enable.yml`);
-                    })
+                      .then(result => {
+                        setLoading(false);
+                        const manifest = result.data?.registerInfra.manifest;
+                        const infraID = result.data?.registerInfra.infraID;
+                        const token = result.data?.registerInfra.token;
+                        if (!manifest) {
+                          showError(getString('error'));
+                          return;
+                        }
+                        if (infraID) setRegisteredInfraID(infraID);
+                        if (token) setRegisteredToken(token);
+                        showSuccess(getString('chaosInfrastructureSuccess'));
+                        downloadYamlAsFile(manifest, `${fileName}-litmus-chaos-enable.yml`);
+                      })
                       .catch((err: Error) => {
                         showError(err.message);
                       });
