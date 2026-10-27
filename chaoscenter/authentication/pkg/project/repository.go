@@ -636,7 +636,7 @@ func (r repository) GetProjectGroupMembers(projectID string) ([]*entities.GroupM
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.D{{"_id", sanitizedProjectID}}
+	filter := bson.D{{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}}}
 	projection := bson.D{
 		{"_id", 0},
 		{"groups", 1},
@@ -678,7 +678,7 @@ func (r repository) AddGroupMember(projectID string, groupMember *entities.Group
 		AssignedAt:  groupMember.AssignedAt,
 	}
 
-	query := bson.D{{"_id", sanitizedProjectID}}
+	query := bson.D{{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}}}
 	update := bson.D{{"$push", bson.D{
 		{"groups", sanitizedGroupMember},
 	}}}
@@ -704,11 +704,11 @@ func (r repository) RemoveGroupMember(projectID string, groupName string) error 
 	if err != nil {
 		return err
 	}
-	query := bson.D{{"_id", sanitizedProjectID}}
+	query := bson.D{{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}}}
 	update := bson.D{
 		{"$pull", bson.D{
 			{"groups", bson.D{
-				{"group", sanitizedGroupName},
+				{Key: "group", Value: bson.D{{Key: "$eq", Value: sanitizedGroupName}}},
 			}},
 		}},
 	}
@@ -741,10 +741,10 @@ func (r repository) UpdateGroupMemberRole(projectID string, groupName string, ro
 	sanitizedMemberRole := entities.MemberRole(sanitizedRole)
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.group", sanitizedGroupName}},
+			bson.D{{Key: "elem.group", Value: bson.D{{Key: "$eq", Value: sanitizedGroupName}}}},
 		},
 	})
-	query := bson.D{{"_id", sanitizedProjectID}}
+	query := bson.D{{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}}}
 	update := bson.D{{"$set", bson.M{"groups.$[elem].role": sanitizedMemberRole}}}
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)

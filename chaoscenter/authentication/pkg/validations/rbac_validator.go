@@ -31,14 +31,14 @@ func RbacValidator(uid string, projectID string,
 
 	// Check for individual member permission
 	filter := bson.D{
-		{"_id", sanitizedProjectID},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", uid},
-				{"role", bson.D{
-					{"$in", requiredRoles},
+		{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}},
+		{Key: "members", Value: bson.D{
+			{Key: "$elemMatch", Value: bson.D{
+				{Key: "user_id", Value: bson.D{{Key: "$eq", Value: uid}}},
+				{Key: "role", Value: bson.D{
+					{Key: "$in", Value: requiredRoles},
 				}},
-				{"invitation", invitation},
+				{Key: "invitation", Value: bson.D{{Key: "$eq", Value: invitation}}},
 			}},
 		}},
 	}
@@ -68,14 +68,14 @@ func RbacValidator(uid string, projectID string,
 		}
 
 		groupFilter := bson.D{
-			{"_id", sanitizedProjectID},
-			{"groups", bson.D{
-				{"$elemMatch", bson.D{
-					{"group", bson.D{
-						{"$in", sanitizedGroups},
+			{Key: "_id", Value: bson.D{{Key: "$eq", Value: sanitizedProjectID}}},
+			{Key: "groups", Value: bson.D{
+				{Key: "$elemMatch", Value: bson.D{
+					{Key: "group", Value: bson.D{
+						{Key: "$in", Value: sanitizedGroups},
 					}},
-					{"role", bson.D{
-						{"$in", requiredRoles},
+					{Key: "role", Value: bson.D{
+						{Key: "$in", Value: requiredRoles},
 					}},
 				}},
 			}},

@@ -13,10 +13,111 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+func TestProjectNameLookupsUseLiteralEquality(t *testing.T) {
+	const userID = `user.'{"ne":null}`
+	const projectID = `project.'{"ne":null}`
+	const projectName = `Project's {"$ne": null}`
+
+	tests := []struct {
+		name    string
+		handler func(services.ApplicationService) gin.HandlerFunc
+		filter  primitive.D
+	}{
+		{
+			name:    "create project",
+			handler: rest.CreateProject,
+			filter: primitive.D{
+				{Key: "name", Value: primitive.D{{Key: "$eq", Value: projectName}}},
+			},
+		},
+		{
+			name:    "rename project",
+			handler: rest.UpdateProjectName,
+			filter: primitive.D{
+				{Key: "name", Value: primitive.D{{Key: "$eq", Value: projectName}}},
+				{Key: "members.user_id", Value: primitive.D{{Key: "$eq", Value: userID}}},
+				{Key: "members.role", Value: primitive.D{{Key: "$eq", Value: entities.RoleOwner}}},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			service := new(mocks.MockedApplicationService)
+			service.On("GetUser", userID).Return(&entities.User{ID: userID}, nil).Twice()
+			if test.name == "rename project" {
+				filter := memberRbacFilter(projectID, userID,
+					validations.MutationRbacRules["updateProjectName"], string(entities.AcceptedInvitation))
+				service.On("GetProjects", filter).Return([]*entities.Project{{ID: projectID}}, nil).Once()
+			}
+			service.On("GetProjects", test.filter).Return([]*entities.Project{{Name: projectName}}, nil).Once()
+
+			w := httptest.NewRecorder()
+			ctx := GetTestGinContext(w)
+			ctx.Set("uid", userID)
+			setRequestBody(ctx, entities.ProjectInput{ProjectID: projectID, ProjectName: projectName})
+
+			test.handler(service)(ctx)
+
+			assert.Equal(t, http.StatusBadRequest, w.Code)
+			assert.Contains(t, w.Body.String(), "already exists")
+			service.AssertExpectations(t)
+		})
+	}
+}
+
+func TestProjectHandlersRejectQueryObjects(t *testing.T) {
+	tests := []struct {
+		name    string
+		handler func(services.ApplicationService) gin.HandlerFunc
+		fields  []string
+	}{
+		{"create project", rest.CreateProject, []string{"projectName"}},
+		{"rename project", rest.UpdateProjectName, []string{"projectName", "projectID"}},
+		{"add group", rest.AddGroupToProject, []string{"projectID", "group"}},
+		{"remove group", rest.RemoveGroupFromProject, []string{"projectID", "group"}},
+		{"update group role", rest.UpdateGroupRole, []string{"projectID", "group"}},
+	}
+	invalidValues := []struct {
+		name  string
+		value interface{}
+	}{
+		{"operator object", map[string]interface{}{"$ne": nil}},
+		{"array", []string{"team"}},
+	}
+
+	for _, test := range tests {
+		for _, field := range test.fields {
+			for _, invalid := range invalidValues {
+				t.Run(test.name+"/"+field+"/"+invalid.name, func(t *testing.T) {
+					service := new(mocks.MockedApplicationService)
+					w := httptest.NewRecorder()
+					ctx := GetTestGinContext(w)
+					ctx.Set("uid", "user")
+					body := map[string]interface{}{
+						"projectName": "project",
+						"projectID":   "project-id",
+						"group":       "team",
+						"role":        "Viewer",
+					}
+					body[field] = invalid.value
+					setRequestBody(ctx, body)
+
+					test.handler(service)(ctx)
+
+					assert.Equal(t, http.StatusBadRequest, w.Code)
+					assert.Empty(t, service.Calls)
+				})
+			}
+		}
+	}
+}
 
 func TestGetUserWithProject(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -272,7 +373,7 @@ func TestGetProject(t *testing.T) {
 		expectedFilter := primitive.D{
 			primitive.E{
 				Key:   "_id",
-				Value: "",
+				Value: primitive.D{{Key: "$eq", Value: ""}},
 			},
 			primitive.E{
 				Key: "members",
@@ -282,7 +383,7 @@ func TestGetProject(t *testing.T) {
 						Value: primitive.D{
 							primitive.E{
 								Key:   "user_id",
-								Value: "testUserID",
+								Value: primitive.D{{Key: "$eq", Value: "testUserID"}},
 							},
 							primitive.E{
 								Key: "role",
@@ -295,7 +396,7 @@ func TestGetProject(t *testing.T) {
 							},
 							primitive.E{
 								Key:   "invitation",
-								Value: "Accepted",
+								Value: primitive.D{{Key: "$eq", Value: "Accepted"}},
 							},
 						},
 					},
@@ -315,14 +416,14 @@ func TestGetProject(t *testing.T) {
 
 func memberRbacFilter(projectID, uid string, roles []string, invitation string) primitive.D {
 	return primitive.D{
-		primitive.E{Key: "_id", Value: projectID},
+		primitive.E{Key: "_id", Value: primitive.D{{Key: "$eq", Value: projectID}}},
 		primitive.E{Key: "members", Value: primitive.D{
 			primitive.E{Key: "$elemMatch", Value: primitive.D{
-				primitive.E{Key: "user_id", Value: uid},
+				primitive.E{Key: "user_id", Value: primitive.D{{Key: "$eq", Value: uid}}},
 				primitive.E{Key: "role", Value: primitive.D{
 					primitive.E{Key: "$in", Value: roles},
 				}},
-				primitive.E{Key: "invitation", Value: invitation},
+				primitive.E{Key: "invitation", Value: primitive.D{{Key: "$eq", Value: invitation}}},
 			}},
 		}},
 	}

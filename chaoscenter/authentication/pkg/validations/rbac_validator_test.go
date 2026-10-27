@@ -20,7 +20,17 @@ func TestRbacValidator_IndividualMemberAllowed(t *testing.T) {
 		Username:   "testuser",
 		OIDCGroups: []string{"dev-team"},
 	}, nil)
-	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{
+	filter := bson.D{
+		{Key: "_id", Value: bson.D{{Key: "$eq", Value: "proj1"}}},
+		{Key: "members", Value: bson.D{
+			{Key: "$elemMatch", Value: bson.D{
+				{Key: "user_id", Value: bson.D{{Key: "$eq", Value: "user1"}}},
+				{Key: "role", Value: bson.D{{Key: "$in", Value: []string{string(entities.RoleOwner)}}}},
+				{Key: "invitation", Value: bson.D{{Key: "$eq", Value: string(entities.AcceptedInvitation)}}},
+			}},
+		}},
+	}
+	service.On("GetProjects", filter).Return([]*entities.Project{
 		{ID: "proj1"},
 	}, nil).Once()
 
@@ -43,7 +53,7 @@ func TestRbacValidator_IndividualMemberDenied_GroupAllowed(t *testing.T) {
 	}, nil)
 	service.On("GetProjects", mock.AnythingOfType("primitive.D")).Return([]*entities.Project{}, nil).Once()
 	groupFilter := bson.D{
-		{Key: "_id", Value: "proj1"},
+		{Key: "_id", Value: bson.D{{Key: "$eq", Value: "proj1"}}},
 		{Key: "groups", Value: bson.D{
 			{Key: "$elemMatch", Value: bson.D{
 				{Key: "group", Value: bson.D{{Key: "$in", Value: []string{"dev-team"}}}},
@@ -112,7 +122,7 @@ func TestRbacValidator_ExplicitGroupsParam(t *testing.T) {
 	// Pass explicit groups via variadic param — should override user.OIDCGroups
 	explicitGroups := []string{"explicit-group"}
 	groupFilter := bson.D{
-		{Key: "_id", Value: "proj1"},
+		{Key: "_id", Value: bson.D{{Key: "$eq", Value: "proj1"}}},
 		{Key: "groups", Value: bson.D{
 			{Key: "$elemMatch", Value: bson.D{
 				{Key: "group", Value: bson.D{{Key: "$in", Value: explicitGroups}}},
