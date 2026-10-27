@@ -298,10 +298,9 @@ func TestConditionChecker(t *testing.T) {
 			expected: false,
 		},
 		{
-			name: "9. Steady-State Satisfied (Option B) - All conditions satisfied on newData, unrelated field updated",
-			// Documents intended AND semantics per official docs ("triggered if both
-			// conditions are met"): evaluation is against current state, so an
-			// unrelated update while the policy is fully satisfied triggers.
+			name: "9. Steady-State Transition Guard - All conditions already satisfied on oldData, unrelated update does not retrigger",
+			// When all value conditions are already satisfied on oldData, an unrelated update
+			// (e.g. status or metadata change) does not transition into matching and must not retrigger.
 			policy: litmuschaosv1.EventTrackerPolicy{
 				Spec: litmuschaosv1.EventTrackerPolicySpec{
 					ConditionType: "and",
@@ -345,7 +344,103 @@ func TestConditionChecker(t *testing.T) {
 					},
 				},
 			},
-			expected: true,
+			expected: false,
+		},
+		{
+			name: "10. Transition to Non-Matching - Matching resource becomes non-matching",
+			policy: litmuschaosv1.EventTrackerPolicy{
+				Spec: litmuschaosv1.EventTrackerPolicySpec{
+					ConditionType: "and",
+					Conditions: []litmuschaosv1.Condition{
+						{
+							Key:      "spec.replicas",
+							Value:    stringPtr("3"),
+							Operator: "EqualTo",
+						},
+						{
+							Key:      "spec.template.spec.containers[0].image",
+							Value:    stringPtr("nginx:1.21.1"),
+							Operator: "EqualTo",
+						},
+					},
+				},
+			},
+			oldData: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"replicas": 3,
+					"template": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{"image": "nginx:1.21.1"},
+							},
+						},
+					},
+				},
+			},
+			newData: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"replicas": 1, // scaled down to 1
+					"template": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{"image": "nginx:1.21.1"},
+							},
+						},
+					},
+				},
+			},
+			expected: false,
+		},
+		{
+			name: "11. Status-Only Update - Workload status updates while spec conditions remain satisfied",
+			policy: litmuschaosv1.EventTrackerPolicy{
+				Spec: litmuschaosv1.EventTrackerPolicySpec{
+					ConditionType: "and",
+					Conditions: []litmuschaosv1.Condition{
+						{
+							Key:      "spec.replicas",
+							Value:    stringPtr("3"),
+							Operator: "EqualTo",
+						},
+						{
+							Key:      "spec.template.spec.containers[0].image",
+							Value:    stringPtr("nginx:1.21.1"),
+							Operator: "EqualTo",
+						},
+					},
+				},
+			},
+			oldData: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"replicas": 3,
+					"template": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{"image": "nginx:1.21.1"},
+							},
+						},
+					},
+				},
+				"status": map[string]interface{}{
+					"readyReplicas": 0,
+				},
+			},
+			newData: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"replicas": 3,
+					"template": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{"image": "nginx:1.21.1"},
+							},
+						},
+					},
+				},
+				"status": map[string]interface{}{
+					"readyReplicas": 1, // status update during pod startup
+				},
+			},
+			expected: false,
 		},
 	}
 

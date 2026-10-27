@@ -67,6 +67,8 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 	}
 
 	if etp.Spec.ConditionType == "and" {
+		hasTransition := false
+
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
 			if err != nil {
@@ -83,6 +85,7 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 				if newDataResult == oldDataResult {
 					return false
 				}
+				hasTransition = true
 				continue
 			}
 
@@ -93,8 +96,21 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 			if !cases(str, *condition.Value, condition.Operator) {
 				return false
 			}
+
+			if !hasTransition {
+				oldDataResult, err := jmespath.Search(condition.Key, oldData)
+				if err != nil || oldDataResult == nil {
+					hasTransition = true
+				} else {
+					oldStr := fmt.Sprintf("%v", oldDataResult)
+					if !cases(oldStr, *condition.Value, condition.Operator) {
+						hasTransition = true
+					}
+				}
+			}
 		}
-		return true
+
+		return hasTransition
 	} else if etp.Spec.ConditionType == "or" {
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
