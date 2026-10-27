@@ -5,7 +5,8 @@
 export type PrimitiveObject<T extends string> = Record<T, string | number | boolean>
 
 export interface StringsMap {
-    '404Error': unknown
+  '404Error': unknown
+  'Editor': unknown
   'Executor': unknown
   'FRI': unknown
   'MON': unknown
@@ -61,6 +62,7 @@ export interface StringsMap {
   'appLabel': unknown
   'appLabelName': unknown
   'appNameSpace': unknown
+  'appearance': unknown
   'apply': unknown
   'applyChanges': unknown
   'assignedAt': unknown
@@ -207,6 +209,8 @@ export interface StringsMap {
   'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
+  'darkMode': unknown
+  'darkModeLabel': unknown
   'data': unknown
   'dataTypeFloat': unknown
   'dataTypeInt': unknown
@@ -229,13 +233,13 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
-  'deployUsingKubectlApplyCommand': unknown
   'deleteProject': unknown
   'deleteProjectWarning': unknown
   'deleteSuccess': unknown
   'deployChaosInfrastructure': unknown
   'deployProbe': unknown
   'deploySetup': unknown
+  'deployUsingKubectlApplyCommand': unknown
   'deployedOn': unknown
   'description': unknown
   'descriptionOptional': unknown
@@ -505,6 +509,7 @@ export interface StringsMap {
   'leaveProjectDescription': unknown
   'leaveThisPage': unknown
   'letsGetStarted': unknown
+  'lightMode': unknown
   'litmus': unknown
   'litmusChaos': unknown
   'litmuschaos': unknown
@@ -990,6 +995,7 @@ export interface StringsMap {
   'switchToLineChart': unknown
   'syncLatestRun': unknown
   'syncedSuccessfully': unknown
+  'systemMode': unknown
   'tags': unknown
   'target': unknown
   'targetApplication': unknown

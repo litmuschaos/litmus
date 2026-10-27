@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -13,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
+func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
 	var request entities.ListProjectRequest
 
 	uID, exists := c.Get("uid")
@@ -41,8 +42,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	if createdByMeStr != "" {
 		createdByMe, err := strconv.ParseBool(createdByMeStr)
 		if err != nil {
-			log.Fatal(err)
-			return nil
+			return nil, fmt.Errorf("invalid value for %s: %w", types.CreatedByMe, err)
 		}
 		request.Filter.CreatedByMe = &createdByMe
 	}
@@ -74,8 +74,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	if ascendingStr != "" {
 		ascending, err := strconv.ParseBool(ascendingStr)
 		if err != nil {
-			log.Fatal(err)
-			return nil
+			return nil, fmt.Errorf("invalid value for %s: %w", types.Ascending, err)
 		}
 		request.Sort.Ascending = &ascending
 	}
@@ -107,7 +106,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 
 	request.Pagination = &pagination
 
-	return &request
+	return &request, nil
 }
 
 func CreateMatchStage(userID string, groups []string) bson.D {

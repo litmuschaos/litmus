@@ -183,6 +183,7 @@ type MemberRole string
 
 const (
 	RoleOwner    MemberRole = "Owner"
+	RoleEditor   MemberRole = "Editor"
 	RoleExecutor MemberRole = "Executor"
 	RoleViewer   MemberRole = "Viewer"
 )
