@@ -18,4 +18,4 @@ Feel free to get your queries resolved.
 **We primarily use GitHub as an issue tracker; for usage and support questions, please check out these resources below. Thanks!**
 
   - [LitmusChaos Readme](https://github.com/litmuschaos/litmus)
-  - [LitmusChaos Docs](https://docs.litmuschaos.io/docs/next/getstarted.html)
+  - [LitmusChaos Docs](https://docs.litmuschaos.io/docs/introduction/what-is-litmus)

@@ -118,7 +118,7 @@ ChaosExperiment CR은 <a href="https://hub.litmuschaos.io" target="_blank">hub.l
 - [Introduction to Cloud Native Chaos Engineering](https://youtu.be/LK0oDLQE4S8) @ [Kunal Kushwaha](https://www.youtube.com/channel/UCBGOUQHNNtNGcGzVq5rIXjw)
 - [#EveryoneCanContribute cafe: Litmus - Chaos Engineering for your Kubernetes](https://youtu.be/IiyrEiK4stQ) @ [GitLab Unfiltered](https://www.youtube.com/channel/UCMtZ0sc1HHNtGGWZFDRTh5A)
 - [Litmus - Chaos Engineering for Kubernetes (CNCFMinutes 9)](https://youtu.be/rDQ9XKbSJIc) @ [Saiyam Pathak](https://www.youtube.com/channel/UCi-1nnN0eC9nRleXdZA6ncg)
-- [Chaos Engineering with Litmus Chaos by Prithvi Raj || HACKODISHA Workshop](https://youtu.be/eyAG0svCsQA) @ [Webwiz](https://www.youtube.com/channel/UC9yM_PkV0QIIsPA3qPrp)
+- [Chaos Engineering with Litmus Chaos by Prithvi Raj || HACKODISHA Workshop](https://youtu.be/eyAG0svCsQA) @ [Webwiz](https://www.youtube.com/channel/UC9yM_PkV0QIIsPA3qPrp3zw)
 
 [추가 영상....](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 

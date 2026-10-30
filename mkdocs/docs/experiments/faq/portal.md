@@ -45,7 +45,7 @@ Currently, you can’t.But We are working on it. Shortly we will publish samples
 
 ###  Does Litmusctl support actions that are currently performed from the portal dashboard?
 
-For now you can create agents and projects, also you can get the agents and project details by using litmusctl. To know more about litmusctl please refer to the [documentation](https://github.com/litmuschaos/litmusctl/blob/master/Usage.md) of litmusctl.
+For now you can create agents and projects, also you can get the agents and project details by using litmusctl. To know more about litmusctl please refer to the [documentation](https://github.com/litmuschaos/litmusctl/blob/master/README.md#usage) of litmusctl.
 
 ### How is resilience score is Calculated?
 

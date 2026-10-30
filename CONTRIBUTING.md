@@ -78,7 +78,7 @@ For full details, see the [DCO documentation](https://developercertificate.org/)
 5. **Review Process**  
 - Your branch may be merged once all configured checks pass, including:
   - The branch has passed tests in CI.
-  - A review from appropriate maintainers (see [MAINTAINERS.md](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS) and [GOVERNANCE.md](https://github.com/litmuschaos/litmus/blob/master/GOVERNANCE.md))
+  - A review from appropriate maintainers (see [MAINTAINERS.md](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md) and [GOVERNANCE.md](https://github.com/litmuschaos/litmus/blob/master/GOVERNANCE.md))
   - Merge occurs when all checks pass and reviews are approved  
   - If your PR is large or high-impact, coordinate with maintainers in **#litmus-dev** Slack
 
