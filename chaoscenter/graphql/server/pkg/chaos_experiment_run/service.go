@@ -76,11 +76,20 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 // the infra subscriber if it's currently connected. Updating the DB here is important because
 // the infra might be disconnected (e.g. agent redeployed), in which case the stop signal
 // never reaches the agent and the run would be stuck in Running state forever.
+//
+// When the infra is connected, the run is only marked as Stopped here and left
+// incomplete, so that the subscriber's final event (carrying the final
+// execution_data after the Argo Workflow is stopped) is not rejected as a
+// duplicate. The subscriber marks the run as completed in that final event.
 func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID string, notifyID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
+	// The stop signal is only sent to the subscriber for runs with an
+	// experimentRunID, so only those can expect a final event from it.
+	completed := !(experimentRunID != "" && isInfraConnected(r, experiment.InfraID))
+
 	update := bson.D{
 		{"$set", bson.D{
 			{"phase", string(model.ExperimentRunStatusStopped)},
-			{"completed", true},
+			{"completed", completed},
 			{"updated_at", time.Now().UnixMilli()},
 			{"updated_by", mongodb.UserDetailResponse{
 				Username: username,
@@ -103,7 +112,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 		experimentUpdate := bson.D{
 			{"$set", bson.D{
 				{"recent_experiment_run_details.$.phase", string(model.ExperimentRunStatusStopped)},
-				{"recent_experiment_run_details.$.completed", true},
+				{"recent_experiment_run_details.$.completed", completed},
 				{"recent_experiment_run_details.$.updated_at", time.Now().UnixMilli()},
 				{"recent_experiment_run_details.$.updated_by", mongodb.UserDetailResponse{
 					Username: username,
@@ -126,7 +135,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 		experimentUpdate := bson.D{
 			{"$set", bson.D{
 				{"recent_experiment_run_details.$.phase", string(model.ExperimentRunStatusStopped)},
-				{"recent_experiment_run_details.$.completed", true},
+				{"recent_experiment_run_details.$.completed", completed},
 				{"recent_experiment_run_details.$.updated_at", time.Now().UnixMilli()},
 				{"recent_experiment_run_details.$.updated_by", mongodb.UserDetailResponse{
 					Username: username,
@@ -150,6 +159,18 @@ func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context
 	}
 
 	return nil
+}
+
+// isInfraConnected reports whether the subscriber of the given infra is
+// currently connected to the server.
+func isInfraConnected(r *store.StateData, infraID string) bool {
+	if r == nil {
+		return false
+	}
+	r.Mutex.Lock()
+	defer r.Mutex.Unlock()
+	_, ok := r.ConnectedInfra[infraID]
+	return ok
 }
 
 // ProcessCompletedExperimentRun calculates the Resiliency Score and returns the updated ExecutionData
