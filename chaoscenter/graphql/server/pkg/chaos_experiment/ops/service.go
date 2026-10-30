@@ -288,7 +288,30 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 	}
 
 	if r != nil {
-		chaos_infrastructure.SendExperimentToSubscriber(projectID, workflow, &username, nil, "update", r)
+		workflowToSend := workflow
+		if (wfType != nil && *wfType == dbChaosExperiment.CronExperiment) || strings.ToLower(workflowObj.GetKind()) == "cronworkflow" {
+			cronWorkflowManifest, err := c.probeService.GenerateCronExperimentManifestWithProbes(workflow.ExperimentManifest, projectID)
+			if err != nil {
+				return err
+			}
+
+			cronWorkflowManifest, _, err = c.UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest, dbChaosExperiment.ChaosExperimentRequest{
+				InfraID: workflow.InfraID,
+			})
+			if err != nil {
+				return err
+			}
+
+			updatedManifest, err := json.Marshal(cronWorkflowManifest)
+			if err != nil {
+				return errors.New("failed to marshal workflow manifest")
+			}
+
+			workflowCopy := *workflow
+			workflowCopy.ExperimentManifest = string(updatedManifest)
+			workflowToSend = &workflowCopy
+		}
+		chaos_infrastructure.SendExperimentToSubscriber(projectID, workflowToSend, &username, nil, "update", r)
 	}
 	return nil
 }

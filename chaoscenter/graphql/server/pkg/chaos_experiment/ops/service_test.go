@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
@@ -501,5 +502,105 @@ func Test_chaosExperimentService_ProcessExperimentUpdate(t *testing.T) {
 				t.Errorf("chaosExperimentService.ProcessExperimentUpdate() error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})
+	}
+}
+
+func Test_chaosExperimentService_ProcessExperimentUpdate_CronWorkflowExpandsProbes(t *testing.T) {
+	username := "test"
+	wfType := dbChaosExperiment.CronExperiment
+	experimentID := uuid.NewString()
+	revisionID := uuid.NewString()
+	infraID := uuid.NewString()
+	projectID := uuid.NewString()
+	stateStore := store.NewStore()
+	observer := make(chan *model.InfraActionResponse, 1)
+	stateStore.ConnectedInfra[infraID] = observer
+
+	rawCronYAML := `kind: CronWorkflow
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: test-cron-with-probe-ref
+  namespace: litmus
+spec:
+  schedule: "*/5 * * * *"
+  workflowSpec:
+    entrypoint: argowf-chaos
+    templates:
+      - name: pod-delete
+        inputs:
+          artifacts:
+            - name: pod-delete
+              path: /tmp/chaosengine.yaml
+              raw:
+                data: |
+                  apiVersion: litmuschaos.io/v1alpha1
+                  kind: ChaosEngine
+                  metadata:
+                    annotations:
+                      probeRef: '[{"name":"http-probe","mode":"SOT"}]'
+                    name: nginx-chaos
+                    generateName: pod-delete-chaos
+                  spec:
+                    experiments:
+                      - name: pod-delete
+                        spec:
+                          components:
+                            env:
+                              - name: TOTAL_CHAOS_DURATION
+                                value: "30"
+`
+	manifestBytes, err := yaml.YAMLToJSON([]byte(rawCronYAML))
+	if err != nil {
+		t.Fatalf("failed to convert cron YAML to JSON: %v", err)
+	}
+	originalManifest := string(manifestBytes)
+
+	workflow := &model.ChaosExperimentRequest{
+		ExperimentID:       &experimentID,
+		ExperimentName:     "test-cron-with-probe-ref",
+		InfraID:            infraID,
+		ExperimentManifest: originalManifest,
+	}
+
+	updateResult := &mongo.UpdateResult{MatchedCount: 1}
+	mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything, mock.Anything).Return(updateResult, nil).Once()
+
+	probeDoc := dbSchemaProbe.Probe{
+		ProjectID: projectID,
+		ResourceDetails: mongodb.ResourceDetails{
+			Name: "http-probe",
+		},
+		Type:               dbSchemaProbe.ProbeType(model.ProbeTypeHTTPProbe),
+		InfrastructureType: model.InfrastructureTypeKubernetes,
+		KubernetesHTTPProperties: &dbSchemaProbe.KubernetesHTTPProbe{
+			URL:          "http://podtato-main:9000",
+			ProbeTimeout: "1000ms",
+			Interval:     "2s",
+			Method: dbSchemaProbe.Method{
+				GET: &dbSchemaProbe.GET{
+					Criteria:     "==",
+					ResponseCode: "200",
+				},
+			},
+		},
+	}
+	singleProbeResult := mongo.NewSingleResultFromDocument(probeDoc, nil, nil)
+	mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything).Return(singleProbeResult, nil).Once()
+
+	if err := chaosExperimentRunTestService.ProcessExperimentUpdate(workflow, username, &wfType, revisionID, false, projectID, stateStore); err != nil {
+		t.Fatalf("ProcessExperimentUpdate() unexpected error = %v", err)
+	}
+
+	if workflow.ExperimentManifest != originalManifest {
+		t.Errorf("expected stored workflow.ExperimentManifest to remain reference-based, got %s", workflow.ExperimentManifest)
+	}
+
+	select {
+	case action := <-observer:
+		if !strings.Contains(action.Action.K8sManifest, "http://podtato-main:9000") || !strings.Contains(action.Action.K8sManifest, "httpProbe/inputs") {
+			t.Errorf("expected subscriber manifest to contain expanded http-probe definition, got: %s", action.Action.K8sManifest)
+		}
+	default:
+		t.Fatalf("expected subscriber action to be sent for updated cron workflow")
 	}
 }
