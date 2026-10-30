@@ -229,12 +229,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: yarn build check
-        run: |
-          cd chaoscenter/web && yarn && yarn build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: web docker build check
         shell: bash
+        env:
+          DOCKER_BUILDKIT: "1"
         run: |
           cd chaoscenter/web
           docker build . -f Dockerfile --build-arg TARGETARCH=amd64 -t docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}
