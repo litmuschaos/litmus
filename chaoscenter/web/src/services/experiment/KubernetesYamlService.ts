@@ -890,7 +890,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
           type: ref,
           valueFrom: {
             name: env.valueFrom?.[ref].name,
-            key: env.valueFrom?.[ref].name
+            key: env.valueFrom?.[ref].key
           }
         };
       }
