@@ -69,6 +69,12 @@ func (_m *ProbeService) UpdateProbe(ctx context.Context, probe model.ProbeReques
 	return ret.Get(0).(string), ret.Error(1)
 }
 
+// ValidateProbeUpdate provides a mock function with given fields: ctx, probe, projectID
+func (_m *ProbeService) ValidateProbeUpdate(ctx context.Context, probe model.ProbeRequest, projectID string) error {
+	ret := _m.Called(ctx, probe, projectID)
+	return ret.Error(0)
+}
+
 // ValidateUniqueProbe provides a mock function with given fields: ctx, probeName, projectID
 func (_m *ProbeService) ValidateUniqueProbe(ctx context.Context, probeName string, projectID string) (bool, error) {
 	ret := _m.Called(ctx, probeName, projectID)
