@@ -26,7 +26,7 @@ require (
 
 require (
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/klauspost/compress v1.17.8 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/mongodb/mongo-tools v0.0.0-20240711192303-088725fbaf4b
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
