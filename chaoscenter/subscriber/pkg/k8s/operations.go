@@ -29,10 +29,13 @@ import (
 	"k8s.io/client-go/restmapper"
 )
 
-const (
-	InfraConfigName   = "subscriber-config"
-	InfraSecretName   = "subscriber-secret"
-	LiveCheckMaxTries = 6
+const LiveCheckMaxTries = 6
+
+// The subscriber's configmap and secret. INFRA_CONFIG_NAME and INFRA_SECRET_NAME
+// override the defaults so two chaos infrastructures can run in one namespace.
+var (
+	InfraConfigName = getEnvOrDefault("INFRA_CONFIG_NAME", "subscriber-config")
+	InfraSecretName = getEnvOrDefault("INFRA_SECRET_NAME", "subscriber-secret")
 )
 
 type InfraComponents struct {
