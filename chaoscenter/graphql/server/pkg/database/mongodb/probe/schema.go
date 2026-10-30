@@ -50,6 +50,18 @@ type ProbeWithExecutionHistory struct {
 	ExecutionHistory []ExecutionHistory `bson:"execution_history"`
 }
 
+// TotalFilteredData holds the count of documents matched by the aggregation pipeline
+type TotalFilteredData struct {
+	Count int `bson:"count"`
+}
+
+// AggregatedProbes is the result of the paginated listProbes aggregation,
+// holding the paginated probes along with the total count of matched probes
+type AggregatedProbes struct {
+	TotalFilteredProbes []TotalFilteredData `bson:"total_filtered_probes"`
+	Probes              []Probe             `bson:"probes"`
+}
+
 type CommonProbeProperties struct {
 	ProbeTimeout      string  `bson:"probe_timeout"`
 	Interval          string  `bson:"interval"`

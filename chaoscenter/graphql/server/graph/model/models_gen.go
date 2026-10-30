@@ -1474,6 +1474,14 @@ type ListInfraResponse struct {
 	Infras []*Infra `json:"infras"`
 }
 
+// Defines the response for the listProbes query with total probes count
+type ListProbeResponse struct {
+	// Total number of probes
+	TotalNoOfProbes int `json:"totalNoOfProbes"`
+	// Details related to the probes
+	Probes []*Probe `json:"probes"`
+}
+
 // Defines the details of the maintainer
 type Maintainer struct {
 	// Name of the maintainer
@@ -1797,6 +1805,14 @@ type ProbeRequest struct {
 	K8sProperties *K8SProbeRequest `json:"k8sProperties,omitempty"`
 	// PROM Properties of the specific type of the Probe
 	PromProperties *PROMProbeRequest `json:"promProperties,omitempty"`
+}
+
+// Defines sorting options for Probes
+type ProbeSortInput struct {
+	// Field in which sorting will be done
+	Field ProbeSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in ascending order
+	Ascending *bool `json:"ascending,omitempty"`
 }
 
 type Provider struct {
@@ -2656,6 +2672,48 @@ func (e *Mode) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Mode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// Defines the fields on which Probes can be sorted
+type ProbeSortingField string
+
+const (
+	ProbeSortingFieldName ProbeSortingField = "NAME"
+	ProbeSortingFieldTime ProbeSortingField = "TIME"
+)
+
+var AllProbeSortingField = []ProbeSortingField{
+	ProbeSortingFieldName,
+	ProbeSortingFieldTime,
+}
+
+func (e ProbeSortingField) IsValid() bool {
+	switch e {
+	case ProbeSortingFieldName, ProbeSortingFieldTime:
+		return true
+	}
+	return false
+}
+
+func (e ProbeSortingField) String() string {
+	return string(e)
+}
+
+func (e *ProbeSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProbeSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProbeSortingField", str)
+	}
+	return nil
+}
+
+func (e ProbeSortingField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
