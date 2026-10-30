@@ -58,7 +58,11 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
     {
       label: getString('viewer'),
       value: getString('viewer')
-    }
+    },
+    {
+      label: 'Editor',
+      value: 'Editor',
+    },
   ];
   return <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />;
 };
@@ -67,7 +71,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
   const { projectID } = useParams<{ projectID: string }>();
   const { getString } = useStrings();
   const { role } = data;
-  const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer'>(role);
+  const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer' | 'Editor'>(role);
   const rolesDropDown: SelectOption[] = [
     {
       label: 'Executor',
@@ -76,7 +80,11 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
     {
       label: 'Viewer',
       value: 'Viewer'
-    }
+    },
+    {
+      label: 'Editor',
+      value: 'Editor',
+    },
   ];
 
   const { showSuccess } = useToaster();
@@ -104,7 +112,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
         <DropDown
           value={memberRole}
           items={rolesDropDown}
-          onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer')}
+          onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer' | 'Editor')}
         />
       </Layout.Horizontal>
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="medium">
