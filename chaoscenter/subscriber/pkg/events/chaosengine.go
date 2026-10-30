@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 	"subscriber/pkg/types"
 
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
@@ -20,6 +22,57 @@ import (
 	mergeType "k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/cache"
 )
+
+// gitOpsDiscoveryEnabled reports whether externally managed (GitOps) ChaosEngines
+// without ChaosCenter labels should be synced for read-only visibility.
+// Enabled by default; set GITOPS_DISCOVERY_ENABLED=false to disable.
+func gitOpsDiscoveryEnabled() bool {
+	v := strings.ToLower(strings.TrimSpace(os.Getenv("GITOPS_DISCOVERY_ENABLED")))
+	return v == "" || v == "true" || v == "1" || v == "yes"
+}
+
+// gitOpsSelector returns an optional label selector narrowing which unlabeled
+// engines are treated as GitOps-managed (e.g. "chaoscenter.io/discover=true").
+// Empty means all ChaosEngines lacking a workflow_id label.
+func gitOpsSelector() string {
+	return strings.TrimSpace(os.Getenv("GITOPS_DISCOVERY_SELECTOR"))
+}
+
+// isGitOpsEngine reports whether the engine was created outside ChaosCenter
+// (no workflow_id label) and matches the opt-in selector, if any.
+func isGitOpsEngine(obj *chaosTypes.ChaosEngine) bool {
+	if obj.Labels["workflow_id"] != "" {
+		return false
+	}
+	sel := gitOpsSelector()
+	if sel == "" {
+		return true
+	}
+	// Support simple "key=value" (or "key") selectors without importing labels pkg.
+	for _, part := range strings.Split(sel, ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		if kv := strings.SplitN(part, "=", 2); len(kv) == 2 {
+			if obj.Labels[strings.TrimSpace(kv[0])] != strings.TrimSpace(kv[1]) {
+				return false
+			}
+		} else if _, ok := obj.Labels[part]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
+// gitOpsWorkflowID synthesizes a stable experiment ID for GitOps engines so
+// they can be displayed in ChaosCenter without colliding with ChaosCenter runs.
+func gitOpsWorkflowID(obj *chaosTypes.ChaosEngine) string {
+	if id := obj.Labels["workflow_id"]; id != "" {
+		return id
+	}
+	return fmt.Sprintf("gitops-%s-%s", obj.Namespace, obj.Name)
+}
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
 func (ev *subscriberEvents) ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
@@ -55,6 +108,31 @@ func (ev *subscriberEvents) ChaosEventWatcher(stopCh chan struct{}, stream chan 
 	}
 
 	go ev.startWatchEngine(stopCh, informer, stream, int64(startTime))
+
+	// Watch externally managed (GitOps/Argo CD) ChaosEngines that lack
+	// ChaosCenter labels so they can be displayed read-only in the UI.
+	// Reuses the same handler, which synthesizes IDs for unlabeled engines.
+	if gitOpsDiscoveryEnabled() {
+		var gitopsInformer cache.SharedIndexInformer
+		if InfraScope == "namespace" {
+			gf := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(InfraNamespace),
+				externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+					if sel := gitOpsSelector(); sel != "" {
+						list.LabelSelector = sel
+					}
+				}))
+			gitopsInformer = gf.Litmuschaos().V1alpha1().ChaosEngines().Informer()
+		} else {
+			gf := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
+				externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+					if sel := gitOpsSelector(); sel != "" {
+						list.LabelSelector = sel
+					}
+				}))
+			gitopsInformer = gf.Litmuschaos().V1alpha1().ChaosEngines().Informer()
+		}
+		go ev.startWatchEngine(stopCh, gitopsInformer, stream, int64(startTime))
+	}
 }
 
 // handles the different*subscriberEvents - add, update and delete
@@ -75,13 +153,17 @@ func (ev *subscriberEvents) startWatchEngine(stopCh <-chan struct{}, s cache.Sha
 // responsible for extracting the required data from the event and streaming
 func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*chaosTypes.ChaosEngine)
+	gitops := false
 	if workflowObj.Labels["workflow_id"] == "" {
-		logrus.WithFields(map[string]interface{}{
-			"uid":      string(workflowObj.ObjectMeta.UID),
-			"wf_id":    workflowObj.Labels["workflow_id"],
-			"infra_id": workflowObj.Labels["infra_id"],
-		}).Printf("CHAOSENGINE RUN IGNORED [INVALID METADATA]")
-		return
+		if !gitOpsDiscoveryEnabled() || !isGitOpsEngine(workflowObj) {
+			logrus.WithFields(map[string]interface{}{
+				"uid":      string(workflowObj.ObjectMeta.UID),
+				"wf_id":    workflowObj.Labels["workflow_id"],
+				"infra_id": workflowObj.Labels["infra_id"],
+			}).Printf("CHAOSENGINE RUN IGNORED [INVALID METADATA]")
+			return
+		}
+		gitops = true
 	}
 
 	if workflowObj.ObjectMeta.CreationTimestamp.UnixMilli() < startTime {
@@ -136,9 +218,21 @@ func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string,
 	}
 
 	nodes[workflowObj.Name+"-engine"] = details
+	workflowID := workflowObj.Labels["workflow_id"]
+	revisionID := workflowObj.Labels["revision_id"]
+	updatedBy := workflowObj.Labels["updated_by"]
+	if gitops {
+		// Synthesize stable IDs so GitOps engines are visible read-only.
+		// Argo CD continues to manage the resource; ChaosCenter never mutates it.
+		workflowID = gitOpsWorkflowID(workflowObj)
+		revisionID = "gitops"
+		updatedBy = "gitops"
+		logrus.Printf("GITOPS CHAOSENGINE DISCOVERED [ns=%s name=%s id=%s]", workflowObj.Namespace, workflowObj.Name, workflowID)
+	}
 	workflow := types.WorkflowEvent{
 		WorkflowType:      "chaosengine",
-		WorkflowID:        workflowObj.Labels["workflow_id"],
+		WorkflowID:        workflowID,
+		RevisionID:        revisionID,
 		EventType:         eventType,
 		UID:               string(workflowObj.ObjectMeta.UID),
 		Namespace:         workflowObj.ObjectMeta.Namespace,
@@ -149,6 +243,7 @@ func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string,
 		StartedAt:         details.StartedAt,
 		FinishedAt:        details.FinishedAt,
 		Nodes:             nodes,
+		UpdatedBy:         updatedBy,
 	}
 
 	//stream
