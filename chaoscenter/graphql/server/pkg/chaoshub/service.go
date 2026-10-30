@@ -123,8 +123,23 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 
 	// Cloning the repository at a path from ChaosHub link structure.
 	if err := chaosHubOps.GitClone(cloneHub, projectID); err != nil {
-		log.Error(err)
-	}
+    	log.Error(err)
+    	// Rollback: mark the hub as removed since git clone failed
+    	rollbackQuery := bson.D{
+    	    {"hub_id", newHub.ID},
+    	    {"project_id", projectID},
+    	}
+    	rollbackUpdate := bson.D{
+    	    {"$set", bson.D{
+    	        {"is_removed", true},
+    	        {"updated_at", time.Now().UnixMilli()},
+    	    }},
+    	}
+    	if rollbackErr := c.chaosHubOperator.UpdateChaosHub(ctx, rollbackQuery, rollbackUpdate); rollbackErr != nil {
+    	    log.Error("failed to rollback ChaosHub after git clone failure: ", rollbackErr)
+    	}
+    	return nil, fmt.Errorf("failed to clone ChaosHub repository: %w", err)
+		}
 
 	return newHub.GetOutputChaosHub(), nil
 }
