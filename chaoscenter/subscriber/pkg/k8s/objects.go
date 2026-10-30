@@ -9,19 +9,26 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"subscriber/pkg/types"
 
+	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 )
 
 var (
-	InfraNamespace = os.Getenv("INFRA_NAMESPACE")
-	InfraScope     = os.Getenv("INFRA_SCOPE")
+	InfraNamespace = mustGetEnv("INFRA_NAMESPACE")
+	InfraScope     = mustGetEnv("INFRA_SCOPE")
 )
+
+func mustGetEnv(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		logrus.Fatalf("required environment variable %s is not set or empty", key)
+	}
+	return val
+}
 
 // GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
 func (k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error) {
