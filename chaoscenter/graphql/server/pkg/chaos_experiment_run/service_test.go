@@ -360,3 +360,85 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 		})
 	}
 }
+
+// completedFlag returns the value of the given key in the $set stage of an update document.
+func completedFlag(update interface{}, key string) (interface{}, bool) {
+	doc, ok := update.(bson.D)
+	if !ok {
+		return nil, false
+	}
+	for _, stage := range doc {
+		if stage.Key != "$set" {
+			continue
+		}
+		set, ok := stage.Value.(bson.D)
+		if !ok {
+			return nil, false
+		}
+		for _, field := range set {
+			if field.Key == key {
+				return field.Value, true
+			}
+		}
+	}
+	return nil, false
+}
+
+func Test_chaosExperimentRunService_ProcessExperimentRunStop_CompletedFlag(t *testing.T) {
+	experimentRunID := uuid.New().String()
+	projectID := uuid.New().String()
+	experimentID := uuid.New().String()
+	infraID := uuid.New().String()
+
+	connected := store.NewStore()
+	connected.ConnectedInfra[infraID] = make(chan *model.InfraActionResponse, 1)
+
+	testcases := []struct {
+		name          string
+		r             *store.StateData
+		wantCompleted bool
+	}{
+		{
+			name:          "disconnected infra: run is marked completed right away",
+			r:             nil,
+			wantCompleted: true,
+		},
+		{
+			name:          "connected infra without a subscriber for this infra: run is marked completed right away",
+			r:             store.NewStore(),
+			wantCompleted: true,
+		},
+		{
+			name:          "connected infra: run is left incomplete so the subscriber's final event is accepted",
+			r:             connected,
+			wantCompleted: false,
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.MatchedBy(func(update bson.D) bool {
+				v, ok := completedFlag(update, "completed")
+				return ok && v == tc.wantCompleted
+			}), mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+			mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.MatchedBy(func(update bson.D) bool {
+				v, ok := completedFlag(update, "recent_experiment_run_details.$.completed")
+				return ok && v == tc.wantCompleted
+			}), mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+
+			query := bson.D{
+				{Key: "experiment_id", Value: experimentID},
+				{Key: "experiment_run_id", Value: experimentRunID},
+			}
+			experiment := dbChaosExperiment.ChaosExperimentRequest{
+				ProjectID:    projectID,
+				InfraID:      infraID,
+				ExperimentID: experimentID,
+			}
+			if err := chaosExperimentRunTestService.ProcessExperimentRunStop(context.Background(), query, experimentRunID, nil, experiment, "test", projectID, tc.r); err != nil {
+				t.Fatalf("ProcessExperimentRunStop() unexpected error = %v", err)
+			}
+			mongodbMockOperator.AssertExpectations(t)
+		})
+	}
+}
