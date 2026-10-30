@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"context"
 	"strconv"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 // MetricsMiddleware tracks request metrics
 func MetricsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		operation := &operationMetrics{name: "N/A", operationType: "N/A"}
+		c.Request = c.Request.WithContext(context.WithValue(c.Request.Context(), operationMetricsKey{}, operation))
 		start := time.Now()
 		path := c.FullPath()
 		if path == "" {
@@ -22,20 +25,9 @@ func MetricsMiddleware() gin.HandlerFunc {
 		duration := time.Since(start).Milliseconds()
 		status := strconv.Itoa(c.Writer.Status())
 
-		// Try to get GraphQL operation details from context
-		operationName := "N/A"
-		operationType := "N/A"
-
-		if opName := c.Request.Context().Value(GraphqlOperationNameKey); opName != nil {
-			if name, ok := opName.(string); ok {
-				operationName = name
-			}
-		}
-		if opType := c.Request.Context().Value(GraphqlOperationTypeKey); opType != nil {
-			if opTypeStr, ok := opType.(string); ok {
-				operationType = opTypeStr
-			}
-		}
+		operation.mu.Lock()
+		operationName, operationType := operation.name, operation.operationType
+		operation.mu.Unlock()
 
 		// Increment request counter with GraphQL operation details
 		APIRequestsTotal.WithLabelValues(path, status, operationName, operationType).Inc()
