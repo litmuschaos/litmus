@@ -39,7 +39,7 @@
 
 [![IMAGE ALT TEXT](../images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
-请看此处 <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a>.
+请看此处 <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Litmus Docs</a>.
 
 ## 为ChaosHub添砖加瓦
 
