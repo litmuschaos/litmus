@@ -444,21 +444,24 @@ func InsertProbeRefAnnotation(rawYaml, value string) (string, error) {
 		return "", err
 	}
 
-	dataMap := data.(map[string]interface{})
+	dataMap, ok := data.(map[string]interface{})
+	if !ok || dataMap == nil {
+		return "", errors.New("invalid manifest format")
+	}
 
-	metadata := dataMap["metadata"]
-	if metadata == nil {
+	metadata, ok := dataMap["metadata"].(map[string]interface{})
+	if !ok || metadata == nil {
 		return "", errors.New("metadata not found")
 	}
 
-	annotations := metadata.(map[string]interface{})["annotations"]
-	if annotations == nil {
+	annotations, ok := metadata["annotations"].(map[string]interface{})
+	if !ok || annotations == nil {
 		// create new annotations
 		annotations = make(map[string]interface{})
-		metadata.(map[string]interface{})["annotations"] = annotations
+		metadata["annotations"] = annotations
 	}
 
-	annotations.(map[string]interface{})["probeRef"] = value
+	annotations["probeRef"] = value
 
 	result, err := yaml.Marshal(dataMap)
 	if err != nil {
