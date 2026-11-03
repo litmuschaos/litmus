@@ -17,7 +17,7 @@ import (
 )
 
 const GRPCErrorPrefix string = "rpc error: code = Unknown desc ="
-const UnitValidationRegex string = `\b(\d+(\.\d+)?)((ns|us|ms|s|m|h))\b`
+const UnitValidationRegex string = `^(\d+(\.\d+)?(ns|us|ms|s|m|h))+$`
 
 // WriteHeaders adds important headers to API responses
 func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
