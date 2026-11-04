@@ -1,5 +1,5 @@
 .wrapper {
-  padding: '20px 40px';
+  padding: 20px 40px;
 }
 
 .modalWithHelpPanel {
@@ -67,8 +67,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  border: 1px solid #d9dae5;
-  background: #fafbfc;
+  border: 1px solid var(--grey-200);
+  background: var(--grey-50);
   padding: 0.15rem 0.25rem;
   border-radius: 2px;
 }
@@ -91,25 +91,25 @@
 }
 
 .default {
-  color: #0278d5;
-  background: #cdf4fe;
-  border: 1px solid #a3e9ff;
+  color: var(--primary-7);
+  background: var(--primary-1);
+  border: 1px solid var(--primary-2);
 }
 
 .private {
-  color: #ee2a89;
-  background: #fff3f9;
-  border: 1px solid #ffeef7;
+  color: var(--red-500);
+  background: var(--red-50, #fff3f9);
+  border: 1px solid var(--red-100, #ffeef7);
 }
 
 .hubModalText {
   font-weight: 500;
   font-size: 24px;
-  color: 'black';
+  color: var(--grey-900);
 }
 
 .helpPanelDiv {
-  width: '50%';
+  width: 50%;
   padding: 30px 30px;
 }
 
