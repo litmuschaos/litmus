@@ -31,6 +31,14 @@ func getEnvAsFloat(name string, defaultVal float64) float64 {
 	return defaultVal
 }
 
+// getEnvOrDefault reads a string from the given env variable, returning defaultVal if not set or empty
+func getEnvOrDefault(name string, defaultVal string) string {
+	if value := os.Getenv(name); value != "" {
+		return value
+	}
+	return defaultVal
+}
+
 // getEnvAsInt reads an int from the given env variable, returning defaultVal if not set or invalid
 func getEnvAsInt(name string, defaultVal int) int {
 	valueStr := os.Getenv(name)
