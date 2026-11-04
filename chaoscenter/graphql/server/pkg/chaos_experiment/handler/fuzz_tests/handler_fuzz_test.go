@@ -170,6 +170,12 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 		store := store.NewStore()
 		res, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, targetStruct.experiment, targetStruct.projectID, store, "")
+		if id := targetStruct.experiment.ExperimentID; id == nil || *id == "" {
+			if err == nil {
+				t.Errorf("ChaosExperimentHandler.UpdateChaosExperiment() accepted a request without an experiment ID")
+			}
+			return
+		}
 		if err != nil {
 			t.Errorf("ChaosExperimentHandler.UpdateChaosExperiment() error = %v", err)
 			return
