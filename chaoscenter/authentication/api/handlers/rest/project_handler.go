@@ -702,20 +702,6 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		if member.Role != nil && *member.Role == entities.RoleOwner {
-			owners, err := service.GetProjectOwners(member.ProjectID)
-			if err != nil {
-				log.Error(err)
-				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-				return
-			}
-
-			if len(owners) == 1 {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "Cannot leave project. There must be at least one owner."})
-				return
-			}
-		}
-
 		uid := c.MustGet("uid").(string)
 
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
@@ -739,6 +725,28 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
+		}
+
+		// Use the caller's stored role, not the one in the request body.
+		role, err := service.GetProjectRole(member.ProjectID, uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		if role != nil && *role == entities.RoleOwner {
+			owners, err := service.GetProjectOwners(member.ProjectID)
+			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+				return
+			}
+
+			if len(owners) == 1 {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "Cannot leave project. There must be at least one owner."})
+				return
+			}
 		}
 
 		err = service.UpdateInvite(member.ProjectID, uid, entities.ExitedProject, nil)

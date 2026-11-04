@@ -381,6 +381,8 @@ func TestInvitationHandlersActOnTheCaller(t *testing.T) {
 			service.On("GetProjects", memberRbacFilter(projectID, callerUID, tt.roles, tt.invitation)).
 				Return([]*entities.Project{{ID: projectID}}, nil)
 			service.On("UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
+			viewer := entities.RoleViewer
+			service.On("GetProjectRole", projectID, callerUID).Return(&viewer, nil).Maybe()
 
 			tt.handler(service)(c)
 
@@ -389,6 +391,70 @@ func TestInvitationHandlersActOnTheCaller(t *testing.T) {
 				(*entities.MemberRole)(nil))
 			service.AssertNotCalled(t, "UpdateInvite", projectID, victimUID, tt.expectedInvitation,
 				(*entities.MemberRole)(nil))
+		})
+	}
+}
+
+func TestLeaveProjectLastOwner(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	const (
+		projectID = "testProjectID"
+		callerUID = "callerUID"
+	)
+	ownerRoles := []string{"Owner", "Viewer", "Executor", "Editor"}
+
+	tests := []struct {
+		name         string
+		body         string
+		owners       []*entities.Member
+		expectedCode int
+	}{
+		{
+			name:         "only owner without role in the body is rejected",
+			body:         `{"projectID":"` + projectID + `"}`,
+			owners:       []*entities.Member{{UserID: callerUID}},
+			expectedCode: http.StatusBadRequest,
+		},
+		{
+			name:         "only owner claiming another role is rejected",
+			body:         `{"projectID":"` + projectID + `","role":"Viewer"}`,
+			owners:       []*entities.Member{{UserID: callerUID}},
+			expectedCode: http.StatusBadRequest,
+		},
+		{
+			name:         "owner can leave when another owner remains",
+			body:         `{"projectID":"` + projectID + `"}`,
+			owners:       []*entities.Member{{UserID: callerUID}, {UserID: "otherOwnerUID"}},
+			expectedCode: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			service := new(mocks.MockedApplicationService)
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request, _ = http.NewRequest(http.MethodPost, "/", strings.NewReader(tt.body))
+			c.Request.Header.Set("Content-Type", "application/json")
+			c.Set("uid", callerUID)
+
+			owner := entities.RoleOwner
+			service.On("GetUser", callerUID).Return(&entities.User{ID: callerUID}, nil)
+			service.On("GetProjects", memberRbacFilter(projectID, callerUID, ownerRoles, string(entities.AcceptedInvitation))).
+				Return([]*entities.Project{{ID: projectID}}, nil)
+			service.On("GetProjectRole", projectID, callerUID).Return(&owner, nil)
+			service.On("GetProjectOwners", projectID).Return(tt.owners, nil)
+			service.On("UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
+
+			rest.LeaveProject(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			if tt.expectedCode == http.StatusOK {
+				service.AssertCalled(t, "UpdateInvite", projectID, callerUID, entities.ExitedProject, (*entities.MemberRole)(nil))
+			} else {
+				service.AssertNotCalled(t, "UpdateInvite", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+			}
 		})
 	}
 }
