@@ -76,7 +76,7 @@
     "cronstrue": "^2.10.0",
     "formik": "2.2.9",
     "graphql": "^16.3.0",
-    "highcharts": "9.2.0",
+    "highcharts": "11.4.9",
     "highcharts-react-official": "3.0.0",
     "idb": "^7.0.2",
     "jwt-decode": "^3.1.2",
