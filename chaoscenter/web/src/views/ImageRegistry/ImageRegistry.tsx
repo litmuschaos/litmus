@@ -130,9 +130,10 @@ export default function ImageRegistryView({
               isDefault: Yup.boolean(),
               imageRegistryName: Yup.string().when('isDefault', {
                 is: false,
-                then: Yup.string()
-                  .required(getString('imageRegistryNameRequired'))
-                  .matches(IMAGE_REGISTRY_REGEX, getString('imageRegistryNameInvalid'))
+                then: Yup.string().matches(IMAGE_REGISTRY_REGEX, {
+                  excludeEmptyString: true,
+                  message: getString('imageRegistryNameInvalid')
+                })
               }),
               imageRepoName: Yup.string().when('isDefault', {
                 is: false,
