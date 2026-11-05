@@ -17,10 +17,9 @@ export const sanitize = (obj: Record<string, any>, sanityConfig?: YamlSanityConf
     } else if (removeEmptyString && obj[key] === '') {
       delete obj[key];
     } else if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
+      sanitize(obj[key], sanityConfig);
       if (removeEmptyObject && Object.keys(obj[key]).length === 0) {
         delete obj[key];
-      } else {
-        sanitize(obj[key], sanityConfig);
       }
     } else if (Array.isArray(obj[key])) {
       if (removeEmptyArray && obj[key].length == 0) {
