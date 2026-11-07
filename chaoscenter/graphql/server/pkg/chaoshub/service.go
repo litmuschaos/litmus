@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -561,7 +562,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 				matchHubNameStage := bson.D{
 					{"$match", bson.D{
 						{"name", bson.M{
-							"$regex": request.Filter.ChaosHubName, "$options": "mix",
+							"$regex": regexp.QuoteMeta(*request.Filter.ChaosHubName), "$options": "i",
 						}},
 					}},
 				}
@@ -572,7 +573,7 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 				matchDescriptionStage := bson.D{
 					{"$match", bson.D{
 						{"description", bson.M{
-							"$regex": request.Filter.Description, "$options": "mix",
+							"$regex": regexp.QuoteMeta(*request.Filter.Description), "$options": "i",
 						}},
 					}},
 				}

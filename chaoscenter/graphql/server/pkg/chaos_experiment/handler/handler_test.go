@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -986,6 +987,26 @@ func TestChaosExperimentHandler_ListExperiment_SortByName(t *testing.T) {
 				t.Errorf("sort stage = %v, want %v", gotSort, want)
 			}
 		})
+	}
+}
+
+func TestChaosExperimentHandler_ListExperiment_SearchesNameLiterally(t *testing.T) {
+	mockServices := NewMockServices()
+	var pipeline mongo.Pipeline
+	cursor, _ := mongo.NewCursorFromDocuments([]interface{}{bson.D{}}, nil, nil)
+	mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).
+		Run(func(args mock.Arguments) {
+			pipeline = args.Get(2).(mongo.Pipeline)
+		}).Return(cursor, nil).Once()
+
+	search := "exp (a.b"
+	_, _ = mockServices.ChaosExperimentHandler.ListExperiment(uuid.New().String(), model.ListExperimentRequest{
+		Filter: &model.ExperimentFilterInput{ExperimentName: &search},
+	})
+
+	want := bson.D{{"$match", bson.D{{"name", bson.D{{"$regex", `exp \(a\.b`}}}}}}
+	if !slices.ContainsFunc(pipeline, func(stage bson.D) bool { return reflect.DeepEqual(stage, want) }) {
+		t.Errorf("pipeline %v has no stage %v", pipeline, want)
 	}
 }
 

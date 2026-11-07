@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -129,4 +130,19 @@ func TestGetProbe_DBError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "document is nil")
 	mockOp.AssertExpectations(t)
+}
+
+func TestListProbes_SearchesNameLiterally(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	var pipeline mongo.Pipeline
+	mockOp.On("Aggregate", mock.Anything, mongodb.ChaosProbeCollection, mock.Anything, mock.Anything).
+		Run(func(args mock.Arguments) {
+			pipeline = args.Get(2).(mongo.Pipeline)
+		}).Return((*mongo.Cursor)(nil), errors.New("stop after the pipeline is built")).Once()
+
+	name := "probe (a.b"
+	_, err := newProbeServiceWithMock(mockOp).ListProbes(context.Background(), nil, nil, &model.ProbeFilterInput{Name: &name}, "project-1")
+
+	assert.Error(t, err)
+	assert.Contains(t, pipeline, bson.D{{"$match", bson.D{{"name", bson.D{{"$regex", `probe \(a\.b`}}}}}})
 }

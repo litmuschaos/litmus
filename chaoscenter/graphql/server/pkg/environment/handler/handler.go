@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -234,7 +235,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 			matchInfraNameStage := bson.D{
 				{"$match", bson.D{
 					{"name", bson.M{
-						"$regex": request.Filter.Name, "$options": "mix",
+						"$regex": regexp.QuoteMeta(*request.Filter.Name), "$options": "i",
 					}},
 				}},
 			}
@@ -246,7 +247,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 			matchDescriptionStage := bson.D{
 				{"$match", bson.D{
 					{"description", bson.M{
-						"$regex": request.Filter.Description, "$options": "mix",
+						"$regex": regexp.QuoteMeta(*request.Filter.Description), "$options": "i",
 					}},
 				}},
 			}
