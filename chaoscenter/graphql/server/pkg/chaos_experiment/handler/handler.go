@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"time"
@@ -562,7 +563,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			matchWfNameStage := bson.D{
 				{"$match", bson.D{
 					{"name", bson.D{
-						{"$regex", request.Filter.ExperimentName},
+						{"$regex", regexp.QuoteMeta(*request.Filter.ExperimentName)},
 					}},
 				}},
 			}

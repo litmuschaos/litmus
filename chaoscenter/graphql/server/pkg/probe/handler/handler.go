@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -299,7 +300,7 @@ func (p *probeService) ListProbes(ctx context.Context, probeNames []string, infr
 			matchProbeNameStage := bson.D{
 				{"$match", bson.D{
 					{"name", bson.D{
-						{"$regex", filter.Name},
+						{"$regex", regexp.QuoteMeta(*filter.Name)},
 					}},
 				}},
 			}
