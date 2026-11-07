@@ -146,15 +146,15 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		res, err := service.GetProjectsByUserID(request)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 		if res == nil || (res.TotalNumberOfProjects != nil && *res.TotalNumberOfProjects == 0) {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
-			return
-		}
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
@@ -383,6 +383,8 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		filter := bson.D{{"name", userRequest.ProjectName}}
 		projects, err := service.GetProjects(filter)
 		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
@@ -892,6 +894,8 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		filter := bson.D{{"name", userRequest.ProjectName}, {"members.user_id", uid}, {"members.role", entities.RoleOwner}}
 		projects, err := service.GetProjects(filter)
 		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 

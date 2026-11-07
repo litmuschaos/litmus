@@ -256,6 +256,11 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		projectMembers, err := service.GetProjectMembers(projectID, "all")
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 
 		var userIds []string
 		for _, k := range projectMembers {
@@ -339,6 +344,11 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 
 		var defaultProject string
 		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 
 		if len(ownerProjects) > 0 {
 			defaultProject = ownerProjects[0].ID
@@ -379,6 +389,8 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			}
 			err := service.CreateProject(newProject)
 			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 				return
 			}
 			defaultProject = newProject.ID
@@ -485,6 +497,11 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 
 		var defaultProject string
 		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 
 		if len(ownerProjects) > 0 {
 			defaultProject = ownerProjects[0].ID
@@ -525,6 +542,8 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			}
 			err := service.CreateProject(newProject)
 			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 				return
 			}
 			defaultProject = newProject.ID
