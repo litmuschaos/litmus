@@ -76,17 +76,15 @@ func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
 
 	// Convert strings to integers
 	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		// Handle error if conversion fails
-		// For example, set a default value or return an error response
-		page = 0 // Setting a default value of 1
+	if err != nil || page < 0 {
+		// $skip rejects negative values, fall back to the first page
+		page = 0
 	}
 
 	limit, err := strconv.Atoi(limitStr)
-	if err != nil {
-		// Handle error if conversion fails
-		// For example, set a default value or return an error response
-		limit = 15 // Setting a default value of 15
+	if err != nil || limit <= 0 {
+		// $limit only accepts positive values, fall back to the default page size
+		limit = 15
 	}
 
 	pagination := entities.Pagination{
