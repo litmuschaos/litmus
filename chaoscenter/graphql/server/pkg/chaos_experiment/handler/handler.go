@@ -501,7 +501,7 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				Username: exp.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: exp.UpdatedBy.Username,
+				Username: exp.CreatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		},
@@ -842,7 +842,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 						Username: v.UpdatedBy.Username,
 					},
 					CreatedBy: &model.UserDetails{
-						Username: v.UpdatedBy.Username,
+						Username: v.CreatedBy.Username,
 					},
 					UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
 					CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
@@ -869,7 +869,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 				Username: workflow.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy.Username,
+				Username: workflow.CreatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		}
