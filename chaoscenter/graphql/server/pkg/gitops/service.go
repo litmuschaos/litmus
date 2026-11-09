@@ -600,6 +600,9 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	}
 
 	experiment, err := g.chaosExperimentOps.GetExperiments(bson.D{{"experiment_id", wfID}, {"project_id", config.ProjectID}, {"is_removed", false}})
+	if err != nil {
+		return err
+	}
 	if len(experiment) == 0 {
 		return errors.New("No such experiment found : " + wfID)
 	}
