@@ -989,6 +989,74 @@ func TestChaosExperimentHandler_ListExperiment_SortByName(t *testing.T) {
 	}
 }
 
+// experimentCreatedByAliceUpdatedByBob returns an experiment that alice created
+// and bob edited later, with one recent run that alice started and bob updated.
+func experimentCreatedByAliceUpdatedByBob(projectID string) bson.D {
+	return bson.D{
+		{Key: "project_id", Value: projectID},
+		{Key: "experiment_id", Value: uuid.NewString()},
+		{Key: "created_by", Value: bson.D{{Key: "username", Value: "alice"}}},
+		{Key: "updated_by", Value: bson.D{{Key: "username", Value: "bob"}}},
+		{Key: "kubernetesInfraDetails", Value: bson.A{bson.D{{Key: "infra_id", Value: uuid.NewString()}}}},
+		{Key: "revision", Value: bson.A{bson.D{{Key: "revision_id", Value: uuid.NewString()}}}},
+		{Key: "recent_experiment_run_details", Value: bson.A{bson.D{
+			{Key: "experiment_run_id", Value: uuid.NewString()},
+			{Key: "created_by", Value: bson.D{{Key: "username", Value: "alice"}}},
+			{Key: "updated_by", Value: bson.D{{Key: "username", Value: "bob"}}},
+		}}},
+	}
+}
+
+func TestChaosExperimentHandler_GetExperiment_CreatedBy(t *testing.T) {
+	mockServices := NewMockServices()
+	projectID := uuid.NewString()
+	cursor, _ := mongo.NewCursorFromDocuments([]interface{}{experimentCreatedByAliceUpdatedByBob(projectID)}, nil, nil)
+	mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+	resp, err := mockServices.ChaosExperimentHandler.GetExperiment(context.Background(), projectID, uuid.NewString())
+	if err != nil {
+		t.Fatalf("GetExperiment() error = %v", err)
+	}
+	if got := resp.ExperimentDetails.CreatedBy.Username; got != "alice" {
+		t.Errorf("createdBy = %q, want %q", got, "alice")
+	}
+	if got := resp.ExperimentDetails.UpdatedBy.Username; got != "bob" {
+		t.Errorf("updatedBy = %q, want %q", got, "bob")
+	}
+}
+
+func TestChaosExperimentHandler_ListExperiment_CreatedBy(t *testing.T) {
+	mockServices := NewMockServices()
+	projectID := uuid.NewString()
+	aggregated := bson.D{
+		{Key: "total_filtered_experiments", Value: bson.A{bson.D{{Key: "count", Value: 1}}}},
+		{Key: "scheduled_experiments", Value: bson.A{experimentCreatedByAliceUpdatedByBob(projectID)}},
+	}
+	cursor, _ := mongo.NewCursorFromDocuments([]interface{}{aggregated}, nil, nil)
+	mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+	resp, err := mockServices.ChaosExperimentHandler.ListExperiment(projectID, model.ListExperimentRequest{})
+	if err != nil {
+		t.Fatalf("ListExperiment() error = %v", err)
+	}
+	if len(resp.Experiments) != 1 {
+		t.Fatalf("got %d experiments, want 1", len(resp.Experiments))
+	}
+	exp := resp.Experiments[0]
+	if got := exp.CreatedBy.Username; got != "alice" {
+		t.Errorf("createdBy = %q, want %q", got, "alice")
+	}
+	if got := exp.UpdatedBy.Username; got != "bob" {
+		t.Errorf("updatedBy = %q, want %q", got, "bob")
+	}
+	if len(exp.RecentExperimentRunDetails) != 1 {
+		t.Fatalf("got %d recent runs, want 1", len(exp.RecentExperimentRunDetails))
+	}
+	if got := exp.RecentExperimentRunDetails[0].CreatedBy.Username; got != "alice" {
+		t.Errorf("recent run createdBy = %q, want %q", got, "alice")
+	}
+}
+
 func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 
 	projectID := uuid.New().String()
