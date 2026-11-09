@@ -395,7 +395,7 @@ func (e *EnvironmentService) ListEnvironments(projectID string, request *model.L
 	}
 
 	totalFilteredEnvironmentsCounter := 0
-	if len(envs) > 0 && len(aggregatedEnvironments[0].TotalFilteredEnvironments) > 0 {
+	if len(aggregatedEnvironments[0].TotalFilteredEnvironments) > 0 {
 		totalFilteredEnvironmentsCounter = aggregatedEnvironments[0].TotalFilteredEnvironments[0].Count
 	}
 

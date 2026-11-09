@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
@@ -147,5 +148,33 @@ func TestDeleteEnvironment(t *testing.T) {
 				t.Fatalf("Expected error %v, but got %v", tc.expectedErr, err)
 			}
 		})
+	}
+}
+
+func TestListEnvironmentsPreservesTotalOnEmptyPage(t *testing.T) {
+	op := new(dbMocks.MongoOperator)
+	findResult := []interface{}{bson.D{
+		{Key: "total_filtered_environments", Value: bson.A{bson.D{{Key: "count", Value: 16}}}},
+		{Key: "environments", Value: bson.A{}},
+	}}
+	cursor, err := mongo.NewCursorFromDocuments(findResult, nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	op.On("Aggregate", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything).
+		Return(cursor, nil).Once()
+	service := handler.NewEnvironmentService(dbOperationsEnvironment.NewEnvironmentOperator(op))
+	response, err := service.ListEnvironments("testProject", &model.ListEnvironmentRequest{
+		Pagination: &model.Pagination{Page: 2, Limit: 15},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	op.AssertExpectations(t)
+	if len(response.Environments) != 0 {
+		t.Fatalf("Expected empty page, but got %d environments", len(response.Environments))
+	}
+	if response.TotalNoOfEnvironments != 16 {
+		t.Fatalf("Expected total environment count 16, but got %d", response.TotalNoOfEnvironments)
 	}
 }
