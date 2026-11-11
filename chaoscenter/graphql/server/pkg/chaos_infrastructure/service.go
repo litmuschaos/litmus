@@ -28,6 +28,10 @@ import (
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 )
 
 const (
@@ -180,21 +184,45 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		StartTime:      strconv.FormatInt(currentTime.UnixMilli(), 10),
 	}
 
-	err = in.infraOperator.InsertInfra(context.TODO(), newInfra)
+	var (
+		wc      = writeconcern.New(writeconcern.WMajority())
+		rc      = readconcern.Snapshot()
+		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
+		ctx     = context.Background()
+	)
+
+	session, err := mongodb.MgoClient.StartSession()
 	if err != nil {
 		return nil, err
 	}
+	defer session.EndSession(ctx)
 
-	envQuery := bson.D{
-		{"project_id", bson.D{{"$eq", projectID}}},
-		{"environment_id", input.EnvironmentID},
-	}
-	update := bson.D{
-		{"$push", bson.D{
-			{"infra_ids", infraID},
-		}},
-	}
-	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, update)
+	err = mongo.WithSession(ctx, session, func(sessionContext mongo.SessionContext) error {
+		if err = session.StartTransaction(txnOpts); err != nil {
+			return err
+		}
+
+		err = in.infraOperator.InsertInfra(sessionContext, newInfra)
+		if err != nil {
+			return err
+		}
+
+		envQuery := bson.D{
+			{"project_id", bson.D{{"$eq", projectID}}},
+			{"environment_id", input.EnvironmentID},
+		}
+		update := bson.D{
+			{"$push", bson.D{
+				{"infra_ids", infraID},
+			}},
+		}
+		err = in.envOperator.UpdateEnvironment(sessionContext, envQuery, update)
+		if err != nil {
+			return err
+		}
+
+		return session.CommitTransaction(sessionContext)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -256,21 +284,45 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 			}},
 		}},
 	}
-	err = in.infraOperator.UpdateInfra(context.TODO(), query, update)
+	var (
+		wc2      = writeconcern.New(writeconcern.WMajority())
+		rc2      = readconcern.Snapshot()
+		txnOpts2 = options.Transaction().SetWriteConcern(wc2).SetReadConcern(rc2)
+		ctx2     = context.Background()
+	)
+
+	session2, err := mongodb.MgoClient.StartSession()
 	if err != nil {
 		return "", err
 	}
+	defer session2.EndSession(ctx2)
 
-	envQuery := bson.D{
-		{"project_id", bson.D{{"$eq", projectID}}},
-		{"environment_id", infra.EnvironmentID},
-	}
-	updateQuery := bson.D{
-		{"$pull", bson.D{
-			{"infra_ids", infra.InfraID},
-		}},
-	}
-	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, updateQuery)
+	err = mongo.WithSession(ctx2, session2, func(sessionContext mongo.SessionContext) error {
+		if err = session2.StartTransaction(txnOpts2); err != nil {
+			return err
+		}
+
+		err = in.infraOperator.UpdateInfra(sessionContext, query, update)
+		if err != nil {
+			return err
+		}
+
+		envQuery := bson.D{
+			{"project_id", bson.D{{"$eq", projectID}}},
+			{"environment_id", infra.EnvironmentID},
+		}
+		updateQuery := bson.D{
+			{"$pull", bson.D{
+				{"infra_ids", infra.InfraID},
+			}},
+		}
+		err = in.envOperator.UpdateEnvironment(sessionContext, envQuery, updateQuery)
+		if err != nil {
+			return err
+		}
+
+		return session2.CommitTransaction(sessionContext)
+	})
 	if err != nil {
 		return "", err
 	}
