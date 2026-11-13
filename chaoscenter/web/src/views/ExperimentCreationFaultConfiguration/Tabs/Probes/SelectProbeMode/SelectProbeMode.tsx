@@ -2,7 +2,6 @@ import React from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
 import { Layout, useToaster, Text, ButtonVariation, Button, ButtonSize, Tabs, Container } from '@harnessio/uicore';
 import { FontVariation } from '@harnessio/design-system';
-import { isEqual } from 'lodash-es';
 import { Icon } from '@harnessio/icons';
 import { Fallback } from '@errors';
 import { useStrings } from '@strings';
@@ -11,46 +10,57 @@ import { getIcon } from '@utils';
 import { Mode, ProbeObj } from '@api/entities';
 import ProbePropertiesController from '@controllers/ProbeProperties';
 import type { ChaosProbesSelectionProps } from '@controllers/SelectProbesTab/types';
+import { updateAttachedProbes } from '../probeAttachment';
 import ModeCard from './ModeCard';
 import css from './SelectProbeMode.module.scss';
 
 export interface SelectProbeModeViewProps extends FaultProps {
   setIsModeSelected: React.Dispatch<React.SetStateAction<boolean>>;
   probe: ChaosProbesSelectionProps | undefined;
+  // Set when the drawer is changing a probe that is already attached to this fault.
+  editingProbe?: ProbeObj;
   isModeSelected: boolean;
 }
 
 function SelectProbeModeView({
   faultData,
   probe,
+  editingProbe,
   onSave,
   setIsModeSelected,
   isModeSelected
 }: SelectProbeModeViewProps): React.ReactElement {
   const { getString } = useStrings();
   const { showError, showSuccess } = useToaster();
-  const isValid = React.useRef<boolean>(true);
-  const [mode, setMode] = React.useState<Mode>(Mode.SoT);
+  const [mode, setMode] = React.useState<Mode>(editingProbe?.mode ?? Mode.SoT);
+  const probeName = editingProbe?.name ?? probe?.probeName;
+  // The fault attachment stores name and mode only, so an edit has no probe type to icon.
+  const probeType = editingProbe ? undefined : probe?.type;
+
+  // The drawer stays mounted, so the mode has to be reset each time it opens.
+  React.useEffect(() => {
+    if (isModeSelected) {
+      setMode(editingProbe?.mode ?? Mode.SoT);
+    }
+  }, [editingProbe, isModeSelected]);
 
   const applyChanges = (): void => {
-    if (!faultData || !probe) return;
+    if (!faultData || !probeName) return;
 
-    const newProbe: ProbeObj = { name: probe.probeName, mode };
+    const nextProbe: ProbeObj = { name: probeName, mode };
+    const { probes, duplicate } = updateAttachedProbes(
+      faultData.probes as ProbeObj[] | undefined,
+      nextProbe,
+      editingProbe
+    );
 
-    // Validate if the probe with the same mode already exists
-    if (faultData.probes?.some(p => isEqual(p, newProbe))) {
-      showError(`${newProbe.name} ${getString('probeModeAlreadyExists')}`);
-      isValid.current = false;
+    if (duplicate) {
+      showError(`${nextProbe.name} ${getString('probeModeAlreadyExists')}`);
       return;
     }
 
-    isValid.current = true;
-    if (faultData.probes) faultData.probes.push(newProbe);
-    else faultData.probes = [newProbe];
-
-    // Update faultData
-    onSave(faultData);
-    showSuccess(getString('probeAddedSuccessfully'));
+    onSave({ ...faultData, probes });
+    showSuccess(getString(editingProbe ? 'probeUpdatedSuccessfully' : 'probeAddedSuccessfully'));
     setIsModeSelected(false);
   };
 
@@ -62,14 +72,14 @@ function SelectProbeModeView({
     <>
       <Layout.Horizontal padding={{ top: 'large', left: 'medium', right: 'medium', bottom: 'large' }} flex>
         <Layout.Horizontal spacing={'medium'}>
-          {probe && <Icon name={getIcon(probe.type)} size={25} />}
+          {probeType && <Icon name={getIcon(probeType)} size={25} />}
 
           <Text font={{ variation: FontVariation.H5, weight: 'bold' }} lineClamp={1}>
-            {probe?.probeName}
+            {probeName}
           </Text>
         </Layout.Horizontal>
 
-        {probe?.probeName && (
+        {probeName && (
           <Layout.Horizontal spacing={'medium'}>
             <Button
               variation={ButtonVariation.PRIMARY}
@@ -149,9 +159,9 @@ function SelectProbeModeView({
             {
               id: 'properties',
               title: 'Properties',
-              panel: probe && (
-                <ProbePropertiesController probeName={probe.probeName} mode={mode} isModeSelected={isModeSelected} />
-              )
+              panel: probeName ? (
+                <ProbePropertiesController probeName={probeName} mode={mode} isModeSelected={isModeSelected} />
+              ) : undefined
             }
           ]}
         />

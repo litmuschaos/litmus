@@ -18,17 +18,16 @@ import {
 import React from 'react';
 import type { Row } from 'react-table';
 import { ParentComponentErrorWrapper } from '@errors';
-import { useSearchParams } from '@hooks';
 import { useStrings } from '@strings';
 import { killEvent } from '@utils';
-import type { InfrastructureType, ProbeObj } from '@api/entities';
+import type { ProbeObj } from '@api/entities';
 import { PermissionGroup, type FaultData } from '@models';
 import RbacMenuItem from '@components/RbacMenuItem';
-import type { EditProbeData } from './Probes';
+import { removeAttachedProbe } from './probeAttachment';
 
 interface MenuCellProps {
   row: Row<ProbeObj>;
-  setEditProbe: React.Dispatch<React.SetStateAction<EditProbeData | undefined>>;
+  onEditProbe: (probe: ProbeObj) => void;
   onSave: (data: Omit<FaultData, 'experimentCR'>) => void;
   faultData: FaultData | undefined;
 }
@@ -36,14 +35,11 @@ interface MenuCellProps {
 export const MenuCell = ({
   row: { original: data },
   onSave,
-  setEditProbe,
+  onEditProbe,
   faultData
 }: MenuCellProps): React.ReactElement => {
   const { getString } = useStrings();
   const { showSuccess } = useToaster();
-  const searchParams = useSearchParams();
-
-  const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType;
 
   const {
     isOpen: isRemoveProbeDialogOpen,
@@ -54,14 +50,10 @@ export const MenuCell = ({
   const removeProbeFromManifest = (): void => {
     if (!faultData || !data) return;
 
-    faultData.probes?.some((probe, i) => {
-      if (probe.name === data.name) {
-        faultData.probes?.splice(i, 1);
-      }
+    onSave({
+      ...faultData,
+      probes: removeAttachedProbe(faultData.probes as ProbeObj[] | undefined, data)
     });
-
-    // Update faultData
-    onSave(faultData);
     showSuccess(getString('probeDeletedSuccessfully'));
   };
 
@@ -94,8 +86,8 @@ export const MenuCell = ({
           <ParentComponentErrorWrapper>
             <RbacMenuItem
               icon={'Edit'}
-              text={getString('editProbe')}
-              onClick={() => setEditProbe({ name: data.name, infrastructureType: infrastructureType })}
+              text={getString('editProbeMode')}
+              onClick={() => onEditProbe(data)}
               permission={PermissionGroup.EDITOR}
             />
           </ParentComponentErrorWrapper>
