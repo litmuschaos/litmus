@@ -24,7 +24,7 @@ import { useStrings } from '@strings';
 import TargetApplicationTabController from '@controllers/TargetApplicationTab';
 import type { FaultData } from '@models';
 import { useSearchParams } from '@hooks';
-import { InfrastructureType } from '@api/entities';
+import { InfrastructureType, type ProbeObj } from '@api/entities';
 import experimentYamlService from '@services/experiment';
 import type { GetFaultTunablesOperation } from '@services/experiment/ExperimentYamlService';
 import type { ServiceIdentifiers } from '@db';
@@ -71,6 +71,7 @@ export default function ExperimentCreationTuneFaultView({
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const [faultData, setFaultData] = React.useState<FaultData | undefined>(cloneDeep(initialFaultData));
   const [isModeSelected, setIsModeSelected] = React.useState<boolean>(false);
+  const [editingProbe, setEditingProbe] = React.useState<ProbeObj>();
 
   const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
@@ -109,6 +110,26 @@ export default function ExperimentCreationTuneFaultView({
   );
 
   const [probe, setProbe] = React.useState<ChaosProbesSelectionProps>();
+
+  const editAttachedProbe = (attached: ProbeObj): void => {
+    setEditingProbe(attached);
+    setIsModeSelected(true);
+  };
+
+  const setAddProbeSelected: React.Dispatch<React.SetStateAction<boolean>> = selected => {
+    if (selected === true) {
+      setEditingProbe(undefined);
+    }
+    setIsAddProbeSelected(selected);
+  };
+
+  // The mode drawer stays mounted. Drop the probe being edited once it closes
+  // so the next open from "add probe" does not replace that attachment.
+  React.useEffect(() => {
+    if (!isModeSelected) {
+      setEditingProbe(undefined);
+    }
+  }, [isModeSelected]);
 
   const confirmationDialogProps = {
     usePortal: true,
@@ -233,7 +254,8 @@ export default function ExperimentCreationTuneFaultView({
         <NewProbes
           faultData={faultData}
           onSave={data => setFaultData({ ...faultData, ...data })}
-          setIsAddProbeSelected={setIsAddProbeSelected}
+          setIsAddProbeSelected={setAddProbeSelected}
+          onEditProbe={editAttachedProbe}
         />
       )
     }
@@ -287,6 +309,7 @@ export default function ExperimentCreationTuneFaultView({
         leftPanel={
           <SelectProbeModeView
             probe={probe}
+            editingProbe={editingProbe}
             setIsModeSelected={setIsModeSelected}
             faultData={faultData}
             isModeSelected={isModeSelected}
@@ -296,7 +319,11 @@ export default function ExperimentCreationTuneFaultView({
         handleClose={() => {
           setIsModeSelected(false);
         }}
-        title={<Text font={{ variation: FontVariation.H5 }}>{'Select a mode'}</Text>}
+        title={
+          <Text font={{ variation: FontVariation.H5 }}>
+            {editingProbe ? getString('editProbeMode') : 'Select a mode'}
+          </Text>
+        }
         type={DrawerTypes.SelectMode}
       />
       {confirmationDialog}

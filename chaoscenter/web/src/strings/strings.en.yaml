@@ -318,6 +318,7 @@ editHubDescription: >-
 editInChaosStudio: Edit in Chaos Studio
 editName: Edit Name
 editProbe: Edit Probe
+editProbeMode: Edit probe mode
 editProjectName: Edit Project Name
 editSameExperimentDescription: >-
   When you edit directly on the existing experiment, you will not be able to
@@ -884,6 +885,7 @@ probeTypes:
   httpProbe: HTTP Probe
   k8sProbe: K8S Probe
   promProbe: Prometheus Probe
+probeUpdatedSuccessfully: Probe mode updated, please apply changes before closing
 probeValidation:
   accountIdentifier: Account identifier is a required field
   apiTokenSecret: API Token Secret is a required field
@@ -909,7 +911,6 @@ probeValidation:
   url: URL is a required field
   value: Comparator value is a required field
   version: Probe version is a required field
-
 probes: Probes
 probesArePassed: probes are passed
 problems: Problems
