@@ -16,7 +16,7 @@ This proposal is for adding the multiple owners feature in the project managemen
 ## Proposal
 
 ### Flow Diagram
-![Flow](multipleprojectwoner.png)
+![Flow](./images/multipleprojectwoner.png)
 
 ### Implementation Details
 
