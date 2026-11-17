@@ -16,7 +16,7 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 		}
 		for _, wfs := range wfOb.Items {
 			uid := string(wfs.UID)
-			err = utils.subscriberEventOperations.StopChaosEngineState(agentData["AGENT_NAMESPACE"], &uid)
+			err = utils.subscriberEventOperations.StopChaosEngineState(agentData["INFRA_NAMESPACE"], &uid)
 			if err != nil {
 				logrus.Info("failed to stop chaosEngine for : ", wfs.Name, " namespace: ", wfs.Namespace)
 			}
@@ -31,6 +31,12 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 		if err != nil {
 			return err
 		}
+		if wfOb == nil {
+			// The workflow is already gone (deleted by hand or by its TTL), so
+			// there is nothing left to delete.
+			logrus.Info("workflow run ", externalData, " not found, nothing to delete")
+			return nil
+		}
 
 		err = utils.DeleteWorkflow(wfOb.Name, agentData)
 		if err != nil {
@@ -43,9 +49,15 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 		if err != nil {
 			return err
 		}
+		// Stop the run's ChaosEngines even when the workflow itself is gone:
+		// they are found by the workflow_run_id label, not through the workflow.
 		err = utils.subscriberEventOperations.StopChaosEngineState(agentData["INFRA_NAMESPACE"], &externalData)
 		if err != nil {
-			logrus.Info("failed to stop chaosEngine for : ", wfOb.Name, " namespace: ", wfOb.Namespace, " : ", err)
+			logrus.Info("failed to stop chaosEngine for workflow run: ", externalData, " : ", err)
+		}
+		if wfOb == nil {
+			logrus.Info("workflow run ", externalData, " not found, nothing left to stop")
+			return nil
 		}
 		err = utils.subscriberEventOperations.StopWorkflow(wfOb.Name, wfOb.Namespace)
 		if err != nil {
