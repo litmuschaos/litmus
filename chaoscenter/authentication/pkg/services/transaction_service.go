@@ -20,6 +20,8 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 	if err != nil {
 		return err
 	}
+	defer session.EndSession(context.TODO())
+
 	if err = session.StartTransaction(); err != nil {
 		return err
 	}
@@ -65,8 +67,8 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 		}
 		return nil
 	}); err != nil {
+		_ = session.AbortTransaction(context.TODO())
 		return err
 	}
-	session.EndSession(context.TODO())
 	return nil
 }
