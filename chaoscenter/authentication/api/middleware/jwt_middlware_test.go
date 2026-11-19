@@ -12,6 +12,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestJwtMiddleware(t *testing.T) {
@@ -121,5 +122,37 @@ func TestJwtMiddleware_Error(t *testing.T) {
 
 	if status := resp.Code; status != utils.ErrorStatusCodes[utils.ErrUnauthorized] {
 		t.Errorf("Handler returned wrong status code: got %v want %v", status, utils.ErrorStatusCodes[utils.ErrUnauthorized])
+	}
+}
+
+func TestJwtMiddleware_MalformedAuthorizationHeader(t *testing.T) {
+	// None of these carry a token after the "Bearer " scheme, so the request
+	// must be rejected with 401 and never reach token validation.
+	tests := []struct {
+		name   string
+		header string
+	}{
+		{name: "shorter than the scheme", header: "abc"},
+		{name: "scheme without trailing space", header: "Bearer"},
+		{name: "scheme without a token", header: "Bearer "},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := gin.Default()
+			mockService := new(mocks.MockedApplicationService)
+			router.Use(middleware.JwtMiddleware(mockService))
+			router.GET("/status", func(c *gin.Context) {
+				c.JSON(http.StatusOK, gin.H{"message": "Access Granted"})
+			})
+
+			req := httptest.NewRequest(http.MethodGet, "/status", nil)
+			req.Header.Set("Authorization", tt.header)
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
+
+			assert.Equal(t, utils.ErrorStatusCodes[utils.ErrUnauthorized], resp.Code)
+			mockService.AssertNotCalled(t, "ValidateToken", mock.Anything)
+		})
 	}
 }
