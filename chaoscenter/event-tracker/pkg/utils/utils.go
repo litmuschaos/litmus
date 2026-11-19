@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
+	"strconv"
 
 	"github.com/sirupsen/logrus"
 
@@ -41,6 +43,25 @@ const (
 	DaemonSet   = "daemonset"
 )
 
+// compareValues orders key against value, returning -1, 0 or 1. When both
+// sides are numbers (for example spec.replicas) they are compared numerically,
+// so that "10" is greater than "5". Otherwise they are compared as strings.
+func compareValues(key string, value string) int {
+	keyNum, keyErr := strconv.ParseFloat(strings.TrimSpace(key), 64)
+	valueNum, valueErr := strconv.ParseFloat(strings.TrimSpace(value), 64)
+	if keyErr == nil && valueErr == nil && !math.IsNaN(keyNum) && !math.IsNaN(valueNum) {
+		switch {
+		case keyNum < valueNum:
+			return -1
+		case keyNum > valueNum:
+			return 1
+		}
+		return 0
+	}
+
+	return strings.Compare(key, value)
+}
+
 func cases(key string, value string, operator string) bool {
 	switch operator {
 	case "EqualTo":
@@ -48,13 +69,13 @@ func cases(key string, value string, operator string) bool {
 	case "NotEqualTo":
 		return key != value
 	case "LessThan":
-		return key < value
+		return compareValues(key, value) < 0
 	case "GreaterThan":
-		return key > value
+		return compareValues(key, value) > 0
 	case "GreaterThanEqualTo":
-		return key >= value
+		return compareValues(key, value) >= 0
 	case "LessThanEqualTo":
-		return key <= value
+		return compareValues(key, value) <= 0
 	}
 
 	return false
