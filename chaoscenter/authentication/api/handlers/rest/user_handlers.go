@@ -409,7 +409,8 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
+		// the header must hold more than the "Bearer " prefix, otherwise slicing it below would panic
+		if len(authHeader) <= len(BearerSchema) {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}

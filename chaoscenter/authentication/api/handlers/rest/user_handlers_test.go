@@ -404,6 +404,36 @@ func TestLogoutUser(t *testing.T) {
 	}
 }
 
+func TestLogoutUser_MalformedAuthorizationHeader(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	// None of these carry a token after the "Bearer " scheme, so there is
+	// nothing to revoke and the request must be rejected with 401.
+	tests := []struct {
+		name   string
+		header string
+	}{
+		{name: "shorter than the scheme", header: "abc"},
+		{name: "scheme without trailing space", header: "Bearer"},
+		{name: "scheme without a token", header: "Bearer "},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			service := new(mocks.MockedApplicationService)
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request, _ = http.NewRequest(http.MethodPost, "/", nil)
+			c.Request.Header.Set("Authorization", tt.header)
+
+			assert.NotPanics(t, func() { rest.LogoutUser(service)(c) })
+
+			assert.Equal(t, http.StatusUnauthorized, w.Code)
+			service.AssertNotCalled(t, "RevokeToken", mock.Anything)
+		})
+	}
+}
+
 func TestLoginUser(t *testing.T) {
 	service := new(mocks.MockedApplicationService)
 
