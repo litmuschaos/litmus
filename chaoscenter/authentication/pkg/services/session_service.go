@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -24,6 +25,11 @@ type sessionService interface {
 func (a applicationService) RevokeToken(tokenString string) error {
 	token, err := a.parseToken(tokenString)
 	if err != nil {
+		// An expired token can no longer be used, so there is nothing left to revoke
+		var validationErr *jwt.ValidationError
+		if errors.As(err, &validationErr) && validationErr.Errors == jwt.ValidationErrorExpired {
+			return nil
+		}
 		return err
 	}
 	claims := token.Claims.(jwt.MapClaims)
