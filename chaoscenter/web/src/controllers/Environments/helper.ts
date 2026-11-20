@@ -16,3 +16,7 @@ export function generateEnvironmentTableContent(environmentData: Array<Environme
   });
   return content;
 }
+
+export function getEnvironmentPageSizeOptions(limit: number): number[] {
+  return [...new Set([5, 10, 15, 30, limit])].sort((a, b) => a - b);
+}

@@ -5,7 +5,7 @@ import { createEnvironment, deleteEnvironment, listEnvironment, updateEnvironmen
 import EnvironmentListView from '@views/Environments/EnvironmentList/EnvironmentsList';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import type { EnvironmentDetailsTableProps } from './types';
-import { generateEnvironmentTableContent } from './helper';
+import { generateEnvironmentTableContent, getEnvironmentPageSizeOptions } from './helper';
 
 const EnvironmentController: React.FC = () => {
   const { showError } = useToaster();
@@ -64,7 +64,7 @@ const EnvironmentController: React.FC = () => {
       itemCount: totalEnvironments ?? 0,
       pageCount: totalEnvironments ? Math.ceil(totalEnvironments / limit) : 1,
       pageIndex: page,
-      pageSizeOptions: [...new Set([5, 10, 15, 30, limit])].sort(),
+      pageSizeOptions: getEnvironmentPageSizeOptions(limit),
       pageSize: limit,
       showPagination: true,
       onPageSizeChange: event => setLimit(event)
