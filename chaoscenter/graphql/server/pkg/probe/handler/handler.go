@@ -1045,12 +1045,6 @@ func (p *probeService) GenerateProbeManifest(probe *model.Probe, mode model.Mode
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(mode)
 
-		if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
-			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-				InsecureSkipVerify: *probe.KubernetesHTTPProperties.InsecureSkipVerify,
-			}
-		}
-
 		if probe.KubernetesHTTPProperties.Method.Get != nil {
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
@@ -1083,6 +1077,11 @@ func (p *probeService) GenerateProbeManifest(probe *model.Probe, mode model.Mode
 			if probe.KubernetesHTTPProperties.Method.Post.BodyPath != nil {
 				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.KubernetesHTTPProperties.Method.Post.BodyPath
 			}
+		}
+
+		// set after the method blocks above, which assign the whole HTTPProbeInputs struct
+		if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
+			_probe.HTTPProbeInputs.InsecureSkipVerify = *probe.KubernetesHTTPProperties.InsecureSkipVerify
 		}
 
 		_probe.RunProperties = v1alpha1.RunProperty{
