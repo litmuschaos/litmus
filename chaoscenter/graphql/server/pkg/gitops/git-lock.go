@@ -55,7 +55,7 @@ func getKey(repo string, branch *string) string {
 	if branch == nil {
 		return repo
 	}
-	key := strings.Trim(repo, ".git")
+	key := strings.TrimSuffix(repo, ".git")
 	split := regexp.MustCompile(`[:/]`).Split(key, -1)
 	return strings.Join(split[len(split)-2:], "/") + "/" + *branch
 }
