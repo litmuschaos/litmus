@@ -10,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/project"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -69,11 +70,8 @@ func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, m
 			log.Error(err.Error())
 		}
 		if DbEvent.OperationType == "insert" {
-			user, err := grpc.GetUserById(client, DbEvent.FullDocument.CreatedBy.UserID)
-			if err != nil {
-				log.Error(err)
-			}
-			err = ProjectInitializer(context.Background(), DbEvent.FullDocument, user.Role, mongoOp)
+			role := creatorRole(client, DbEvent.FullDocument.CreatedBy.UserID)
+			err = ProjectInitializer(context.Background(), DbEvent.FullDocument, role, mongoOp)
 			if err != nil {
 				log.Error(err)
 			}
@@ -81,4 +79,15 @@ func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, m
 		}
 	}
 
+}
+
+// creatorRole returns the role of the user that created a project. It returns an
+// empty role when the user cannot be fetched from the authentication server.
+func creatorRole(client protos.AuthRpcServiceClient, userID string) string {
+	user, err := grpc.GetUserById(client, userID)
+	if err != nil {
+		log.Error(err)
+		return ""
+	}
+	return user.GetRole()
 }
