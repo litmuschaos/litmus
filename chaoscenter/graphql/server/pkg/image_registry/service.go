@@ -91,7 +91,7 @@ func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageReg
 		bl          = false
 	)
 
-	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
+	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}, {"is_removed", false}}
 	update := bson.D{{"$set", bson.D{
 		{"image_registry_name", imageRegistryInfo.ImageRegistryName},
 		{"image_repo_name", imageRegistryInfo.ImageRepoName},
@@ -126,7 +126,7 @@ func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageReg
 }
 
 func (i *imageRegistryService) DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
-	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
+	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}, {"is_removed", false}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 
 	err := i.imageRegistryOperator.UpdateImageRegistry(ctx, query, update)
@@ -138,7 +138,7 @@ func (i *imageRegistryService) DeleteImageRegistry(ctx context.Context, imageReg
 }
 
 func (i *imageRegistryService) GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error) {
-	query := bson.D{{"project_id", projectID}}
+	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
 	imageRegistry, err := i.imageRegistryOperator.GetImageRegistry(ctx, query)
 	if err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ func (i *imageRegistryService) GetImageRegistry(ctx context.Context, projectID s
 }
 
 func (i *imageRegistryService) ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
-	query := bson.D{{"project_id", projectID}}
+	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
 	imageRegistries, err := i.imageRegistryOperator.ListImageRegistries(ctx, query)
 	if err != nil {
 		return nil, err
