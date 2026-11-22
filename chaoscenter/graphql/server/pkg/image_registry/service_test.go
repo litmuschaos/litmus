@@ -143,6 +143,19 @@ func Test_imageRegistryService_UpdateImageRegistry(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, response)
 	})
+
+	t.Run("success: updates using is_removed false filter", func(t *testing.T) {
+		mockOperator, service := newTestService(t)
+		expectedQuery := bson.D{{"image_registry_id", registryID}, {"project_id", projectID}, {"is_removed", false}}
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, expectedQuery, mock.Anything, mock.Anything).
+			Return(&mongo.UpdateResult{}, nil).Once()
+
+		response, err := service.UpdateImageRegistry(context.Background(), registryID, projectID, input)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, response)
+		assert.Equal(t, registryID, response.ImageRegistryID)
+	})
 }
 
 func Test_imageRegistryService_DeleteImageRegistry(t *testing.T) {
@@ -169,6 +182,19 @@ func Test_imageRegistryService_DeleteImageRegistry(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Empty(t, message)
+	})
+
+	t.Run("success: deletes using is_removed false filter", func(t *testing.T) {
+		mockOperator, service := newTestService(t)
+		expectedQuery := bson.D{{"image_registry_id", registryID}, {"project_id", projectID}, {"is_removed", false}}
+		expectedUpdate := bson.D{{"$set", bson.D{{"is_removed", true}}}}
+		mockOperator.On("Update", mock.Anything, mongodb.ImageRegistryCollection, expectedQuery, expectedUpdate, mock.Anything).
+			Return(&mongo.UpdateResult{}, nil).Once()
+
+		message, err := service.DeleteImageRegistry(context.Background(), registryID, projectID)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "image registry deleted", message)
 	})
 }
 
@@ -218,6 +244,21 @@ func Test_imageRegistryService_GetImageRegistry(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Nil(t, response)
+	})
+
+	t.Run("success: queries with is_removed: false filter", func(t *testing.T) {
+		mockOperator, service := newTestService(t)
+		expectedQuery := bson.D{{"project_id", projectID}, {"is_removed", false}}
+		singleResult := mongo.NewSingleResultFromDocument(
+			sampleRegistryDoc(registryID, projectID, createdAt, updatedAt), nil, nil)
+		mockOperator.On("Get", mock.Anything, mongodb.ImageRegistryCollection, expectedQuery).
+			Return(singleResult, nil).Once()
+
+		response, err := service.GetImageRegistry(context.Background(), projectID)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, response)
+		assert.Equal(t, registryID, response.ImageRegistryID)
 	})
 }
 
@@ -271,5 +312,23 @@ func Test_imageRegistryService_ListImageRegistries(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Nil(t, response)
+	})
+
+	t.Run("success: filters out soft-deleted registries using is_removed false query", func(t *testing.T) {
+		mockOperator, service := newTestService(t)
+		expectedQuery := bson.D{{"project_id", projectID}, {"is_removed", false}}
+		docs := []interface{}{
+			sampleRegistryDoc("registry-1", projectID, 1000, 2000),
+		}
+		cursor, err := mongo.NewCursorFromDocuments(docs, nil, nil)
+		assert.NoError(t, err)
+		mockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, expectedQuery).
+			Return(cursor, nil).Once()
+
+		response, err := service.ListImageRegistries(context.Background(), projectID)
+
+		assert.NoError(t, err)
+		assert.Len(t, response, 1)
+		assert.Equal(t, "registry-1", response[0].ImageRegistryID)
 	})
 }
