@@ -360,3 +360,116 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 		})
 	}
 }
+
+// experimentWeightagesMock makes the next GetExperiment call return an experiment revision
+// carrying the given fault weightages.
+func experimentWeightagesMock(experimentID, revisionID string, weightages map[string]int) {
+	faults := bson.A{}
+	for faultName, weightage := range weightages {
+		faults = append(faults, bson.D{
+			{Key: "fault_name", Value: faultName},
+			{Key: "weightage", Value: weightage},
+		})
+	}
+
+	document := bson.D{
+		{Key: "experiment_id", Value: experimentID},
+		{Key: "revision", Value: bson.A{
+			bson.D{
+				{Key: "revision_id", Value: revisionID},
+				{Key: "weightages", Value: faults},
+			},
+		}},
+	}
+
+	mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).
+		Return(mongo.NewSingleResultFromDocument(document, nil, nil), nil).Once()
+}
+
+func Test_chaosExperimentRunService_ProcessCompletedExperimentRun_WeightageResolution(t *testing.T) {
+	experimentID := uuid.New().String()
+	revisionID := uuid.New().String()
+
+	execDataFor := func(experimentName string) ExecutionData {
+		return ExecutionData{
+			ExperimentID: experimentID,
+			RevisionID:   revisionID,
+			Nodes: map[string]Node{
+				"network-loss-node-abc12": {
+					Name: "network-loss-node-abc12",
+					Type: "ChaosEngine",
+					ChaosExp: &ChaosData{
+						EngineName:             "network-loss-node-abc12",
+						ExperimentName:         experimentName,
+						ProbeSuccessPercentage: "100",
+						ExperimentVerdict:      "Pass",
+					},
+				},
+			},
+		}
+	}
+
+	testcases := []struct {
+		name           string
+		experimentName string
+		weightages     map[string]int
+		wantScore      float64
+		wantPassed     int
+		wantTotal      int
+		runs           int
+	}{
+		{
+			// The engine name matches both weightage keys, so the previous map scan toggled
+			// between them on every call.
+			name:           "success: overlapping fault names resolve to the longest key on every run",
+			experimentName: "",
+			weightages:     map[string]int{"network-loss": 3, "network-loss-node": 10},
+			wantScore:      76.92,
+			wantPassed:     1,
+			wantTotal:      2,
+			runs:           50,
+		},
+		{
+			name:           "success: exact experiment name wins over the longer overlapping key",
+			experimentName: "network-loss",
+			weightages:     map[string]int{"network-loss": 3, "network-loss-node": 10},
+			wantScore:      23.07,
+			wantPassed:     1,
+			wantTotal:      2,
+			runs:           1,
+		},
+		{
+			name:           "success: a single matching weightage key keeps its score",
+			experimentName: "",
+			weightages:     map[string]int{"network-loss-node": 10},
+			wantScore:      100,
+			wantPassed:     1,
+			wantTotal:      1,
+			runs:           1,
+		},
+		{
+			name:           "success: no matching weightage key leaves the resiliency score empty",
+			experimentName: "",
+			weightages:     map[string]int{"pod-delete": 5},
+			wantScore:      0,
+			wantPassed:     1,
+			wantTotal:      1,
+			runs:           1,
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			for i := 0; i < tc.runs; i++ {
+				experimentWeightagesMock(experimentID, revisionID, tc.weightages)
+				metrics, err := chaosExperimentRunTestService.ProcessCompletedExperimentRun(execDataFor(tc.experimentName), experimentID, uuid.NewString())
+				if err != nil {
+					t.Fatalf("run %d: ProcessCompletedExperimentRun() error = %v", i, err)
+				}
+				if metrics.ResiliencyScore != tc.wantScore || metrics.ExperimentsPassed != tc.wantPassed || metrics.TotalExperiments != tc.wantTotal {
+					t.Fatalf("run %d: metrics = %+v, want score %v, passed %d, total %d", i, metrics, tc.wantScore, tc.wantPassed, tc.wantTotal)
+				}
+			}
+		})
+	}
+}
