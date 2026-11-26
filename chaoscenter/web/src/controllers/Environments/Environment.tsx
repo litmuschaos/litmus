@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { getScope } from '@utils';
+import { getPageSizeOptions, getScope } from '@utils';
 import { createEnvironment, deleteEnvironment, listEnvironment, updateEnvironment } from '@api/core/environments';
 import EnvironmentListView from '@views/Environments/EnvironmentList/EnvironmentsList';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
@@ -64,7 +64,7 @@ const EnvironmentController: React.FC = () => {
       itemCount: totalEnvironments ?? 0,
       pageCount: totalEnvironments ? Math.ceil(totalEnvironments / limit) : 1,
       pageIndex: page,
-      pageSizeOptions: [...new Set([5, 10, 15, 30, limit])].sort(),
+      pageSizeOptions: getPageSizeOptions([5, 10, 15, 30], limit),
       pageSize: limit,
       showPagination: true,
       onPageSizeChange: event => setLimit(event)
