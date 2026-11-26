@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -11,10 +12,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -148,4 +151,23 @@ func TestDeleteEnvironment(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestListEnvironments_SearchesLiterally(t *testing.T) {
+	mockOp := new(dbMocks.MongoOperator)
+	var pipeline mongo.Pipeline
+	mockOp.On("Aggregate", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything).
+		Run(func(args mock.Arguments) {
+			pipeline = args.Get(2).(mongo.Pipeline)
+		}).Return((*mongo.Cursor)(nil), errors.New("stop after the pipeline is built")).Once()
+
+	service := handler.NewEnvironmentService(dbOperationsEnvironment.NewEnvironmentOperator(mockOp))
+	name, description := "my env (prod", "runs c++ apps"
+	_, err := service.ListEnvironments("project-1", &model.ListEnvironmentRequest{
+		Filter: &model.EnvironmentFilterInput{Name: &name, Description: &description},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, pipeline, bson.D{{"$match", bson.D{{"name", bson.M{"$regex": `my env \(prod`, "$options": "i"}}}}})
+	assert.Contains(t, pipeline, bson.D{{"$match", bson.D{{"description", bson.M{"$regex": `runs c\+\+ apps`, "$options": "i"}}}}})
 }

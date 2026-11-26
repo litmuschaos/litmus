@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -367,7 +368,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			matchWfNameStage := bson.D{
 				{"$match", bson.D{
 					{"experiment.name", bson.D{
-						{"$regex", request.Filter.ExperimentName},
+						{"$regex", regexp.QuoteMeta(*request.Filter.ExperimentName)},
 					}},
 				}},
 			}
@@ -379,7 +380,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			matchWfRunIDStage := bson.D{
 				{"$match", bson.D{
 					{"experiment_run_id", bson.D{
-						{"$regex", request.Filter.ExperimentRunID},
+						{"$regex", regexp.QuoteMeta(*request.Filter.ExperimentRunID)},
 					}},
 				}},
 			}

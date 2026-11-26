@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -146,7 +147,7 @@ func CreateFilterStages(filter *entities.ListProjectInputFilter, userID string) 
 		stages = append(stages, bson.D{
 			{"$match", bson.D{
 				{"name", bson.D{
-					{"$regex", primitive.Regex{Pattern: *filter.ProjectName, Options: "i"}},
+					{"$regex", primitive.Regex{Pattern: regexp.QuoteMeta(*filter.ProjectName), Options: "i"}},
 				}},
 			}},
 		})
