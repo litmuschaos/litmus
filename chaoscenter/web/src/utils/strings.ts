@@ -9,7 +9,7 @@ export function capitalize(str: string): string {
 }
 
 export function replaceHyphen(str: string): string {
-  return str.replace('-', ' ');
+  return str.replace(/-/g, ' ');
 }
 
 export function replaceSpace(str: string): string {
