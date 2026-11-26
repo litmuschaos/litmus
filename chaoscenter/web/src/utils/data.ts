@@ -33,12 +33,17 @@ export const sanitize = (obj: Record<string, any>, sanityConfig?: YamlSanityConf
         delete obj[key];
       } else {
         sanitize(obj[key], sanityConfig);
+        // the object may have become empty once its own empty values were removed
+        if (removeEmptyObject && Object.keys(obj[key]).length === 0) delete obj[key];
       }
     } else if (Array.isArray(obj[key])) {
       if (removeEmptyArray && obj[key].length == 0) {
         delete obj[key];
       } else {
         sanitize(obj[key], sanityConfig);
+        // `delete` on an array element leaves a hole, which is serialized as null: drop the holes
+        obj[key] = obj[key].filter(() => true);
+        if (removeEmptyArray && obj[key].length === 0) delete obj[key];
       }
     }
   }
