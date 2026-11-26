@@ -1148,3 +1148,214 @@ func TestChaosExperimentHandler_CreateChaosExperiment_NilExperimentID(t *testing
 		assertExpectations(mockServices, t)
 	})
 }
+
+func TestChaosExperimentHandler_GetExperiment_RevisionAndAvgResiliencyScore(t *testing.T) {
+	projectID := uuid.New().String()
+	experimentID := uuid.New().String()
+	infraID := uuid.New().String()
+	ctx := context.Background()
+	avgScore := 85.678
+
+	tests := []struct {
+		name              string
+		doc               bson.D
+		wantManifest      string
+		wantWeightages    []*model.Weightages
+		wantAvgResiliency float64
+		wantErr           bool
+	}{
+		{
+			name: "multi-revision: returns latest revision weightages when initial revision has nil weightages",
+			doc: bson.D{
+				{Key: "project_id", Value: projectID},
+				{Key: "experiment_id", Value: experimentID},
+				{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+					{ProjectID: projectID, InfraID: infraID},
+				}},
+				{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
+					{
+						RevisionID:         "rev-1",
+						ExperimentManifest: "manifest-v1",
+						Weightages:         nil,
+					},
+					{
+						RevisionID:         "rev-2",
+						ExperimentManifest: "manifest-v2",
+						Weightages: []*dbChaosExperiment.WeightagesInput{
+							{FaultName: "pod-delete", Weightage: 10},
+							nil,
+						},
+					},
+				}},
+				{Key: "avg_resiliency_score", Value: []dbChaosExperiment.AvgResScore{
+					{Avg: &avgScore},
+				}},
+			},
+			wantManifest: "manifest-v2",
+			wantWeightages: []*model.Weightages{
+				{FaultName: "pod-delete", Weightage: 10},
+			},
+			wantAvgResiliency: 85.67,
+		},
+		{
+			name: "multi-revision: returns nil weightages when latest revision clears weightages",
+			doc: bson.D{
+				{Key: "project_id", Value: projectID},
+				{Key: "experiment_id", Value: experimentID},
+				{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+					{ProjectID: projectID, InfraID: infraID},
+				}},
+				{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
+					{
+						RevisionID:         "rev-1",
+						ExperimentManifest: "manifest-v1",
+						Weightages: []*dbChaosExperiment.WeightagesInput{
+							{FaultName: "pod-delete", Weightage: 5},
+						},
+					},
+					{
+						RevisionID:         "rev-2",
+						ExperimentManifest: "manifest-v2",
+						Weightages:         nil,
+					},
+				}},
+			},
+			wantManifest:      "manifest-v2",
+			wantWeightages:    nil,
+			wantAvgResiliency: 0,
+		},
+		{
+			name: "empty revision slice does not panic",
+			doc: bson.D{
+				{Key: "project_id", Value: projectID},
+				{Key: "experiment_id", Value: experimentID},
+				{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+					{ProjectID: projectID, InfraID: infraID},
+				}},
+				{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{}},
+			},
+			wantManifest:      "",
+			wantWeightages:    nil,
+			wantAvgResiliency: 0,
+		},
+		{
+			name: "nil Avg pointer in AvgResiliencyScore does not panic",
+			doc: bson.D{
+				{Key: "project_id", Value: projectID},
+				{Key: "experiment_id", Value: experimentID},
+				{Key: "kubernetesInfraDetails", Value: []dbChoasInfra.ChaosInfra{
+					{ProjectID: projectID, InfraID: infraID},
+				}},
+				{Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
+					{RevisionID: "rev-1", ExperimentManifest: "manifest-v1"},
+				}},
+				{Key: "avg_resiliency_score", Value: []dbChaosExperiment.AvgResScore{
+					{Avg: nil},
+				}},
+			},
+			wantManifest:      "manifest-v1",
+			wantWeightages:    nil,
+			wantAvgResiliency: 0,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			mockServices := NewMockServices()
+			cursor, err := mongo.NewCursorFromDocuments([]interface{}{tc.doc}, nil, nil)
+			if err != nil {
+				t.Fatalf("failed to create cursor: %v", err)
+			}
+			mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+			resp, err := mockServices.ChaosExperimentHandler.GetExperiment(ctx, projectID, experimentID)
+			if (err != nil) != tc.wantErr {
+				t.Fatalf("GetExperiment() error = %v, wantErr %v", err, tc.wantErr)
+			}
+			if resp == nil || resp.ExperimentDetails == nil {
+				t.Fatalf("expected non-nil experiment response")
+			}
+			if resp.ExperimentDetails.ExperimentManifest != tc.wantManifest {
+				t.Errorf("ExperimentManifest = %q, want %q", resp.ExperimentDetails.ExperimentManifest, tc.wantManifest)
+			}
+			if !reflect.DeepEqual(resp.ExperimentDetails.Weightages, tc.wantWeightages) {
+				t.Errorf("Weightages = %+v, want %+v", resp.ExperimentDetails.Weightages, tc.wantWeightages)
+			}
+			if resp.AverageResiliencyScore == nil || *resp.AverageResiliencyScore != tc.wantAvgResiliency {
+				t.Errorf("AverageResiliencyScore = %v, want %v", resp.AverageResiliencyScore, tc.wantAvgResiliency)
+			}
+			assertExpectations(mockServices, t)
+		})
+	}
+}
+
+func TestChaosExperimentHandler_ListExperiment_RevisionWeightages(t *testing.T) {
+	projectID := uuid.New().String()
+	expID1 := uuid.New().String()
+	expID2 := uuid.New().String()
+
+	aggregatedDoc := bson.D{
+		{Key: "total_filtered_experiments", Value: []dbChaosExperiment.TotalFilteredData{
+			{Count: 2},
+		}},
+		{Key: "scheduled_experiments", Value: []dbChaosExperiment.ChaosExperimentsWithRunDetails{
+			{
+				ExperimentID: expID1,
+				ProjectID:    projectID,
+				Revision: []dbChaosExperiment.ExperimentRevision{
+					{
+						RevisionID:         "rev-1",
+						ExperimentManifest: "manifest-v1",
+						Weightages:         nil,
+					},
+					{
+						RevisionID:         "rev-2",
+						ExperimentManifest: "manifest-v2",
+						Weightages: []*dbChaosExperiment.WeightagesInput{
+							{FaultName: "container-kill", Weightage: 8},
+							nil,
+						},
+					},
+				},
+			},
+			{
+				ExperimentID: expID2,
+				ProjectID:    projectID,
+				Revision:     []dbChaosExperiment.ExperimentRevision{},
+			},
+		}},
+	}
+
+	mockServices := NewMockServices()
+	cursor, err := mongo.NewCursorFromDocuments([]interface{}{aggregatedDoc}, nil, nil)
+	if err != nil {
+		t.Fatalf("failed to create cursor: %v", err)
+	}
+	mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+	resp, err := mockServices.ChaosExperimentHandler.ListExperiment(projectID, model.ListExperimentRequest{})
+	if err != nil {
+		t.Fatalf("ListExperiment() unexpected error: %v", err)
+	}
+	if resp.TotalNoOfExperiments != 2 || len(resp.Experiments) != 2 {
+		t.Fatalf("got %d experiments (total=%d), want 2", len(resp.Experiments), resp.TotalNoOfExperiments)
+	}
+
+	first := resp.Experiments[0]
+	if first.ExperimentManifest != "manifest-v2" {
+		t.Errorf("first.ExperimentManifest = %q, want %q", first.ExperimentManifest, "manifest-v2")
+	}
+	wantWeightages := []*model.Weightages{{FaultName: "container-kill", Weightage: 8}}
+	if !reflect.DeepEqual(first.Weightages, wantWeightages) {
+		t.Errorf("first.Weightages = %+v, want %+v", first.Weightages, wantWeightages)
+	}
+
+	second := resp.Experiments[1]
+	if second.ExperimentManifest != "" {
+		t.Errorf("second.ExperimentManifest = %q, want empty string", second.ExperimentManifest)
+	}
+	if second.Weightages != nil {
+		t.Errorf("second.Weightages = %+v, want nil", second.Weightages)
+	}
+	assertExpectations(mockServices, t)
+}
