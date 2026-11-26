@@ -3,7 +3,7 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import { isEqual } from 'lodash-es';
-import { getScope } from '@utils';
+import { getPageSizeOptions, getScope } from '@utils';
 import { initialExperimentFilterState, useExperimentFilter, useSearchParams, useUpdateSearchParams } from '@hooks';
 import { listExperiment } from '@api/core';
 import ExperimentDashboardV2View from '@views/ExperimentDashboardV2';
@@ -67,7 +67,7 @@ export default function ExperimentDashboardV2Controller(): React.ReactElement {
       itemCount: totalExperimentRuns ?? 0,
       pageCount: totalExperimentRuns ? Math.ceil(totalExperimentRuns / limit) : 1,
       pageIndex: page,
-      pageSizeOptions: [...new Set([15, 30, limit])].sort(),
+      pageSizeOptions: getPageSizeOptions([15, 30], limit),
       pageSize: limit,
       onPageSizeChange: event => setLimit(event)
     }

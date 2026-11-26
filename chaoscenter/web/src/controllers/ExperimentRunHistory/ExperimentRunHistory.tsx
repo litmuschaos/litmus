@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { listExperimentRunForHistory } from '@api/core';
-import { getScope, getColorBasedOnResilienceScore, cronEnabled } from '@utils';
+import { getScope, getColorBasedOnResilienceScore, cronEnabled, getPageSizeOptions } from '@utils';
 import ExperimentRunHistoryView from '@views/ExperimentRunHistory';
 import { useStrings } from '@strings';
 import { ExperimentRun, ExperimentType } from '@api/entities';
@@ -132,7 +132,7 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
       itemCount: totalExperimentRuns ?? 0,
       pageCount: totalExperimentRuns ? Math.ceil(totalExperimentRuns / limit) : 1,
       pageIndex: page,
-      pageSizeOptions: [...new Set([15, 30, limit])].sort(),
+      pageSizeOptions: getPageSizeOptions([15, 30], limit),
       pageSize: limit,
       onPageSizeChange: event => setLimit(event)
     }
