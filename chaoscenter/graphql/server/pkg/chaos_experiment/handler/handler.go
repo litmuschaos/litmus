@@ -444,14 +444,24 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 		}
 	}
 
-	var weightages []*model.Weightages
-	if exp.Revision[0].Weightages != nil {
-		// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
-		for _, v := range exp.Revision[len(exp.Revision)-1].Weightages {
-			weightages = append(weightages, &model.Weightages{
-				FaultName: v.FaultName,
-				Weightage: v.Weightage,
-			})
+	var (
+		weightages         []*model.Weightages
+		experimentManifest string
+	)
+	if len(exp.Revision) > 0 {
+		latestRevision := exp.Revision[len(exp.Revision)-1]
+		experimentManifest = latestRevision.ExperimentManifest
+		if latestRevision.Weightages != nil {
+			// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
+			for _, v := range latestRevision.Weightages {
+				if v == nil {
+					continue
+				}
+				weightages = append(weightages, &model.Weightages{
+					FaultName: v.FaultName,
+					Weightage: v.Weightage,
+				})
+			}
 		}
 	}
 
@@ -479,7 +489,7 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 
 	var avg float64
 	// Truncating score to 2 decimal places
-	if len(exp.AvgResiliencyScore) > 0 {
+	if len(exp.AvgResiliencyScore) > 0 && exp.AvgResiliencyScore[0].Avg != nil {
 		avg = utils.Truncate(*exp.AvgResiliencyScore[0].Avg)
 	}
 	expResponse = &model.GetExperimentResponse{
@@ -493,7 +503,7 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			IsCustomExperiment: exp.IsCustomExperiment,
 			UpdatedAt:          strconv.FormatInt(exp.UpdatedAt, 10),
 			CreatedAt:          strconv.FormatInt(exp.CreatedAt, 10),
-			ExperimentManifest: exp.Revision[len(exp.Revision)-1].ExperimentManifest,
+			ExperimentManifest: experimentManifest,
 			ProjectID:          exp.ProjectID,
 			IsRemoved:          exp.IsRemoved,
 			Infra:              chaosInfrastructure,
@@ -820,14 +830,24 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			}
 		}
 
-		var weightages []*model.Weightages
-		if workflow.Revision[0].Weightages != nil {
-			// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
-			for _, v := range workflow.Revision[len(workflow.Revision)-1].Weightages {
-				weightages = append(weightages, &model.Weightages{
-					FaultName: v.FaultName,
-					Weightage: v.Weightage,
-				})
+		var (
+			weightages         []*model.Weightages
+			experimentManifest string
+		)
+		if len(workflow.Revision) > 0 {
+			latestRevision := workflow.Revision[len(workflow.Revision)-1]
+			experimentManifest = latestRevision.ExperimentManifest
+			if latestRevision.Weightages != nil {
+				// TODO: Once we make the new chaos terminology change in APIs, then we can use the copier instead of for loop
+				for _, v := range latestRevision.Weightages {
+					if v == nil {
+						continue
+					}
+					weightages = append(weightages, &model.Weightages{
+						FaultName: v.FaultName,
+						Weightage: v.Weightage,
+					})
+				}
 			}
 		}
 
@@ -862,7 +882,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			UpdatedAt:          strconv.FormatInt(workflow.UpdatedAt, 10),
 			CreatedAt:          strconv.FormatInt(workflow.CreatedAt, 10),
 			ExperimentType:     (*string)(&workflow.ExperimentType),
-			ExperimentManifest: workflow.Revision[len(workflow.Revision)-1].ExperimentManifest,
+			ExperimentManifest: experimentManifest,
 			IsRemoved:          workflow.IsRemoved,
 			Infra:              chaosInfrastructure,
 			UpdatedBy: &model.UserDetails{
