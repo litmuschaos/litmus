@@ -402,13 +402,13 @@ export const EnableDisableCronButton = ({
     intent: Intent.WARNING,
     onClose: (isConfirmed: boolean) => {
       if (isConfirmed) {
-        const diable = isCronEnabled ? true : false;
-        setIsCronEnabled?.(!diable);
+        const disable = isCronEnabled;
+        setIsCronEnabled?.(!disable);
         updateCronExperimentStateMutation({
           variables: {
             projectID: scope.projectID,
             experimentID: experimentID,
-            disable: diable
+            disable: disable
           }
         });
       }
