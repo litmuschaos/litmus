@@ -546,38 +546,6 @@ func (p *probeService) GetProbeReference(ctx context.Context, probeName, project
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
 
-	experimentWithSelectedProbeName := bson.D{
-		{
-			"$lookup",
-			bson.D{
-				{"from", "chaosExperimentRuns"},
-				{
-					"pipeline", bson.A{
-						bson.D{{"$match", bson.D{
-							{"probes.probe_names", bson.D{
-								{"$eq", probeName},
-							}},
-						}}},
-						bson.D{
-							{"$project", bson.D{
-								{"experiment_name", 1},
-								{"probes.fault_name", 1},
-								{"probes.probe_names", 1},
-								{"phase", 1},
-								{"updated_at", 1},
-								{"updated_by", 1},
-								{"execution_data", 1},
-								{"experiment_id", 1},
-							}},
-						},
-					},
-				},
-				{"as", "execution_history"},
-			},
-		},
-	}
-	pipeline = append(pipeline, experimentWithSelectedProbeName)
-
 	// Call aggregation on pipeline
 	probeCursor, err := p.probeOperator.GetAggregateProbes(ctx, pipeline)
 	if err != nil {
@@ -593,6 +561,36 @@ func (p *probeService) GetProbeReference(ctx context.Context, probeName, project
 	)
 
 	if err = probeCursor.All(context.Background(), &probeRuns); err != nil {
+		return nil, err
+	}
+	if len(probeRuns) == 0 {
+		return nil, errors.New("probe not found")
+	}
+
+	// Fetch the experiment runs that reference the probe as separate documents.
+	// Embedding them in the probe document with $lookup fails with
+	// BSONObjectTooLarge once the runs add up to more than 16MB.
+	executionHistoryPipeline := mongo.Pipeline{
+		bson.D{{"$match", bson.D{
+			{"project_id", bson.D{{"$eq", projectID}}},
+			{"probes.probe_names", bson.D{{"$eq", probeName}}},
+		}}},
+		bson.D{{"$project", bson.D{
+			{"experiment_name", 1},
+			{"probes.fault_name", 1},
+			{"probes.probe_names", 1},
+			{"phase", 1},
+			{"updated_at", 1},
+			{"updated_by", 1},
+			{"execution_data", 1},
+			{"experiment_id", 1},
+		}}},
+	}
+	historyCursor, err := p.probeOperator.GetAggregateProbeExecutionHistory(ctx, executionHistoryPipeline)
+	if err != nil {
+		return nil, err
+	}
+	if err = historyCursor.All(ctx, &probeRuns[0].ExecutionHistory); err != nil {
 		return nil, err
 	}
 

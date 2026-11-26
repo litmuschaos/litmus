@@ -42,6 +42,18 @@ func (p *Operator) GetAggregateProbes(ctx context.Context, pipeline mongo.Pipeli
 	return results, nil
 }
 
+// GetAggregateProbeExecutionHistory takes a mongo pipeline to retrieve the experiment runs
+// that reference a probe. Each run is returned as its own document, so the history of a
+// heavily used probe is not limited by the 16MB BSON document size.
+func (p *Operator) GetAggregateProbeExecutionHistory(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+	results, err := p.operator.Aggregate(ctx, mongodb.ChaosExperimentRunsCollection, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
 // IsProbeUnique returns true if probe is unique
 func (p *Operator) IsProbeUnique(ctx context.Context, query bson.D) (bool, error) {
 	count, err := p.operator.CountDocuments(ctx, mongodb.ChaosProbeCollection, query)
