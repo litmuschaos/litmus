@@ -17,6 +17,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// probeRefAnnotationKey is the ChaosEngine annotation listing the resilience probes attached to a fault
+const probeRefAnnotationKey = "probeRef"
+
 func AddKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 	newProbe.KubernetesHTTPProperties = &dbSchemaProbe.KubernetesHTTPProbe{
 		// Common Probe Properties
@@ -241,30 +244,20 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 				}
 				data := artifact[0].Raw.Data
 				if len(data) > 0 {
-					var (
-						meta       v1alpha1.ChaosEngine
-						annotation = make(map[string]string)
-					)
+					var meta v1alpha1.ChaosEngine
 
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %s", err.Error())
 					}
 					if strings.ToLower(meta.Kind) == "chaosengine" {
-						if meta.Annotations != nil {
-							annotation = meta.Annotations
+						probeRefs, err := ParseProbeRefAnnotation(meta.Annotations)
+						if err != nil {
+							return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 						}
 						var annotationArray []string
-						for _, key := range annotation {
-
-							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-							err := json.Unmarshal([]byte(key), &manifestAnnotation)
-							if err != nil {
-								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
-							}
-							for _, annotationKey := range manifestAnnotation {
-								annotationArray = append(annotationArray, annotationKey.Name)
-							}
+						for _, probeRef := range probeRefs {
+							annotationArray = append(annotationArray, probeRef.Name)
 						}
 						probes = append(probes, dbChaosExperiment.Probes{
 							FaultName:  artifact[0].Name,
@@ -289,30 +282,20 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 				}
 				data := artifact[0].Raw.Data
 				if len(data) > 0 {
-					var (
-						meta       v1alpha1.ChaosEngine
-						annotation = make(map[string]string)
-					)
+					var meta v1alpha1.ChaosEngine
 
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %s", err.Error())
 					}
 					if strings.ToLower(meta.Kind) == "chaosengine" {
-						if meta.Annotations != nil {
-							annotation = meta.Annotations
+						probeRefs, err := ParseProbeRefAnnotation(meta.Annotations)
+						if err != nil {
+							return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 						}
 						var annotationArray []string
-						for _, key := range annotation {
-
-							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-							err := json.Unmarshal([]byte(key), &manifestAnnotation)
-							if err != nil {
-								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
-							}
-							for _, annotationKey := range manifestAnnotation {
-								annotationArray = append(annotationArray, annotationKey.Name)
-							}
+						for _, probeRef := range probeRefs {
+							annotationArray = append(annotationArray, probeRef.Name)
 						}
 						probes = append(probes, dbChaosExperiment.Probes{
 							FaultName:  artifact[0].Name,
@@ -350,30 +333,20 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 				}
 				data := artifact[0].Raw.Data
 				if len(data) > 0 {
-					var (
-						meta       v1alpha1.ChaosEngine
-						annotation = make(map[string]string)
-					)
+					var meta v1alpha1.ChaosEngine
 
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %v", err.Error())
 					}
 					if strings.ToLower(meta.Kind) == "chaosengine" {
-						if meta.Annotations != nil {
-							annotation = meta.Annotations
+						probeRefs, err := ParseProbeRefAnnotation(meta.Annotations)
+						if err != nil {
+							return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
 						}
 						var annotationArray []string
-						for _, key := range annotation {
-
-							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-							err := json.Unmarshal([]byte(key), &manifestAnnotation)
-							if err != nil {
-								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
-							}
-							for _, annotationKey := range manifestAnnotation {
-								annotationArray = append(annotationArray, annotationKey.Name)
-							}
+						for _, probeRef := range probeRefs {
+							annotationArray = append(annotationArray, probeRef.Name)
 						}
 						probes = append(probes, dbChaosExperimentRun.Probes{
 							FaultName:  artifact[0].Name,
@@ -398,30 +371,20 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 				}
 				data := artifact[0].Raw.Data
 				if len(data) > 0 {
-					var (
-						meta       v1alpha1.ChaosEngine
-						annotation = make(map[string]string)
-					)
+					var meta v1alpha1.ChaosEngine
 
 					err := yaml.Unmarshal([]byte(data), &meta)
 					if err != nil {
 						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %v", err.Error())
 					}
 					if strings.ToLower(meta.Kind) == "chaosengine" {
-						if meta.Annotations != nil {
-							annotation = meta.Annotations
+						probeRefs, err := ParseProbeRefAnnotation(meta.Annotations)
+						if err != nil {
+							return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
 						}
 						var annotationArray []string
-						for _, key := range annotation {
-
-							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-							err := json.Unmarshal([]byte(key), &manifestAnnotation)
-							if err != nil {
-								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
-							}
-							for _, annotationKey := range manifestAnnotation {
-								annotationArray = append(annotationArray, annotationKey.Name)
-							}
+						for _, probeRef := range probeRefs {
+							annotationArray = append(annotationArray, probeRef.Name)
 						}
 						probes = append(probes, dbChaosExperimentRun.Probes{
 							FaultName:  artifact[0].Name,
@@ -434,6 +397,22 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 	}
 
 	return probes, nil
+}
+
+// ParseProbeRefAnnotation returns the probes referenced by the probeRef annotation of a ChaosEngine.
+// All other annotations belong to the user and are ignored, their values need not be probe references.
+func ParseProbeRefAnnotation(annotations map[string]string) ([]dbChaosExperiment.ProbeAnnotations, error) {
+	value := annotations[probeRefAnnotationKey]
+	if value == "" {
+		return nil, nil
+	}
+
+	var probeRefs []dbChaosExperiment.ProbeAnnotations
+	if err := json.Unmarshal([]byte(value), &probeRefs); err != nil {
+		return nil, err
+	}
+
+	return probeRefs, nil
 }
 
 func InsertProbeRefAnnotation(rawYaml, value string) (string, error) {
@@ -458,7 +437,7 @@ func InsertProbeRefAnnotation(rawYaml, value string) (string, error) {
 		metadata.(map[string]interface{})["annotations"] = annotations
 	}
 
-	annotations.(map[string]interface{})["probeRef"] = value
+	annotations.(map[string]interface{})[probeRefAnnotationKey] = value
 
 	result, err := yaml.Marshal(dataMap)
 	if err != nil {

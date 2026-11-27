@@ -21,7 +21,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
@@ -750,9 +749,8 @@ func (p *probeService) GenerateExperimentManifestWithProbes(manifest string, pro
 			data := artifact[0].Raw.Data
 			if len(data) > 0 {
 				var (
-					meta       v1alpha1.ChaosEngine
-					annotation = make(map[string]string)
-					probes     []v1alpha1.ProbeAttributes
+					meta   v1alpha1.ChaosEngine
+					probes []v1alpha1.ProbeAttributes
 				)
 
 				err := yaml.Unmarshal([]byte(data), &meta)
@@ -763,107 +761,98 @@ func (p *probeService) GenerateExperimentManifestWithProbes(manifest string, pro
 
 					probes = meta.Spec.Experiments[0].Spec.Probe
 
-					if meta.Annotations != nil {
-						annotation = meta.Annotations
+					probeRefs, err := utils.ParseProbeRefAnnotation(meta.Annotations)
+					if err != nil {
+						return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 					}
+					for _, annotationKey := range probeRefs {
+						probe, err := p.probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
+						if err != nil {
+							return argoTypes.Workflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
+						}
+						probeManifestString, err := p.GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
+						if err != nil {
+							return argoTypes.Workflow{}, fmt.Errorf("failed to generate probe manifest, error: %s", err.Error())
+						}
 
-					for _, key := range annotation {
-						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-						if strings.HasPrefix(key, "[{\"name\"") {
-							err := json.Unmarshal([]byte(key), &manifestAnnotation)
+						if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
+							var httpProbe HTTPProbeAttributes
+							err := json.Unmarshal([]byte(probeManifestString), &httpProbe)
 							if err != nil {
-								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
+								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal http probe, error: %s", err.Error())
 							}
-							for _, annotationKey := range manifestAnnotation {
-								probe, err := p.probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
-								if err != nil {
-									return argoTypes.Workflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
-								}
-								probeManifestString, err := p.GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
-								if err != nil {
-									return argoTypes.Workflow{}, fmt.Errorf("failed to generate probe manifest, error: %s", err.Error())
-								}
 
-								if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
-									var httpProbe HTTPProbeAttributes
-									err := json.Unmarshal([]byte(probeManifestString), &httpProbe)
-									if err != nil {
-										return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal http probe, error: %s", err.Error())
-									}
-
-									probes = append(probes, v1alpha1.ProbeAttributes{
-										Name: httpProbe.Name,
-										Type: httpProbe.Type,
-										HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
-											URL:                httpProbe.HTTPProbeInputs.URL,
-											InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
-											Method:             httpProbe.HTTPProbeInputs.Method,
-										},
-										RunProperties: httpProbe.RunProperties,
-										Mode:          httpProbe.Mode,
-									})
-								} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
-									var cmdProbe CMDProbeAttributes
-									err := json.Unmarshal([]byte(probeManifestString), &cmdProbe)
-									if err != nil {
-										return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal cmd probe, error: %s", err.Error())
-									}
-
-									probes = append(probes, v1alpha1.ProbeAttributes{
-										Name: cmdProbe.Name,
-										Type: cmdProbe.Type,
-										CmdProbeInputs: &v1alpha1.CmdProbeInputs{
-											Command:    cmdProbe.CmdProbeInputs.Command,
-											Comparator: cmdProbe.CmdProbeInputs.Comparator,
-											Source:     cmdProbe.CmdProbeInputs.Source,
-										},
-										RunProperties: cmdProbe.RunProperties,
-										Mode:          cmdProbe.Mode,
-									})
-								} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
-									var promProbe PROMProbeAttributes
-									err := json.Unmarshal([]byte(probeManifestString), &promProbe)
-									if err != nil {
-										return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal prom probe, error: %s", err.Error())
-									}
-
-									probes = append(probes, v1alpha1.ProbeAttributes{
-										Name: promProbe.Name,
-										Type: promProbe.Type,
-										PromProbeInputs: &v1alpha1.PromProbeInputs{
-											Endpoint:   promProbe.PromProbeInputs.Endpoint,
-											Query:      promProbe.PromProbeInputs.Query,
-											QueryPath:  promProbe.PromProbeInputs.QueryPath,
-											Comparator: promProbe.PromProbeInputs.Comparator,
-										},
-										RunProperties: promProbe.RunProperties,
-										Mode:          promProbe.Mode,
-									})
-								} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
-									var k8sProbe K8SProbeAttributes
-									err := json.Unmarshal([]byte(probeManifestString), &k8sProbe)
-									if err != nil {
-										return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal k8s probe, error: %s", err.Error())
-									}
-
-									probes = append(probes, v1alpha1.ProbeAttributes{
-										Name: k8sProbe.Name,
-										Type: k8sProbe.Type,
-										K8sProbeInputs: &v1alpha1.K8sProbeInputs{
-											Group:         k8sProbe.K8sProbeInputs.Group,
-											Version:       k8sProbe.K8sProbeInputs.Version,
-											Resource:      k8sProbe.K8sProbeInputs.Resource,
-											ResourceNames: k8sProbe.K8sProbeInputs.ResourceNames,
-											Namespace:     k8sProbe.K8sProbeInputs.Namespace,
-											FieldSelector: k8sProbe.K8sProbeInputs.FieldSelector,
-											LabelSelector: k8sProbe.K8sProbeInputs.LabelSelector,
-											Operation:     k8sProbe.K8sProbeInputs.Operation,
-										},
-										RunProperties: k8sProbe.RunProperties,
-										Mode:          k8sProbe.Mode,
-									})
-								}
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: httpProbe.Name,
+								Type: httpProbe.Type,
+								HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
+									URL:                httpProbe.HTTPProbeInputs.URL,
+									InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
+									Method:             httpProbe.HTTPProbeInputs.Method,
+								},
+								RunProperties: httpProbe.RunProperties,
+								Mode:          httpProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
+							var cmdProbe CMDProbeAttributes
+							err := json.Unmarshal([]byte(probeManifestString), &cmdProbe)
+							if err != nil {
+								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal cmd probe, error: %s", err.Error())
 							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: cmdProbe.Name,
+								Type: cmdProbe.Type,
+								CmdProbeInputs: &v1alpha1.CmdProbeInputs{
+									Command:    cmdProbe.CmdProbeInputs.Command,
+									Comparator: cmdProbe.CmdProbeInputs.Comparator,
+									Source:     cmdProbe.CmdProbeInputs.Source,
+								},
+								RunProperties: cmdProbe.RunProperties,
+								Mode:          cmdProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
+							var promProbe PROMProbeAttributes
+							err := json.Unmarshal([]byte(probeManifestString), &promProbe)
+							if err != nil {
+								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal prom probe, error: %s", err.Error())
+							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: promProbe.Name,
+								Type: promProbe.Type,
+								PromProbeInputs: &v1alpha1.PromProbeInputs{
+									Endpoint:   promProbe.PromProbeInputs.Endpoint,
+									Query:      promProbe.PromProbeInputs.Query,
+									QueryPath:  promProbe.PromProbeInputs.QueryPath,
+									Comparator: promProbe.PromProbeInputs.Comparator,
+								},
+								RunProperties: promProbe.RunProperties,
+								Mode:          promProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
+							var k8sProbe K8SProbeAttributes
+							err := json.Unmarshal([]byte(probeManifestString), &k8sProbe)
+							if err != nil {
+								return argoTypes.Workflow{}, fmt.Errorf("failed to unmarshal k8s probe, error: %s", err.Error())
+							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: k8sProbe.Name,
+								Type: k8sProbe.Type,
+								K8sProbeInputs: &v1alpha1.K8sProbeInputs{
+									Group:         k8sProbe.K8sProbeInputs.Group,
+									Version:       k8sProbe.K8sProbeInputs.Version,
+									Resource:      k8sProbe.K8sProbeInputs.Resource,
+									ResourceNames: k8sProbe.K8sProbeInputs.ResourceNames,
+									Namespace:     k8sProbe.K8sProbeInputs.Namespace,
+									FieldSelector: k8sProbe.K8sProbeInputs.FieldSelector,
+									LabelSelector: k8sProbe.K8sProbeInputs.LabelSelector,
+									Operation:     k8sProbe.K8sProbeInputs.Operation,
+								},
+								RunProperties: k8sProbe.RunProperties,
+								Mode:          k8sProbe.Mode,
+							})
 						}
 					}
 
@@ -908,9 +897,8 @@ func (p *probeService) GenerateCronExperimentManifestWithProbes(manifest string,
 			data := artifact[0].Raw.Data
 			if len(data) > 0 {
 				var (
-					meta       v1alpha1.ChaosEngine
-					annotation = make(map[string]string)
-					probes     []v1alpha1.ProbeAttributes
+					meta   v1alpha1.ChaosEngine
+					probes []v1alpha1.ProbeAttributes
 				)
 
 				if err := yaml.Unmarshal([]byte(data), &meta); err != nil {
@@ -921,99 +909,92 @@ func (p *probeService) GenerateCronExperimentManifestWithProbes(manifest string,
 
 					probes = meta.Spec.Experiments[0].Spec.Probe
 
-					if meta.Annotations != nil {
-						annotation = meta.Annotations
+					probeRefs, err := utils.ParseProbeRefAnnotation(meta.Annotations)
+					if err != nil {
+						return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
 					}
-
-					for _, key := range annotation {
-						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-						err := json.Unmarshal([]byte(key), &manifestAnnotation)
+					for _, annotationKey := range probeRefs {
+						probe, err := p.probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
 						if err != nil {
-							return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal experiment annotation object, error: %s", err.Error())
+							return argoTypes.CronWorkflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
 						}
-						for _, annotationKey := range manifestAnnotation {
-							probe, err := p.probeOperator.GetProbeByName(ctx, annotationKey.Name, projectID)
-							if err != nil {
-								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
+
+						probeManifestString, err := p.GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
+
+						if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
+							var httpProbe HTTPProbeAttributes
+							if err := json.Unmarshal([]byte(probeManifestString), &httpProbe); err != nil {
+								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal http probe, error: %s", err.Error())
 							}
 
-							probeManifestString, err := p.GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
-
-							if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
-								var httpProbe HTTPProbeAttributes
-								if err := json.Unmarshal([]byte(probeManifestString), &httpProbe); err != nil {
-									return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal http probe, error: %s", err.Error())
-								}
-
-								probes = append(probes, v1alpha1.ProbeAttributes{
-									Name: httpProbe.Name,
-									Type: httpProbe.Type,
-									HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
-										URL:                httpProbe.HTTPProbeInputs.URL,
-										InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
-										Method:             httpProbe.HTTPProbeInputs.Method,
-									},
-									RunProperties: httpProbe.RunProperties,
-									Mode:          httpProbe.Mode,
-								})
-							} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
-								var cmdProbe CMDProbeAttributes
-								if err := json.Unmarshal([]byte(probeManifestString), &cmdProbe); err != nil {
-									return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal cmd probe, error: %s", err.Error())
-								}
-
-								probes = append(probes, v1alpha1.ProbeAttributes{
-									Name: cmdProbe.Name,
-									Type: cmdProbe.Type,
-									CmdProbeInputs: &v1alpha1.CmdProbeInputs{
-										Command:    cmdProbe.CmdProbeInputs.Command,
-										Comparator: cmdProbe.CmdProbeInputs.Comparator,
-										Source:     cmdProbe.CmdProbeInputs.Source,
-									},
-									RunProperties: cmdProbe.RunProperties,
-									Mode:          cmdProbe.Mode,
-								})
-							} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
-								var promProbe PROMProbeAttributes
-								if err := json.Unmarshal([]byte(probeManifestString), &promProbe); err != nil {
-									return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal prom probe, error: %s", err.Error())
-								}
-
-								probes = append(probes, v1alpha1.ProbeAttributes{
-									Name: promProbe.Name,
-									Type: promProbe.Type,
-									PromProbeInputs: &v1alpha1.PromProbeInputs{
-										Endpoint:   promProbe.PromProbeInputs.Endpoint,
-										Query:      promProbe.PromProbeInputs.Query,
-										QueryPath:  promProbe.PromProbeInputs.QueryPath,
-										Comparator: promProbe.PromProbeInputs.Comparator,
-									},
-									RunProperties: promProbe.RunProperties,
-									Mode:          promProbe.Mode,
-								})
-							} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
-								var k8sProbe K8SProbeAttributes
-								if err := json.Unmarshal([]byte(probeManifestString), &k8sProbe); err != nil {
-									return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal k8s probe, error: %s", err.Error())
-								}
-
-								probes = append(probes, v1alpha1.ProbeAttributes{
-									Name: k8sProbe.Name,
-									Type: k8sProbe.Type,
-									K8sProbeInputs: &v1alpha1.K8sProbeInputs{
-										Group:         k8sProbe.K8sProbeInputs.Group,
-										Version:       k8sProbe.K8sProbeInputs.Version,
-										Resource:      k8sProbe.K8sProbeInputs.Resource,
-										ResourceNames: k8sProbe.K8sProbeInputs.ResourceNames,
-										Namespace:     k8sProbe.K8sProbeInputs.Namespace,
-										FieldSelector: k8sProbe.K8sProbeInputs.FieldSelector,
-										LabelSelector: k8sProbe.K8sProbeInputs.LabelSelector,
-										Operation:     k8sProbe.K8sProbeInputs.Operation,
-									},
-									RunProperties: k8sProbe.RunProperties,
-									Mode:          k8sProbe.Mode,
-								})
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: httpProbe.Name,
+								Type: httpProbe.Type,
+								HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
+									URL:                httpProbe.HTTPProbeInputs.URL,
+									InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
+									Method:             httpProbe.HTTPProbeInputs.Method,
+								},
+								RunProperties: httpProbe.RunProperties,
+								Mode:          httpProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
+							var cmdProbe CMDProbeAttributes
+							if err := json.Unmarshal([]byte(probeManifestString), &cmdProbe); err != nil {
+								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal cmd probe, error: %s", err.Error())
 							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: cmdProbe.Name,
+								Type: cmdProbe.Type,
+								CmdProbeInputs: &v1alpha1.CmdProbeInputs{
+									Command:    cmdProbe.CmdProbeInputs.Command,
+									Comparator: cmdProbe.CmdProbeInputs.Comparator,
+									Source:     cmdProbe.CmdProbeInputs.Source,
+								},
+								RunProperties: cmdProbe.RunProperties,
+								Mode:          cmdProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
+							var promProbe PROMProbeAttributes
+							if err := json.Unmarshal([]byte(probeManifestString), &promProbe); err != nil {
+								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal prom probe, error: %s", err.Error())
+							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: promProbe.Name,
+								Type: promProbe.Type,
+								PromProbeInputs: &v1alpha1.PromProbeInputs{
+									Endpoint:   promProbe.PromProbeInputs.Endpoint,
+									Query:      promProbe.PromProbeInputs.Query,
+									QueryPath:  promProbe.PromProbeInputs.QueryPath,
+									Comparator: promProbe.PromProbeInputs.Comparator,
+								},
+								RunProperties: promProbe.RunProperties,
+								Mode:          promProbe.Mode,
+							})
+						} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
+							var k8sProbe K8SProbeAttributes
+							if err := json.Unmarshal([]byte(probeManifestString), &k8sProbe); err != nil {
+								return argoTypes.CronWorkflow{}, fmt.Errorf("failed to unmarshal k8s probe, error: %s", err.Error())
+							}
+
+							probes = append(probes, v1alpha1.ProbeAttributes{
+								Name: k8sProbe.Name,
+								Type: k8sProbe.Type,
+								K8sProbeInputs: &v1alpha1.K8sProbeInputs{
+									Group:         k8sProbe.K8sProbeInputs.Group,
+									Version:       k8sProbe.K8sProbeInputs.Version,
+									Resource:      k8sProbe.K8sProbeInputs.Resource,
+									ResourceNames: k8sProbe.K8sProbeInputs.ResourceNames,
+									Namespace:     k8sProbe.K8sProbeInputs.Namespace,
+									FieldSelector: k8sProbe.K8sProbeInputs.FieldSelector,
+									LabelSelector: k8sProbe.K8sProbeInputs.LabelSelector,
+									Operation:     k8sProbe.K8sProbeInputs.Operation,
+								},
+								RunProperties: k8sProbe.RunProperties,
+								Mode:          k8sProbe.Mode,
+							})
 						}
 					}
 

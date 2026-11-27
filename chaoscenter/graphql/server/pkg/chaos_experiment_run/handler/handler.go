@@ -734,15 +734,12 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 					}
 
 					var annotationArray []string
-					for _, key := range annotation {
-						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
-						err := json.Unmarshal([]byte(key), &manifestAnnotation)
-						if err != nil {
-							return nil, errors.New("failed to unmarshal experiment annotation object")
-						}
-						for _, annotationKey := range manifestAnnotation {
-							annotationArray = append(annotationArray, annotationKey.Name)
-						}
+					probeRefs, err := probeUtils.ParseProbeRefAnnotation(annotation)
+					if err != nil {
+						return nil, errors.New("failed to unmarshal experiment annotation object")
+					}
+					for _, probeRef := range probeRefs {
+						annotationArray = append(annotationArray, probeRef.Name)
 					}
 					probes = append(probes, dbChaosExperimentRun.Probes{
 						artifact[0].Name,
