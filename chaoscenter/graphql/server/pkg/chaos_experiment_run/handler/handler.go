@@ -203,17 +203,18 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 		var (
 			weightages          []*model.Weightages
 			workflowRunManifest string
+			expType             string
+			expName             string
 		)
 
-		if len(wfRun.ExperimentDetails[0].Revision) > 0 {
-			revision := wfRun.ExperimentDetails[0].Revision[0]
-			for _, v := range revision.Weightages {
-				weightages = append(weightages, &model.Weightages{
-					FaultName: v.FaultName,
-					Weightage: v.Weightage,
-				})
+		if len(wfRun.ExperimentDetails) > 0 {
+			expType = string(wfRun.ExperimentDetails[0].ExperimentType)
+			expName = wfRun.ExperimentDetails[0].ExperimentName
+			if len(wfRun.ExperimentDetails[0].Revision) > 0 {
+				revision := wfRun.ExperimentDetails[0].Revision[0]
+				weightages = buildModelWeightages(revision.Weightages)
+				workflowRunManifest = revision.ExperimentManifest
 			}
-			workflowRunManifest = revision.ExperimentManifest
 		}
 		var chaosInfrastructure *model.Infra
 
@@ -237,10 +238,8 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			}
 		}
 
-		expType := string(wfRun.ExperimentDetails[0].ExperimentType)
-
 		expRunResponse = &model.ExperimentRun{
-			ExperimentName:     wfRun.ExperimentDetails[0].ExperimentName,
+			ExperimentName:     expName,
 			ExperimentID:       wfRun.ExperimentID,
 			ExperimentRunID:    wfRun.ExperimentRunID,
 			ExperimentType:     &expType,
@@ -565,7 +564,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 		workflows []dbChaosExperiment.AggregatedExperimentRuns
 	)
 
-	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
+	if err = workflowsCursor.All(context.Background(), &workflows); err != nil {
 		return &model.ListExperimentRunResponse{
 			TotalNoOfExperimentRuns: 0,
 			ExperimentRuns:          result,
@@ -591,12 +590,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			workflowName = workflow.ExperimentDetails[0].ExperimentName
 			if len(workflow.ExperimentDetails[0].Revision) > 0 {
 				revision := workflow.ExperimentDetails[0].Revision[0]
-				for _, v := range revision.Weightages {
-					weightages = append(weightages, &model.Weightages{
-						FaultName: v.FaultName,
-						Weightage: v.Weightage,
-					})
-				}
+				weightages = buildModelWeightages(revision.Weightages)
 				workflowRunManifest = revision.ExperimentManifest
 			}
 		}
@@ -763,7 +757,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
 					}
 
-					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+					if len(meta.Spec.Experiments) > 0 && len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
 						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
 					}
 					res, err := yaml.Marshal(&meta)
@@ -811,7 +805,10 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 	)
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
+	tkn, ok := ctx.Value(authorization.AuthKey).(string)
+	if !ok {
+		return nil, errors.New("authorization token not found in context")
+	}
 	username, err := authorization.GetUsername(tkn)
 	if err != nil {
 		return nil, err
@@ -822,6 +819,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		logrus.Errorf("failed to start mongo session %v", err)
 		return nil, err
 	}
+	defer session.EndSession(ctx)
 
 	err = mongo.WithSession(context.Background(), session, func(sessionContext mongo.SessionContext) error {
 		if err = session.StartTransaction(txnOpts); err != nil {
@@ -873,6 +871,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		err = c.chaosExperimentOperator.UpdateChaosExperiment(sessionContext, filter, update)
 		if err != nil {
 			logrus.Error("Failed to update experiment collection")
+			return err
 		}
 
 		err = c.chaosExperimentRunOperator.CreateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
@@ -914,13 +913,12 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 
 	if err != nil {
 		if abortErr := session.AbortTransaction(ctx); abortErr != nil {
-			logrus.Errorf("failed to abort session transaction %v", err)
+			logrus.Errorf("failed to abort session transaction %v", abortErr)
 			return nil, abortErr
 		}
 		return nil, err
 	}
 
-	session.EndSession(ctx)
 	// Track experiment run creation and status after successful transaction
 	metrics.ExperimentRunsTotal.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, workflow.InfraID).Inc()
 	metrics.ExperimentStatus.WithLabelValues(projectID, workflow.ExperimentID, workflow.Name, string(model.ExperimentRunStatusQueued), workflow.InfraID).Set(0)
@@ -1000,7 +998,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 						meta.Labels["step_pod_name"] = "{{pod.name}}"
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
 					}
-					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+					if len(meta.Spec.Experiments) > 0 && len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
 						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
 					}
 					res, err := yaml.Marshal(&meta)
@@ -1018,7 +1016,10 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
+	tkn, ok := ctx.Value(authorization.AuthKey).(string)
+	if !ok {
+		return errors.New("authorization token not found in context")
+	}
 	username, err := authorization.GetUsername(tkn)
 	if err != nil {
 		return err
@@ -1122,6 +1123,10 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 	logrus.WithFields(logFields).Info("new workflow event received")
 
+	if len(experiment.Revision) == 0 {
+		return "", fmt.Errorf("no revisions found for experimentID: %s", event.ExperimentID)
+	}
+
 	expType := experiment.ExperimentType
 	probes, err := probeUtils.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
 	if err != nil {
@@ -1170,6 +1175,16 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		}
 	}
 
+	updatedBy, err := base64.RawURLEncoding.DecodeString(event.UpdatedBy)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse updated by field: %w", err)
+	}
+
+	var infraID string
+	if event.InfraID != nil {
+		infraID = event.InfraID.InfraID
+	}
+
 	//TODO check for mongo transaction
 	var (
 		wc      = writeconcern.New(writeconcern.WMajority())
@@ -1182,6 +1197,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		logrus.WithFields(logFields).Errorf("failed to start mongo session %v", err)
 		return "", err
 	}
+	defer session.EndSession(ctx)
 	//
 	var (
 		isRemoved   = false
@@ -1209,10 +1225,6 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		experimentRunCount, err := c.chaosExperimentRunOperator.CountExperimentRuns(sessionContext, query)
 		if err != nil {
 			return err
-		}
-		updatedBy, err := base64.RawURLEncoding.DecodeString(event.UpdatedBy)
-		if err != nil {
-			logrus.Fatalf("Failed to parse updated by field %v", err)
 		}
 		expRunDetail := []dbChaosExperiment.ExperimentRunDetail{
 			{
@@ -1296,7 +1308,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		}
 
 		count, err := c.chaosExperimentRunOperator.UpdateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
-			InfraID:         event.InfraID.InfraID,
+			InfraID:         infraID,
 			ProjectID:       experiment.ProjectID,
 			ExperimentRunID: event.ExperimentRunID,
 			ExperimentID:    event.ExperimentID,
@@ -1344,13 +1356,25 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 	if err != nil {
 		if abortErr := session.AbortTransaction(ctx); abortErr != nil {
-			logrus.WithFields(logFields).Errorf("failed to abort session transaction %v", err)
+			logrus.WithFields(logFields).Errorf("failed to abort session transaction %v", abortErr)
 			return "", abortErr
 		}
 		return "", err
 	}
 
-	session.EndSession(ctx)
-
 	return fmt.Sprintf("Experiment run received for for ExperimentID: %s, ExperimentRunID: %s", event.ExperimentID, event.ExperimentRunID), nil
+}
+
+func buildModelWeightages(inputs []*dbChaosExperiment.WeightagesInput) []*model.Weightages {
+	var weightages []*model.Weightages
+	for _, v := range inputs {
+		if v == nil {
+			continue
+		}
+		weightages = append(weightages, &model.Weightages{
+			FaultName: v.FaultName,
+			Weightage: v.Weightage,
+		})
+	}
+	return weightages
 }
