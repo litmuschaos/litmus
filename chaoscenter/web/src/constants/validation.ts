@@ -33,3 +33,13 @@ export const IMAGE_REPO_REGEX = /^[a-z0-9]([a-z0-9._/-]*[a-z0-9])?$/;
 // [a-z0-9])?$        # Must end with lowercase letter or digit (if more than 1 char)
 // Max 253 characters (enforced by Yup, not regex)
 export const K8S_SECRET_NAME_REGEX = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/;
+
+// Probe run property duration validation (probeTimeout, interval, probePollingInterval, initialDelay, evaluationTimeout)
+// The chaos runner parses these fields with Go's time.ParseDuration, so the same formats are accepted here.
+// Valid formats: 500ms, 10s, 1m30s, 1.5h, 2h45m (empty is allowed, required fields are checked separately)
+// ^$|                            # Empty value
+// ^(                             # One or more groups of
+//   \d+(\.\d+)?                  # a whole or decimal number
+//   (ns|us|µs|μs|ms|s|m|h)       # followed by a unit (µs and μs are the two micro signs Go accepts)
+// )+$
+export const PROBE_DURATION_REGEX = /^$|^(\d+(\.\d+)?(ns|us|µs|μs|ms|s|m|h))+$/;

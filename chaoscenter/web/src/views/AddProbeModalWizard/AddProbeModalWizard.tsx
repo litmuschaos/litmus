@@ -35,6 +35,7 @@ import { ProbeType, Probe, InfrastructureType } from '@api/entities';
 import type { CmdProbeInputs, HTTPProbeInputs, K8sProbeInputs, PromProbeInputs, RunProperty } from '@models';
 import Loader from '@components/Loader';
 import YAMLBuilder from '@components/YAMLBuilder';
+import { PROBE_DURATION_REGEX } from '@constants/validation';
 import css from './AddProbeModalWizard.module.scss';
 
 enum HTTPMethod {
@@ -293,7 +294,6 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
    * @returns {Yup} the yup object which validates the properties according to the nested structure
    */
   const validateProperties = () => {
-    const unitsRegex = /^$|^(\d+)(ns|us|ms|s|m|h)$/;
     /**
      * Objects shared between the 5 probe keys `httpProperties`, `cmdProperties`, `promProperties`,
      * `k8sProperties` and `sloProperties`
@@ -301,19 +301,34 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
      */
     const sharedValidation = {
       probeTimeout: Yup.string()
-        .matches(unitsRegex, 'Probe timeout should contain values in ns, us, ms, m, s or h only')
+        .matches(
+          PROBE_DURATION_REGEX,
+          'Probe timeout should be a duration such as 30s, 1m30s or 1.5h, in ns, us, ms, s, m or h'
+        )
         .required(getString(`probeValidation.timeout`)),
       interval: Yup.string()
-        .matches(unitsRegex, 'Probe interval should contain values in ns, us, ms, m, s or h only')
+        .matches(
+          PROBE_DURATION_REGEX,
+          'Probe interval should be a duration such as 30s, 1m30s or 1.5h, in ns, us, ms, s, m or h'
+        )
         .required(getString(`probeValidation.interval`)),
       probePollingInterval: Yup.string()
-        .matches(unitsRegex, 'Probe polling interval should contain values in ns, us, ms, m, s or h only')
+        .matches(
+          PROBE_DURATION_REGEX,
+          'Probe polling interval should be a duration such as 30s, 1m30s or 1.5h, in ns, us, ms, s, m or h'
+        )
         .nullable(),
       initialDelay: Yup.string()
-        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .matches(
+          PROBE_DURATION_REGEX,
+          'Probe initial delay should be a duration such as 30s, 1m30s or 1.5h, in ns, us, ms, s, m or h'
+        )
         .nullable(),
       evaluationTimeout: Yup.string()
-        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .matches(
+          PROBE_DURATION_REGEX,
+          'Probe evaluation timeout should be a duration such as 30s, 1m30s or 1.5h, in ns, us, ms, s, m or h'
+        )
         .nullable()
     };
 
