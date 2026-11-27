@@ -679,12 +679,7 @@ func (c *chaosHubService) GetChaosHub(ctx context.Context, chaosHubID string, pr
 
 	sum := 0
 	experimentCount := 0
-	var chartPath string
-	if hub.IsDefault {
-		chartPath = DefaultPath + "default/" + hub.Name
-	} else {
-		chartPath = DefaultPath + hub.ProjectID + "/" + hub.Name
-	}
+	chartPath := handler.GetChartsPath(model.CloningInput{Name: hub.Name}, hub.ProjectID, hub.IsDefault)
 	chartsData, err := handler.GetChartsData(chartPath)
 	if err != nil {
 		sum = 0
