@@ -1,0 +1,1 @@
+export { RemoveGroupView } from './RemoveGroup';

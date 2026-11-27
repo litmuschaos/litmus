@@ -29,6 +29,11 @@ type projectService interface {
 	GetProjectOwners(projectID string) ([]*entities.Member, error)
 	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
+	GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error)
+	AddGroupMember(projectID string, groupMember *entities.GroupMember) error
+	RemoveGroupMember(projectID string, groupName string) error
+	UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error
+	GetProjectsByGroup(groupNames []string) ([]*entities.Project, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -99,4 +104,24 @@ func (a applicationService) ListInvitations(userID string, invitationState entit
 
 func (a applicationService) DeleteProject(projectID string) error {
 	return a.projectRepository.DeleteProject(projectID)
+}
+
+func (a applicationService) GetProjectGroupMembers(projectID string) ([]*entities.GroupMember, error) {
+	return a.projectRepository.GetProjectGroupMembers(projectID)
+}
+
+func (a applicationService) AddGroupMember(projectID string, groupMember *entities.GroupMember) error {
+	return a.projectRepository.AddGroupMember(projectID, groupMember)
+}
+
+func (a applicationService) RemoveGroupMember(projectID string, groupName string) error {
+	return a.projectRepository.RemoveGroupMember(projectID, groupName)
+}
+
+func (a applicationService) UpdateGroupMemberRole(projectID string, groupName string, role *entities.MemberRole) error {
+	return a.projectRepository.UpdateGroupMemberRole(projectID, groupName, role)
+}
+
+func (a applicationService) GetProjectsByGroup(groupNames []string) ([]*entities.Project, error) {
+	return a.projectRepository.GetProjectsByGroup(groupNames)
 }

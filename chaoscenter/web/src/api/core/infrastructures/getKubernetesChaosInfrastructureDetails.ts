@@ -54,8 +54,8 @@ export const getChaosInfraDetails = ({
     `,
     {
       ...options,
-       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
-       variables: { infraID, projectID },
+      fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
+      variables: { infraID, projectID },
     },
   );
   return {

@@ -23,6 +23,7 @@ type userService interface {
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
+	UpdateUserOIDCGroups(userID string, groups []string) error
 }
 
 // LoginUser is the implementation of the repository function `LoginUser`
@@ -87,4 +88,8 @@ func (a applicationService) UpdateUserState(ctx context.Context, username string
 
 func (a applicationService) InviteUsers(invitedUsers []string) (*[]entities.User, error) {
 	return a.userRepository.InviteUsers(invitedUsers)
+}
+
+func (a applicationService) UpdateUserOIDCGroups(userID string, groups []string) error {
+	return a.userRepository.UpdateUserOIDCGroups(userID, groups)
 }

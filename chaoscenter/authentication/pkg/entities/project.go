@@ -3,12 +3,13 @@ package entities
 // Project contains the required fields to be stored in the database for a project
 type Project struct {
 	Audit       `bson:",inline"`
-	ID          string    `bson:"_id" json:"projectID"`
-	Name        string    `bson:"name" json:"name"`
-	Members     []*Member `bson:"members" json:"members"`
-	State       *string   `bson:"state" json:"state"`
-	Tags        []*string `bson:"tags" json:"tags"`
-	Description *string   `bson:"description" json:"description"`
+	ID          string         `bson:"_id" json:"projectID"`
+	Name        string         `bson:"name" json:"name"`
+	Members     []*Member      `bson:"members" json:"members"`
+	Groups      []*GroupMember `bson:"groups,omitempty" json:"groups,omitempty"`
+	State       *string        `bson:"state" json:"state"`
+	Tags        []*string      `bson:"tags" json:"tags"`
+	Description *string        `bson:"description" json:"description"`
 }
 
 type Owner struct {
@@ -68,6 +69,22 @@ type MemberInput struct {
 	Role      *MemberRole `json:"role"`
 }
 
+// GroupMember contains the required fields for an OIDC group assigned to a project
+type GroupMember struct {
+	Group       string     `bson:"group" json:"group"`
+	DisplayName string     `bson:"display_name,omitempty" json:"displayName,omitempty"`
+	Role        MemberRole `bson:"role" json:"role"`
+	AssignedAt  int64      `bson:"assigned_at" json:"assignedAt"`
+}
+
+// GroupMemberInput is the input for group-to-project operations
+type GroupMemberInput struct {
+	ProjectID   string      `json:"projectID"`
+	Group       string      `json:"group"`
+	DisplayName string      `json:"displayName,omitempty"`
+	Role        *MemberRole `json:"role"`
+}
+
 type ListInvitationResponse struct {
 	ProjectID      string     `json:"projectID"`
 	ProjectName    string     `json:"projectName"`
@@ -87,6 +104,7 @@ type Pagination struct {
 
 type ListProjectRequest struct {
 	UserID     string                  `json:"userID"`
+	Groups     []string                `json:"groups,omitempty"`
 	Sort       *SortInput              `json:"sort,omitempty"`
 	Filter     *ListProjectInputFilter `json:"filter,omitempty"`
 	Pagination *Pagination             `json:"pagination,omitempty"`

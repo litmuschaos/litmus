@@ -28,4 +28,3 @@ declare namespace YamlBuilderModuleScssNamespace {
 declare const YamlBuilderModuleScssModule: YamlBuilderModuleScssNamespace.IYamlBuilderModuleScss;
 
 export = YamlBuilderModuleScssModule;
-

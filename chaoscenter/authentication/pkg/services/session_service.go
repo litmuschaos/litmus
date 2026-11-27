@@ -74,6 +74,7 @@ func (a applicationService) GetSignedJWT(user *entities.User, jwtSecret string) 
 	claims["uid"] = user.ID
 	claims["role"] = user.Role
 	claims["username"] = user.Username
+	claims["groups"] = user.OIDCGroups
 	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
 
 	tokenString, err := token.SignedString([]byte(jwtSecret))

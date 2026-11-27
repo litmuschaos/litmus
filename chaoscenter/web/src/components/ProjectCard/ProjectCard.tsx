@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useAppStore } from '@context';
 import { useStrings } from '@strings';
 import type { Project } from '@api/auth';
-import { setUserDetails } from '@utils';
+import { setUserDetails, getEffectiveProjectRole } from '@utils';
 import styles from './ProjectCard.module.scss';
 
 interface ProjectCardProps {
@@ -27,8 +27,8 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
   });
 
   const handleProjectSelect = (): void => {
-    const projectRole = data.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
-    updateAppStore({ projectID: data.projectID, projectName: data.name });
+    const projectRole = getEffectiveProjectRole(data, currentUserInfo?.ID);
+    updateAppStore({ projectID: data.projectID, projectName: data.name, projectRole });
     setUserDetails({
       projectRole,
       projectID: data.projectID

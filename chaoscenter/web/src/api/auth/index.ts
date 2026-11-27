@@ -218,6 +218,37 @@ export type {
 export { updateState, useUpdateStateMutation } from './hooks/useUpdateStateMutation';
 export type { UsersErrorResponse, UsersOkResponse, UsersProps } from './hooks/useUsersQuery';
 export { useUsersQuery, users } from './hooks/useUsersQuery';
+export type {
+  GetProjectGroupsErrorResponse,
+  GetProjectGroupsOkResponse,
+  GetProjectGroupsProps,
+  GetProjectGroupsQueryPathParams
+} from './hooks/useGetProjectGroupsQuery';
+export { getProjectGroups, useGetProjectGroupsQuery } from './hooks/useGetProjectGroupsQuery';
+export type {
+  AddGroupToProjectErrorResponse,
+  AddGroupToProjectMutationProps,
+  AddGroupToProjectOkResponse,
+  AddGroupToProjectProps,
+  AddGroupToProjectRequestBody
+} from './hooks/useAddGroupToProjectMutation';
+export { addGroupToProject, useAddGroupToProjectMutation } from './hooks/useAddGroupToProjectMutation';
+export type {
+  RemoveGroupFromProjectErrorResponse,
+  RemoveGroupFromProjectMutationProps,
+  RemoveGroupFromProjectOkResponse,
+  RemoveGroupFromProjectProps,
+  RemoveGroupFromProjectRequestBody
+} from './hooks/useRemoveGroupFromProjectMutation';
+export { removeGroupFromProject, useRemoveGroupFromProjectMutation } from './hooks/useRemoveGroupFromProjectMutation';
+export type {
+  UpdateGroupRoleErrorResponse,
+  UpdateGroupRoleMutationProps,
+  UpdateGroupRoleOkResponse,
+  UpdateGroupRoleProps,
+  UpdateGroupRoleRequestBody
+} from './hooks/useUpdateGroupRoleMutation';
+export { updateGroupRole, useUpdateGroupRoleMutation } from './hooks/useUpdateGroupRoleMutation';
 export type { DeclineInvitationBodyRequestBody } from './requestBodies/DeclineInvitationBodyRequestBody';
 export type { ActionBy } from './schemas/ActionBy';
 export type { ApiToken } from './schemas/ApiToken';
@@ -238,3 +269,4 @@ export type { ResponseErrOldPassword } from './schemas/ResponseErrOldPassword';
 export type { ResponseMessageResponse } from './schemas/ResponseMessageResponse';
 export type { User } from './schemas/User';
 export type { Users } from './schemas/Users';
+export type { GroupMember } from './schemas/GroupMember';

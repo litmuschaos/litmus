@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
@@ -195,12 +196,16 @@ func TestOAuthCallbackAcceptsVerifiedEmail(t *testing.T) {
 
 	service := new(mocks.MockedApplicationService)
 	service.On("LoginUser", mock.Anything).Return(&entities.User{
-		ID:       "user-id",
-		Username: "user@litmus.test",
-		Email:    "user@litmus.test",
+		ID:         "user-id",
+		Username:   "user@litmus.test",
+		Email:      "user@litmus.test",
+		OIDCGroups: []string{"previous-group"},
 	}, nil)
+	service.On("UpdateUserOIDCGroups", "user-id", []string{}).Return(nil).Once()
 	service.On("GetConfig", "salt").Return(&authConfig.AuthConfig{Value: "salt"}, nil)
-	service.On("GetSignedJWT", mock.Anything, mock.Anything).Return("user-session-token", nil)
+	service.On("GetSignedJWT", mock.MatchedBy(func(user *entities.User) bool {
+		return len(user.OIDCGroups) == 0
+	}), mock.Anything).Return("user-session-token", nil)
 	service.On("GetOwnerProjectIDs", mock.Anything, mock.Anything).
 		Return([]*entities.Project{{ID: "user-project"}}, nil)
 
@@ -212,4 +217,43 @@ func TestOAuthCallbackAcceptsVerifiedEmail(t *testing.T) {
 
 	assert.Equal(t, http.StatusPermanentRedirect, w.Code)
 	assert.Contains(t, w.Header().Get("Location"), "jwtToken=user-session-token")
+	service.AssertExpectations(t)
+}
+
+func TestOAuthCallbackFailsWhenGroupSyncFails(t *testing.T) {
+	const clientID = "litmus-test-client"
+
+	provider := newTestOIDCProvider(t, clientID, map[string]interface{}{
+		"email":          "user@litmus.test",
+		"email_verified": true,
+		"name":           "user",
+	})
+
+	utils.OAuthOIDCIssuer = provider.URL
+	utils.OAuthClientID = clientID
+	utils.OAuthClientSecret = "test-client-secret"
+	utils.OAuthCallBackURL = "http://localhost:3000/oauth/callback"
+	utils.OAuthJwtSecret = "test-oauth-state-secret"
+
+	state, err := utils.GenerateOAuthJWT()
+	assert.NoError(t, err)
+
+	service := new(mocks.MockedApplicationService)
+	service.On("LoginUser", mock.Anything).Return(&entities.User{
+		ID:         "user-id",
+		Username:   "user@litmus.test",
+		Email:      "user@litmus.test",
+		OIDCGroups: []string{"previous-group"},
+	}, nil)
+	service.On("UpdateUserOIDCGroups", "user-id", []string{}).Return(errors.New("database unavailable")).Once()
+
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Request = httptest.NewRequest(http.MethodGet, "/oauth/callback?state="+state+"&code=test-code", nil)
+
+	rest.OAuthCallback(service)(ctx)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	service.AssertNotCalled(t, "GetSignedJWT", mock.Anything, mock.Anything)
+	service.AssertExpectations(t)
 }

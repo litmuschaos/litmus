@@ -452,11 +452,11 @@ export class KubernetesYamlService extends ExperimentYamlService {
     }
 
     const existingRunnerTols = manifest.spec.components?.runner?.tolerations;
-    const normalizedRunnerTols = Array.isArray(existingRunnerTols) 
-      ? existingRunnerTols 
-      : existingRunnerTols 
-        ? [existingRunnerTols] 
-        : [];
+    const normalizedRunnerTols = Array.isArray(existingRunnerTols)
+      ? existingRunnerTols
+      : existingRunnerTols
+      ? [existingRunnerTols]
+      : [];
 
     manifest.spec.components = {
       ...manifest.spec.components,
@@ -470,8 +470,8 @@ export class KubernetesYamlService extends ExperimentYamlService {
     const normalizedExpTols = Array.isArray(existingExpTols)
       ? existingExpTols
       : existingExpTols
-        ? [existingExpTols]
-        : [];
+      ? [existingExpTols]
+      : [];
 
     manifest.spec.experiments[0].spec.components = {
       ...manifest.spec.experiments[0].spec.components,
