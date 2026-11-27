@@ -177,19 +177,13 @@ func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData Execu
 	result.TotalExperiments = len(weightMap)
 	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
-			experimentName := ""
 			if value.ChaosExp == nil {
 				continue
 			}
 
-			for expName := range weightMap {
-				if strings.Contains(value.ChaosExp.EngineName, expName) {
-					experimentName = expName
-				}
-			}
-			weight, ok := weightMap[experimentName]
 			// probeSuccessPercentage will be included only if chaosData is present
-			if ok {
+			if experimentName, ok := resolveWeightageKey(weightMap, value.ChaosExp); ok {
+				weight := weightMap[experimentName]
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
 				totalTestResult += weight * x
 			}
@@ -215,4 +209,30 @@ func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData Execu
 	}
 
 	return result, nil
+}
+
+// resolveWeightageKey returns the weightage key of the fault a chaos engine node ran. Map iteration
+// order is randomised, so when one fault name contains another (pod-delete, pod-delete-peer) a plain
+// scan of weightMap resolves a different weight per run. An exact experiment name wins, else the
+// longest matching key, so the same run always gets the same ResiliencyScore.
+func resolveWeightageKey(weightMap map[string]int, chaosExp *ChaosData) (string, bool) {
+	if chaosExp.ExperimentName != "" {
+		if _, ok := weightMap[chaosExp.ExperimentName]; ok {
+			return chaosExp.ExperimentName, true
+		}
+	}
+
+	var match string
+	found := false
+	for expName := range weightMap {
+		if !strings.Contains(chaosExp.EngineName, expName) {
+			continue
+		}
+		if !found || len(expName) > len(match) || (len(expName) == len(match) && expName < match) {
+			match = expName
+			found = true
+		}
+	}
+
+	return match, found
 }
