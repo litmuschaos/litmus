@@ -52,19 +52,26 @@ function timeDifference(current: number, previous: number): string {
   if (elapsed < milliSecondsPerMinute) {
     return 'less than 1 min ago';
   }
-  if (elapsed < milliSecondsPerHour) {
-    return `${Math.round(elapsed / milliSecondsPerMinute)} mins ago`;
+  // Round before choosing the unit, so that a value which rounds up to the next unit is shown in it
+  // (59.6 minutes is "1 hour ago", not "60 mins ago"), and use the singular for a count of 1.
+  const ago = (count: number, unit: string): string => `${count} ${unit}${count === 1 ? '' : 's'} ago`;
+  const minutes = Math.round(elapsed / milliSecondsPerMinute);
+  if (minutes < 60) {
+    return ago(minutes, 'min');
   }
-  if (elapsed < milliSecondsPerDay) {
-    return `${Math.round(elapsed / milliSecondsPerHour)} hours ago`;
+  const hours = Math.round(elapsed / milliSecondsPerHour);
+  if (hours < 24) {
+    return ago(hours, 'hour');
   }
-  if (elapsed < milliSecondsPerMonth) {
-    return `${Math.round(elapsed / milliSecondsPerDay)} days ago`;
+  const days = Math.round(elapsed / milliSecondsPerDay);
+  if (days < 30) {
+    return ago(days, 'day');
   }
-  if (elapsed < milliSecondsPerYear) {
-    return `${Math.round(elapsed / milliSecondsPerMonth)} months ago`;
+  const months = Math.round(elapsed / milliSecondsPerMonth);
+  if (months < 12) {
+    return ago(months, 'month');
   }
-  return `${Math.round(elapsed / milliSecondsPerYear)} years ago`;
+  return ago(Math.max(1, Math.round(elapsed / milliSecondsPerYear)), 'year');
 }
 
 export const timeDifferenceForDate = (date: number): string => {
