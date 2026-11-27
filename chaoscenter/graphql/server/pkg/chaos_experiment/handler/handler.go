@@ -278,6 +278,12 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		revID = uuid.New().String()
 	)
 
+	// experimentID is optional in ChaosExperimentRequest because the create mutation
+	// generates one, but an update has to name the experiment it changes.
+	if request.ExperimentID == nil || *request.ExperimentID == "" {
+		return nil, errors.New("experimentID is required to update an experiment")
+	}
+
 	// Check if the experiment name exists under same project
 	experiments, err := c.chaosExperimentOperator.GetExperiments(bson.D{
 		{"project_id", projectID},

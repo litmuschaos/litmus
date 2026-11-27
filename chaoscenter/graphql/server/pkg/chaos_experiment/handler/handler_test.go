@@ -721,6 +721,41 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "failure: experiment ID is not provided",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: existingExperimentName,
+				},
+			},
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
+				// An experiment with this name exists, which is what the duplicate-name check compares against
+				findResult := []interface{}{bson.D{
+					{Key: "experiment_id", Value: experimentId},
+					{Key: "name", Value: existingExperimentName},
+				}}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+				mockServices.MongodbOperator.On("List", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(cursor, nil).Maybe()
+			},
+			wantErr: true,
+		},
+		{
+			name: "failure: experiment ID is empty",
+			args: args{
+				projectID: projectId,
+				request: &model.ChaosExperimentRequest{
+					ExperimentID:   new(string),
+					InfraID:        infraId,
+					ExperimentType: &model.AllExperimentType[0],
+					ExperimentName: newExperimentName,
+				},
+			},
+			given:   func(request *model.ChaosExperimentRequest, mockServices *MockServices) {},
+			wantErr: true,
+		},
+		{
 			name: "failure: failed to update experiment",
 			args: args{
 				projectID: projectId,
