@@ -36,11 +36,18 @@ export const getBreakdownValues = (cronExpression: string): ExpressionBreakdownI
   };
 };
 
+/**
+ * Returns the schedule tab that can show the given cron expression.
+ * Expressions that none of the tabs can produce (for example `0 0 1 * *`, `30 * * * *`,
+ * `0 9 * * 1-5` or `@daily`) open in the Custom tab, so they are shown as they are.
+ */
 export const getSelectedTab = (cronExpression: string): string => {
-  const cronExpressionArr = cronExpression?.trim().split(' ');
+  const cronExpressionArr = cronExpression?.trim().split(/\s+/) ?? [];
+
+  if (cronExpressionArr.length !== 5) return 'Custom';
 
   if (
-    cronExpressionArr[0] !== '*' &&
+    cronExpressionArr[0].includes('/') &&
     cronExpressionArr[1] === '*' &&
     cronExpressionArr[2] === '*' &&
     cronExpressionArr[3] === '*' &&
@@ -61,7 +68,7 @@ export const getSelectedTab = (cronExpression: string): string => {
     cronExpressionArr[1] !== '*' &&
     cronExpressionArr[2] === '*' &&
     cronExpressionArr[3] === '*' &&
-    cronExpressionArr[4].length > 0
+    cronExpressionArr[4].split(',').every(day => Object.values(DaysOfWeek).includes(day.toUpperCase() as DaysOfWeek))
   )
     return 'Weekly';
   else if (
@@ -73,5 +80,5 @@ export const getSelectedTab = (cronExpression: string): string => {
   ) {
     if (cronExpressionArr[3].split('/').length > 1) return 'Monthly';
     else return 'Yearly';
-  } else return 'Minutes';
+  } else return 'Custom';
 };
