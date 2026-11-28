@@ -275,6 +275,7 @@ export interface StringsMap {
   'editInChaosStudio': unknown
   'editName': unknown
   'editProbe': unknown
+  'editProbeMode': unknown
   'editProjectName': unknown
   'editSameExperimentDescription': unknown
   'editSameExperimentTitle': unknown
@@ -728,6 +729,7 @@ export interface StringsMap {
   'probeTypes.httpProbe': unknown
   'probeTypes.k8sProbe': unknown
   'probeTypes.promProbe': unknown
+  'probeUpdatedSuccessfully': unknown
   'probeValidation.accountIdentifier': unknown
   'probeValidation.apiTokenSecret': unknown
   'probeValidation.apiTokenSecretName': unknown

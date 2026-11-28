@@ -7,19 +7,13 @@ import type { Row } from 'react-table';
 import type { FaultData } from '@models';
 import { useStrings } from '@strings';
 import EmptyProbe from '@images/emptyProbe.png';
-import type { InfrastructureType, ProbeObj } from '@api/entities';
-import { UpdateProbeModal } from '@views/ChaosProbes/UpdateProbeModal';
+import type { ProbeObj } from '@api/entities';
 import { MenuCell } from './MenuCell';
 import css from './Probes.module.scss';
 
-export interface EditProbeData {
-  name: string;
-  infrastructureType: InfrastructureType;
-}
-
 const getTableColumns = (
   onSave: (data: Omit<FaultData, 'experimentCR'>) => void,
-  setEditProbe: React.Dispatch<React.SetStateAction<EditProbeData | undefined>>,
+  onEditProbe: (probe: ProbeObj) => void,
   faultData: FaultData | undefined
 ): any => {
   return [
@@ -58,7 +52,7 @@ const getTableColumns = (
       Header: '',
       id: 'threeDotMenu',
       Cell: ({ row }: { row: Row<ProbeObj> }) => (
-        <MenuCell row={row} faultData={faultData} setEditProbe={setEditProbe} onSave={onSave} />
+        <MenuCell row={row} faultData={faultData} onEditProbe={onEditProbe} onSave={onSave} />
       ),
       disableSortBy: true,
       width: '10px'
@@ -69,14 +63,15 @@ const getTableColumns = (
 export default function ProbesTab({
   faultData,
   onSave,
-  setIsAddProbeSelected
+  setIsAddProbeSelected,
+  onEditProbe
 }: {
   faultData: FaultData | undefined;
   setIsAddProbeSelected: React.Dispatch<React.SetStateAction<boolean>>;
   onSave: (data: Omit<FaultData, 'experimentCR'>) => void;
+  onEditProbe: (probe: ProbeObj) => void;
 }): React.ReactElement {
   const { getString } = useStrings();
-  const [editProbe, setEditProbe] = React.useState<EditProbeData | undefined>();
 
   return (
     <Container
@@ -128,7 +123,7 @@ export default function ProbesTab({
             {getString('selectedProbe')}
           </Text>
           <TableV2
-            columns={getTableColumns(onSave, setEditProbe, faultData)}
+            columns={getTableColumns(onSave, onEditProbe, faultData)}
             data={faultData.probes as ProbeObj[]}
             className={css.probeTable}
           />
@@ -148,14 +143,6 @@ export default function ProbesTab({
               </Layout.Vertical>
             </Layout.Horizontal>
           </div>
-          {editProbe && (
-            <UpdateProbeModal
-              isOpen={!!editProbe.name}
-              hideDarkModal={() => setEditProbe(undefined)}
-              probeName={editProbe.name}
-              infrastructureType={editProbe.infrastructureType}
-            />
-          )}
         </Layout.Vertical>
       )}
     </Container>
